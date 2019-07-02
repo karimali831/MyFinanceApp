@@ -1,26 +1,26 @@
-﻿@model IEnumerable<MyFinances.Model.Finances>
+﻿@model IEnumerable<MyFinances.Model.Finance>
 @{
     ViewBag.Title = "My Finances";
 }
 
-<h1>My Finances</h1>
+<h1>My Finance</h1>
 
 <table>
     <thead>
         <tr>
             <th>#</th>
-            <th>Booking</th>
+            <th>Item</th>
         </tr>
     </thead>
     <tbody>
         @if (Model.Any())
         {
 
-            foreach (var booking in Model)
+            foreach (var item in Model)
             {
                 <tr>
-                    <td>@booking.Id</td>
-                    <td>@booking.Name</td>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
                 </tr>
             }
         }

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Bookings]
+﻿CREATE TABLE [dbo].[Finances]
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Name] NCHAR(50) NULL

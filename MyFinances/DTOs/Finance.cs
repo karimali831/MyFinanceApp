@@ -7,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace MyFinances.DTOs
 {
-    public class FinancesDTO
+    public class FinanceDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public static FinancesDTO MapFrom(Finances Finances)
+        public static FinanceDTO MapFrom(Finance Finance)
         {
-            return new FinancesDTO
+            return new FinanceDTO
             {
-                Id = Finances.Id,
-                Name = Finances.Name
+                Id = Finance.Id,
+                Name = Finance.Name
             };
         }
     }
 
     /*
-     * usage: var dto = Finances.Select(b => FinancesDTO.MapFrom(b)).ToList();
+     * usage: var dto = Finance.Select(b => FinanceDTO.MapFrom(b)).ToList();
     */
 }

@@ -13,10 +13,10 @@ namespace MyFinances.Ninject
         public override void Load()
         {
             // Services
-            Bind<IFinanceservice>().To<Financeservice>();
+            Bind<IFinanceService>().To<FinanceService>();
 
             // Repositories
-            Bind<IFinancesRepository>().To<FinancesRepository>();
+            Bind<IFinanceRepository>().To<FinanceRepository>();
         }
     }
 

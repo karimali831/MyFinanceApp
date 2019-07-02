@@ -102,11 +102,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTOs\Bookings.cs" />
-    <Compile Include="Model\Bookings\Bookings.cs" />
+    <Compile Include="DTOs\Finance.cs" />
+    <Compile Include="Model\Finance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\Bookings\Bookings.cs" />
-    <Compile Include="Service\BookingService.cs" />
+    <Compile Include="Repository\Finance.cs" />
+    <Compile Include="Service\FinanceService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enums\" />

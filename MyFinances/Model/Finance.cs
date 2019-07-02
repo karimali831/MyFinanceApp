@@ -2,15 +2,15 @@
 
 namespace MyFinances.Model
 {
-    public class Finances
+    public class Finance
     {
         public int Id { get; set; }
         public string Name { get; set; }
     }
 
-    public class FinancesMap : EntityTypeConfiguration<Finances>
+    public class FinanceMap : EntityTypeConfiguration<Finance>
     {
-        public FinancesMap()
+        public FinanceMap()
         {
             // Primary Key
             this.HasKey(t => t.Id);

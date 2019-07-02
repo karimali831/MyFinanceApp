@@ -1,0 +1,15 @@
+/.vs/MyFinanceApp/v16/.suo
+/MyFinanceApp/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/MyFinanceApp/obj/Debug/MyFinanceApp.csproj.CoreCompileInputs.cache
+/MyFinanceApp/obj/Debug/MyFinanceApp.csprojAssemblyReference.cache
+/.vs/MyFinanceApp/v16/Server/sqlite3/storage.ide-shm
+/.vs/MyFinanceApp/v16/Server/sqlite3/storage.ide-wal
+/MyFinanceApp/bin/Dapper.dll
+/packages/Dapper.1.60.6/.signature.p7s
+/packages/Dapper.1.60.6/Dapper.1.60.6.nupkg
+/packages/Dapper.1.60.6/lib/net451/Dapper.dll
+/packages/Dapper.1.60.6/lib/net451/Dapper.xml
+/packages/Dapper.1.60.6/lib/netstandard1.3/Dapper.dll
+/packages/Dapper.1.60.6/lib/netstandard1.3/Dapper.xml
+/packages/Dapper.1.60.6/lib/netstandard2.0/Dapper.dll
+/packages/Dapper.1.60.6/lib/netstandard2.0/Dapper.xml

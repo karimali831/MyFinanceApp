@@ -30,11 +30,11 @@ namespace MyFinances.Website.Controllers.API
 
     [RoutePrefix("api/finances")]
     [CamelCaseControllerConfig]
-    public class NavigatorUserController : ApiController
+    public class FinancesController : ApiController
     {
         private readonly IFinanceService financeService;
 
-        public NavigatorUserController(
+        public FinancesController(
             IFinanceService financeService)
         {
             this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));

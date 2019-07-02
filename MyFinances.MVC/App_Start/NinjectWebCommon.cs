@@ -7,11 +7,13 @@ namespace MyFinances.Website.App_Start
     using global::Ninject;
     using global::Ninject.Web.Common;
     using global::Ninject.Web.Common.WebHost;
+    using global::Ninject.Web.WebApi;
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
     using System;
     using System.Data;
     using System.Data.SqlClient;
     using System.Web;
+    using System.Web.Http;
 
     public static class NinjectWebCommon
     {
@@ -49,6 +51,7 @@ namespace MyFinances.Website.App_Start
                 kernel.Bind<Func<IDbConnection>>().ToMethod((ctx) => () => new SqlConnection(DatabaseHelper.DefaultConnectionString));
 
                 RegisterServices(kernel);
+                GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
                 return kernel;
             }
             catch

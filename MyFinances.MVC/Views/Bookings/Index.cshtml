@@ -1,0 +1,34 @@
+﻿@model IEnumerable<MyFinances.Model.Finances>
+@{
+    ViewBag.Title = "My Finances";
+}
+
+<h1>My Finances</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Booking</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+
+            foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.Id</td>
+                    <td>@booking.Name</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="2">No Finances found</td>
+            </tr>
+        }
+    </tbody>
+</table>

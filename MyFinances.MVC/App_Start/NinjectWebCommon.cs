@@ -51,7 +51,10 @@ namespace MyFinances.Website.App_Start
                 kernel.Bind<Func<IDbConnection>>().ToMethod((ctx) => () => new SqlConnection(DatabaseHelper.DefaultConnectionString));
 
                 RegisterServices(kernel);
+
+                // for restful web api
                 GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
+
                 return kernel;
             }
             catch

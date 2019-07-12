@@ -1,4 +1,6 @@
-﻿using MyFinances.Service;
+﻿using MyFinances.DTOs;
+using MyFinances.Model;
+using MyFinances.Service;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
@@ -51,5 +53,20 @@ namespace MyFinances.Website.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK, new { Finances = finances });
         }
 
+        [Route("add")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> InsertAsync(FinanceDTO finance)
+        {
+            await financeService.InsertAsync(finance);
+            return Request.CreateResponse(HttpStatusCode.OK, true);
+        }
+
+        [Route("delete/{id}")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> DeleteAsync(int id)
+        {
+            await financeService.DeleteAsync(id);
+            return Request.CreateResponse(HttpStatusCode.OK, true);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using MyFinances.Model;
+﻿using MyFinances.DTOs;
+using MyFinances.Model;
 using MyFinances.Repository;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ namespace MyFinances.Service
     public interface IFinanceService
     {
         Task<IEnumerable<Finance>> GetAllAsync();
+        Task InsertAsync(FinanceDTO finance);
+        Task DeleteAsync(int id);
     }
 
     public class FinanceService : IFinanceService
@@ -23,6 +26,16 @@ namespace MyFinances.Service
         public async Task<IEnumerable<Finance>> GetAllAsync()
         {
             return await FinanceRepository.GetAllAsync();
+        }
+
+        public async Task InsertAsync(FinanceDTO finance)
+        {
+            await FinanceRepository.InsertAsync(finance);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            await FinanceRepository.DeleteAsync(id);
         }
     }
 }

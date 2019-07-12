@@ -7,7 +7,6 @@ export class Api {
             method: "GET",
             headers: {
                 "Accept": "application/json",
-                'Access-Control-Allow-Origin': '*',
                 "Content-Type": "application/json"
             },
             credentials: 'same-origin',
@@ -20,12 +19,49 @@ export class Api {
         })
         .then(data => data as IFinanceResponse);
     }
+
+    public addExpense = async (request: IFinanceRequest) => {
+        return fetch(`${this.rootUrl}/api/finances/add`, {
+            method: "POST",
+            body: JSON.stringify(request),
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+        })
+    }
+
+    public removeExpense = async (id: number) => {
+        return fetch(`${this.rootUrl}/api/finances/delete/${id}`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+        })
+    }
 }
 
 export const financeApi = new Api();
 
 export interface IFinanceResponse {
     finances: IFinances[]
+}
+
+export interface IFinanceRequest {
+   name: string
 }
 
 export interface IFinances {

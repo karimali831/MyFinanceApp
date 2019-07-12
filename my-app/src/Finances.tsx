@@ -19,6 +19,10 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         };
     }
 
+    public componentDidMount() {
+        this.loadFinances();
+    }
+
     loadFinances = () => {
         financeApi.finances()
             .then(response => this.loadFinancesSuccess(response.finances));

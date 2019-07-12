@@ -7,6 +7,7 @@ export class Api {
             method: "GET",
             headers: {
                 "Accept": "application/json",
+                'Access-Control-Allow-Origin': '*',
                 "Content-Type": "application/json"
             },
             credentials: 'same-origin',

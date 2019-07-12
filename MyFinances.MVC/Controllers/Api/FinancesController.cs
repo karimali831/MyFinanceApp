@@ -8,6 +8,7 @@ using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using System.Web.Http.Cors;
 
 namespace MyFinances.Website.Controllers.API
 {
@@ -29,6 +30,7 @@ namespace MyFinances.Website.Controllers.API
     }
 
     [RoutePrefix("api/finances")]
+    [EnableCors(origins: "http://localhost:3000", headers: "*", methods: "*")]
     [CamelCaseControllerConfig]
     public class FinancesController : ApiController
     {

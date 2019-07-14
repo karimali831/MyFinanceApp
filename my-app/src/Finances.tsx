@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { IFinances, financeApi } from './Api';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
 
 interface IOwnProps {
 }
@@ -24,16 +25,6 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         this.loadFinances();
     }
 
-    // public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
-
-    //     console.log("prevState = " + prevState.finances);
-    //     console.log("currState = " + this.state.finances);
-
-    //     if (!prevState.finances.length) {
-    //      this.loadFinances();
-    //     }
-    // }
-
     private loadFinances = () => {
         financeApi.finances()
             .then(response => this.loadFinancesSuccess(response.finances));
@@ -48,35 +39,64 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         }) 
     }
 
-    render() {
-        if (this.state.finances.length > 0) {
-            return (
-                <div>
-                    <input type="text" value={this.state.expense} placeholder="Enter expense..." onChange={(e) => { this.onExpenseChanged(e);}} onKeyDown={this.onKeyDown} />
-                    <ul>
-                    {
-                        this.state.finances.map((a, idx) => 
-                            <li className="finance" key={a.id}>
-                                <div className="title">{a.name}</div>
-                                <a href="javascript:void(0)" onClick={() => this.removeExpense(a.id)}>[DEL]</a>
-                            </li>
-                        
-                        )
-                    }
-                    </ul>
-                </div>
-            )
-        } else {
-            return <input type="text" value={this.state.expense} placeholder="Enter expense..." onChange={(e) => { this.onExpenseChanged(e);}} onKeyDown={this.onKeyDown} />;
+    private onAfterSaveCell(row: { [x: string]: string; }, cellName: any, cellValue: any) {
+        alert(`Save cell ${cellName} with value ${cellValue} of Id: ${row['id']}`);
+        
+        let key = cellName;
+        let value = cellValue;
+        let id = row['id'];
+
+        let rowStr = '';
+        for (const prop in row) {
+            rowStr += prop + ': ' + row[prop] + '\n';
         }
+        
+        alert('Thw whole row :\n' + rowStr);
+    }
+      
+    private onBeforeSaveCell(row: any, cellName: any, cellValue: any) {
+        // You can do any validation on here for editing value,
+        // return false for reject the editing
+        return true;
     }
 
-    private reset = () => {
-        this.setState({ ...this.state, 
-            ...{ 
-                expense: ""
-            }
-        })  
+    render() {
+        const options = {
+            noDataText: 'No income or expenditure for the day',
+            onDeleteRow: this.removeExpense
+        };
+        const cellEditProp = {
+            mode: 'click',
+            blurToSave: 'true',
+            beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
+            afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell
+        };
+        return (
+            <div style={{width: '75%', margin: '0 auto'}}>
+                <BootstrapTable 
+                    selectRow={{ mode: 'radio' }} 
+                    remote={ true }  
+                    data={ this.state.finances } 
+                    striped={ true } 
+                    hover={ true } 
+                    options={ options } 
+                    deleteRow={ true } 
+                    cellEdit={{
+                        mode: 'click',
+                        blurToSave: true,
+                        beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
+                        afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell  
+                    }} >
+                    <TableHeaderColumn isKey dataField='id' hidden autoValue={true}>ID</TableHeaderColumn>
+                    <TableHeaderColumn dataField='name'>Expense</TableHeaderColumn>
+                    <TableHeaderColumn dataField='avgMonthlyCost'>Avg Monthly Cost</TableHeaderColumn>
+                    <TableHeaderColumn dataField='type'>Type</TableHeaderColumn>
+                    <TableHeaderColumn dataField='endDate'>End Date</TableHeaderColumn>
+                    <TableHeaderColumn dataField='remaining'>Remaining</TableHeaderColumn>
+                </BootstrapTable>
+                <input className={"form-control"} type="text" value={this.state.expense} placeholder="Add expense..." onChange={(e) => { this.onExpenseChanged(e);}} onKeyDown={this.onKeyDown} />
+            </div>
+        )
     }
 
     private onExpenseChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +108,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         })  
     }
 
+
     private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             this.addExpense();
@@ -97,22 +118,17 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
     private addExpense = () => {
         if (this.state.expense && this.state.expense.length > 2)
         {
-            this.setState({ ...this.state, ...{ loading: true }})  
+            this.setState({ ...this.state, ...{ loading: true, expense: "" }})  
             
             financeApi.addExpense({ name: this.state.expense })
-                .then(() => this.updateSuccess())
+                .then(() => this.loadFinances())
         }
     }
 
-    private removeExpense = (id: number) => {
+    private removeExpense = (id: any) => {
         this.setState({ ...this.state, ...{ loading: true }}) 
 
         financeApi.removeExpense(id)
-            .then(() => this.updateSuccess())
-    }
-
-    private updateSuccess = () => {
-        this.setState({ ...this.state, loading: false })  
-        this.loadFinances();
+            .then(() => this.loadFinances())
     }
 }

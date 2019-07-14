@@ -66,5 +66,11 @@ export interface IFinanceRequest {
 
 export interface IFinances {
     id: number,
-    name: string
+    name: string,
+    avgMonthlyCost: number,
+    type: string,
+    startDate: Date,
+    endDate: Date,
+    remaining: number,
+    paid: number
 }

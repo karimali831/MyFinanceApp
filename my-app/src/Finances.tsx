@@ -7,6 +7,7 @@ interface IOwnProps {
 
 export interface IOwnState {
     finances: IFinances[],
+    totalAvgCost: number | undefined,
     loading: boolean,
     expense: string
 }
@@ -17,6 +18,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         this.state = { 
             loading: true,
             finances: [],
+            totalAvgCost: undefined,
             expense: ""
         };
     }
@@ -27,31 +29,24 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
 
     private loadFinances = () => {
         financeApi.finances()
-            .then(response => this.loadFinancesSuccess(response.finances));
+            .then(response => this.loadFinancesSuccess(response.finances, response.totalAvgCost));
     }
 
-    private loadFinancesSuccess = (finances: IFinances[]) => {
+    private loadFinancesSuccess = (finances: IFinances[], totalAvgCost: number) => {
         this.setState({ ...this.state,
             ...{ 
                 loading: false, 
-                finances: finances
+                finances: finances,
+                totalAvgCost: totalAvgCost
             }
         }) 
     }
 
-    private onAfterSaveCell(row: { [x: string]: string; }, cellName: any, cellValue: any) {
-        alert(`Save cell ${cellName} with value ${cellValue} of Id: ${row['id']}`);
-        
+    private onAfterSaveCell = (row: { [x: string]: string; }, cellName: any, cellValue: any) => {
         let key = cellName;
         let value = cellValue;
-        let id = row['id'];
-
-        let rowStr = '';
-        for (const prop in row) {
-            rowStr += prop + ': ' + row[prop] + '\n';
-        }
-        
-        alert('Thw whole row :\n' + rowStr);
+        let id = Number(row['id']);
+        this.updateExpense(key, value, id)
     }
       
     private onBeforeSaveCell(row: any, cellName: any, cellValue: any) {
@@ -60,17 +55,22 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         return true;
     }
 
+    private priceFormatter(cell: any, row: any) {   // String example
+        return `<i class='glyphicon glyphicon-gbp'></i> ${cell}`;
+    }
+
     render() {
         const options = {
             noDataText: 'No income or expenditure for the day',
             onDeleteRow: this.removeExpense
         };
-        const cellEditProp = {
-            mode: 'click',
-            blurToSave: 'true',
-            beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
-            afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell
-        };
+        
+        // const cellEditProp = {
+        //     mode: 'click',
+        //     blurToSave: 'true',
+        //     beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
+        //     afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell
+        // };
         return (
             <div style={{width: '75%', margin: '0 auto'}}>
                 <BootstrapTable 
@@ -89,12 +89,13 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
                     }} >
                     <TableHeaderColumn isKey dataField='id' hidden autoValue={true}>ID</TableHeaderColumn>
                     <TableHeaderColumn dataField='name'>Expense</TableHeaderColumn>
-                    <TableHeaderColumn dataField='avgMonthlyCost'>Avg Monthly Cost</TableHeaderColumn>
+                    <TableHeaderColumn dataField='avgMonthlyCost' dataFormat={ this.priceFormatter }>Avg Monthly Cost</TableHeaderColumn>
                     <TableHeaderColumn dataField='type'>Type</TableHeaderColumn>
-                    <TableHeaderColumn dataField='endDate'>End Date</TableHeaderColumn>
+                    <TableHeaderColumn dataField='endDate' editable={{ placeholder: "dd-MM-yyyy"}} >End Date</TableHeaderColumn>
                     <TableHeaderColumn dataField='remaining'>Remaining</TableHeaderColumn>
                 </BootstrapTable>
                 <input className={"form-control"} type="text" value={this.state.expense} placeholder="Add expense..." onChange={(e) => { this.onExpenseChanged(e);}} onKeyDown={this.onKeyDown} />
+                <label>Total average monthly cost: £{this.state.totalAvgCost}</label>
             </div>
         )
     }
@@ -107,7 +108,6 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             }
         })  
     }
-
 
     private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -125,10 +125,15 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         }
     }
 
+    private updateExpense = (key: string, value: any, id: number) => {
+        this.setState({ ...this.state, ...{ loading: true }}) 
+        financeApi.updateExpense(key, value, id)
+            .then(() => this.loadFinances());
+    }
+
     private removeExpense = (id: any) => {
         this.setState({ ...this.state, ...{ loading: true }}) 
-
         financeApi.removeExpense(id)
-            .then(() => this.loadFinances())
+            .then(() => this.loadFinances());
     }
 }

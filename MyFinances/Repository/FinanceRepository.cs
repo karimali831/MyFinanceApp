@@ -14,6 +14,7 @@ namespace MyFinances.Repository
     {
         Task<IEnumerable<Finance>> GetAllAsync();
         Task InsertAsync(FinanceDTO finance);
+        Task UpdateAsync<T>(string field, T value, int id) where T : class;
         Task DeleteAsync(int Id);
     }
 
@@ -44,6 +45,21 @@ namespace MyFinances.Repository
                     INSERT INTO {TABLE} (Name) VALUES (@Name)", 
                     new {
                         finance.Name
+                    }
+                );
+            }
+        }
+
+        public async Task UpdateAsync<T>(string field, T value, int id) where T : class
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($@"
+                    UPDATE {TABLE} SET {field} = @value WHERE Id = @id",
+                    new
+                    {
+                        value,
+                        id
                     }
                 );
             }

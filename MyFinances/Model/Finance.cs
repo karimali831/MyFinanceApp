@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.ModelConfiguration;
 
 namespace MyFinances.Model
@@ -7,12 +8,12 @@ namespace MyFinances.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int AvgMonthlyCost { get; set; }
+        public decimal AvgMonthlyCost { get; set; }
         public string Type { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public int? Remaining { get; set; }
-        public int? Paid { get; set; }
+        public decimal? Remaining { get; set; }
+        public decimal? Paid { get; set; }
     }
 
     public class FinanceMap : EntityTypeConfiguration<Finance>

@@ -37,6 +37,22 @@ export class Api {
         })
     }
 
+    public updateExpense = async (field: string, value: any, id: number) => {
+        return fetch(`${this.rootUrl}/api/finances/update/${field}/${id}/${value}/`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+        })
+    }
+
     public removeExpense = async (id: number) => {
         return fetch(`${this.rootUrl}/api/finances/delete/${id}`, {
             method: "POST",
@@ -58,6 +74,7 @@ export const financeApi = new Api();
 
 export interface IFinanceResponse {
     finances: IFinances[]
+    totalAvgCost: number
 }
 
 export interface IFinanceRequest {

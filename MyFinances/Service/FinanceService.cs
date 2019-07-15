@@ -11,6 +11,7 @@ namespace MyFinances.Service
     {
         Task<IEnumerable<Finance>> GetAllAsync();
         Task InsertAsync(FinanceDTO finance);
+        Task UpdateAsync<T>(string field, T value, int id) where T : class;
         Task DeleteAsync(int id);
     }
 
@@ -31,6 +32,11 @@ namespace MyFinances.Service
         public async Task InsertAsync(FinanceDTO finance)
         {
             await FinanceRepository.InsertAsync(finance);
+        }
+
+        public async Task UpdateAsync<T>(string field, T value, int id) where T : class
+        {
+            await FinanceRepository.UpdateAsync(field, value, id);
         }
 
         public async Task DeleteAsync(int id)

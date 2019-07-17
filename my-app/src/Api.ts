@@ -54,8 +54,8 @@ export class Api {
         })
     }
 
-    public addSpending = async (name: string, catId: number) => {
-        return fetch(`${this.rootUrl}/spendings/add/${name}/${catId}`, {
+    public addSpending = async (name: string, catId: number, amount: number) => {
+        return fetch(`${this.rootUrl}/spendings/add/${name}/${catId}/${amount}/`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",

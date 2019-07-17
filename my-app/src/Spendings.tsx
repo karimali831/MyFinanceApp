@@ -10,6 +10,7 @@ export interface IOwnState {
     totalSpent: number[],
     categories: ICategory[],
     selectedCat?: number | undefined,
+    amount?: number | undefined,
     loading: boolean,
     name: string
 }
@@ -23,6 +24,7 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
             totalSpent: [],
             categories: [],
             selectedCat: undefined,
+            amount: 0,
             name: ""
         };
     }
@@ -92,17 +94,30 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
                     <TableHeaderColumn dataField='info'>Info</TableHeaderColumn>
                     <TableHeaderColumn dataField='category'>Category</TableHeaderColumn>
                 </BootstrapTable>
-                <input className={"form-control"} type="text" value={this.state.name} placeholder="Add spending..." onChange={(e) => { this.onSpendingChanged(e);}} onKeyDown={this.onKeyDown} />
-                <select onChange={e => this.onChangeSelectedCategory(e)} className={"form-control"}>
-                    <option value="">-- category --</option>
-                    {
-                        this.state.categories.map(c =>
-                            <option key={c.id} value={c.id}>{c.name}</option>
-                        )
-                    }
-                </select>
-                <input type={"submit"} value={"Add"} className={"form-control"} onClick={() => this.addSpending()} />
-                <label>Last day total spent: £{this.state.totalSpent[0]}</label>
+                <div>
+                    <div className="form-group">
+                        <input className="form-control" type="text" value={this.state.name} placeholder="Enter item" onChange={(e) => { this.onSpendingChanged(e);}} />
+                    </div>
+                    <div className="form-group">
+                        <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />
+                    </div>
+                    <div className="form-group">
+                        <select onChange={e => this.onChangeSelectedCategory(e)} className="form-control">
+                            <option value={0}>-- category --</option>
+                            {
+                                this.state.categories.map(c =>
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                )
+                            }
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <input type="submit" value="Add Item" onClick={(e) =>this.addSpending() } />
+                    </div>
+                    <div><h3>Spent in last day: £{this.state.totalSpent[0]}</h3></div>
+                    <div><h3>Spent in last 7 days: £{this.state.totalSpent[1]}</h3></div>
+                    <div><h3>Spent in last 30 days: £{this.state.totalSpent[2]}</h3></div>
+                </div>
             </div>
         )
     }
@@ -111,7 +126,14 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
         this.setState({ ...this.state, 
             ...{ 
                 name: e.target.value,
-                loading: e.target.value.length > 2
+            }
+        })  
+    }
+
+    private onAmountChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, 
+            ...{ 
+                amount: Number(e.target.value),
             }
         })  
     }
@@ -120,33 +142,27 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
         this.setState({ ...this.state, 
             ...{ 
                 selectedCat: Number(e.target.value),
-                loading: e.target.value.length > 2
             }
         })  
     }
 
-    private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            this.addSpending();
-        }
-    }
-
     private addSpending = () => {
-        if (this.state.name && this.state.name.length > 2 && this.state.selectedCat)
+        if (this.state.name && this.state.name.length > 2 && this.state.selectedCat && this.state.amount)
         {
             this.setState({ ...this.state, 
                 ...{ 
                     loading: true, 
                     name: "", 
-                    selectedCat: undefined 
+                    amount: 0,
+                    selectedCat: undefined
                 }
             })  
             
-            financeApi.addSpending(this.state.name, this.state.selectedCat)
+            financeApi.addSpending(this.state.name, this.state.selectedCat, this.state.amount)
                 .then(() => this.loadSpendings())
         }
         else{
-            alert("Must select name and category");
+            alert("Enter item and amount first");
         }
     }
 

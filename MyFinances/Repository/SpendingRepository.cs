@@ -12,7 +12,7 @@ namespace MyFinances.Repository
     public interface ISpendingRepository
     {
         Task<IEnumerable<Spending>> GetAllAsync();
-        Task InsertAsync(string name, int catId);
+        Task InsertAsync(string name, int catId, decimal amount);
         Task UpdateAsync<T>(string field, T value, int id) where T : class;
         Task DeleteAsync(int Id);
     }
@@ -48,15 +48,16 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task InsertAsync(string name, int catId)
+        public async Task InsertAsync(string name, int catId, decimal amount)
         {
             using (var sql = dbConnectionFactory())
             {
                 await sql.ExecuteAsync($@"
-                    INSERT INTO {TABLE} (Name, CatId) VALUES (@Name, @CatId)", 
+                    INSERT INTO {TABLE} (Name, CatId, Amount) VALUES (@Name, @CatId, @Amount)", 
                     new {
                         Name = name,
-                        CatId = catId
+                        CatId = catId,
+                        Amount = amount
                     }
                 );
             }

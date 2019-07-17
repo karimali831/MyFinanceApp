@@ -36,19 +36,25 @@ namespace MyFinances.Website.Controllers.API
             totalSpent[2] = spendingService.GetTotalSpent(spendings, -30);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
-                Spendings = spendings
-                    .OrderBy(x => x.Name)
-                    .ThenBy(x => x.Category),
+                Spendings = spendings.Select(x => new
+                {
+                    x.Id,
+                    x.Name,
+                    x.Amount,
+                    Date = x.Date.ToString("dd-MM-yy"),
+                    x.Info,
+                    x.Category
+                }).OrderBy(x => x.Name).ThenBy(x => x.Category),
                 Categories = categories,
                 TotalSpent = totalSpent
             });
         }
 
-        [Route("add/{name}/{catId}")]
+        [Route("add/{name}/{catId}/{amount}/")]
         [HttpPost]
-        public async Task<HttpResponseMessage> InsertAsync(string name, int catId)
+        public async Task<HttpResponseMessage> InsertAsync(string name, int catId, decimal amount)
         {
-            await spendingService.InsertAsync(name, catId);
+            await spendingService.InsertAsync(name, catId, amount);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
 

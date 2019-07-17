@@ -11,7 +11,7 @@ namespace MyFinances.Service
     {
         Task<IEnumerable<Spending>> GetAllAsync();
         Task<IEnumerable<Category>> GetAllCategories();
-        Task InsertAsync(string name, int catId);
+        Task InsertAsync(string name, int catId, decimal amount);
         Task UpdateAsync<T>(string field, T value, int id) where T : class;
         Task DeleteAsync(int id);
         decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval);
@@ -38,9 +38,9 @@ namespace MyFinances.Service
             return await spendingRepository.GetAllAsync();
         }
 
-        public async Task InsertAsync(string name, int catId)
+        public async Task InsertAsync(string name, int catId, decimal amount)
         {
-            await spendingRepository.InsertAsync(name, catId);
+            await spendingRepository.InsertAsync(name, catId, amount);
         }
 
         public async Task UpdateAsync<T>(string field, T value, int id) where T : class

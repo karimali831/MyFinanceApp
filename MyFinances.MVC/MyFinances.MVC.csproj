@@ -220,6 +220,8 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\Api\ConfigController.cs" />
+    <Compile Include="Controllers\Api\SpendingsController.cs" />
     <Compile Include="Controllers\Api\FinancesController.cs" />
     <Compile Include="Controllers\FinancesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

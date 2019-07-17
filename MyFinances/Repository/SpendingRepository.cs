@@ -9,41 +9,54 @@ using System.Threading.Tasks;
 
 namespace MyFinances.Repository
 {
-    public interface IFinanceRepository
+    public interface ISpendingRepository
     {
-        Task<IEnumerable<Finance>> GetAllAsync();
-        Task InsertAsync(string name);
+        Task<IEnumerable<Spending>> GetAllAsync();
+        Task InsertAsync(string name, int catId);
         Task UpdateAsync<T>(string field, T value, int id) where T : class;
         Task DeleteAsync(int Id);
     }
 
-    public class FinanceRepository : IFinanceRepository
+    public class SpendingRepository : ISpendingRepository
     {
         private readonly Func<IDbConnection> dbConnectionFactory;
-        private static readonly string TABLE = "Finances";
-        private static readonly string[] FIELDS = typeof(Finance).DapperFields();
+        private static readonly string TABLE = "Spendings";
+        private static readonly string[] FIELDS = typeof(Spending).DapperFields();
 
-        public FinanceRepository(Func<IDbConnection> dbConnectionFactory)
+        public SpendingRepository(Func<IDbConnection> dbConnectionFactory)
         {
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<IEnumerable<Finance>> GetAllAsync()
+        public async Task<IEnumerable<Spending>> GetAllAsync()
         {
+            string sqlTxt =
+                $@"SELECT 
+                    s.Id,
+                    s.Name,
+                    s.Amount,
+                    s.Date,
+                    s.Info,
+                    c.Name AS Category
+                FROM {TABLE} s 
+                INNER JOIN Categories c 
+                    ON c.Id = s.CatId";
+
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<Finance>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
+                return (await sql.QueryAsync<Spending>(sqlTxt)).ToArray();
             }
         }
 
-        public async Task InsertAsync(string name)
+        public async Task InsertAsync(string name, int catId)
         {
             using (var sql = dbConnectionFactory())
             {
                 await sql.ExecuteAsync($@"
-                    INSERT INTO {TABLE} (Name) VALUES (@Name)", 
+                    INSERT INTO {TABLE} (Name, CatId) VALUES (@Name, @CatId)", 
                     new {
-                        Name = name
+                        Name = name,
+                        CatId = catId
                     }
                 );
             }

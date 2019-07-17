@@ -12,45 +12,43 @@ using System.Web.Http.Cors;
 
 namespace MyFinances.Website.Controllers.API
 {
-    [RoutePrefix("api/finances")]
+    [RoutePrefix("api/spendings")]
     [EnableCors(origins: "http://localhost:3000", headers: "*", methods: "*")]
     [CamelCaseControllerConfig]
-    public class FinancesController : ApiController
+    public class SpendingsController : ApiController
     {
-        private readonly IFinanceService financeService;
+        private readonly ISpendingService spendingService;
 
-        public FinancesController(IFinanceService financeService)
+        public SpendingsController(ISpendingService spendingService)
         {
-            this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
+            this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
         }
 
         [HttpGet]
-        public async Task<HttpResponseMessage> GetFinancesAsync()
+        public async Task<HttpResponseMessage> GetSpendingsAsync()
         {
-            var finances = await financeService.GetAllAsync();
+            var spendings = await spendingService.GetAllAsync();
+            var categories = await spendingService.GetAllCategories();
+            var totalSpent = new decimal[3];
+
+            totalSpent[0] = spendingService.GetTotalSpent(spendings, -1);
+            totalSpent[1] = spendingService.GetTotalSpent(spendings, -7);
+            totalSpent[2] = spendingService.GetTotalSpent(spendings, -30);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
-                Finances =
-                    finances.Select(x => new
-                    {
-                        x.Id,
-                        x.Name,
-                        x.AvgMonthlyCost,
-                        x.Type,
-                        EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
-                        x.Remaining
-                    })
+                Spendings = spendings
                     .OrderBy(x => x.Name)
-                    .ThenBy(x => x.Type),
-                TotalAvgCost = finances.Sum(x => x.AvgMonthlyCost)
+                    .ThenBy(x => x.Category),
+                Categories = categories,
+                TotalSpent = totalSpent
             });
         }
 
-        [Route("add/{name}")]
+        [Route("add/{name}/{catId}")]
         [HttpPost]
-        public async Task<HttpResponseMessage> InsertAsync(string name)
+        public async Task<HttpResponseMessage> InsertAsync(string name, int catId)
         {
-            await financeService.InsertAsync(name);
+            await spendingService.InsertAsync(name, catId);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
 
@@ -65,7 +63,7 @@ namespace MyFinances.Website.Controllers.API
                 dbValue = date;
             }
 
-            await financeService.UpdateAsync(fieldToPascal, dbValue, id);
+            await spendingService.UpdateAsync(fieldToPascal, dbValue, id);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
 
@@ -73,7 +71,7 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> DeleteAsync(int id)
         {
-            await financeService.DeleteAsync(id);
+            await spendingService.DeleteAsync(id);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
     }

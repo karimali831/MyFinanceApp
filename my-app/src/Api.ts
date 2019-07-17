@@ -1,9 +1,9 @@
 export class Api {
 
-    public rootUrl: string = "http://localhost:53822";
+    public rootUrl: string = "http://localhost:53822/api";
 
     public finances = async (): Promise<IFinanceResponse> => {
-        return fetch(`${this.rootUrl}/api/finances/all`, {
+        return fetch(`${this.rootUrl}/finances`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",
@@ -20,10 +20,43 @@ export class Api {
         .then(data => data as IFinanceResponse);
     }
 
-    public addExpense = async (request: IFinanceRequest) => {
-        return fetch(`${this.rootUrl}/api/finances/add`, {
+    public spendings = async (): Promise<ISpendingResponse> => {
+        return fetch(`${this.rootUrl}/spendings`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => data as ISpendingResponse);
+    }
+
+    public addExpense = async (name: string) => {
+        return fetch(`${this.rootUrl}/finances/add/${name}`, {
             method: "POST",
-            body: JSON.stringify(request),
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+        })
+    }
+
+    public addSpending = async (name: string, catId: number) => {
+        return fetch(`${this.rootUrl}/spendings/add/${name}/${catId}`, {
+            method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
@@ -38,7 +71,23 @@ export class Api {
     }
 
     public updateExpense = async (field: string, value: any, id: number) => {
-        return fetch(`${this.rootUrl}/api/finances/update/${field}/${id}/${value}/`, {
+        return fetch(`${this.rootUrl}/finances/update/${field}/${id}/${value}/`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+        })
+    }
+
+    public updateSpending = async (field: string, value: any, id: number) => {
+        return fetch(`${this.rootUrl}/spendings/update/${field}/${id}/${value}/`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -54,7 +103,23 @@ export class Api {
     }
 
     public removeExpense = async (id: number) => {
-        return fetch(`${this.rootUrl}/api/finances/delete/${id}`, {
+        return fetch(`${this.rootUrl}/finances/delete/${id}`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+        })
+    }
+
+    public removeSpending = async (id: number) => {
+        return fetch(`${this.rootUrl}/spendings/delete/${id}`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -73,15 +138,17 @@ export class Api {
 export const financeApi = new Api();
 
 export interface IFinanceResponse {
-    finances: IFinances[]
+    finances: IFinance[]
     totalAvgCost: number
 }
 
-export interface IFinanceRequest {
-   name: string
+export interface ISpendingResponse {
+    spendings: ISpending[],
+    totalSpent: number[],
+    categories: ICategory[]
 }
 
-export interface IFinances {
+export interface IFinance {
     id: number,
     name: string,
     avgMonthlyCost: number,
@@ -90,4 +157,18 @@ export interface IFinances {
     endDate: Date,
     remaining: number,
     paid: number
+}
+
+export interface ISpending {
+    id: number,
+    name: string,
+    amount: number,
+    date: Date,
+    info: string,
+    category: string
+}
+
+export interface ICategory {
+    id: number,
+    name: string
 }

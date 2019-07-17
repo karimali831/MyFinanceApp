@@ -14,9 +14,12 @@ namespace MyFinances.Ninject
         {
             // Services
             Bind<IFinanceService>().To<FinanceService>();
+            Bind<ISpendingService>().To<SpendingService>();
 
             // Repositories
             Bind<IFinanceRepository>().To<FinanceRepository>();
+            Bind<ISpendingRepository>().To<SpendingRepository>();
+            Bind<ICategoryRepository>().To<CategoryRepository>();
         }
     }
 

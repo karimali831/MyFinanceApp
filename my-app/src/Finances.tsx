@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { IFinances, financeApi } from './Api';
+import { IFinance, financeApi } from './Api';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
 
 interface IOwnProps {
 }
 
 export interface IOwnState {
-    finances: IFinances[],
+    finances: IFinance[],
     totalAvgCost: number | undefined,
     loading: boolean,
-    expense: string
+    name: string
 }
 
 export default class Finances extends React.Component<IOwnProps, IOwnState> {
@@ -19,7 +19,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             loading: true,
             finances: [],
             totalAvgCost: undefined,
-            expense: ""
+            name: ""
         };
     }
 
@@ -32,7 +32,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             .then(response => this.loadFinancesSuccess(response.finances, response.totalAvgCost));
     }
 
-    private loadFinancesSuccess = (finances: IFinances[], totalAvgCost: number) => {
+    private loadFinancesSuccess = (finances: IFinance[], totalAvgCost: number) => {
         this.setState({ ...this.state,
             ...{ 
                 loading: false, 
@@ -61,7 +61,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
 
     render() {
         const options = {
-            noDataText: 'No income or expenditure for the day',
+            noDataText: 'No finances found',
             onDeleteRow: this.removeExpense
         };
         
@@ -94,7 +94,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
                     <TableHeaderColumn dataField='endDate' editable={{ placeholder: "dd-MM-yyyy"}} >End Date</TableHeaderColumn>
                     <TableHeaderColumn dataField='remaining'>Remaining</TableHeaderColumn>
                 </BootstrapTable>
-                <input className={"form-control"} type="text" value={this.state.expense} placeholder="Add expense..." onChange={(e) => { this.onExpenseChanged(e);}} onKeyDown={this.onKeyDown} />
+                <input className={"form-control"} type="text" value={this.state.name} placeholder="Add expense..." onChange={(e) => { this.onExpenseChanged(e);}} onKeyDown={this.onKeyDown} />
                 <label>Total average monthly cost: £{this.state.totalAvgCost}</label>
             </div>
         )
@@ -103,7 +103,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
     private onExpenseChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ ...this.state, 
             ...{ 
-                expense: e.target.value,
+                name: e.target.value,
                 loading: e.target.value.length > 2
             }
         })  
@@ -116,11 +116,11 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
     }
 
     private addExpense = () => {
-        if (this.state.expense && this.state.expense.length > 2)
+        if (this.state.name && this.state.name.length > 2)
         {
-            this.setState({ ...this.state, ...{ loading: true, expense: "" }})  
+            this.setState({ ...this.state, ...{ loading: true, name: "" }})  
             
-            financeApi.addExpense({ name: this.state.expense })
+            financeApi.addExpense(this.state.name)
                 .then(() => this.loadFinances())
         }
     }

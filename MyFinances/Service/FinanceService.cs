@@ -1,5 +1,4 @@
-﻿using MyFinances.DTOs;
-using MyFinances.Model;
+﻿using MyFinances.Model;
 using MyFinances.Repository;
 using System;
 using System.Collections.Generic;
@@ -10,38 +9,38 @@ namespace MyFinances.Service
     public interface IFinanceService
     {
         Task<IEnumerable<Finance>> GetAllAsync();
-        Task InsertAsync(FinanceDTO finance);
+        Task InsertAsync(string name);
         Task UpdateAsync<T>(string field, T value, int id) where T : class;
         Task DeleteAsync(int id);
     }
 
     public class FinanceService : IFinanceService
     {
-        private readonly IFinanceRepository FinanceRepository;
+        private readonly IFinanceRepository financeRepository;
 
-        public FinanceService(IFinanceRepository FinanceRepository)
+        public FinanceService(IFinanceRepository financeRepository)
         {
-            this.FinanceRepository = FinanceRepository ?? throw new ArgumentNullException(nameof(FinanceRepository));
+            this.financeRepository = financeRepository ?? throw new ArgumentNullException(nameof(financeRepository));
         }
 
         public async Task<IEnumerable<Finance>> GetAllAsync()
         {
-            return await FinanceRepository.GetAllAsync();
+            return await financeRepository.GetAllAsync();
         }
 
-        public async Task InsertAsync(FinanceDTO finance)
+        public async Task InsertAsync(string name)
         {
-            await FinanceRepository.InsertAsync(finance);
+            await financeRepository.InsertAsync(name);
         }
 
         public async Task UpdateAsync<T>(string field, T value, int id) where T : class
         {
-            await FinanceRepository.UpdateAsync(field, value, id);
+            await financeRepository.UpdateAsync(field, value, id);
         }
 
         public async Task DeleteAsync(int id)
         {
-            await FinanceRepository.DeleteAsync(id);
+            await financeRepository.DeleteAsync(id);
         }
     }
 }

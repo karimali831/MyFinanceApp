@@ -4,9 +4,6 @@
   "private": true,
   "dependencies": {
     "@types/react-bootstrap-table": "^4.3.7",
-    "express": "^4.17.1",
-    "express-favicon": "^2.0.1",
-    "path": "^0.12.7",
     "react": "^16.8.6",
     "react-bootstrap-table": "^4.3.1",
     "react-dom": "^16.8.6",

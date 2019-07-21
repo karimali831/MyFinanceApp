@@ -44,7 +44,7 @@ namespace MyFinances.Website.Controllers.API
                     Date = x.Date.ToString("dd-MM-yy"),
                     x.Info,
                     x.Category
-                }).OrderBy(x => x.Name).ThenBy(x => x.Category),
+                }).OrderByDescending(x => x.Date).ThenBy(x => x.Name).ThenBy(x => x.Category),
                 Categories = categories,
                 TotalSpent = totalSpent
             });

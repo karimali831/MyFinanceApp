@@ -1,7 +1,15 @@
 ﻿import React from 'react';
-import ReactDOM from 'react-dom';
+import './App.css';
+import Finances from './Typescript/Finances'
+import Spendings from './Typescript/Spendings'
 
-ReactDOM.render(
-    <h1>Hello, world!</h1>,
-    document.getElementById('root')
-);
+function App() {
+    return (
+        <div className="App">
+            <Finances />
+            <Spendings />
+        </div>
+    );
+}
+
+export default App;

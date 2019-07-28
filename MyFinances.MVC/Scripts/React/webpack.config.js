@@ -1,23 +1,29 @@
 ﻿module.exports = {
     context: __dirname,
-    entry: "./app.js",
+    entry: ['babel-polyfill',"./index.js"],
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js'],
+    },
     output: {
         path: __dirname + "/dist",
         filename: "bundle.js"
     },
-    watch: true,
+    //watch: true,
     module: {
         rules: [
             {
+                test: /\.tsx?$/,
+                loader: 'babel-loader',
+            },
+            {
+                enforce: 'pre',
                 test: /\.js$/,
-                exclude: /(node_modules)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env', '@babel/preset-react']
-                    }
-                }
-            }
+                loader: 'babel-loader',
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
         ]
     }
 }

@@ -2,7 +2,7 @@
   "name": "MyFinanceApp",
   "version": "1.0.0",
   "description": "MyFinanceApp react components",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "webpack": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,13 +19,24 @@
   "homepage": "https://github.com/karimali831/MyFinanceApp#readme",
   "dependencies": {
     "react": "^16.8.6",
+    "react-bootstrap-table": "^4.3.1",
     "react-dom": "^16.8.6"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "babel-core": "^6.26.3",
     "babel-loader": "^8.0.6",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^3.1.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^0.23.1",
+    "typescript": "^3.5.3",
     "webpack": "^4.38.0",
     "webpack-cli": "^3.3.6"
   }

@@ -1,5 +1,7 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import Spendings from './Typescript/Spendings';
+import Finances from './Typescript/Finances';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<Spendings />, document.getElementById('finances'));
+ReactDOM.render(<Spendings />, document.getElementById('spendings'));

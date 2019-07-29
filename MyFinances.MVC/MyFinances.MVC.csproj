@@ -261,8 +261,6 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Scripts\React\App.css" />
-    <Content Include="Scripts\React\app.js" />
     <Content Include="Scripts\React\dist\bundle.js" />
     <Content Include="Scripts\React\index.js" />
     <None Include="Scripts\React\.babelrc" />

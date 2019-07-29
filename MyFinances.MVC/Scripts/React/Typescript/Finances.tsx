@@ -72,7 +72,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         //     afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell
         // };
         return (
-            <div style={{width: '75%', margin: '0 auto'}}>
+            <div style={{margin: '0 auto'}}>
                 <BootstrapTable 
                     selectRow={{ mode: 'radio' }} 
                     remote={ true }  

@@ -72,7 +72,7 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
             onDeleteRow: this.removeSpending
         };
         return (
-            <div style={{width: '75%', margin: '0 auto'}}>
+            <div style={{margin: '0 auto'}}>
                 <BootstrapTable 
                     selectRow={{ mode: 'radio' }} 
                     remote={ true }  

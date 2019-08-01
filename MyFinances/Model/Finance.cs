@@ -8,12 +8,16 @@ namespace MyFinances.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public decimal AvgMonthlyCost { get; set; }
-        public string Type { get; set; }
+        public decimal AvgMonthlyAmount { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public DateTime? MonthlyDueDate { get; set; }
         public decimal? Remaining { get; set; }
-        public decimal? Paid { get; set; }
+        public decimal? TotalAmount { get; set; }
+        public decimal? TotalPaid { get; set; }
+        public bool Income { get; set; }
+        public bool ManualPayment { get; set; }
+
     }
 
     public class FinanceMap : EntityTypeConfiguration<Finance>

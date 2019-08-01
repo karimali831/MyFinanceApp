@@ -89,10 +89,10 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
                     }} >
                     <TableHeaderColumn isKey dataField='id' hidden autoValue={true}>ID</TableHeaderColumn>
                     <TableHeaderColumn dataField='name'>Expense</TableHeaderColumn>
-                    <TableHeaderColumn dataField='avgMonthlyCost' dataFormat={ this.priceFormatter }>Avg Monthly Cost</TableHeaderColumn>
-                    <TableHeaderColumn dataField='type'>Type</TableHeaderColumn>
-                    <TableHeaderColumn dataField='endDate' editable={{ placeholder: "dd-MM-yyyy"}} >End Date</TableHeaderColumn>
-                    <TableHeaderColumn dataField='remaining'>Remaining</TableHeaderColumn>
+                    <TableHeaderColumn dataField='avgMonthlyAmount' dataFormat={ this.priceFormatter }>Avg Monthly Cost</TableHeaderColumn>
+                    <TableHeaderColumn dataField='endDate' columnClassName="hidden-xs" className="hidden-xs" editable={{ placeholder: "dd-MM-yyyy"}} >End Date</TableHeaderColumn>
+                    <TableHeaderColumn dataField='remaining' columnClassName="hidden-xs" className="hidden-xs">Remaining</TableHeaderColumn>
+                    <TableHeaderColumn dataField='monthlyDueDate' editable={{ placeholder: "dd-MM-yyyy"}}>Next Due</TableHeaderColumn>
                 </BootstrapTable>
                 <input className={"form-control"} type="text" value={this.state.name} placeholder="Add expense..." onChange={(e) => { this.onExpenseChanged(e);}} onKeyDown={this.onKeyDown} />
                 <label>Total average monthly cost: £{this.state.totalAvgCost}</label>

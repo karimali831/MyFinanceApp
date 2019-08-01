@@ -1,4 +1,5 @@
-﻿using MyFinances.Helpers;
+﻿using MyFinances.Enums;
+using MyFinances.Helpers;
 using MyFinances.Service;
 using MyFinances.Website.Controllers.Api;
 using System;
@@ -28,12 +29,6 @@ namespace MyFinances.Website.Controllers.API
         public async Task<HttpResponseMessage> GetSpendingsAsync()
         {
             var spendings = await spendingService.GetAllAsync();
-            var categories = await spendingService.GetAllCategories();
-            var totalSpent = new decimal[3];
-
-            totalSpent[0] = spendingService.GetTotalSpent(spendings, -1);
-            totalSpent[1] = spendingService.GetTotalSpent(spendings, -7);
-            totalSpent[2] = spendingService.GetTotalSpent(spendings, -30);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Spendings = spendings.Select(x => new
@@ -44,10 +39,30 @@ namespace MyFinances.Website.Controllers.API
                     Date = x.Date.ToString("dd-MM-yy"),
                     x.Info,
                     x.Category
-                }).OrderByDescending(x => x.Date).ThenBy(x => x.Name).ThenBy(x => x.Category),
-                Categories = categories,
-                TotalSpent = totalSpent
+                }).OrderByDescending(x => x.Date).ThenBy(x => x.Name).ThenBy(x => x.Category)
             });
+        }
+
+        [Route("summary")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetSpendingSummaryAsync()
+        {
+            var spendings = await spendingService.GetAllAsync();
+            var totalSpent = new decimal[3];
+
+            totalSpent[0] = spendingService.GetTotalSpent(spendings, -1);
+            totalSpent[1] = spendingService.GetTotalSpent(spendings, -7);
+            totalSpent[2] = spendingService.GetTotalSpent(spendings, -30);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { TotalSpent = totalSpent });
+        }
+
+        [Route("categories")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetCategoriesAsync()
+        {
+            var categories = await spendingService.GetAllCategories(CategoryType.Spendings);
+            return Request.CreateResponse(HttpStatusCode.OK, new { Categories = categories });
         }
 
         [Route("add/{name}/{catId}/{amount}/")]

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using DFM.Utils;
+using MyFinances.Enums;
 using MyFinances.Model;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace MyFinances.Repository
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<Category>> GetAllAsync();
+        Task<IEnumerable<Category>> GetAllAsync(CategoryType type);
     }
 
     public class CategoryRepository : ICategoryRepository
@@ -25,11 +26,13 @@ namespace MyFinances.Repository
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync()
+        public async Task<IEnumerable<Category>> GetAllAsync(CategoryType type)
         {
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<Category>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
+                return (await sql.QueryAsync<Category>($"{DapperHelper.SELECT(TABLE, FIELDS)}"))
+                    .Where(x => x.Type == type)
+                    .ToArray();
             }
         }
     }

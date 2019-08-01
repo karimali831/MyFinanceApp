@@ -2,32 +2,30 @@
 import './App.css';
 import Finances from './Typescript/Finances'
 import Spendings from './Typescript/Spendings'
+import AddSpending from './Typescript/AddSpending'
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
 function App() {
     return (
         <div className="App">
-
             <Router>
-                <div>
-                    <nav>
-                    <ul>
-                        <li>
-                        <Link to="/">Home</Link>
+                <nav className="navbar navbar-expand-sm bg-light">
+                    <ul className="navbar-nav">
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/addspending/">Home</Link>
                         </li>
-                        <li>
-                        <Link to="/finances/">Finances</Link>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/finance/">Finances</Link>
                         </li>
-                        <li>
-                        <Link to="/spendings/">Spendings</Link>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/spending/">Spendings</Link>
                         </li>
                     </ul>
-                    </nav>
-
-                    <Route path="/finances/" component={Finances} />
-                    <Route path="/spendings/" component={Spendings} />
-                </div>
-                </Router>
+                </nav>
+                <Route path="/addspending/" component={AddSpending} />
+                <Route path="/finance/" component={Finances} />
+                <Route path="/spending/" component={Spendings} />
+            </Router>
         </div>
     );
 }

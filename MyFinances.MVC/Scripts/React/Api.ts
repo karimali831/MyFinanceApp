@@ -38,6 +38,42 @@ export class Api {
         .then(data => data as ISpendingResponse);
     }
 
+    public categories = async (): Promise<ICategoryResponse> => {
+        return fetch(`${this.rootUrl}/spendings/categories`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => data as ICategoryResponse);
+    }
+
+    public summary = async (): Promise<ISummaryResponse> => {
+        return fetch(`${this.rootUrl}/spendings/summary`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => data as ISummaryResponse);
+    }
+
     public addExpense = async (name: string) => {
         return fetch(`${this.rootUrl}/finances/add/${name}`, {
             method: "POST",
@@ -143,20 +179,27 @@ export interface IFinanceResponse {
 }
 
 export interface ISpendingResponse {
-    spendings: ISpending[],
-    totalSpent: number[],
+    spendings: ISpending[]
+}
+
+export interface ICategoryResponse {
     categories: ICategory[]
+}
+
+export interface ISummaryResponse {
+    totalSpent: number[]
 }
 
 export interface IFinance {
     id: number,
     name: string,
-    avgMonthlyCost: number,
+    avgMonthlyAmount: number,
     type: string,
     startDate: Date,
     endDate: Date,
     remaining: number,
-    paid: number
+    paid: number,
+    monthlyDueDate: Date
 }
 
 export interface ISpending {

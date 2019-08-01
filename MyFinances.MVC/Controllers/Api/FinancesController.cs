@@ -35,14 +35,19 @@ namespace MyFinances.Website.Controllers.API
                     {
                         x.Id,
                         x.Name,
-                        x.AvgMonthlyCost,
-                        x.Type,
+                        x.AvgMonthlyAmount,
                         EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
-                        x.Remaining
+                        x.Remaining,
+                        x.MonthlyDueDate,
+                        x.Income,
+                        x.ManualPayment
                     })
-                    .OrderBy(x => x.Name)
-                    .ThenBy(x => x.Type),
-                TotalAvgCost = finances.Sum(x => x.AvgMonthlyCost)
+                    .OrderBy(x => x.Income)
+                    .ThenBy(x => x.MonthlyDueDate)
+                    .ThenBy(x => x.Name),
+                TotalAvgCost = finances
+                    .Where(x => x.Income == false && (x.EndDate == null || DateTime.UtcNow < x.EndDate))
+                    .Sum(x => x.AvgMonthlyAmount)
             });
         }
 

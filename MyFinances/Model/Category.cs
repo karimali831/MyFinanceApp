@@ -1,4 +1,5 @@
-﻿using System.Data.Entity.ModelConfiguration;
+﻿using MyFinances.Enums;
+using System.Data.Entity.ModelConfiguration;
 
 namespace MyFinances.Model
 {
@@ -6,6 +7,7 @@ namespace MyFinances.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public CategoryType Type { get; set; }
     }
 
     public class CategoryMap : EntityTypeConfiguration<Category>

@@ -1,4 +1,5 @@
-﻿using MyFinances.Model;
+﻿using MyFinances.Enums;
+using MyFinances.Model;
 using MyFinances.Repository;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace MyFinances.Service
     public interface ISpendingService
     {
         Task<IEnumerable<Spending>> GetAllAsync();
-        Task<IEnumerable<Category>> GetAllCategories();
+        Task<IEnumerable<Category>> GetAllCategories(CategoryType type);
         Task InsertAsync(string name, int catId, decimal amount);
         Task UpdateAsync<T>(string field, T value, int id) where T : class;
         Task DeleteAsync(int id);
@@ -28,9 +29,9 @@ namespace MyFinances.Service
             this.categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
         }
 
-        public async Task<IEnumerable<Category>> GetAllCategories()
+        public async Task<IEnumerable<Category>> GetAllCategories(CategoryType type)
         {
-            return await categoryRepository.GetAllAsync();
+            return await categoryRepository.GetAllAsync(type);
         }
 
         public async Task<IEnumerable<Spending>> GetAllAsync()

@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /MyFinances.MVC/Scripts/React/dist/**/*
 /MyFinances.MVC/Scripts/React/dist/bundle.js
+/MyFinances.MVC/Scripts/React/dist/bundle.js

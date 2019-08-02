@@ -1,4 +1,5 @@
-﻿using MyFinances.Enums;
+﻿using MyFinances.DTOs;
+using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Service;
 using MyFinances.Website.Controllers.Api;
@@ -57,42 +58,11 @@ namespace MyFinances.Website.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK, new { TotalSpent = totalSpent });
         }
 
-        [Route("categories")]
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetCategoriesAsync()
-        {
-            var categories = await spendingService.GetAllCategories(CategoryType.Spendings);
-            return Request.CreateResponse(HttpStatusCode.OK, new { Categories = categories });
-        }
-
-        [Route("add/{name}/{catId}/{amount}/")]
+        [Route("add")]
         [HttpPost]
-        public async Task<HttpResponseMessage> InsertAsync(string name, int catId, decimal amount)
+        public async Task<HttpResponseMessage> InsertAsync(SpendingDTO dto)
         {
-            await spendingService.InsertAsync(name, catId, amount);
-            return Request.CreateResponse(HttpStatusCode.OK, true);
-        }
-
-        [Route("update/{field}/{id}/{value?}/")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> UpdateAsync(string field, int id, string value = "")
-        {
-            string fieldToPascal = StringExtensions.FirstCharToUpper(field);
-
-            object dbValue = value;
-            if (DateTime.TryParseExact(value, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date)) {
-                dbValue = date;
-            }
-
-            await spendingService.UpdateAsync(fieldToPascal, dbValue, id);
-            return Request.CreateResponse(HttpStatusCode.OK, true);
-        }
-
-        [Route("delete/{id}")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> DeleteAsync(int id)
-        {
-            await spendingService.DeleteAsync(id);
+            await spendingService.InsertAsync(dto);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
     }

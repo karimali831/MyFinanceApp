@@ -7,7 +7,7 @@ namespace MyFinances.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public CategoryType Type { get; set; }
+        public CategoryType TypeId { get; set; }
     }
 
     public class CategoryMap : EntityTypeConfiguration<Category>

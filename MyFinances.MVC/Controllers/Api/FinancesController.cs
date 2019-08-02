@@ -1,4 +1,5 @@
-﻿using MyFinances.Helpers;
+﻿using MyFinances.DTOs;
+using MyFinances.Helpers;
 using MyFinances.Service;
 using MyFinances.Website.Controllers.Api;
 using System;
@@ -51,34 +52,11 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("add/{name}")]
+        [Route("add")]
         [HttpPost]
-        public async Task<HttpResponseMessage> InsertAsync(string name)
+        public async Task<HttpResponseMessage> InsertAsync(FinanceDTO model)
         {
-            await financeService.InsertAsync(name);
-            return Request.CreateResponse(HttpStatusCode.OK, true);
-        }
-
-        [Route("update/{field}/{id}/{value?}/")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> UpdateAsync(string field, int id, string value = "")
-        {
-            string fieldToPascal = StringExtensions.FirstCharToUpper(field);
-
-            object dbValue = value;
-            if (DateTime.TryParseExact(value, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date)) {
-                dbValue = date;
-            }
-
-            await financeService.UpdateAsync(fieldToPascal, dbValue, id);
-            return Request.CreateResponse(HttpStatusCode.OK, true);
-        }
-
-        [Route("delete/{id}")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> DeleteAsync(int id)
-        {
-            await financeService.DeleteAsync(id);
+            await financeService.InsertAsync(model);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
     }

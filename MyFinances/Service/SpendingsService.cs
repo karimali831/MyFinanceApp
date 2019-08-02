@@ -1,4 +1,5 @@
-﻿using MyFinances.Enums;
+﻿using MyFinances.DTOs;
+using MyFinances.Enums;
 using MyFinances.Model;
 using MyFinances.Repository;
 using System;
@@ -11,27 +12,17 @@ namespace MyFinances.Service
     public interface ISpendingService
     {
         Task<IEnumerable<Spending>> GetAllAsync();
-        Task<IEnumerable<Category>> GetAllCategories(CategoryType type);
-        Task InsertAsync(string name, int catId, decimal amount);
-        Task UpdateAsync<T>(string field, T value, int id) where T : class;
-        Task DeleteAsync(int id);
+        Task InsertAsync(SpendingDTO dto);
         decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval);
     }
 
     public class SpendingService : ISpendingService
     {
         private readonly ISpendingRepository spendingRepository;
-        private readonly ICategoryRepository categoryRepository;
 
-        public SpendingService(ISpendingRepository spendingRepository, ICategoryRepository categoryRepository)
+        public SpendingService(ISpendingRepository spendingRepository)
         {
             this.spendingRepository = spendingRepository ?? throw new ArgumentNullException(nameof(spendingRepository));
-            this.categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
-        }
-
-        public async Task<IEnumerable<Category>> GetAllCategories(CategoryType type)
-        {
-            return await categoryRepository.GetAllAsync(type);
         }
 
         public async Task<IEnumerable<Spending>> GetAllAsync()
@@ -39,19 +30,9 @@ namespace MyFinances.Service
             return await spendingRepository.GetAllAsync();
         }
 
-        public async Task InsertAsync(string name, int catId, decimal amount)
+        public async Task InsertAsync(SpendingDTO dto)
         {
-            await spendingRepository.InsertAsync(name, catId, amount);
-        }
-
-        public async Task UpdateAsync<T>(string field, T value, int id) where T : class
-        {
-            await spendingRepository.UpdateAsync(field, value, id);
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            await spendingRepository.DeleteAsync(id);
+            await spendingRepository.InsertAsync(dto);
         }
 
         public decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval) 

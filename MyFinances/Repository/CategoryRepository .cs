@@ -12,7 +12,7 @@ namespace MyFinances.Repository
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<Category>> GetAllAsync(CategoryType type);
+        Task<IEnumerable<Category>> GetAllAsync(CategoryType typeId);
     }
 
     public class CategoryRepository : ICategoryRepository
@@ -26,12 +26,12 @@ namespace MyFinances.Repository
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync(CategoryType type)
+        public async Task<IEnumerable<Category>> GetAllAsync(CategoryType typeId)
         {
             using (var sql = dbConnectionFactory())
             {
                 return (await sql.QueryAsync<Category>($"{DapperHelper.SELECT(TABLE, FIELDS)}"))
-                    .Where(x => x.Type == type)
+                    .Where(x => x.TypeId == typeId)
                     .ToArray();
             }
         }

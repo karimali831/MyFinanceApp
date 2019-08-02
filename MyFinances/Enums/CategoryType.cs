@@ -9,6 +9,7 @@ namespace MyFinances.Enums
     public enum CategoryType
     {
         Spendings,
-        IncomeSources
+        IncomeSources,
+        CNWRouteType
     }
 }

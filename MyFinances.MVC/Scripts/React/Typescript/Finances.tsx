@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { IFinance, financeApi } from '../Api';
+import { api } from '../Api/Api';
+import { IFinance } from "../Models/IFinance";
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
+import { commonApi } from '../Api/CommonApi';
+import { Loader } from './Loader';
 
 interface IOwnProps {
 }
@@ -23,12 +26,14 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         };
     }
 
+    private tableName = "Finances";
+    
     public componentDidMount() {
         this.loadFinances();
     }
 
     private loadFinances = () => {
-        financeApi.finances()
+        api.finances()
             .then(response => this.loadFinancesSuccess(response.finances, response.totalAvgCost));
     }
 
@@ -64,13 +69,9 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             noDataText: 'No finances found',
             onDeleteRow: this.removeExpense
         };
-        
-        // const cellEditProp = {
-        //     mode: 'click',
-        //     blurToSave: 'true',
-        //     beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
-        //     afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell
-        // };
+        if (this.state.loading) {
+            return <Loader />
+        }
         return (
             <div style={{margin: '0 auto'}}>
                 <BootstrapTable 
@@ -94,46 +95,19 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
                     <TableHeaderColumn dataField='remaining' columnClassName="hidden-xs" className="hidden-xs">Remaining</TableHeaderColumn>
                     <TableHeaderColumn dataField='monthlyDueDate' editable={{ placeholder: "dd-MM-yyyy"}}>Next Due</TableHeaderColumn>
                 </BootstrapTable>
-                <input className={"form-control"} type="text" value={this.state.name} placeholder="Add expense..." onChange={(e) => { this.onExpenseChanged(e);}} onKeyDown={this.onKeyDown} />
                 <label>Total average monthly cost: £{this.state.totalAvgCost}</label>
             </div>
         )
     }
-
-    private onExpenseChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ ...this.state, 
-            ...{ 
-                name: e.target.value,
-                loading: e.target.value.length > 2
-            }
-        })  
-    }
-
-    private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            this.addExpense();
-        }
-    }
-
-    private addExpense = () => {
-        if (this.state.name && this.state.name.length > 2)
-        {
-            this.setState({ ...this.state, ...{ loading: true, name: "" }})  
-            
-            financeApi.addExpense(this.state.name)
-                .then(() => this.loadFinances())
-        }
-    }
-
     private updateExpense = (key: string, value: any, id: number) => {
-        this.setState({ ...this.state, ...{ loading: true }}) 
-        financeApi.updateExpense(key, value, id)
+        this.setState({ ...this.state, ...{ loading: true } })
+        commonApi.update(this.tableName, key, value, id)
             .then(() => this.loadFinances());
     }
 
     private removeExpense = (id: any) => {
-        this.setState({ ...this.state, ...{ loading: true }}) 
-        financeApi.removeExpense(id)
+        this.setState({ ...this.state, ...{ loading: true } })
+        commonApi.remove(id, this.tableName)
             .then(() => this.loadFinances());
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using DFM.Utils;
+using MyFinances.DTOs;
 using MyFinances.Model;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,7 @@ namespace MyFinances.Repository
     public interface IFinanceRepository
     {
         Task<IEnumerable<Finance>> GetAllAsync();
-        Task InsertAsync(string name);
-        Task UpdateAsync<T>(string field, T value, int id) where T : class;
-        Task DeleteAsync(int Id);
+        Task InsertAsync(FinanceDTO dto);
     }
 
     public class FinanceRepository : IFinanceRepository
@@ -22,6 +21,7 @@ namespace MyFinances.Repository
         private readonly Func<IDbConnection> dbConnectionFactory;
         private static readonly string TABLE = "Finances";
         private static readonly string[] FIELDS = typeof(Finance).DapperFields();
+        private static readonly string[] DTOFIELDS = typeof(FinanceDTO).DapperFields();
 
         public FinanceRepository(Func<IDbConnection> dbConnectionFactory)
         {
@@ -36,41 +36,12 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task InsertAsync(string name)
+        public async Task InsertAsync(FinanceDTO dto)
         {
             using (var sql = dbConnectionFactory())
             {
-                await sql.ExecuteAsync($@"
-                    INSERT INTO {TABLE} (Name) VALUES (@Name)", 
-                    new {
-                        Name = name
-                    }
-                );
+                await sql.ExecuteAsync($@"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
             }
         }
-
-        public async Task UpdateAsync<T>(string field, T value, int id) where T : class
-        {
-            using (var sql = dbConnectionFactory())
-            {
-                await sql.ExecuteAsync($@"
-                    UPDATE {TABLE} SET {field} = @value WHERE Id = @id",
-                    new
-                    {
-                        value,
-                        id
-                    }
-                );
-            }
-        }
-
-        public async Task DeleteAsync(int Id)
-        {
-            using (var sql = dbConnectionFactory())
-            {
-                await sql.ExecuteAsync($"{DapperHelper.DELETE(TABLE)} WHERE Id = @Id", new { Id });
-            }
-        }
-
     }
 }

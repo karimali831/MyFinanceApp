@@ -1,10 +1,6 @@
 ﻿using Ninject.Modules;
 using MyFinances.Repository;
 using MyFinances.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace MyFinances.Ninject
 {
@@ -15,11 +11,15 @@ namespace MyFinances.Ninject
             // Services
             Bind<IFinanceService>().To<FinanceService>();
             Bind<ISpendingService>().To<SpendingService>();
+            Bind<IBaseService>().To<BaseService>();
+            Bind<ICNWService>().To<CNWService>();
 
             // Repositories
             Bind<IFinanceRepository>().To<FinanceRepository>();
             Bind<ISpendingRepository>().To<SpendingRepository>();
             Bind<ICategoryRepository>().To<CategoryRepository>();
+            Bind<IBaseRepository>().To<BaseRepository>();
+            Bind<ICNWRepository>().To<CNWRepository>();
         }
     }
 

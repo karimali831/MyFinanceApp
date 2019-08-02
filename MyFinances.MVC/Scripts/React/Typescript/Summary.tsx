@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { financeApi, } from '../Api';
+import { api } from '../Api/Api'
+import { Loader } from './Loader';
 
 interface IOwnProps {
 }
@@ -23,7 +24,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
     }
 
     private loadSummary = () => {
-        financeApi.summary()
+        api.summary()
             .then(response => this.loadSummarySuccess(response.totalSpent));
     }
 
@@ -37,6 +38,9 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
     }
 
     render() {
+        if (this.state.loading) {
+            return <Loader />
+        }
         return (
             <div style={{margin: '0 auto'}}>
                 <div><h3>Spent in last day: £{this.state.totalSpent[0]}</h3></div>

@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { ISpending, financeApi } from '../Api';
+import { api } from '../Api/Api';
+import { ISpending } from "../Models/ISpending";
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
+import { commonApi } from '../Api/CommonApi';
+import { Loader } from './Loader';
 
 interface IOwnProps {
 }
@@ -19,12 +22,14 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
         };
     }
 
+    private tableName = "Spendings"
+
     public componentDidMount() {
         this.loadSpendings();
     }
 
     private loadSpendings = () => {
-        financeApi.spendings()
+        api.spendings()
             .then(response => this.loadSpendingsSuccess(response.spendings));
     }
 
@@ -59,6 +64,11 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
             noDataText: 'No spendings in this period found',
             onDeleteRow: this.removeSpending
         };
+
+        if (this.state.loading) {
+            return <Loader />
+        }
+
         return (
             <div>
                 <BootstrapTable 
@@ -87,14 +97,14 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
     }
 
     private updateSpending = (key: string, value: any, id: number) => {
-        this.setState({ ...this.state, ...{ loading: true }}) 
-        financeApi.updateSpending(key, value, id)
+        this.setState({ ...this.state, ...{ loading: true } })
+        commonApi.update(this.tableName, key, value, id)
             .then(() => this.loadSpendings());
     }
 
     private removeSpending = (id: any) => {
-        this.setState({ ...this.state, ...{ loading: true }}) 
-        financeApi.removeSpending(id)
+        this.setState({ ...this.state, ...{ loading: true } })
+        commonApi.remove(id, this.tableName)
             .then(() => this.loadSpendings());
     }
 }

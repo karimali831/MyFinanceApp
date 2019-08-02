@@ -263,12 +263,6 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Scripts\React\App.css" />
-    <Content Include="Scripts\React\app.js" />
-    <Content Include="Scripts\React\dist\bundle.js" />
-    <Content Include="Scripts\React\index.js" />
-    <None Include="Scripts\React\.babelrc" />
-    <Content Include="Scripts\React\webpack.config.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -284,9 +278,6 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Finance\Index.cshtml" />
-    <Content Include="Scripts\React\package.json" />
-    <Content Include="Scripts\React\tsconfig.json" />
-    <Content Include="Scripts\React\package-lock.json" />
     <None Include="Web.Stage.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -320,23 +311,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="Scripts\React\Api\Api.ts" />
-    <TypeScriptCompile Include="Scripts\React\Api\CommonApi.ts" />
-    <TypeScriptCompile Include="Scripts\React\Enums\CategoryType.ts" />
-    <TypeScriptCompile Include="Scripts\React\Models\ICategory.ts" />
-    <TypeScriptCompile Include="Scripts\React\Models\IFinance.ts" />
-    <TypeScriptCompile Include="Scripts\React\Models\IRoute.ts" />
-    <TypeScriptCompile Include="Scripts\React\Models\ISpending.ts" />
-    <TypeScriptCompile Include="Scripts\React\Typescript\AddExpense.tsx" />
-    <TypeScriptCompile Include="Scripts\React\Typescript\AddRoute.tsx" />
-    <TypeScriptCompile Include="Scripts\React\Typescript\AddSpending.tsx" />
-    <TypeScriptCompile Include="Scripts\React\Typescript\CommonTable.tsx" />
-    <TypeScriptCompile Include="Scripts\React\Typescript\Finances.tsx" />
-    <TypeScriptCompile Include="Scripts\React\Typescript\Menu.tsx" />
-    <TypeScriptCompile Include="Scripts\React\Typescript\Spendings.tsx" />
-    <TypeScriptCompile Include="Scripts\React\Typescript\Summary.tsx" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

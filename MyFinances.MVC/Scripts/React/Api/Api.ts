@@ -6,7 +6,8 @@ import { CategoryType } from '../Enums/CategoryType'
 
 export class Api {
 
-    public rootUrl: string = "http://localhost:53822/api";
+    public devRootUrl: string = "http://localhost:53822/api";
+    public rootUrl: string = "http://myfinanceapp.developforme.com/api";
 
     public spendings = async (): Promise<ISpendingResponse> => {
         return fetch(`${this.rootUrl}/spendings`, {

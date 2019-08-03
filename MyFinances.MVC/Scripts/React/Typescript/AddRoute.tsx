@@ -137,7 +137,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
     }
 
     private addRoute = () => {
-        if (this.state.routeNo && this.state.routeNo.length > 2 && this.state.selectedRouteType)
+        if (this.state.routeNo && this.state.routeDate && this.state.routeNo.length > 2 && this.state.selectedRouteType)
         {
             this.setState({ ...this.state, 
                 ...{ 
@@ -167,7 +167,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             commonApi.add(addModel, "cnw");
         }
         else{
-            alert("Enter item and amount first");
+            alert("Enter route, date & type");
         }
     }
 }

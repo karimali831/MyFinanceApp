@@ -82,13 +82,7 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
 
     
     private onExpenseChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({
-            ...this.state,
-            ...{
-                name: e.target.value,
-                loading: e.target.value.length > 2
-            }
-        })
+        this.setState({ ...this.state, name: e.target.value })
     }
 
     private onChangeSelectedCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {

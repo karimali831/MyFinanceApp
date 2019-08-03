@@ -1,5 +1,3 @@
-import { ICategory } from './ICategory'
-
 export interface IRoute {
     id: number,
     routeNo: string,
@@ -13,9 +11,10 @@ export interface IRoute {
 
 export interface IRouteDTO {
     routeNo: string,
-    routeTypeId: ICategory
+    routeTypeId: number,
     routeDate: Date,
     mileage: number,
+    drops: number,
     extraDrops: number,
     info: string
 }

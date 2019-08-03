@@ -17,6 +17,7 @@ export interface IOwnState {
     routeNo: string,
     routeDate: Date,
     mileage?: number | undefined,
+    drops?: number | undefined,
     extraDrops?: number | undefined,
     info?: string | null
 }
@@ -32,6 +33,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             routeNo: "",
             routeDate: undefined,
             mileage: undefined,
+            drops: undefined,
             extraDrops: undefined,
             info: null
         };
@@ -78,6 +80,9 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                     <input className="form-control" type="number" value={this.state.mileage} placeholder="Enter route mileage" onChange={(e) => { this.onMileageChanged(e);}} />
                 </div>
                 <div className="form-group">
+                    <input className="form-control" type="number" value={this.state.drops} placeholder="Enter drops" onChange={(e) => { this.onDropsChanged(e);}} />
+                </div>
+                <div className="form-group">
                     <input className="form-control" type="number" value={this.state.extraDrops} placeholder="Enter extra drops" onChange={(e) => { this.onExtraDropsChanged(e);}} />
                 </div>
                 <div className="form-group">
@@ -119,6 +124,10 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
         this.setState({ ...this.state, mileage: Number(e.target.value) })  
     }
 
+    private onDropsChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, drops: Number(e.target.value) })  
+    }
+
     private onExtraDropsChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ ...this.state, extraDrops: Number(e.target.value) })  
     }
@@ -139,6 +148,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                     routeNo: "",
                     routeDate: undefined,
                     mileage: undefined,
+                    drops: undefined,
                     extraDrops: undefined,
                     info: null
                 }
@@ -149,6 +159,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                 routeTypeId: this.state.selectedRouteType,
                 routeDate: this.state.routeDate,
                 mileage: this.state.mileage,
+                drops: this.state.drops,
                 extraDrops: this.state.extraDrops,
                 info: this.state.info
             }

@@ -31,10 +31,9 @@ namespace MyFinances.Repository
 
         public async Task<IEnumerable<CNWRoute>> GetAllAsync()
         {
-            using (var sql = dbConnectionFactory())
-            {
-                string sqlText = $@"
+            string sqlText = $@"
                 SELECT 
+                    r.Id,
                     r.RouteNo,
                     r.RouteDate,
                     r.Mileage,
@@ -46,9 +45,9 @@ namespace MyFinances.Repository
                 INNER JOIN Categories c 
                     ON c.Id = r.RouteTypeId";
 
-                return (await sql.QueryAsync<CNWRoute>(sqlText))
-                    .Where(x => x.RouteTypeId == CategoryType.CNWRouteType)
-                    .ToArray();
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<CNWRoute>(sqlText)).ToArray();
             }
         }
 

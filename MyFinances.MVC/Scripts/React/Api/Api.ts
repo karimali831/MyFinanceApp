@@ -2,12 +2,10 @@ import { ICategory } from '../Models/ICategory'
 import { ISpending} from '../Models/ISpending'
 import { IFinance } from '../Models/IFinance'
 import { IRoute } from '../Models/IRoute'
-import { CategoryType } from '../Enums/CategoryType'
 
 export class Api {
 
-    public devRootUrl: string = "http://localhost:53822/api";
-    public rootUrl: string = "http://myfinanceapp.developforme.com/api";
+    public rootUrl: string = window.location.origin + "/api";
 
     public spendings = async (): Promise<ISpendingResponse> => {
         return fetch(`${this.rootUrl}/spendings`, {

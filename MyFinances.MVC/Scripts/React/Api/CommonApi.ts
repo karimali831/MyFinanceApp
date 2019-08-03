@@ -3,8 +3,7 @@ import { CategoryType } from '../Enums/CategoryType';
 
 export class CommonApi {
 
-    public devRootUrl: string = "http://localhost:53822/api";
-    public rootUrl: string = "http://myfinanceapp.developforme.com/api";
+    public rootUrl: string = window.location.origin + "/api";
 
     public add = async (model: any, route: string) => {
         return fetch(`${this.rootUrl}/${route}/add`, {

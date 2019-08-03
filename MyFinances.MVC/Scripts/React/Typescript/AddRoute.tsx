@@ -3,6 +3,8 @@ import { commonApi } from './../Api/CommonApi'
 import { CategoryType } from '../Enums/CategoryType';
 import { ICategory } from '../Models/ICategory';
 import { IRouteDTO } from '../Models/IRoute'
+import { Redirect } from 'react-router-dom'
+import { Loader } from './Loader';
 
 interface IOwnProps {
 }
@@ -11,6 +13,7 @@ export interface IOwnState {
     routeTypes: ICategory[],
     selectedRouteType?: number | undefined,
     loading: boolean,
+    redirect: boolean,
     routeNo: string,
     routeDate: Date,
     mileage?: number | undefined,
@@ -25,6 +28,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             routeTypes: [],
             selectedRouteType: undefined,
             loading: true,
+            redirect: false,
             routeNo: "",
             routeDate: undefined,
             mileage: undefined,
@@ -52,6 +56,16 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
     }
 
     render() {
+        const { redirect, loading } = this.state;
+
+        if (redirect) {
+            return <Redirect to='/route'/>;
+        }
+
+        if (loading) {
+            return <Loader />
+        }
+
         return (
             <div style={{margin: '0 auto', border: 1}}>
                 <div className="form-group">
@@ -118,14 +132,15 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
         {
             this.setState({ ...this.state, 
                 ...{ 
-                    // routeTypes: [],
-                    // selectedRouteType: undefined,
-                    // loading: true,
-                    // routeNo: "",
-                    // routeDate: undefined,
-                    // mileage: undefined,
-                    // extraDrops: undefined,
-                    // info: null
+                    routeTypes: [],
+                    selectedRouteType: undefined,
+                    loading: true,
+                    redirect: true,
+                    routeNo: "",
+                    routeDate: undefined,
+                    mileage: undefined,
+                    extraDrops: undefined,
+                    info: null
                 }
             })  
 

@@ -33,7 +33,20 @@ namespace MyFinances.Repository
         {
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<CNWRoute>($"{DapperHelper.SELECT(TABLE, FIELDS)}"))
+                string sqlText = $@"
+                SELECT 
+                    r.RouteNo,
+                    r.RouteDate,
+                    r.Mileage,
+                    r.Drops,
+                    r.ExtraDrops,
+                    r.Info,
+                    c.Name AS RouteType
+                FROM {TABLE} r 
+                INNER JOIN Categories c 
+                    ON c.Id = r.RouteTypeId";
+
+                return (await sql.QueryAsync<CNWRoute>(sqlText))
                     .Where(x => x.RouteTypeId == CategoryType.CNWRouteType)
                     .ToArray();
             }

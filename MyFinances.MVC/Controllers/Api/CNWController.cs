@@ -27,7 +27,7 @@ namespace MyFinances.Website.Controllers.API
         }
 
         [HttpGet]
-        public async Task<HttpResponseMessage> GetSpendingsAsync()
+        public async Task<HttpResponseMessage> GetRoutesAsync()
         {
             var routes = await cnwService.GetAllAsync();
 
@@ -36,9 +36,10 @@ namespace MyFinances.Website.Controllers.API
                 {
                     x.Id,
                     x.RouteNo,
-                    x.RouteTypeId,
+                    x.RouteType,
                     x.RouteDate,
                     x.Mileage,
+                    x.Drops,
                     x.ExtraDrops,
                     x.Info
                 }).OrderByDescending(x => x.RouteDate)

@@ -3,9 +3,10 @@ import { ICategory } from './ICategory'
 export interface IRoute {
     id: number,
     routeNo: string,
-    routeTypeId: ICategory
+    routeType: string
     routeDate: Date,
     mileage: number,
+    drops: string,
     extraDrops: number,
     info: string
 }

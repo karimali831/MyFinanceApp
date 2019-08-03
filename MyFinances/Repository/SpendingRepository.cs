@@ -39,7 +39,9 @@ namespace MyFinances.Repository
                     c.Name AS Category
                 FROM {TABLE} s 
                 INNER JOIN Categories c 
-                    ON c.Id = s.CatId";
+                    ON c.Id = s.CatId
+                WHERE 
+                    Display = 1";
 
             using (var sql = dbConnectionFactory())
             {

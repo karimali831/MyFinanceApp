@@ -34,7 +34,13 @@ export default class Menu extends React.Component<IOwnProps, IOwnState> {
         )
     }
 
-    private onMenuActive = () => {
+    private onMenuActive() {
+        var x = document.getElementById("myTopnav");
+
+        if (x.className === "topnav responsive") {
+            x.className = "topnav";
+        } 
+
         this.setState({ ...this.state, 
             ...{ 
                 active: " "
@@ -44,11 +50,6 @@ export default class Menu extends React.Component<IOwnProps, IOwnState> {
 
     private myFunction() {
         var x = document.getElementById("myTopnav");
-
-        if (x.className === "topnav") {
-            x.className += " responsive";
-        } else {
-            x.className = "topnav";
-        }
+        x.className += " responsive";
     }
 }

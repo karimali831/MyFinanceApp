@@ -4,11 +4,13 @@ export interface ISpending {
     amount: number,
     date: Date,
     info: string,
-    category: string
+    category: string,
+    secondCategory: string
 }
 
 export interface ISpendingDTO {
     name: string,
     amount: number,
-    catId: number
+    catId: number,
+    secondCatId: number
 }

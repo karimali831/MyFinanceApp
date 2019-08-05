@@ -13,6 +13,7 @@ namespace MyFinances.Model
         public DateTime Date { get; set; }
         public string Info { get; set; }
         public string Category { get; set; }
+        public string SecondCategory { get; set; }
     }
 
     public class SpendingMap : EntityTypeConfiguration<Spending>

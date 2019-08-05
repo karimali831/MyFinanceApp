@@ -39,7 +39,8 @@ namespace MyFinances.Website.Controllers.API
                     x.Amount,
                     Date = x.Date.ToString("dd-MM-yy"),
                     x.Info,
-                    x.Category
+                    x.Category,
+                    x.SecondCategory
                 }).OrderByDescending(x => x.Date).ThenBy(x => x.Name).ThenBy(x => x.Category)
             });
         }

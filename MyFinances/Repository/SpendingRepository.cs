@@ -36,10 +36,13 @@ namespace MyFinances.Repository
                     s.Amount,
                     s.Date,
                     s.Info,
-                    c.Name AS Category
-                FROM {TABLE} s 
-                INNER JOIN Categories c 
-                    ON c.Id = s.CatId
+                    c1.Name AS Category,
+	                c2.Name AS SecondCategory
+                FROM Spendings s 
+                INNER JOIN Categories c1 
+                    ON c1.Id = s.CatId
+                LEFT JOIN Categories c2
+                    ON c2.Id = s.SecondCatId
                 WHERE 
                     Display = 1";
 

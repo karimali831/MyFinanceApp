@@ -10,6 +10,7 @@ namespace MyFinances.Enums
     {
         Spendings,
         IncomeSources,
-        CNWRouteType
+        CNWRouteType,
+        Vehicles
     }
 }

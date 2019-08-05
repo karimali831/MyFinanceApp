@@ -11,7 +11,10 @@ interface IOwnProps {
 
 export interface IOwnState {
     categories: ICategory[],
+    secondCategories: ICategory[],
     selectedCat?: number | undefined,
+    selectedSecondCat?: number | undefined,
+    secondTypeId?: number | undefined,  
     amount?: number | undefined,
     loading: boolean,
     name: string,
@@ -23,7 +26,10 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
         super(props);
         this.state = { 
             categories: [],
+            secondCategories: [],
             selectedCat: undefined,
+            selectedSecondCat: undefined,
+            secondTypeId: undefined,  
             amount: 0,
             loading: true,
             name: "",
@@ -35,9 +41,20 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
         this.loadCategories();
     }
 
+    public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
+        if (this.state.secondTypeId !== undefined && prevState.secondTypeId !== this.state.secondTypeId) {
+            this.loadSecondCategories(this.state.secondTypeId);
+        }
+    }
+
     private loadCategories = () => {
         commonApi.categories(CategoryType.Spendings)
             .then(response => this.loadCategoriesSuccess(response.categories));
+    }
+
+    private loadSecondCategories = (secondTypeId: number) => {
+        commonApi.categories(secondTypeId)
+            .then(response => this.loadSecondCategoriesSuccess(response.categories));
     }
 
     private loadCategoriesSuccess = (categories: ICategory[]) => {
@@ -45,6 +62,15 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
             ...{ 
                 loading: false, 
                 categories: categories
+            }
+        }) 
+    }
+
+    private loadSecondCategoriesSuccess = (categories: ICategory[]) => {
+        this.setState({ ...this.state,
+            ...{ 
+                loading: false, 
+                secondCategories: categories
             }
         }) 
     }
@@ -73,11 +99,27 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                         <option value={0}>-- category --</option>
                         {
                             this.state.categories.map(c =>
-                                <option key={c.id} value={c.id}>{c.name}</option>
+                                <option key={c.id} value={c.id + "-" + c.secondTypeId}>{c.name}</option>
                             )
                         }
                     </select>
                 </div>
+                <>
+                    {
+                        this.state.secondTypeId !== undefined ?
+                            <div className="form-group">
+                                <select onChange={e => this.onChangeSelectedSecondCategory(e)} className="form-control">
+                                    <option value={0}>-- category --</option>
+                                    {
+                                        this.state.secondCategories.map(c =>
+                                            <option key={c.id} value={c.id}>{c.name}</option>
+                                        )
+                                    }
+                                </select>
+                            </div>
+                        : null
+                    }
+                </>
                 <div className="form-group">
                     <input type="submit" value="Add Item" onClick={() => this.addSpending() } />
                 </div>
@@ -102,9 +144,21 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
     }
 
     private onChangeSelectedCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        var value = e.target.value;
+        var ids = value.split("-", 2);
+
         this.setState({ ...this.state, 
             ...{ 
-                selectedCat: Number(e.target.value),
+                selectedCat: Number(ids[0]),
+                secondTypeId: ids[1] !== "0" ? Number(ids[1]) : undefined
+            }
+        })  
+    }
+
+    private onChangeSelectedSecondCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        this.setState({ ...this.state, 
+            ...{ 
+                selectedSecondCat: Number(e.target.value)
             }
         })  
     }
@@ -118,13 +172,16 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                     redirect: true,
                     name: "", 
                     amount: 0,
-                    selectedCat: undefined
+                    selectedCat: undefined,
+                    selectedSecondCat: undefined,
+                    secondTypeId: undefined
                 }
             })  
 
             const addModel: ISpendingDTO = {
                 name: this.state.name,
                 catId: this.state.selectedCat,
+                secondCatId: this.state.secondTypeId,
                 amount: this.state.amount
             }
             

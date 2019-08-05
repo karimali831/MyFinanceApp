@@ -91,6 +91,7 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
                     <TableHeaderColumn dataField='date' editable={{ placeholder: "dd-MM-yyyy"}} >Date</TableHeaderColumn>
                     <TableHeaderColumn dataField='info' columnClassName="hidden-xs" className="hidden-xs">Info</TableHeaderColumn>
                     <TableHeaderColumn dataField='category' columnClassName="hidden-xs" className="hidden-xs">Category</TableHeaderColumn>
+                    <TableHeaderColumn dataField='secondCategory' columnClassName="hidden-xs" className="hidden-xs">Second Cat</TableHeaderColumn>
                 </BootstrapTable>
             </div>
         )

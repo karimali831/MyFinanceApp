@@ -181,7 +181,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
             const addModel: ISpendingDTO = {
                 name: this.state.name,
                 catId: this.state.selectedCat,
-                secondCatId: this.state.secondTypeId,
+                secondCatId: this.state.selectedSecondCat,
                 amount: this.state.amount
             }
             

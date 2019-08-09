@@ -11,8 +11,8 @@ namespace MyFinances.Model
         public string RouteType { get; set; }
         public CategoryType RouteTypeId { get; set; }
         public DateTime RouteDate { get; set; }
-        public int? Mileage { get; set; }
-        public int? MPG { get; set; }
+        public decimal? Mileage { get; set; }
+        public decimal? MPG { get; set; }
         public int? Drops { get; set; }
         public int? ExtraDrops { get; set; }
         public string Info { get; set; }

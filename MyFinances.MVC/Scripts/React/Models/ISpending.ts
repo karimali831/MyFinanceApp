@@ -10,6 +10,7 @@ export interface ISpending {
 
 export interface ISpendingDTO {
     name: string,
+    date: Date,
     amount: number,
     catId: number,
     secondCatId: number

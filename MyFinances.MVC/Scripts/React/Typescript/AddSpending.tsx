@@ -18,6 +18,7 @@ export interface IOwnState {
     amount?: number | undefined,
     loading: boolean,
     name: string,
+    date: Date,
     redirect: boolean
 }
 
@@ -33,6 +34,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
             amount: 0,
             loading: true,
             name: "",
+            date: undefined,
             redirect: false
         };
     }
@@ -92,6 +94,9 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                     <input className="form-control" type="text" value={this.state.name} placeholder="Enter item" onChange={(e) => { this.onSpendingChanged(e);}} />
                 </div>
                 <div className="form-group">
+                    <input className="form-control" type="date" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
+                </div>
+                <div className="form-group">
                     <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />
                 </div>
                 <div className="form-group">
@@ -133,6 +138,10 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                 name: e.target.value,
             }
         })  
+    }
+
+    private onDateChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, date: e.target.value })  
     }
 
     private onAmountChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,7 +191,8 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                 name: this.state.name,
                 catId: this.state.selectedCat,
                 secondCatId: this.state.selectedSecondCat,
-                amount: this.state.amount
+                amount: this.state.amount,
+                date: this.state.date
             }
             
             commonApi.add(addModel, "spendings");

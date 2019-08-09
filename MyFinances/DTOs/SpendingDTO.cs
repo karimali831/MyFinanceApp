@@ -10,6 +10,7 @@ namespace MyFinances.DTOs
     public class SpendingDTO
     {
         public string Name { get; set; }
+        public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public int CatId { get; set; }
         public int SecondCatId { get; set; }

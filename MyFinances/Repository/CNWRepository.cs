@@ -37,6 +37,7 @@ namespace MyFinances.Repository
                     r.RouteNo,
                     r.RouteDate,
                     r.Mileage,
+                    r.ExtraMileage,
                     r.MPG,
                     r.Drops,
                     r.ExtraDrops,

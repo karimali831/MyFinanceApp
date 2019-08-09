@@ -70,7 +70,7 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
             return <Loader />
         }
         return (
-            <div style={{margin: '0 auto'}}>
+            <div>
                 <BootstrapTable 
                     selectRow={{ mode: 'radio' }} 
                     remote={ true }  
@@ -89,7 +89,8 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
                     <TableHeaderColumn dataField='routeNo'>Route</TableHeaderColumn>
                     <TableHeaderColumn dataField='routeType' columnClassName="hidden-xs" className="hidden-xs">Type</TableHeaderColumn>
                     <TableHeaderColumn dataField='routeDate'  editable={{ placeholder: "dd-MM-yyyy"}} >Date</TableHeaderColumn>
-                    <TableHeaderColumn dataField='mileage' columnClassName="hidden-xs" className="hidden-xs">Mileage</TableHeaderColumn>
+                    <TableHeaderColumn dataField='mileage' columnClassName="hidden-xs" className="hidden-xs">Route Mileage</TableHeaderColumn>
+                    <TableHeaderColumn dataField='extraMileage' columnClassName="hidden-xs" className="hidden-xs">Support Mileage</TableHeaderColumn>
                     <TableHeaderColumn dataField='mpg' columnClassName="hidden-xs" className="hidden-xs">MPG</TableHeaderColumn>
                     <TableHeaderColumn dataField='drops'>Drops</TableHeaderColumn>
                     <TableHeaderColumn dataField='extraDrops'>Extra Drops</TableHeaderColumn>

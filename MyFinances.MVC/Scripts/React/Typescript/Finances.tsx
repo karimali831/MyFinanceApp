@@ -71,7 +71,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             return <Loader />
         }
         return (
-            <div style={{margin: '0 auto'}}>
+            <div>
                 <BootstrapTable 
                     selectRow={{ mode: 'radio' }} 
                     remote={ true }  

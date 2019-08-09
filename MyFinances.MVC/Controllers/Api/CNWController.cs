@@ -42,6 +42,7 @@ namespace MyFinances.Website.Controllers.API
                     x.Mpg,
                     x.Drops,
                     x.ExtraDrops,
+                    x.ExtraMileage,
                     x.Info
                 }).OrderByDescending(x => x.RouteDate)
             });

@@ -17,6 +17,7 @@ export interface IOwnState {
     routeNo: string,
     routeDate: string,
     mileage?: number | undefined,
+    extraMileage?: number | undefined,
     mpg?: number | undefined,
     drops?: number | undefined,
     extraDrops?: number | undefined,
@@ -34,6 +35,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             routeNo: "",
             routeDate: "",
             mileage: undefined,
+            extraMileage: undefined,
             mpg: undefined,
             drops: undefined,
             extraDrops: undefined,
@@ -91,6 +93,9 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                     <input className="form-control" type="number" value={this.state.extraDrops} placeholder="Enter extra drops" onChange={(e) => { this.onExtraDropsChanged(e);}} />
                 </div>
                 <div className="form-group">
+                    <input className="form-control" type="number" value={this.state.extraMileage} placeholder="Enter extra mileage" onChange={(e) => { this.onExtraMileageChanged(e);}} />
+                </div>
+                <div className="form-group">
                     <input className="form-control" type="text" value={this.state.info} placeholder="Enter info" onChange={(e) => { this.onInfoChanged(e);}} />
                 </div>
                 <div className="form-group">
@@ -127,6 +132,10 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
 
     private onMileageChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ ...this.state, mileage: Number(e.target.value) })  
+    }
+
+    private onExtraMileageChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, extraMileage: Number(e.target.value) })  
     }
 
     private onMPGChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {

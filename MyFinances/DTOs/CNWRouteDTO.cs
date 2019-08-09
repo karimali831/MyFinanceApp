@@ -16,6 +16,7 @@ namespace MyFinances.DTOs
         public decimal? Mpg { get; set; }
         public int? Drops { get; set; }
         public int? ExtraDrops { get; set; }
+        public decimal? ExtraMileage { get; set; }
         public string Info { get; set; }
     }
 }

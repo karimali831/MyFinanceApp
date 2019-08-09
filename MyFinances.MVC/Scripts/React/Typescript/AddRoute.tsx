@@ -15,8 +15,9 @@ export interface IOwnState {
     loading: boolean,
     redirect: boolean,
     routeNo: string,
-    routeDate: Date,
+    routeDate: string,
     mileage?: number | undefined,
+    mpg?: number | undefined,
     drops?: number | undefined,
     extraDrops?: number | undefined,
     info?: string | null
@@ -31,8 +32,9 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             loading: true,
             redirect: false,
             routeNo: "",
-            routeDate: undefined,
+            routeDate: "",
             mileage: undefined,
+            mpg: undefined,
             drops: undefined,
             extraDrops: undefined,
             info: null
@@ -80,6 +82,9 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                     <input className="form-control" type="number" value={this.state.mileage} placeholder="Enter route mileage" onChange={(e) => { this.onMileageChanged(e);}} />
                 </div>
                 <div className="form-group">
+                    <input className="form-control" type="number" value={this.state.mpg} placeholder="Enter route mpg" onChange={(e) => { this.onMPGChanged(e);}} />
+                </div>
+                <div className="form-group">
                     <input className="form-control" type="number" value={this.state.drops} placeholder="Enter drops" onChange={(e) => { this.onDropsChanged(e);}} />
                 </div>
                 <div className="form-group">
@@ -122,6 +127,10 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
 
     private onMileageChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ ...this.state, mileage: Number(e.target.value) })  
+    }
+
+    private onMPGChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, mpg: Number(e.target.value) })  
     }
 
     private onDropsChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {

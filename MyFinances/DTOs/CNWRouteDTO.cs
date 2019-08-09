@@ -12,7 +12,8 @@ namespace MyFinances.DTOs
         public string RouteNo { get; set; }
         public int RouteTypeId { get; set; }
         public DateTime RouteDate { get; set; }
-        public int? Mileage { get; set; }
+        public decimal? Mileage { get; set; }
+        public decimal? MPG { get; set; }
         public int? ExtraDrops { get; set; }
         public string Info { get; set; }
     }

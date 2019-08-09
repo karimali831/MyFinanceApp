@@ -18,7 +18,7 @@ export interface IOwnState {
     amount?: number | undefined,
     loading: boolean,
     name: string,
-    date: Date,
+    date: string,
     redirect: boolean
 }
 
@@ -34,7 +34,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
             amount: 0,
             loading: true,
             name: "",
-            date: undefined,
+            date: "",
             redirect: false
         };
     }

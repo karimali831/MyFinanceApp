@@ -11,7 +11,7 @@ namespace MyFinances.Model
         public decimal AvgMonthlyAmount { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public DateTime? MonthlyDueDate { get; set; }
+        public int? MonthlyDueDate { get; set; }
         public decimal? Remaining { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? TotalPaid { get; set; }

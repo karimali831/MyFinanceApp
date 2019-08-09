@@ -39,7 +39,7 @@ namespace MyFinances.Website.Controllers.API
                         x.AvgMonthlyAmount,
                         EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
                         x.Remaining,
-                        MonthlyDueDate = x.MonthlyDueDate.HasValue ? x.MonthlyDueDate.Value.ToString("dd-MM-yy") : null,
+                        x.MonthlyDueDate,
                         x.Income,
                         x.ManualPayment
                     })

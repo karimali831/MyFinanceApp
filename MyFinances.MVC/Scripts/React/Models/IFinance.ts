@@ -6,7 +6,7 @@ export interface IFinance {
     endDate: Date,
     remaining: number,
     paid: number,
-    monthlyDueDate: Date,
+    monthlyDueDate: number,
     income: boolean,
     manualPayment: boolean
 }

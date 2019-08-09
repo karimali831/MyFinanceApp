@@ -39,7 +39,7 @@ namespace MyFinances.Website.Controllers.API
                     x.RouteType,
                     RouteDate = x.RouteDate.ToString("dd-MM-yy"),
                     x.Mileage,
-                    x.MPG,
+                    x.Mpg,
                     x.Drops,
                     x.ExtraDrops,
                     x.Info

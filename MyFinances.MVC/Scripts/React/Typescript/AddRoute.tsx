@@ -157,6 +157,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                     routeNo: "",
                     routeDate: undefined,
                     mileage: undefined,
+                    mpg: undefined,
                     drops: undefined,
                     extraDrops: undefined,
                     info: null
@@ -168,6 +169,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                 routeTypeId: this.state.selectedRouteType,
                 routeDate: this.state.routeDate,
                 mileage: this.state.mileage,
+                mpg: this.state.mpg,
                 drops: this.state.drops,
                 extraDrops: this.state.extraDrops,
                 info: this.state.info

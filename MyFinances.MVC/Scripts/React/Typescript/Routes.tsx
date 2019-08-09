@@ -90,7 +90,7 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
                     <TableHeaderColumn dataField='routeType' columnClassName="hidden-xs" className="hidden-xs">Type</TableHeaderColumn>
                     <TableHeaderColumn dataField='routeDate'  editable={{ placeholder: "dd-MM-yyyy"}} >Date</TableHeaderColumn>
                     <TableHeaderColumn dataField='mileage' columnClassName="hidden-xs" className="hidden-xs">Mileage</TableHeaderColumn>
-                    <TableHeaderColumn dataField='mpg' columnClassName="hidden-xs" className="hidden-xs">Mileage</TableHeaderColumn>
+                    <TableHeaderColumn dataField='mpg' columnClassName="hidden-xs" className="hidden-xs">MPG</TableHeaderColumn>
                     <TableHeaderColumn dataField='drops'>Drops</TableHeaderColumn>
                     <TableHeaderColumn dataField='extraDrops'>Extra Drops</TableHeaderColumn>
                     <TableHeaderColumn dataField='info' columnClassName="hidden-xs" className="hidden-xs">Info</TableHeaderColumn>

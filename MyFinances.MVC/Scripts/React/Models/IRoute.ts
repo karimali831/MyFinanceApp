@@ -13,9 +13,9 @@ export interface IRoute {
 export interface IRouteDTO {
     routeNo: string,
     routeTypeId: number,
-    routeDate: Date,
+    routeDate: string,
     mileage: number,
-    mpg: number,
+    mpg: number
     drops: number,
     extraDrops: number,
     info: string

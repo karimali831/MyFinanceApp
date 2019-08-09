@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { api } from '../Api/Api';
 import { ISpending } from "../Models/ISpending";
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
-import { commonApi } from '../Api/CommonApi';
 import { Loader } from './Loader';
+import { ITableOptions, ITableProps } from '../Models/ITable';
+import { textFilter } from 'react-bootstrap-table2-filter';
+import Table from './CommonTable';
 
 interface IOwnProps {
 }
@@ -42,70 +43,60 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
         }) 
     }
 
-    private onAfterSaveCell = (row: { [x: string]: string; }, cellName: any, cellValue: any) => {
-        let key = cellName;
-        let value = cellValue;
-        let id = Number(row['id']);
-        this.updateSpending(key, value, id)
-    }
-      
-    private onBeforeSaveCell(row: any, cellName: any, cellValue: any) {
-        // You can do any validation on here for editing value,
-        // return false for reject the editing
-        return true;
-    }
-
-    private priceFormatter(cell: any, row: any) {   // String example
+    private priceFormatter(cell: any, row: any) {  
         return `<i class='glyphicon glyphicon-gbp'></i> ${cell}`;
     }
 
     render() {
-        const options = {
-            noDataText: 'No spendings in this period found',
-            onDeleteRow: this.removeSpending
-        };
 
         if (this.state.loading) {
             return <Loader />
         }
 
+        const columns: ITableProps[] = [{
+            dataField: 'id',
+            text: '#',
+            hidden: true
+          }, {
+            dataField: 'name',
+            text: 'Item'
+          }, {
+            dataField: 'amount',
+            text: 'Amount'
+          },, {
+            dataField: 'date',
+            text: 'Date'
+          }, {
+            dataField: 'category',
+            text: 'Category',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
+            dataField: 'secondCategory',
+            text: 'Second Cat',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
+            dataField: 'info',
+            text: 'Info',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }
+        ];
+
+        const options: ITableOptions = {
+            deleteRow: true
+        }
+
         return (
             <div>
-                <BootstrapTable 
-                    selectRow={{ mode: 'radio' }} 
-                    remote={ true }  
-                    data={ this.state.spendings } 
-                    striped={ true } 
-                    hover={ true } 
-                    options={ options } 
-                    deleteRow={ true } 
-                    cellEdit={{
-                        mode: 'click',
-                        blurToSave: true,
-                        beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
-                        afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell  
-                    }} >
-                    <TableHeaderColumn isKey dataField='id' hidden autoValue={true}>ID ??</TableHeaderColumn>
-                    <TableHeaderColumn dataField='name' >Item</TableHeaderColumn>
-                    <TableHeaderColumn dataField='amount' dataFormat={ this.priceFormatter }>Amount</TableHeaderColumn>
-                    <TableHeaderColumn dataField='date' editable={{ placeholder: "dd-MM-yyyy"}} >Date</TableHeaderColumn>
-                    <TableHeaderColumn dataField='info' columnClassName="hidden-xs" className="hidden-xs">Info</TableHeaderColumn>
-                    <TableHeaderColumn dataField='category' columnClassName="hidden-xs" className="hidden-xs">Category</TableHeaderColumn>
-                    <TableHeaderColumn dataField='secondCategory' columnClassName="hidden-xs" className="hidden-xs">Second Cat</TableHeaderColumn>
-                </BootstrapTable>
+                <Table 
+                    table={this.tableName}
+                    data={this.state.spendings}
+                    columns={columns}
+                    options={options}
+                /> 
             </div>
         )
-    }
-
-    private updateSpending = (key: string, value: any, id: number) => {
-        this.setState({ ...this.state, ...{ loading: true } })
-        commonApi.update(this.tableName, key, value, id)
-            .then(() => this.loadSpendings());
-    }
-
-    private removeSpending = (id: any) => {
-        this.setState({ ...this.state, ...{ loading: true } })
-        commonApi.remove(id, this.tableName)
-            .then(() => this.loadSpendings());
     }
 }

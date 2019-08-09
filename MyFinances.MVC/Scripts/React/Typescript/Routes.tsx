@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { api } from '../Api/Api';
 import { IRoute } from "../Models/IRoute";
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
-import { commonApi } from '../Api/CommonApi';
 import { Loader } from './Loader';
+import { ITableProps, ITableOptions } from '../Models/ITable';
+import Table from './CommonTable';
 
 interface IOwnProps {
 }
@@ -44,71 +44,71 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
         }) 
     }
 
-    private onAfterSaveCell = (row: { [x: string]: string; }, cellName: any, cellValue: any) => {
-        let key = cellName;
-        let value = cellValue;
-        let id = Number(row['id']);
-        this.updateRoute(key, value, id)
-    }
-      
-    private onBeforeSaveCell(row: any, cellName: any, cellValue: any) {
-        // You can do any validation on here for editing value,
-        // return false for reject the editing
-        return true;
-    }
-
-    private priceFormatter(cell: any, row: any) {   // String example
-        return `<i class='glyphicon glyphicon-gbp'></i> ${cell}`;
-    }
-
     render() {
-        const options = {
-            noDataText: 'No routes found',
-            onDeleteRow: this.removeRoute
-        };
+
         if (this.state.loading) {
             return <Loader />
         }
+
+        const columns: ITableProps[] = [{
+            dataField: 'id',
+            text: '#',
+            hidden: true
+          }, {
+            dataField: 'routeNo',
+            text: 'Route'
+          }, {
+            dataField: 'routeType',
+            text: 'Type'
+          },, {
+            dataField: 'routeDate',
+            text: 'Date'
+          }, {
+            dataField: 'drops',
+            text: 'Stops'
+          }, {
+            dataField: 'extraDrops',
+            text: 'Extra Stops'
+          }, {
+            dataField: 'mileage',
+            text: 'Route Mileage',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
+            dataField: 'extraMileage',
+            text: 'Support Mileage',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
+            dataField: 'mpg',
+            text: 'MPG',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
+            dataField: 'info',
+            text: 'Info',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs",
+            hidden: true
+          }
+        ];
+
+        const options: ITableOptions = {
+            deleteRow: true
+        }
+
+
         return (
             <div>
-                <BootstrapTable 
-                    selectRow={{ mode: 'radio' }} 
-                    remote={ true }  
-                    data={ this.state.routes } 
-                    striped={ true } 
-                    hover={ true } 
-                    options={ options } 
-                    deleteRow={ true } 
-                    cellEdit={{
-                        mode: 'click',
-                        blurToSave: true,
-                        beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
-                        afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell  
-                    }} >
-                    <TableHeaderColumn isKey dataField='id' hidden autoValue={true}>ID</TableHeaderColumn>
-                    <TableHeaderColumn dataField='routeNo'>Route</TableHeaderColumn>
-                    <TableHeaderColumn dataField='routeType' columnClassName="hidden-xs" className="hidden-xs">Type</TableHeaderColumn>
-                    <TableHeaderColumn dataField='routeDate'  editable={{ placeholder: "dd-MM-yyyy"}} >Date</TableHeaderColumn>
-                    <TableHeaderColumn dataField='mileage' columnClassName="hidden-xs" className="hidden-xs">Route Mileage</TableHeaderColumn>
-                    <TableHeaderColumn dataField='extraMileage' columnClassName="hidden-xs" className="hidden-xs">Support Mileage</TableHeaderColumn>
-                    <TableHeaderColumn dataField='mpg' columnClassName="hidden-xs" className="hidden-xs">MPG</TableHeaderColumn>
-                    <TableHeaderColumn dataField='drops'>Drops</TableHeaderColumn>
-                    <TableHeaderColumn dataField='extraDrops'>Extra Drops</TableHeaderColumn>
-                    <TableHeaderColumn dataField='info' columnClassName="hidden-xs" className="hidden-xs">Info</TableHeaderColumn>
-                </BootstrapTable>
+                <Table 
+                    table={this.tableName}
+                    data={this.state.routes}
+                    columns={columns}
+                    options={options}
+                />      
                 <label>Calculated wage amount: £{this.state.calculateWeeklyPay}</label>
             </div>
         )
     }
-    private updateRoute = (key: string, value: any, id: number) => {
-        this.setState({ ...this.state, ...{ loading: true } })
-        commonApi.update(this.tableName, key, value, id)
-            .then(() => this.loadRoutes());
-    }
 
-    private removeRoute = (id: any) => {
-        this.setState({ ...this.state, ...{ loading: true } })
-        commonApi.remove(id, this.tableName)
-            .then(() => this.loadRoutes());
-    }
 }

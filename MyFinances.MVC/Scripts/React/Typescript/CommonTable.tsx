@@ -1,44 +1,75 @@
 import * as React from 'react';
-import { api } from '../Api/Api';
-import { IFinance } from "../Models/IFinance";
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
+import { ITableOptions, ITableProps } from '../Models/ITable';
 import { commonApi } from '../Api/CommonApi';
+import BootstrapTable from 'react-bootstrap-table-next';
+import cellEditFactory from 'react-bootstrap-table2-editor';
 
 export interface IOwnProps {
     table: string,
-    addModel: any,
-    updateRow: { [x: string]: string; },
-    updateCellName: any,
-    updateCellValue: any
+    data: any,
+    columns: ITableProps[],
+    options?: ITableOptions,
 }
-
 
 export interface IOwnState {
-    apiRoute: string
+    deleteId: number | undefined
 }
 
-export default class CommonTable extends React.Component<IOwnProps, IOwnState> {
+export default class Table extends React.Component<IOwnProps, IOwnState> {
     constructor(props: IOwnProps) {
         super(props);
         this.state = { 
-            table: props.table
+            deleteId: undefined
         };
     }
+
+    render() {
+        const cellEdit = cellEditFactory({
+            mode: 'click',
+            blurToSave: true,
+            beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
+            afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell  
+        });
+
+        const selectRow = {
+            mode: 'radio',
+            onSelect: (row: any) => {
+                this.setState({ ...this.state, 
+                    ...{ 
+                        deleteId: row['id']
+                    }
+                }) 
+            }
+        };
+
+        return(
+            <div>
+                <BootstrapTable 
+                    keyField='id' 
+                    selectRow={ this.props.options && this.props.options.deleteRow ? selectRow : null }
+                    data={ this.props.data } 
+                    columns={ this.props.columns } 
+                    striped={ true } 
+                    hover={ true }
+                    cellEdit={ cellEdit } 
+                />
+                <button onClick={() => this.remove()} className="btn btn-danger">Delete</button>
+            </div>
+        );
+    }
     
-    public onAfterSaveCell = (props: IOwnProps) => {
-        let key = props.updateCellName;
-        let value = props.updateCellValue;
-        let id = Number(props.updateRow['id']);
-        this.update(key, value, id)
+    private onAfterSaveCell = (oldValue: string, newValue: string, row: { [x: string]: string; }, column: { [x: string]: string; }) => {
+        let id = Number(row['id']);
+        this.update(column['dataField'], newValue, id)
     }
       
-    public onBeforeSaveCell(row: any, cellName: any, cellValue: any) {
+    private onBeforeSaveCell(row: any, cellName: any, cellValue: any) {
         // You can do any validation on here for editing value,
         // return false for reject the editing
         return true;
     }
 
-    public priceFormatter(cell: any, row: any) {  
+    private priceFormatter(cell: any, row: any) {  
         return `<i class='glyphicon glyphicon-gbp'></i> ${cell}`;
     }
 
@@ -51,22 +82,21 @@ export default class CommonTable extends React.Component<IOwnProps, IOwnState> {
         })  
     }
 
-    public add = (props: IOwnProps) => {
-        if (props.addModel != null)
-        {
-            this.setState({ ...this.state, ...{ loading: true }})  
-            
-            commonApi.add(props.addModel, this.state.table )
-        }
-    }
-
     private update = (key: string, value: any, id: number) => {
         this.setState({ ...this.state, ...{ loading: true }}) 
-        commonApi.update(this.state.table, key, value, id);
+        commonApi.update(this.props.table, key, value, id);
     }
 
-    private remove = (id: any) => {
-        this.setState({ ...this.state, ...{ loading: true }}) 
-        commonApi.remove(id, this.state.table);
+    private remove = () => {
+        if (this.state.deleteId && this.props.options && this.props.options.deleteRow) {
+            this.setState({ ...this.state, 
+                ...{ 
+                    loading: true,
+                    deleteId: undefined
+                }
+            }) 
+
+            commonApi.remove(this.state.deleteId, this.props.table);
+        }
     }
 }

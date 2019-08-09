@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { api } from '../Api/Api';
 import { IFinance } from "../Models/IFinance";
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
-import { commonApi } from '../Api/CommonApi';
 import { Loader } from './Loader';
+import Table from './CommonTable';
+import { ITableOptions, ITableProps } from '../Models/ITable';
 
 interface IOwnProps {
 }
@@ -11,7 +11,8 @@ interface IOwnProps {
 export interface IOwnState {
     finances: IFinance[],
     totalAvgCost: number | undefined,
-    loading: boolean
+    loading: boolean,
+    showEdit: number | undefined
 }
 
 export default class Finances extends React.Component<IOwnProps, IOwnState> {
@@ -20,7 +21,8 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         this.state = { 
             loading: true,
             finances: [],
-            totalAvgCost: undefined
+            totalAvgCost: undefined,
+            showEdit: undefined
         };
     }
 
@@ -45,67 +47,51 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         }) 
     }
 
-    private onAfterSaveCell = (row: { [x: string]: string; }, cellName: any, cellValue: any) => {
-        let key = cellName;
-        let value = cellValue;
-        let id = Number(row['id']);
-        this.updateExpense(key, value, id)
-    }
-      
-    private onBeforeSaveCell(row: any, cellName: any, cellValue: any) {
-        // You can do any validation on here for editing value,
-        // return false for reject the editing
-        return true;
-    }
-
-    private priceFormatter(cell: any, row: any) {   // String example
-        return `<i class='glyphicon glyphicon-gbp'></i> ${cell}`;
-    }
-
     render() {
-        const options = {
-            noDataText: 'No finances found',
-            onDeleteRow: this.removeExpense
-        };
         if (this.state.loading) {
             return <Loader />
         }
+
+        const columns: ITableProps[] = [{
+            dataField: 'id',
+            text: '#',
+            hidden: true
+          }, {
+            dataField: 'name',
+            text: 'Name'
+          }, {
+            dataField: 'avgMonthlyAmount',
+            text: 'Avg Monthly Cost'
+          },, {
+            dataField: 'endDate',
+            text: 'End Date',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
+            dataField: 'remaining',
+            text: 'Remaining',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
+            dataField: 'monthlyDueDate',
+            text: 'Next Due'
+          }
+        ];
+
+        const options: ITableOptions = {
+            deleteRow: true
+        }
+
         return (
             <div>
-                <BootstrapTable 
-                    selectRow={{ mode: 'radio' }} 
-                    remote={ true }  
-                    data={ this.state.finances } 
-                    striped={ true } 
-                    hover={ true } 
-                    options={ options } 
-                    deleteRow={ true } 
-                    cellEdit={{
-                        mode: 'click',
-                        blurToSave: true,
-                        beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
-                        afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell  
-                    }} >
-                    <TableHeaderColumn isKey dataField='id' hidden autoValue={true}>ID</TableHeaderColumn>
-                    <TableHeaderColumn dataField='name'>Expense</TableHeaderColumn>
-                    <TableHeaderColumn dataField='avgMonthlyAmount' dataFormat={ this.priceFormatter }>Avg Monthly Cost</TableHeaderColumn>
-                    <TableHeaderColumn dataField='endDate' columnClassName="hidden-xs" className="hidden-xs" editable={{ placeholder: "dd-MM-yyyy"}} >End Date</TableHeaderColumn>
-                    <TableHeaderColumn dataField='remaining' columnClassName="hidden-xs" className="hidden-xs">Remaining</TableHeaderColumn>
-                    <TableHeaderColumn dataField='monthlyDueDate' editable={{ placeholder: "dd-MM-yyyy"}}>Next Due</TableHeaderColumn>
-                </BootstrapTable>
+                <Table 
+                    table={this.tableName}
+                    data={this.state.finances}
+                    columns={columns}
+                    options={options}
+                /> 
                 <label>Total average monthly cost: £{this.state.totalAvgCost}</label>
             </div>
         )
-    }
-    private updateExpense = (key: string, value: any, id: number) => {
-        this.setState({ ...this.state, ...{ loading: true } })
-        commonApi.update(this.tableName, key, value, id)
-            .then(() => this.loadFinances());
-    }
-
-    private removeExpense = (id: any) => {
-        this.setState({ ...this.state, ...{ loading: true } })
-        commonApi.remove(id, this.tableName)
-            .then(() => this.loadFinances());
     }
 }

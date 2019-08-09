@@ -115,9 +115,6 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
         )
     }
 
-    
-    // const value = Number.isInteger(Number(e.target.value) ? Number(e.target.value) : e.target.value);
-
     private onRouteNoChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ ...this.state, routeNo: e.target.value })  
     }
@@ -166,6 +163,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                     routeNo: "",
                     routeDate: undefined,
                     mileage: undefined,
+                    extraMileage: undefined,
                     mpg: undefined,
                     drops: undefined,
                     extraDrops: undefined,
@@ -178,6 +176,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                 routeTypeId: this.state.selectedRouteType,
                 routeDate: this.state.routeDate,
                 mileage: this.state.mileage,
+                extraMileage: this.state.extraMileage,
                 mpg: this.state.mpg,
                 drops: this.state.drops,
                 extraDrops: this.state.extraDrops,

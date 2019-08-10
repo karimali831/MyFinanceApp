@@ -11,8 +11,7 @@ interface IOwnProps {
 export const Loader: React.SFC<IOwnProps> = (props) => {
     return (
         <div className={props.type != null ? props.type : "loader"}>
-            <i className="fa fa-circle-o-notch fa-circle-notch fa-spin" />
-            <FontAwesomeIcon icon={['fab', 'apple']} />
+            <FontAwesomeIcon icon={faSpinner} />
             {props.text && props.text != null ? <span className="text">{props.text}</span> : ""}
         </div>
     )

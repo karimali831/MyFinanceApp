@@ -52,13 +52,13 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
 
     render() {
         if (this.state.loading) {
-            return <Loader />
+            return <Loader text="Loading summary..." />
         }
 
         const summary = this.state.spendingSummary;
 
         return (
-            <table className="table" style={{width: '35%'}}>
+            <table className="table">
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>

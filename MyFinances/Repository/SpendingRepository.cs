@@ -36,6 +36,8 @@ namespace MyFinances.Repository
                     s.Amount,
                     s.Date,
                     s.Info,
+                    s.CatId,
+                    s.SecondCatId,
                     c1.Name AS Category,
 	                c2.Name AS SecondCategory
                 FROM Spendings s 

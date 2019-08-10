@@ -12,6 +12,8 @@ namespace MyFinances.Model
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public string Info { get; set; }
+        public int CatId { get; set; }
+        public int? SecondCatId { get; set; }
         public string Category { get; set; }
         public string SecondCategory { get; set; }
     }

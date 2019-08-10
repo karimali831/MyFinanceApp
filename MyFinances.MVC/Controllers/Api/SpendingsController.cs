@@ -45,18 +45,36 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("summary")]
+        [Route("summary/{daysPeriod}")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetSpendingSummaryAsync()
+        public async Task<HttpResponseMessage> GetSpendingSummaryAsync(int daysPeriod)
         {
             var spendings = await spendingService.GetAllAsync();
-            var totalSpent = new decimal[3];
 
-            totalSpent[0] = spendingService.GetTotalSpent(spendings, -1);
-            totalSpent[1] = spendingService.GetTotalSpent(spendings, -7);
-            totalSpent[2] = spendingService.GetTotalSpent(spendings, -30);
+            decimal totalSpent = spendingService.GetTotalSpent(spendings, daysPeriod);
+            decimal totalFuelCost = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel);
+            decimal totalVanFuelCost = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel, Categories.Van);
+            decimal totalGTIFuelCost = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel, Categories.GTI);
+            decimal totalRCZFuelCost = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel, Categories.RCZ);
+            decimal totalFoodCost = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.FoodAndDrinks);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { TotalSpent = totalSpent });
+            var totalFuelCostByType = new decimal[3];
+            totalFuelCostByType[0] = totalVanFuelCost;
+            totalFuelCostByType[1] = totalGTIFuelCost;
+            totalFuelCostByType[2] = totalRCZFuelCost;
+
+
+            return Request.CreateResponse(HttpStatusCode.OK, 
+                new {
+                    SpendingSummary = new SpendingSummaryDTO
+                    {
+                        TotalSpent = totalSpent,
+                        TotalFuelCost = totalFuelCost,
+                        TotalFuelCostByType = totalFuelCostByType,
+                        TotalFoodCost = totalFoodCost
+                    }
+                }
+            );
         }
 
         [Route("add")]

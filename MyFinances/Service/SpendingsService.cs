@@ -13,7 +13,7 @@ namespace MyFinances.Service
     {
         Task<IEnumerable<Spending>> GetAllAsync();
         Task InsertAsync(SpendingDTO dto);
-        decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval);
+        decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
     }
 
     public class SpendingService : ISpendingService
@@ -35,9 +35,21 @@ namespace MyFinances.Service
             await spendingRepository.InsertAsync(dto);
         }
 
-        public decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval) 
+        public decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId, Categories? secondCatId) 
         {
-            return spendings.Where(x => x.Date >= DateTime.Now.Date.AddDays(daysInterval)).Sum(x => x.Amount);
+            var getSpendings = spendings.Where(x => x.Date >= DateTime.Now.Date.AddDays(daysInterval));
+                
+            if (catId.HasValue)
+            {
+                getSpendings = getSpendings.Where(x => (Categories)x.CatId == catId);
+            }
+
+            if (secondCatId.HasValue)
+            {
+                getSpendings = getSpendings.Where(x => (Categories)x.SecondCatId == secondCatId);
+            }
+
+            return getSpendings.Sum(x => x.Amount);
         }
     }
 }

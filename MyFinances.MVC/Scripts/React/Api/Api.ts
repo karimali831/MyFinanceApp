@@ -1,5 +1,5 @@
 import { ICategory } from '../Models/ICategory'
-import { ISpending} from '../Models/ISpending'
+import { ISpending, ISpendingSummary} from '../Models/ISpending'
 import { IFinance } from '../Models/IFinance'
 import { IRoute } from '../Models/IRoute'
 
@@ -25,8 +25,8 @@ export class Api {
         .then(data => data as ISpendingResponse);
     }
 
-    public summary = async (): Promise<ISummaryResponse> => {
-        return fetch(`${this.rootUrl}/spendings/summary`, {
+    public summary = async (daysPeriod: number): Promise<ISpendingSummaryResponse> => {
+        return fetch(`${this.rootUrl}/spendings/summary/${daysPeriod}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",
@@ -40,7 +40,7 @@ export class Api {
             }
             return response.json();
         })
-        .then(data => data as ISummaryResponse);
+        .then(data => data as ISpendingSummaryResponse);
     }
 
     public finances = async (): Promise<IFinanceResponse> => {
@@ -90,8 +90,8 @@ export interface ICategoryResponse {
     categories: ICategory[]
 }
 
-export interface ISummaryResponse {
-    totalSpent: number[]
+export interface ISpendingSummaryResponse {
+    spendingSummary: ISpendingSummary
 }
 
 export interface IFinanceResponse {

@@ -15,3 +15,11 @@ export interface ISpendingDTO {
     catId: number,
     secondCatId: number
 }
+
+export interface ISpendingSummary
+{
+    totalSpent: number,
+    totalFuelCost: number,
+    totalFuelCostByType: number[],
+    totalFoodCost: number
+}

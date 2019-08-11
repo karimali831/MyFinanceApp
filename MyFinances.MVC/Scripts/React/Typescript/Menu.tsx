@@ -24,8 +24,10 @@ export default class Menu extends React.Component<IOwnProps, IOwnState> {
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/home">Home</Link>
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/addroute">Add Route</Link>
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/addspending/">Add Spending</Link>
+                <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/addincome/">Add Income</Link>
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/addexpense/">Add Expense</Link>
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/finance/">Finances</Link>
+                <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/income/">Incomes</Link>
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/spending/">Spendings</Link>
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/route/">Routes</Link>
                 <a href="javascript:void(0);" className="icon" onClick={() => this.myFunction()}>

@@ -47,7 +47,7 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
     render() {
 
         if (this.state.loading) {
-            return <Loader />
+            return <Loader text="Loading routes..." />
         }
 
         const columns: ITableProps[] = [{

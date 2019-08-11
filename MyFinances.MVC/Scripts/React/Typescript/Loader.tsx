@@ -12,7 +12,12 @@ export const Loader: React.SFC<IOwnProps> = (props) => {
     return (
         <div className={props.type != null ? props.type : "loader"}>
             <FontAwesomeIcon icon={faSpinner} />
-            {props.text && props.text != null ? <span className="text">{props.text}</span> : ""}
+            {
+                props.text && props.text != null ? 
+                    <span className="text"><strong>{props.text}</strong></span> 
+                : 
+                    ""
+            }
         </div>
     )
 }

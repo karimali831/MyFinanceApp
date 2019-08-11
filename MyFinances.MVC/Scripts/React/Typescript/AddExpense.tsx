@@ -55,7 +55,7 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
         }
 
         if (loading) {
-            return <Loader />
+            return <Loader text="Loading..."/>
         }
 
         return (

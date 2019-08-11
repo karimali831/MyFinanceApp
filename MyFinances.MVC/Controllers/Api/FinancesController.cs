@@ -40,15 +40,30 @@ namespace MyFinances.Website.Controllers.API
                         EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
                         x.Remaining,
                         x.MonthlyDueDate,
-                        x.Income,
                         x.ManualPayment
                     })
-                    .OrderBy(x => x.Income)
-                    .ThenBy(x => x.MonthlyDueDate)
+                    .OrderBy(x => x.MonthlyDueDate)
                     .ThenBy(x => x.Name),
                 TotalAvgCost = finances
-                    .Where(x => x.Income == false && (x.EndDate == null || DateTime.UtcNow < x.EndDate))
+                    .Where(x => x.EndDate == null || DateTime.UtcNow < x.EndDate)
                     .Sum(x => x.AvgMonthlyAmount)
+            });
+        }
+
+        [Route("incomes")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetIncomesAsync()
+        {
+            var incomes = await financeService.GetAllIncomesAsync();
+            return Request.CreateResponse(HttpStatusCode.OK, new {
+                Incomes = 
+                    incomes.Select(x => new
+                    {
+                        x.Id,
+                        x.Source,
+                        Date = x.Date.ToString("dd-MM-yy"),
+                        x.Amount
+                    })
             });
         }
 
@@ -57,6 +72,14 @@ namespace MyFinances.Website.Controllers.API
         public async Task<HttpResponseMessage> InsertAsync(FinanceDTO model)
         {
             await financeService.InsertAsync(model);
+            return Request.CreateResponse(HttpStatusCode.OK, true);
+        }
+
+        [Route("add/income")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> InsertIncomeAsync(IncomeDTO model)
+        {
+            await financeService.InsertIncomeAsync(model);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
     }

@@ -15,7 +15,6 @@ namespace MyFinances.Model
         public decimal? Remaining { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? TotalPaid { get; set; }
-        public bool Income { get; set; }
         public bool ManualPayment { get; set; }
 
     }

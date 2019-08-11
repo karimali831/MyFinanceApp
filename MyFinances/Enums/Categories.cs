@@ -25,7 +25,7 @@ namespace MyFinances.Enums
         Transfers,
         CigsAndVapes,
         Rent,
-        SalariesAndWages = 19,
+        Incomes = 19,
         Full = 21,
         Half,
         Missort,
@@ -34,6 +34,12 @@ namespace MyFinances.Enums
         Van = 28,
         Haircut,
         Cars,
-        Groceries
+        Groceries,
+        SB,
+        CWTL,
+        UberEats,
+        Loans,
+        Brian = 38,
+        Mark
     }
 }

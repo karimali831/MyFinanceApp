@@ -49,7 +49,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
 
     render() {
         if (this.state.loading) {
-            return <Loader />
+            return <Loader text="Loading finances..." />
         }
 
         const columns: ITableProps[] = [{

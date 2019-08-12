@@ -64,7 +64,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
-                                Spendings Summary in the last
+                                Spendings breakdown summary in the last
                                 <div className="form-group">
                                     <select onChange={(e) => this.onChangeSelectedDaysPeriod(e)} className="form-control">
                                         <option value="-1" selected>24 hours</option>
@@ -81,14 +81,18 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                             <td>£{summary.totalSpent}</td>
                         </tr>
                         <tr>
-                            <th scope="row">Total Fuel Cost</th>
+                            <th scope="row">Fuel Cost</th>
                             <td>
-                                £{summary.totalFuelCost} <i><small> (<strong>van:</strong> £{summary.totalFuelCostByType[0]} <strong>gti:</strong> £{summary.totalFuelCostByType[1]} <strong>rcz:</strong> £{summary.totalFuelCostByType[2]})</small></i>
+                                £{summary.fuelCost} <i><small> (<strong>van:</strong> £{summary.fuelCostByType[0]} <strong>gti:</strong> £{summary.fuelCostByType[1]} <strong>rcz:</strong> £{summary.fuelCostByType[2]})</small></i>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">Total Food Cost</th>
-                            <td>£{summary.totalFoodCost}</td>
+                            <th scope="row">Food Cost</th>
+                            <td>£{summary.foodCost}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Interest & Fees</th>
+                            <td>£{summary.interestAndFees} <i><small>(<strong>od fees:</strong> £{summary.overdraftFees})</small></i></td>
                         </tr>
                     </tbody>
                 </table>

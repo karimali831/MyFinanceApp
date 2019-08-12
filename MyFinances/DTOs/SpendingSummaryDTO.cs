@@ -10,8 +10,10 @@ namespace MyFinances.DTOs
     public class SpendingSummaryDTO
     {
         public decimal TotalSpent { get; set; }
-        public decimal TotalFuelCost { get; set; }
-        public decimal[] TotalFuelCostByType { get; set; }
-        public decimal TotalFoodCost { get; set; }
+        public decimal FuelCost { get; set; }
+        public decimal[] FuelCostByType { get; set; }
+        public decimal FoodCost { get; set; }
+        public decimal InterestAndFees { get; set; }
+        public decimal OverdraftFees { get; set; }
     }
 }

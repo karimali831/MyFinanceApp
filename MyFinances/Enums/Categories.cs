@@ -40,6 +40,7 @@ namespace MyFinances.Enums
         UberEats,
         Loans,
         Brian = 38,
-        Mark
+        Mark,
+        OverdraftFees
     }
 }

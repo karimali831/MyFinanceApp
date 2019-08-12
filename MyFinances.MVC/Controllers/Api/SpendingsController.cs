@@ -57,21 +57,24 @@ namespace MyFinances.Website.Controllers.API
             decimal totalGTIFuelCost = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel, Categories.GTI);
             decimal totalRCZFuelCost = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel, Categories.RCZ);
             decimal totalFoodCost = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.FoodAndDrinks);
+            decimal totalInterestAndFees = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.InterestAndFees);
+            decimal totalODFees = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.InterestAndFees, Categories.OverdraftFees);
 
             var totalFuelCostByType = new decimal[3];
             totalFuelCostByType[0] = totalVanFuelCost;
             totalFuelCostByType[1] = totalGTIFuelCost;
             totalFuelCostByType[2] = totalRCZFuelCost;
 
-
             return Request.CreateResponse(HttpStatusCode.OK, 
                 new {
                     SpendingSummary = new SpendingSummaryDTO
                     {
                         TotalSpent = totalSpent,
-                        TotalFuelCost = totalFuelCost,
-                        TotalFuelCostByType = totalFuelCostByType,
-                        TotalFoodCost = totalFoodCost
+                        FuelCost = totalFuelCost,
+                        FuelCostByType = totalFuelCostByType,
+                        FoodCost = totalFoodCost,
+                        InterestAndFees = totalInterestAndFees,
+                        OverdraftFees = totalODFees
                     }
                 }
             );

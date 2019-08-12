@@ -62,7 +62,7 @@ export default class IncomeSummary extends React.Component<IOwnProps, IOwnState>
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>
-                            Income summary in the last
+                            Income breakdown summary in the last
                             <div className="form-group">
                                 <select onChange={(e) => this.onChangeSelectedIncomesMonthPeriod(e)} className="form-control">
                                     <option value="-1" selected>1 month</option>

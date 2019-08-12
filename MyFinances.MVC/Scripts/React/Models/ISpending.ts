@@ -19,7 +19,9 @@ export interface ISpendingDTO {
 export interface ISpendingSummary
 {
     totalSpent: number,
-    totalFuelCost: number,
-    totalFuelCostByType: number[],
-    totalFoodCost: number
+    fuelCost: number,
+    fuelCostByType: number[],
+    foodCost: number,
+    interestAndFees: number,
+    overdraftFees: number
 }

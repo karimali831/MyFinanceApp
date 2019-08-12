@@ -5,7 +5,7 @@ export class CommonApi {
 
     public rootUrl: string = window.location.origin + "/api";
 
-    public add = async (model: any, route: string, secondRoute?: string) => {
+    public add = async (model: any, route: string, secondRoute = "") => {
         return fetch(`${this.rootUrl}/${route}/add/${secondRoute}`, {
             method: "POST",
             body: JSON.stringify(model),

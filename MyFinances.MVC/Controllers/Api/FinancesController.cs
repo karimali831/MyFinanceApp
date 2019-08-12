@@ -61,6 +61,7 @@ namespace MyFinances.Website.Controllers.API
                     {
                         x.Id,
                         x.Source,
+                        x.SecondSource,
                         Date = x.Date.ToString("dd-MM-yy"),
                         x.Amount
                     })

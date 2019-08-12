@@ -57,9 +57,12 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
           }, {
             dataField: 'date',
             text: 'Paid Date'
-          },, {
+          }, {
             dataField: 'amount',
-            text: 'Amount',
+            text: 'Amount'
+          }, {
+            dataField: 'secondSource',
+            text: 'Second Source',
             headerClasses: "hidden-xs",
             classes: "hidden-xs"
           }

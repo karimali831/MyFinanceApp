@@ -1,6 +1,7 @@
 export interface IIncome {
     id: number,
     source: string,
+    secondSource: string,
     date: Date,
     amount: number
 }

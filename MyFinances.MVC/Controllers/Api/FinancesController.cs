@@ -1,4 +1,5 @@
 ﻿using MyFinances.DTOs;
+using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Service;
 using MyFinances.Website.Controllers.Api;
@@ -66,6 +67,30 @@ namespace MyFinances.Website.Controllers.API
                         x.Amount
                     })
             });
+        }
+
+        [Route("summary/income/{monthsPeriod}")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetIncomesSummaryAsync(int monthsPeriod)
+        {
+            var incomes = await financeService.GetAllIncomesAsync();
+            var totalIncome = financeService.GetTotalIncome(incomes, monthsPeriod);
+            var totalIncomeSB = financeService.GetTotalIncome(incomes, monthsPeriod, Categories.SB);
+            var totalIncomeCWTL = financeService.GetTotalIncome(incomes, monthsPeriod, Categories.CWTL);
+            var totalIncomeUber = financeService.GetTotalIncome(incomes, monthsPeriod, Categories.UberEats);
+
+            return Request.CreateResponse(HttpStatusCode.OK, 
+                new
+                {
+                    IncomeSummary = new IncomeSummaryDTO
+                    {
+                        TotalIncome = totalIncome,
+                        IncomeSB = totalIncomeSB,
+                        IncomeCWTL = totalIncomeCWTL,
+                        IncomeUberEats = totalIncomeUber
+                    }
+                }
+            );
         }
 
         [Route("add")]

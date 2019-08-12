@@ -2,7 +2,7 @@ import { ICategory } from '../Models/ICategory'
 import { ISpending, ISpendingSummary} from '../Models/ISpending'
 import { IFinance } from '../Models/IFinance'
 import { IRoute } from '../Models/IRoute'
-import { IIncome } from '../Models/IIncome';
+import { IIncome, IIncomeSummary } from '../Models/IIncome';
 
 export class Api {
 
@@ -42,6 +42,24 @@ export class Api {
             return response.json();
         })
         .then(data => data as ISpendingSummaryResponse);
+    }
+
+    public incomeSummary = async (monthsPeriod: number): Promise<IIncomeSummaryResponse> => {
+        return fetch(`${this.rootUrl}/finances/summary/income/${monthsPeriod}`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => data as IIncomeSummaryResponse);
     }
 
     public finances = async (): Promise<IFinanceResponse> => {
@@ -111,6 +129,10 @@ export interface ICategoryResponse {
 
 export interface ISpendingSummaryResponse {
     spendingSummary: ISpendingSummary
+}
+
+export interface IIncomeSummaryResponse {
+    incomeSummary: IIncomeSummary
 }
 
 export interface IFinanceResponse {

@@ -38,13 +38,14 @@ namespace MyFinances.Repository
                     i.Date,
                     i.Amount,
                     i.SourceId,
+                    i.SecondSourceId,
                     c1.Name AS Source,
                     c2.Name AS SecondSource
                 FROM {TABLE} i
                 INNER JOIN Categories c1
                     ON c1.Id = i.SourceId
                 LEFT JOIN Categories c2
-                    ON c2.Id = i.SecondCatId";
+                    ON c2.Id = i.SecondSourceId";
 
                 return (await sql.QueryAsync<Income>(sqlTxt)).ToArray();
             }

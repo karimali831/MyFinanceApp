@@ -13,3 +13,9 @@ export interface IIncomeDTO {
     amount: number
 }
 
+export interface IIncomeSummary {
+    totalIncome: number,
+    incomeSB: number,
+    incomeCWTL: number,
+    incomeUberEats: number
+}

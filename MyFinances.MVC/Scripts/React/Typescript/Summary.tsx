@@ -2,6 +2,7 @@ import * as React from 'react';
 import { api } from '../Api/Api'
 import { Loader } from './Loader';
 import { ISpendingSummary } from '../Models/ISpending';
+import IncomeSummary from './IncomeSummary';
 
 interface IOwnProps {
 }
@@ -52,44 +53,47 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
 
     render() {
         if (this.state.loading) {
-            return <Loader text="Loading summary..." />
+            return <Loader text="Loading spending summary..." />
         }
 
         const summary = this.state.spendingSummary;
 
         return (
-            <table className="table">
-                <thead className="thead-light">
-                    <tr>
-                        <th scope="col" colSpan={2}>
-                            Spendings Summary in the last
-                            <div className="form-group">
-                                <select onChange={(e) => this.onChangeSelectedDaysPeriod(e)} className="form-control">
-                                    <option value="-1" selected>24 hours</option>
-                                    <option value="-7">7 days</option>
-                                    <option value="-30">30 days</option>
-                                </select>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">Total Spent</th>
-                        <td>£{summary.totalSpent}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Total Fuel Cost</th>
-                        <td>
-                            £{summary.totalFuelCost} <i><small> (<strong>van:</strong> £{summary.totalFuelCostByType[0]} <strong>gti:</strong> £{summary.totalFuelCostByType[1]} <strong>rcz:</strong> £{summary.totalFuelCostByType[2]})</small></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Total Food Cost</th>
-                        <td>£{summary.totalFoodCost}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div>
+                <table className="table">
+                    <thead className="thead-light">
+                        <tr>
+                            <th scope="col" colSpan={2}>
+                                Spendings Summary in the last
+                                <div className="form-group">
+                                    <select onChange={(e) => this.onChangeSelectedDaysPeriod(e)} className="form-control">
+                                        <option value="-1" selected>24 hours</option>
+                                        <option value="-7">7 days</option>
+                                        <option value="-30">30 days</option>
+                                    </select>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Total Spent</th>
+                            <td>£{summary.totalSpent}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total Fuel Cost</th>
+                            <td>
+                                £{summary.totalFuelCost} <i><small> (<strong>van:</strong> £{summary.totalFuelCostByType[0]} <strong>gti:</strong> £{summary.totalFuelCostByType[1]} <strong>rcz:</strong> £{summary.totalFuelCostByType[2]})</small></i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total Food Cost</th>
+                            <td>£{summary.totalFoodCost}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <IncomeSummary />
+            </div>
         )
     }
 }

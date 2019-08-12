@@ -109,6 +109,7 @@
     <Compile Include="DTOs\CNWRouteDTO.cs" />
     <Compile Include="DTOs\IncomeDTO.cs" />
     <Compile Include="DTOs\FinanceDTO.cs" />
+    <Compile Include="DTOs\IncomeSummaryDTO.cs" />
     <Compile Include="DTOs\SpendingSummaryDTO.cs" />
     <Compile Include="DTOs\SpendingDTO.cs" />
     <Compile Include="Enums\Categories.cs" />

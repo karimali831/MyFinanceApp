@@ -5,6 +5,7 @@ import { Loader } from './Loader';
 import { ITableOptions, ITableProps } from '../Models/ITable';
 import { textFilter } from 'react-bootstrap-table2-filter';
 import Table from './CommonTable';
+import { priceFormatter } from './Utils';
 
 interface IOwnProps {
 }
@@ -62,8 +63,9 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
             text: 'Item'
           }, {
             dataField: 'amount',
-            text: 'Amount'
-          },, {
+            text: 'Amount',
+            formatter: priceFormatter
+          }, {
             dataField: 'date',
             text: 'Date'
           }, {

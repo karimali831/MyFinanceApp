@@ -13,6 +13,7 @@ namespace MyFinances.Service
     {
         Task<IEnumerable<Spending>> GetAllAsync();
         Task InsertAsync(SpendingDTO dto);
+        bool CheckExpenseIsPaid(int financeId);
         decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
     }
 
@@ -30,9 +31,15 @@ namespace MyFinances.Service
             return await spendingRepository.GetAllAsync();
         }
 
-        public async Task InsertAsync(SpendingDTO dto)
+
+        public async Task InsertAsync(SpendingDTO dto) 
         {
             await spendingRepository.InsertAsync(dto);
+        }
+
+        public bool CheckExpenseIsPaid(int financeId)
+        {
+            return spendingRepository.PaidWithinLastWeek(financeId);
         }
 
         public decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId, Categories? secondCatId) 

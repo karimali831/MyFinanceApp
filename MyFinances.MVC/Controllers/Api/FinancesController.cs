@@ -41,9 +41,11 @@ namespace MyFinances.Website.Controllers.API
                         EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
                         x.Remaining,
                         x.MonthlyDueDate,
-                        x.ManualPayment
+                        x.ManualPayment,
+                        DaysUntilDue = financeService.DaysUntilDue(x.MonthlyDueDate),
+                        PaymentStatus = financeService.PaymentStatusAsync(x.Id, x.MonthlyDueDate)
                     })
-                    .OrderBy(x => x.MonthlyDueDate)
+                    .OrderByDescending(x => x.MonthlyDueDate)
                     .ThenBy(x => x.Name),
                 TotalAvgCost = finances
                     .Where(x => x.EndDate == null || DateTime.UtcNow < x.EndDate)

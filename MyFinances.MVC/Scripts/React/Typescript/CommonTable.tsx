@@ -51,6 +51,7 @@ export default class Table extends React.Component<IOwnProps, IOwnState> {
                     columns={ this.props.columns } 
                     striped={ true } 
                     hover={ true }
+                    noDataIndication="No records found"
                     cellEdit={ cellEdit } 
                 />
                 <button onClick={() => this.remove()} className="btn btn-danger">Delete</button>
@@ -67,10 +68,6 @@ export default class Table extends React.Component<IOwnProps, IOwnState> {
         // You can do any validation on here for editing value,
         // return false for reject the editing
         return true;
-    }
-
-    private priceFormatter(cell: any, row: any) {  
-        return `<i class='glyphicon glyphicon-gbp'></i> ${cell}`;
     }
 
     public onItemChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {

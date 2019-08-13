@@ -7,5 +7,6 @@ export interface ITableProps {
     text: string; 
     headerClasses?: string, 
     classes?: string
-    hidden?: boolean
+    hidden?: boolean,
+    formatter?: (cell, row) => void
 }

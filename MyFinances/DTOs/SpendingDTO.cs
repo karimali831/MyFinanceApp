@@ -12,7 +12,8 @@ namespace MyFinances.DTOs
         public string Name { get; set; }
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
-        public int CatId { get; set; }
-        public int SecondCatId { get; set; }
+        public int? CatId { get; set; }
+        public int? SecondCatId { get; set; }
+        public int? FinanceId { get; set; }
     }
 }

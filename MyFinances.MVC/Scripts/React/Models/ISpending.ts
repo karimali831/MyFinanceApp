@@ -13,7 +13,8 @@ export interface ISpendingDTO {
     date: string,
     amount: number,
     catId: number,
-    secondCatId: number
+    secondCatId: number,
+    financeId: number
 }
 
 export interface ISpendingSummary

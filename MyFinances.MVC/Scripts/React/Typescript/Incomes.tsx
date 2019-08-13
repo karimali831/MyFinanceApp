@@ -4,6 +4,7 @@ import { IIncome } from "../Models/IIncome"
 import { Loader } from './Loader';
 import Table from './CommonTable';
 import { ITableOptions, ITableProps } from '../Models/ITable';
+import { priceFormatter } from './Utils';
 
 interface IOwnProps {
 }
@@ -59,7 +60,8 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             text: 'Paid Date'
           }, {
             dataField: 'amount',
-            text: 'Amount'
+            text: 'Amount',
+            formatter: priceFormatter
           }, {
             dataField: 'secondSource',
             text: 'Second Source',

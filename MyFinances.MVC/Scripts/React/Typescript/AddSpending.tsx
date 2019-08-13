@@ -5,6 +5,8 @@ import { commonApi } from '../Api/CommonApi';
 import { CategoryType } from '../Enums/CategoryType';
 import { ISpendingDTO } from '../Models/ISpending';
 import { Loader } from './Loader';
+import { IFinance } from '../Models/IFinance';
+import { api } from '../Api/Api';
 
 interface IOwnProps {
 }
@@ -12,6 +14,7 @@ interface IOwnProps {
 export interface IOwnState {
     categories: ICategory[],
     secondCategories: ICategory[],
+    finances: IFinance[],
     selectedCat?: number | undefined,
     selectedSecondCat?: number | undefined,
     secondTypeId?: number | undefined,  
@@ -19,6 +22,7 @@ export interface IOwnState {
     loading: boolean,
     name: string,
     date: string,
+    selectedFinanceId: number | undefined
     redirect: boolean
 }
 
@@ -28,6 +32,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
         this.state = { 
             categories: [],
             secondCategories: [],
+            finances: [],
             selectedCat: undefined,
             selectedSecondCat: undefined,
             secondTypeId: undefined,  
@@ -35,12 +40,14 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
             loading: true,
             name: "",
             date: "",
+            selectedFinanceId: undefined,
             redirect: false
         };
     }
 
     public componentDidMount() {
         this.loadCategories();
+        this.loadFinances();
     }
 
     public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
@@ -52,6 +59,11 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
     private loadCategories = () => {
         commonApi.categories(CategoryType.Spendings)
             .then(response => this.loadCategoriesSuccess(response.categories));
+    }
+
+    private loadFinances = () => {
+        api.finances()
+            .then(response => this.loadFinancesSuccess(response.finances));
     }
 
     private loadSecondCategories = (secondTypeId: number) => {
@@ -73,6 +85,15 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
             ...{ 
                 loading: false, 
                 secondCategories: categories
+            }
+        }) 
+    }
+
+    private loadFinancesSuccess = (finances: IFinance[]) => {
+        this.setState({ ...this.state,
+            ...{ 
+                loading: false, 
+                finances: finances
             }
         }) 
     }
@@ -100,6 +121,18 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                     <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />
                 </div>
                 <div className="form-group">
+                    <select onChange={e => this.onChangeSelectedFinance(e)} className="form-control">
+                        <option value={0}>-- of finance --</option>
+                        {
+                            this.state.finances.map(f =>
+                                <option key={f.id} value={f.id}>{f.name}</option>
+                            )
+                        }
+                    </select>
+                </div>
+                {this.state.selectedFinanceId == undefined || this.state.selectedFinanceId == 0 ? 
+                <>
+                <div className="form-group">
                     <select onChange={e => this.onChangeSelectedCategory(e)} className="form-control">
                         <option value={0}>-- category --</option>
                         {
@@ -109,7 +142,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                         }
                     </select>
                 </div>
-                <>
+                
                     {
                         this.state.secondTypeId !== undefined ?
                             <div className="form-group">
@@ -125,6 +158,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                         : null
                     }
                 </>
+                : null}
                 <div className="form-group">
                     <input type="submit" value="Add Item" onClick={() => this.addSpending() } />
                 </div>
@@ -172,8 +206,16 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
         })  
     }
 
+    private onChangeSelectedFinance = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        this.setState({ ...this.state, 
+            ...{ 
+                selectedFinanceId: Number(e.target.value)
+            }
+        })  
+    }
+
     private addSpending = () => {
-        if (this.state.name && this.state.name.length > 2 && this.state.selectedCat && this.state.amount)
+        if (this.state.name && this.state.name.length > 2 && (this.state.selectedCat || this.state.selectedFinanceId) && this.state.amount)
         {
             this.setState({ ...this.state, 
                 ...{ 
@@ -183,7 +225,8 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                     amount: 0,
                     selectedCat: undefined,
                     selectedSecondCat: undefined,
-                    secondTypeId: undefined
+                    secondTypeId: undefined,
+                    selectedFinanceId: undefined
                 }
             })  
 
@@ -192,7 +235,8 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                 catId: this.state.selectedCat,
                 secondCatId: this.state.selectedSecondCat,
                 amount: this.state.amount,
-                date: this.state.date
+                date: this.state.date,
+                financeId: this.state.selectedFinanceId
             }
             
             commonApi.add(addModel, "spendings");

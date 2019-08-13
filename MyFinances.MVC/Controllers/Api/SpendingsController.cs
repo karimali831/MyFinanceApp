@@ -84,6 +84,19 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> InsertAsync(SpendingDTO dto)
         {
+            // hack for now 
+            if (dto.FinanceId == 0)
+                dto.FinanceId = null;
+
+            if (dto.CatId == 0)
+                dto.CatId = null;
+
+            if (dto.FinanceId.HasValue && dto.CatId.HasValue)
+                dto.CatId = null;
+
+            if (!dto.FinanceId.HasValue && !dto.CatId.HasValue)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, false);
+
             await spendingService.InsertAsync(dto);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }

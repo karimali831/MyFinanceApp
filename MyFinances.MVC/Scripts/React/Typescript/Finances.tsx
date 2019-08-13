@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { api } from '../Api/Api';
-import { IFinance } from "../Models/IFinance";
+import { IFinance, PaymentStatus } from "../Models/IFinance";
 import { Loader } from './Loader';
 import Table from './CommonTable';
 import { ITableOptions, ITableProps } from '../Models/ITable';
+import { priceFormatter, intToOrdinalNumberString } from './Utils';
 
 interface IOwnProps {
 }
@@ -47,6 +48,21 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         }) 
     }
 
+    private paymentStatus = (cell: any, row: any) => {
+        switch (cell) {
+            case 0:
+                return <span className="label label-success">{PaymentStatus[PaymentStatus.Paid]}</span>
+            case 1:
+                return <span className="label label-warning">{PaymentStatus[PaymentStatus.Upcoming]} ({row['daysUntilDue']} days)</span>
+            case 2:
+                return <span className="label label-danger">{PaymentStatus[PaymentStatus.Late]} ({row['daysUntilDue']} days)</span>
+            case 3:
+                return <span className="label label-default">{PaymentStatus[PaymentStatus.Unknown]}</span>
+            case 4:
+                return <span className="label label-danger">{PaymentStatus[PaymentStatus.DueToday]} ({row['daysUntilDue']} days)</span>
+        }
+    }
+
     render() {
         if (this.state.loading) {
             return <Loader text="Loading finances..." />
@@ -61,7 +77,8 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             text: 'Name'
           }, {
             dataField: 'avgMonthlyAmount',
-            text: 'Avg Monthly Cost'
+            text: 'Avg Monthly Cost',
+            formatter: priceFormatter
           },, {
             dataField: 'endDate',
             text: 'End Date',
@@ -74,7 +91,17 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             classes: "hidden-xs"
           }, {
             dataField: 'monthlyDueDate',
-            text: 'Next Due'
+            text: 'Due Date',
+            formatter: intToOrdinalNumberString
+          }, {
+            dataField: 'daysUntilDue',
+            text: 'Next Due',
+            hidden: true
+          }
+          , {
+            dataField: 'paymentStatus',
+            text: 'Status',
+            formatter: this.paymentStatus
           }
         ];
 

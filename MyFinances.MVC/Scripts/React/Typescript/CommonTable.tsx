@@ -3,6 +3,7 @@ import { ITableOptions, ITableProps } from '../Models/ITable';
 import { commonApi } from '../Api/CommonApi';
 import BootstrapTable from 'react-bootstrap-table-next';
 import cellEditFactory from 'react-bootstrap-table2-editor';
+import paginationFactory from 'react-bootstrap-table2-paginator';
 
 export interface IOwnProps {
     table: string,
@@ -42,17 +43,22 @@ export default class Table extends React.Component<IOwnProps, IOwnState> {
             }
         };
 
+        const paginationOptions = paginationFactory({
+            sizePerPage: 25
+        });
+
         return(
             <div>
                 <BootstrapTable 
                     keyField='id' 
-                    selectRow={ this.props.options && this.props.options.deleteRow ? selectRow : null }
+                    selectRow={ this.props.options && this.props.options.deleteRow ? selectRow : false }
                     data={ this.props.data } 
                     columns={ this.props.columns } 
                     striped={ true } 
                     hover={ true }
                     noDataIndication="No records found"
                     cellEdit={ cellEdit } 
+                    pagination={ this.props.options.pagination === true ? paginationOptions : false }
                 />
                 <button onClick={() => this.remove()} className="btn btn-danger">Delete</button>
             </div>

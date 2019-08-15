@@ -87,7 +87,8 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
         ];
 
         const options: ITableOptions = {
-            deleteRow: true
+            deleteRow: true,
+            pagination: true
         }
 
         return (

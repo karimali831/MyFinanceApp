@@ -59,6 +59,7 @@ namespace MyFinances.Website.Controllers.API
             decimal totalFoodCost = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.FoodAndDrinks);
             decimal totalInterestAndFees = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.InterestAndFees);
             decimal totalODFees = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.InterestAndFees, Categories.OverdraftFees);
+            decimal totalCCFees = spendingService.GetTotalSpent(spendings, daysPeriod, Categories.InterestAndFees, Categories.CCInterest);
 
             var totalFuelCostByType = new decimal[3];
             totalFuelCostByType[0] = totalVanFuelCost;
@@ -74,7 +75,8 @@ namespace MyFinances.Website.Controllers.API
                         FuelCostByType = totalFuelCostByType,
                         FoodCost = totalFoodCost,
                         InterestAndFees = totalInterestAndFees,
-                        OverdraftFees = totalODFees
+                        OverdraftFees = totalODFees,
+                        CreditcardFees = totalCCFees
                     }
                 }
             );

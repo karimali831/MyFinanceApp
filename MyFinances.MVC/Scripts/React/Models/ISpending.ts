@@ -24,5 +24,6 @@ export interface ISpendingSummary
     fuelCostByType: number[],
     foodCost: number,
     interestAndFees: number,
-    overdraftFees: number
+    overdraftFees: number,
+    creditcardFees: number
 }

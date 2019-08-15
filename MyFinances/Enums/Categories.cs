@@ -42,6 +42,7 @@ namespace MyFinances.Enums
         Brian = 38,
         Mark,
         OverdraftFees,
-        AbbeyGuy
+        AbbeyGuy,
+        CCInterest
     }
 }

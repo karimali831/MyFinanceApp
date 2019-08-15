@@ -15,5 +15,6 @@ namespace MyFinances.DTOs
         public decimal FoodCost { get; set; }
         public decimal InterestAndFees { get; set; }
         public decimal OverdraftFees { get; set; }
+        public decimal CreditcardFees { get; set; }
     }
 }

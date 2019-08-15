@@ -92,7 +92,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                         </tr>
                         <tr>
                             <th scope="row">Interest & Fees</th>
-                            <td>£{summary.interestAndFees} <i><small>(<strong>od fees:</strong> £{summary.overdraftFees})</small></i></td>
+                            <td>£{summary.interestAndFees} <i><small>(<strong>overdrafts:</strong> £{summary.overdraftFees} <strong>credit cards:</strong> £{summary.creditcardFees})</small></i></td>
                         </tr>
                     </tbody>
                 </table>

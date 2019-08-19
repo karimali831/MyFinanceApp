@@ -1,6 +1,6 @@
 export interface ITableOptions {
     deleteRow: boolean,
-    pagination: boolean
+    pagination?: boolean
 }
 
 export interface ITableProps {

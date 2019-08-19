@@ -1,0 +1,60 @@
+﻿using Dapper;
+using DFM.Utils;
+using MyFinances.DTOs;
+using MyFinances.Enums;
+using MyFinances.Model;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace MyFinances.Repository
+{
+    public interface ICNWPaymentsRepository
+    {
+        Task<IEnumerable<CNWPayment>> GetAllAsync();
+        Task InsertAsync(CNWPaymentDTO dto);
+        Task<bool> WeekPaymentSummaryExists(DateTime weekstartDate);
+    }
+
+    public class CNWPaymentsRepository : ICNWPaymentsRepository
+    {
+        private readonly Func<IDbConnection> dbConnectionFactory;
+        private static readonly string TABLE = "CNWPayments";
+        private static readonly string[] FIELDS = typeof(CNWPayment).DapperFields();
+        private static readonly string[] DTOFIELDS = typeof(CNWPaymentDTO).DapperFields();
+
+        public CNWPaymentsRepository(Func<IDbConnection> dbConnectionFactory)
+        {
+            this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
+        }
+
+        public async Task<IEnumerable<CNWPayment>> GetAllAsync()
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<CNWPayment>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
+            }
+        }
+
+        public async Task InsertAsync(CNWPaymentDTO dto)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($@"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
+            }
+        }
+
+        public async Task<bool> WeekPaymentSummaryExists(DateTime weekstartDate)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.ExecuteScalarAsync<bool>($@"
+                    SELECT count(1) FROM {TABLE} WHERE WeekDate = @WeekstartDate", 
+                    new { WeekstartDate = weekstartDate }
+                ));
+            }
+        }
+    }
+}

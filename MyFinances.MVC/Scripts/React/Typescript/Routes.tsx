@@ -4,6 +4,7 @@ import { IRoute } from "../Models/IRoute";
 import { Loader } from './Loader';
 import { ITableProps, ITableOptions } from '../Models/ITable';
 import Table from './CommonTable';
+import { WeekPeriodSync } from '../Enums/WeekPeriodSync';
 
 interface IOwnProps {
 }
@@ -42,6 +43,22 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
                 routes: routes
             }
         }) 
+    }
+
+    private syncWeek = (date: string) => {
+        this.setState({ ...this.state, ...{ loading: true }}) 
+            api.syncWeek(date);
+    }
+
+    private syncWeekButton = (cell: any, row: any) => {
+        switch (cell) {
+            case WeekPeriodSync.NotWeekstartPeriod:
+                return null
+            case WeekPeriodSync.NotSynced:
+                return <button type="button" className="btn btn-primary" onClick={() => this.syncWeek(row['routeDate'])}>Sync</button>
+            case WeekPeriodSync.Synced:
+                return <button type="button" className="btn btn-success">Synced</button>
+        }
     }
 
     render() {
@@ -90,6 +107,13 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
             headerClasses: "hidden-xs",
             classes: "hidden-xs",
             hidden: true
+          }
+          , {
+            dataField: 'weekstartPeriod',
+            text: 'Sync Week',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs",
+            formatter: this.syncWeekButton
           }
         ];
 

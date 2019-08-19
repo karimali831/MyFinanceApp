@@ -29,7 +29,7 @@ namespace MyFinances.Website.Controllers.API
         [HttpGet]
         public async Task<HttpResponseMessage> GetRoutesAsync()
         {
-            var routes = await cnwService.GetAllAsync();
+            var routes = await cnwService.GetAllRoutesAsync();
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Routes = routes.Select(x => new
@@ -43,7 +43,8 @@ namespace MyFinances.Website.Controllers.API
                     x.Drops,
                     x.ExtraDrops,
                     x.ExtraMileage,
-                    x.Info
+                    x.Info,
+                    x.WeekstartPeriod
                 }).OrderByDescending(x => x.RouteDate)
             });
         }
@@ -52,8 +53,39 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> InsertAsync(CNWRouteDTO dto)
         {
-            await cnwService.InsertAsync(dto);
+            await cnwService.InsertRouteAsync(dto);
             return Request.CreateResponse(HttpStatusCode.OK, true);
+        }
+
+        [Route("weeksummary/{weekPeriod}")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetWeekSummary(string weekPeriod)
+        {
+            if (DateTime.TryParseExact(weekPeriod, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date))
+            {
+                var weekSummary = await cnwService.GetWeekSummaryAsync(date);
+                return Request.CreateResponse(HttpStatusCode.OK, weekSummary);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, true);
+            }
+            
+        }
+
+        [Route("syncweek/{weekPeriod}")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> SyncWeek(string weekPeriod)
+        {
+            if (DateTime.TryParseExact(weekPeriod, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date))
+            {
+                await cnwService.SyncWeekPeriodAsync(date);
+                return Request.CreateResponse(HttpStatusCode.OK, true);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, true);
+            }
         }
     }
 }

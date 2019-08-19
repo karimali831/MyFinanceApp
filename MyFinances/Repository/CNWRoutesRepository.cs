@@ -11,20 +11,20 @@ using System.Threading.Tasks;
 
 namespace MyFinances.Repository
 {
-    public interface ICNWRepository
+    public interface ICNWRoutesRepository
     {
         Task<IEnumerable<CNWRoute>> GetAllAsync();
         Task InsertAsync(CNWRouteDTO dto);
     }
 
-    public class CNWRepository : ICNWRepository
+    public class CNWRoutesRepository : ICNWRoutesRepository
     {
         private readonly Func<IDbConnection> dbConnectionFactory;
         private static readonly string TABLE = "CNWRoutes";
         private static readonly string[] FIELDS = typeof(CNWRoute).DapperFields();
         private static readonly string[] DTOFIELDS = typeof(CNWRouteDTO).DapperFields();
 
-        public CNWRepository(Func<IDbConnection> dbConnectionFactory)
+        public CNWRoutesRepository(Func<IDbConnection> dbConnectionFactory)
         {
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
@@ -42,6 +42,7 @@ namespace MyFinances.Repository
                     r.Drops,
                     r.ExtraDrops,
                     r.Info,
+                    r.RouteTypeId,
                     c.Name AS RouteType
                 FROM {TABLE} r 
                 INNER JOIN Categories c 

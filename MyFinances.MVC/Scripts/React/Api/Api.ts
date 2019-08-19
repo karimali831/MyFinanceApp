@@ -115,6 +115,25 @@ export class Api {
         })
         .then(data => data as ICNWResponse);
     }
+
+    public syncWeek = async (date: string) => {
+
+        console.log(this.rootUrl+"/cnw/syncweek/"+date)
+
+        return fetch(`${this.rootUrl}/cnw/syncweek/${date}`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+        })
+    }
 }
 
 export const api = new Api();

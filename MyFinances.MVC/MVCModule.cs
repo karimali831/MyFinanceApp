@@ -19,8 +19,10 @@ namespace MyFinances.Ninject
             Bind<ISpendingRepository>().To<SpendingRepository>();
             Bind<ICategoryRepository>().To<CategoryRepository>();
             Bind<IBaseRepository>().To<BaseRepository>();
-            Bind<ICNWRepository>().To<CNWRepository>();
+            Bind<ICNWRoutesRepository>().To<CNWRoutesRepository>();
             Bind<IIncomeRepository>().To<IncomeRepository>();
+            Bind<ICNWPaymentsRepository>().To<CNWPaymentsRepository>();
+            Bind<ICNWRatesRepository>().To<CNWRatesRepository>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using MyFinances.Enums;
+﻿using DFM.Utils;
+using MyFinances.Enums;
 using System;
 using System.Data.Entity.ModelConfiguration;
 
@@ -9,7 +10,7 @@ namespace MyFinances.Model
         public int Id { get; set; }
         public string RouteNo { get; set; }
         public string RouteType { get; set; }
-        public CategoryType RouteTypeId { get; set; }
+        public Categories RouteTypeId { get; set; }
         public DateTime RouteDate { get; set; }
         public decimal? Mileage { get; set; }
         public decimal? Mpg { get; set; }
@@ -17,6 +18,8 @@ namespace MyFinances.Model
         public int? ExtraDrops { get; set; }
         public decimal? ExtraMileage { get; set; }
         public string Info { get; set; }
+        [DbIgnore]
+        public WeekPeriodSync WeekstartPeriod { get; set; }
     }
 
     public class CNWRouteMap : EntityTypeConfiguration<CNWRoute>

@@ -10,6 +10,18 @@ export interface IOwnState {
     active: string
 }
 
+export const AddMenu = (active: string) => 
+    <nav className="navbar navbar-default">
+        <div className="container-fluid">
+            <ul className="nav navbar-nav">
+                <li className={active === "spending" ? "active" : null}><Link to="/addspending">Add Spending</Link></li>
+                <li className={active === "route" ? "active" : null} ><Link to="/addroute">Add Route</Link></li>
+                <li className={active === "income" ? "active" : null}><Link to="/addincome/">Add Income</Link></li>
+                <li className={active === "expense" ? "active" : null}><Link to="/addexpense/">Add Expense</Link></li>
+            </ul>
+        </div>
+    </nav>
+
 export default class Menu extends React.Component<IOwnProps, IOwnState> {
     constructor(props: IOwnProps) {
         super(props);

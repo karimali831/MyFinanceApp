@@ -5,6 +5,7 @@ import { ICategory } from '../Models/ICategory';
 import { IRouteDTO } from '../Models/IRoute'
 import { Redirect } from 'react-router-dom'
 import { Loader } from './Loader';
+import { AddMenu } from './Menu';
 
 interface IOwnProps {
 }
@@ -74,6 +75,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
 
         return (
             <div style={{margin: '0 auto', border: 1}}>
+                {AddMenu("route")}
                 <div className="form-group">
                     <input className="form-control" type="text" value={this.state.routeNo} placeholder="Enter route no" onChange={(e) => { this.onRouteNoChanged(e);}} />
                 </div>

@@ -5,6 +5,7 @@ import { ICategory } from '../Models/ICategory';
 import { IFinanceDTO } from '../Models/IFinance';
 import { Redirect } from 'react-router-dom'
 import { Loader } from './Loader';
+import { AddMenu } from './Menu';
 
 interface IOwnProps {
 }
@@ -60,6 +61,7 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
 
         return (
             <div style={{margin: '0 auto', border: 1}}>
+                {AddMenu("expense")}
                 <div className="form-group">
                     <input className="form-control" type="text" value={this.state.name} placeholder="Enter expenditure" onChange={(e) => { this.onExpenseChanged(e);}} />
                 </div>

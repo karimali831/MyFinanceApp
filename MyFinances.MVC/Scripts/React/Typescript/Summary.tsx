@@ -3,6 +3,8 @@ import { api } from '../Api/Api'
 import { Loader } from './Loader';
 import { ISpendingSummary } from '../Models/ISpending';
 import IncomeSummary from './IncomeSummary';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 interface IOwnProps {
 }
@@ -10,7 +12,9 @@ interface IOwnProps {
 export interface IOwnState {
     spendingSummary: ISpendingSummary
     daysPeriod: number,
-    loading: boolean
+    loading: boolean,
+    showFuelTypes: boolean,
+    showInterestAndFeesTypes: boolean
 }
 
 export default class SpendingSummary extends React.Component<IOwnProps, IOwnState> {
@@ -19,7 +23,9 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
         this.state = { 
             spendingSummary: undefined,
             daysPeriod: -1,
-            loading: true
+            loading: true,
+            showFuelTypes: false,
+            showInterestAndFeesTypes: false
         };
     }
 
@@ -51,6 +57,14 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
         this.setState({ ...this.state, daysPeriod: Number(e.target.value) })
     }
 
+    private showFuelTypes = () => {
+        this.setState({ ...this.state, showFuelTypes: !this.state.showFuelTypes })
+    }
+
+    private showInterestAndFeesTypes = () => {
+        this.setState({ ...this.state, showInterestAndFeesTypes: !this.state.showInterestAndFeesTypes })
+    }
+
     render() {
         if (this.state.loading) {
             return <Loader text="Loading spending summary..." />
@@ -77,13 +91,27 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row" style={{width: '25%'}}>Total Spent</th>
+                            <th scope="row">Total Spent</th>
                             <td>£{summary.totalSpent}</td>
                         </tr>
                         <tr>
                             <th scope="row">Fuel Cost</th>
                             <td>
-                                £{summary.fuelCost} <i><small>(<strong>van:</strong> £{summary.fuelCostByType[0]} <strong>gti:</strong> £{summary.fuelCostByType[1]} <strong>rcz:</strong> £{summary.fuelCostByType[2]})</small></i>
+                                <div onClick={() => this.showFuelTypes()}>
+                                    <FontAwesomeIcon icon={faSearch} /> £{summary.fuelCost} 
+                                    {this.state.showFuelTypes ? 
+                                    <>
+                                        <br />
+                                        <small>
+                                            <i>
+                                                <strong>van:</strong> £{summary.fuelCostByType[0]} <br />
+                                                <strong>gti:</strong> £{summary.fuelCostByType[1]} <br />
+                                                <strong>rcz:</strong> £{summary.fuelCostByType[2]}
+                                            </i>
+                                        </small>
+                                    </>
+                                    : null}
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -98,7 +126,22 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                         </tr>
                         <tr>
                             <th scope="row">Interest & Fees</th>
-                            <td>£{summary.interestAndFees} <i><small>(<strong>overdrafts:</strong> £{summary.overdraftFees} <strong>credit cards:</strong> £{summary.creditcardFees})</small></i></td>
+                            <td>
+                                <div onClick={() => this.showInterestAndFeesTypes()}>
+                                    <FontAwesomeIcon icon={faSearch} /> £{summary.interestAndFees}               
+                                    {this.state.showInterestAndFeesTypes ? 
+                                    <>
+                                        <br />
+                                        <small>
+                                            <i>
+                                                <strong>overdrafts:</strong> £{summary.overdraftFees} <br />
+                                                <strong>credit cards:</strong> £{summary.creditcardFees}
+                                            </i>
+                                        </small>
+                                    </>
+                                    : null}
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

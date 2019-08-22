@@ -29,6 +29,10 @@ function App() {
                 <Route path="/spending/" component={Spendings} />
                 <Route path="/route/" component={Routes} />
                 <Route path="/summary/" component={WeekSummaries} />
+                <Route path='/privacy-policy' component={() => { 
+                    window.location.href = 'https://example.com/1234'; 
+                    return null;
+                }}/>
             </Router>
         </div>
     );

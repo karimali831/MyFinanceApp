@@ -8,12 +8,15 @@ import { WeekPeriodSync } from '../Enums/WeekPeriodSync';
 import { weekSummaryUrl } from '../Typescript/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRetweet, faInfo } from '@fortawesome/free-solid-svg-icons'
+import { Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 interface IOwnProps {
 }
 
 export interface IOwnState {
     loading: boolean,
+    redirectToSummary: string
     routes: IRoute[]
 }
 
@@ -22,6 +25,7 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
         super(props);
         this.state = { 
             loading: true,
+            redirectToSummary: null,
             routes: []
         };
     }
@@ -46,9 +50,20 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
         }) 
     }
 
+    private syncWeekSuccess = (date: string) => {
+        this.setState({ ...this.state,
+            ...{ 
+                loading: false, 
+                redirectToSummary: date
+            }
+        }) 
+    }
+
     private syncWeek = (date: string) => {
-        this.setState({ ...this.state, ...{ loading: true }}) 
-            api.syncWeek(date);
+        this.setState({ ...this.state, loading: true })
+
+        api.syncWeek(date)
+          .then(() => this.syncWeekSuccess(date));
     }
 
     private syncWeekButton = (cell: any, row: any) => {
@@ -69,6 +84,13 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
         if (this.state.loading) {
             return <Loader text="Loading routes..." />
         }
+
+        if (this.state.redirectToSummary !== null) {
+          
+            window.location.assign(weekSummaryUrl(this.state.redirectToSummary))
+        }
+
+        {console.log("wtf = " + this.state.redirectToSummary)}
 
         const columns: ITableProps[] = [{
             dataField: 'id',

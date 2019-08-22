@@ -16,6 +16,7 @@ namespace MyFinances.Service
         Task SyncWeekPeriodAsync(DateTime weekStart);
         Task<CNWPayment> GetWeekSummaryAsync(DateTime weekStart);
         Task<IEnumerable<CNWPayment>> GetWeekSummariesAsync();
+        Task<decimal> GetFuelIn(int daysInterval);
     }
 
     public class CNWService : ICNWService
@@ -135,6 +136,13 @@ namespace MyFinances.Service
         public async Task InsertRouteAsync(CNWRouteDTO dto)
         {
             await cnwRoutesRepository.InsertAsync(dto);
+        }
+
+        public async Task<decimal> GetFuelIn(int daysInterval)
+        {
+            return (await cnwPaymentsRepository.GetAllAsync())
+                .Where(x => x.PayDate >= DateTime.Now.Date.AddDays(daysInterval))
+                .Sum(x => x.ActualMileagePay) ?? 0;
         }
     }
 }

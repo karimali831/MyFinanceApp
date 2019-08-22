@@ -13,17 +13,22 @@ namespace MyFinances.Service
     {
         Task<IEnumerable<Spending>> GetAllAsync();
         Task InsertAsync(SpendingDTO dto);
+        Task<decimal> GetFuelIn(int daysInterval);
         bool CheckExpenseIsPaid(int financeId);
-        decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
+        Task<decimal> GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
     }
 
     public class SpendingService : ISpendingService
     {
         private readonly ISpendingRepository spendingRepository;
+        private readonly ICNWService cnwService;
 
-        public SpendingService(ISpendingRepository spendingRepository)
+        public SpendingService(
+            ISpendingRepository spendingRepository,
+            ICNWService cnwService)
         {
             this.spendingRepository = spendingRepository ?? throw new ArgumentNullException(nameof(spendingRepository));
+            this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
         }
 
         public async Task<IEnumerable<Spending>> GetAllAsync()
@@ -42,7 +47,7 @@ namespace MyFinances.Service
             return spendingRepository.PaidWithinLastWeek(financeId);
         }
 
-        public decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId, Categories? secondCatId) 
+        public async Task<decimal> GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId, Categories? secondCatId) 
         {
             var getSpendings = spendings.Where(x => x.Date >= DateTime.Now.Date.AddDays(daysInterval));
                 
@@ -56,7 +61,18 @@ namespace MyFinances.Service
                 getSpendings = getSpendings.Where(x => (Categories)x.SecondCatId == secondCatId);
             }
 
-            return getSpendings.Sum(x => x.Amount);
+            decimal fuelIn = 0;
+            if (catId == Categories.Fuel)
+            {
+                fuelIn = await GetFuelIn(daysInterval);
+            }
+
+            return getSpendings.Sum(x => x.Amount) - fuelIn;
+        }
+
+        public async Task<decimal> GetFuelIn(int daysInterval)
+        {
+            return await cnwService.GetFuelIn(daysInterval);
         }
     }
 }

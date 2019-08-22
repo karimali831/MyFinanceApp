@@ -37,7 +37,7 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> UpdateAsync(string table, string field, int id, string value = "")
         {
-            string fieldToPascal = StringExtensions.FirstCharToUpper(field);
+            string fieldToPascal = Utils.FirstCharToUpper(field);
 
             object dbValue = value;
             if (DateTime.TryParseExact(value, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date)) {

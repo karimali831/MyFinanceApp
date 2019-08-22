@@ -15,7 +15,6 @@ interface IOwnProps {
 export interface IOwnState {
     loading: boolean,
     routes: IRoute[]
-    calculateWeeklyPay: number
 }
 
 export default class Routes extends React.Component<IOwnProps, IOwnState> {
@@ -23,8 +22,7 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
         super(props);
         this.state = { 
             loading: true,
-            routes: [],
-            calculateWeeklyPay: undefined
+            routes: []
         };
     }
 
@@ -137,7 +135,6 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
                     columns={columns}
                     options={options}
                 />      
-                <label>Calculated wage amount: £{this.state.calculateWeeklyPay}</label>
             </div>
         )
     }

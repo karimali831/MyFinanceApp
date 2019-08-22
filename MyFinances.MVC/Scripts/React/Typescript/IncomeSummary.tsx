@@ -87,7 +87,7 @@ export default class IncomeSummary extends React.Component<IOwnProps, IOwnState>
                         <td>£{summary.incomeUberEats}</td>
                     </tr>
                     <tr>
-                        <th scope="row">SB</th>
+                        <th scope="row">Freelance</th>
                         <td>£{summary.incomeSB}</td>
                     </tr>
                 </tbody>

@@ -117,7 +117,7 @@
     <Compile Include="Enums\WeekPeriodSync.cs" />
     <Compile Include="Enums\PaymentStatus.cs" />
     <Compile Include="Enums\CategoryType.cs" />
-    <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Model\CNWRates.cs" />
     <Compile Include="Model\CNWPayment.cs" />
     <Compile Include="Model\CNWRoute.cs" />

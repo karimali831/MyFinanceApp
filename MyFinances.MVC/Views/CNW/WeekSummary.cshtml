@@ -1,4 +1,5 @@
 ﻿@model MyFinances.Model.CNWPayment
+@using MyFinances.Helpers
 @{
     ViewBag.Title = "CNW Week Summary";
 }
@@ -46,25 +47,25 @@
                 <th scope="row">Miles</th>
                 <td>@Model.CalcMiles</td>
                 <td>@Model.ActualMiles</td>
-                <td>@(Model.ActualMiles - Model.CalcMiles)</td>
+                <td>@Html.Raw(Utils.AmountDifference(Model.ActualMiles, Model.CalcMiles, ""))</td>
             </tr>
             <tr>
                 <th scope="row">Route Pay</th>
-                <td>£@Model.CalcRoutePay</td>
-                <td>£@Model.ActualRoutePay</td>
-                <td>£@(Model.ActualRoutePay - Model.CalcRoutePay)</td>
+                <td>£@Model.CalcRoutePay.ToString("#.##")</td>
+                <td>£@(Model.ActualRoutePay.HasValue ? Model.ActualRoutePay.Value.ToString("#.##") : null)</td>
+                <td>@Html.Raw(Utils.AmountDifference(Model.ActualRoutePay, Model.CalcRoutePay))</td>
             </tr>
             <tr>
                 <th scope="row">Mileage Pay</th>
-                <td>£@Model.CalcMileagePay</td>
-                <td>£@Model.ActualMileagePay</td>
-                <td>£@(Model.ActualMileagePay - Model.CalcMileagePay)</td>
+                <td>£@Model.CalcMileagePay.ToString("#.##")</td>
+                <td>£@(Model.ActualMileagePay.HasValue ? Model.ActualMileagePay.Value.ToString("#.##") : null)</td>
+                <td>@Html.Raw(Utils.AmountDifference(Model.ActualMileagePay, Model.CalcMileagePay))</td>
             </tr>
             <tr>
                 <th scope="row">Total Pay</th>
-                <td>£@Model.CalcTotalPay</td>
-                <td>£@Model.ActualTotalPay</td>
-                <td>£@(Model.ActualTotalPay - Model.CalcTotalPay)</td>
+                <td>£@Model.CalcTotalPay.ToString("#.##")</td>
+                <td>£@(Model.ActualTotalPay.HasValue ? Model.ActualTotalPay.Value.ToString("#.##") : null)</td>
+                <td>@Html.Raw(Utils.AmountDifference(Model.ActualTotalPay, Model.CalcTotalPay))</td>
             </tr>
         </tbody>
     </table>

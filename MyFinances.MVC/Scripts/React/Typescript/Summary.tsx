@@ -77,17 +77,23 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row">Total Spent</th>
+                            <th scope="row" style={{width: '25%'}}>Total Spent</th>
                             <td>£{summary.totalSpent}</td>
                         </tr>
                         <tr>
                             <th scope="row">Fuel Cost</th>
                             <td>
-                                £{summary.fuelCost} <i><small> (<strong>van:</strong> £{summary.fuelCostByType[0]} <strong>gti:</strong> £{summary.fuelCostByType[1]} <strong>rcz:</strong> £{summary.fuelCostByType[2]})</small></i>
+                                £{summary.fuelCost} <i><small>(<strong>van:</strong> £{summary.fuelCostByType[0]} <strong>gti:</strong> £{summary.fuelCostByType[1]} <strong>rcz:</strong> £{summary.fuelCostByType[2]})</small></i>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">Food Cost</th>
+                            <th scope="row">Fuel In</th>
+                            <td>
+                                £{summary.fuelIn}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Foods & Drinks</th>
                             <td>£{summary.foodCost}</td>
                         </tr>
                         <tr>

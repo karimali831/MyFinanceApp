@@ -227,6 +227,7 @@
     <Compile Include="Controllers\Api\CNWController.cs" />
     <Compile Include="Controllers\Api\SpendingsController.cs" />
     <Compile Include="Controllers\Api\FinancesController.cs" />
+    <Compile Include="Controllers\CNWController.cs" />
     <Compile Include="Controllers\FinancesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -280,6 +281,7 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Finance\Index.cshtml" />
+    <Content Include="Views\CNW\WeekSummary.cshtml" />
     <None Include="Web.Stage.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

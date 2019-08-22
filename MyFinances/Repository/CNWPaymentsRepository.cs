@@ -14,7 +14,9 @@ namespace MyFinances.Repository
     public interface ICNWPaymentsRepository
     {
         Task<IEnumerable<CNWPayment>> GetAllAsync();
+        Task<CNWPayment> GetAsync(DateTime weekPeriod);
         Task InsertAsync(CNWPaymentDTO dto);
+        Task DeleteAsync(DateTime weekStart);
         Task<bool> WeekPaymentSummaryExists(DateTime weekstartDate);
     }
 
@@ -38,11 +40,27 @@ namespace MyFinances.Repository
             }
         }
 
+        public async Task<CNWPayment> GetAsync(DateTime weekPeriod)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<CNWPayment>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).SingleOrDefault(x => x.WeekDate == weekPeriod);
+            }
+        }
+
         public async Task InsertAsync(CNWPaymentDTO dto)
         {
             using (var sql = dbConnectionFactory())
             {
                 await sql.ExecuteAsync($@"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
+            }
+        }
+
+        public async Task DeleteAsync(DateTime weekStart)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($@"{DapperHelper.DELETE(TABLE)} WHERE WeekDate = @WeekStart ", new { WeekStart = weekStart });
             }
         }
 

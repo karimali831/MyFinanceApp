@@ -3,10 +3,12 @@ import { ISpending, ISpendingSummary} from '../Models/ISpending'
 import { IFinance } from '../Models/IFinance'
 import { IRoute } from '../Models/IRoute'
 import { IIncome, IIncomeSummary } from '../Models/IIncome';
+import { ICNWPayment } from '../Models/ICNWPayment';
+import { rootUrl } from '../Typescript/Utils';
 
 export class Api {
 
-    public rootUrl: string = window.location.origin + "/api";
+    public rootUrl: string = `${rootUrl}/api`;
 
     public spendings = async (): Promise<ISpendingResponse> => {
         return fetch(`${this.rootUrl}/spendings`, {
@@ -98,6 +100,24 @@ export class Api {
         .then(data => data as IIncomeResponse);
     }
 
+    public weekSummaries = async (): Promise<IWeekSummariesResponse> => {
+        return fetch(`${this.rootUrl}/cnw/weeksummaries`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => data as IWeekSummariesResponse);
+    }
+
     public routes = async (): Promise<ICNWResponse> => {
         return fetch(`${this.rootUrl}/cnw`, {
             method: "GET",
@@ -117,9 +137,6 @@ export class Api {
     }
 
     public syncWeek = async (date: string) => {
-
-        console.log(this.rootUrl+"/cnw/syncweek/"+date)
-
         return fetch(`${this.rootUrl}/cnw/syncweek/${date}`, {
             method: "POST",
             headers: {
@@ -166,4 +183,8 @@ export interface IIncomeResponse {
 export interface ICNWResponse {
     routes: IRoute[]
     calculatedWeeklyPay: number
+}
+
+export interface IWeekSummariesResponse {
+    weekSummaries: ICNWPayment[]
 }

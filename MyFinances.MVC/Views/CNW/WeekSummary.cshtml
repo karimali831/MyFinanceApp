@@ -1,0 +1,70 @@
+﻿@model MyFinances.Model.CNWPayment
+@{
+    ViewBag.Title = "CNW Week Summary";
+}
+
+    <h2>CNW Week Summary</h2>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">Invoice No</th>
+                <td>@Model.InvoiceNo</td>
+            </tr>
+            <tr>
+                <th scope="row" width="30%">Week No</th>
+                <td>@Model.WeekNo</td>
+            <tr>
+                <th scope="row">Week Date</th>
+                <td>@Model.WeekDate.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <th scope="row">Invoice Date</th>
+                <td>@Model.PayDate.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <th scope="row">Routes</th>
+                <td>@Model.Routes</td>
+            </tr>
+            <tr>
+                <th scope="row">Info</th>
+                <td>@Model.Info</td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col" width="25%"></th>
+                <th scope="col" width="25%">Calculated</th>
+                <th scope="col" width="25%">Actual</th>
+                <th scope="col">Difference</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Miles</th>
+                <td>@Model.CalcMiles</td>
+                <td>@Model.ActualMiles</td>
+                <td>@(Model.ActualMiles - Model.CalcMiles)</td>
+            </tr>
+            <tr>
+                <th scope="row">Route Pay</th>
+                <td>£@Model.CalcRoutePay</td>
+                <td>£@Model.ActualRoutePay</td>
+                <td>£@(Model.ActualRoutePay - Model.CalcRoutePay)</td>
+            </tr>
+            <tr>
+                <th scope="row">Mileage Pay</th>
+                <td>£@Model.CalcMileagePay</td>
+                <td>£@Model.ActualMileagePay</td>
+                <td>£@(Model.ActualMileagePay - Model.CalcMileagePay)</td>
+            </tr>
+            <tr>
+                <th scope="row">Total Pay</th>
+                <td>£@Model.CalcTotalPay</td>
+                <td>£@Model.ActualTotalPay</td>
+                <td>£@(Model.ActualTotalPay - Model.CalcTotalPay)</td>
+            </tr>
+        </tbody>
+    </table>

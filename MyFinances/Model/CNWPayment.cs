@@ -1,4 +1,5 @@
-﻿using MyFinances.Enums;
+﻿using DFM.Utils;
+using MyFinances.Enums;
 using System;
 using System.Data.Entity.ModelConfiguration;
 
@@ -15,6 +16,8 @@ namespace MyFinances.Model
         public decimal CalcTotalPay { get; set; }
         public decimal? ActualMiles { get; set; }
         public decimal? ActualRoutePay { get; set; }
+        [DbIgnore]
+        public decimal? ActualMileagePay { get; set; }
         public decimal? ActualTotalPay { get; set; }
         public decimal AverageMpg { get; set; }
         public DateTime PayDate { get; set; }

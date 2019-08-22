@@ -5,6 +5,9 @@ import { Loader } from './Loader';
 import { ITableProps, ITableOptions } from '../Models/ITable';
 import Table from './CommonTable';
 import { WeekPeriodSync } from '../Enums/WeekPeriodSync';
+import { weekSummaryUrl } from '../Typescript/Utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRetweet, faInfo } from '@fortawesome/free-solid-svg-icons'
 
 interface IOwnProps {
 }
@@ -55,14 +58,16 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
             case WeekPeriodSync.NotWeekstartPeriod:
                 return null
             case WeekPeriodSync.NotSynced:
-                return <button type="button" className="btn btn-primary" onClick={() => this.syncWeek(row['routeDate'])}>Sync</button>
+                return <span><FontAwesomeIcon icon={faRetweet} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Sync</a></span>
             case WeekPeriodSync.Synced:
-                return <button type="button" className="btn btn-success">Synced</button>
+                return <span>
+                           <FontAwesomeIcon icon={faRetweet} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Re-Sync</a><br />
+                           <FontAwesomeIcon icon={faInfo} /> <a href={weekSummaryUrl(row['routeDate'])}>Details</a>
+                        </span>
         }
     }
 
     render() {
-
         if (this.state.loading) {
             return <Loader text="Loading routes..." />
         }
@@ -73,13 +78,16 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
             hidden: true
           }, {
             dataField: 'routeNo',
-            text: 'Route'
+            text: 'Route',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
           }, {
             dataField: 'routeType',
             text: 'Type'
           },, {
             dataField: 'routeDate',
-            text: 'Date'
+            text: 'Date',
+
           }, {
             dataField: 'drops',
             text: 'Stops'
@@ -111,8 +119,7 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
           , {
             dataField: 'weekstartPeriod',
             text: 'Sync Week',
-            headerClasses: "hidden-xs",
-            classes: "hidden-xs",
+            editable: false,
             formatter: this.syncWeekButton
           }
         ];

@@ -57,20 +57,22 @@ namespace MyFinances.Website.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
 
-        [Route("weeksummary/{weekPeriod}")]
+        [Route("weeksummaries")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetWeekSummary(string weekPeriod)
+        public async Task<HttpResponseMessage> GetWeekSummaries()
         {
-            if (DateTime.TryParseExact(weekPeriod, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date))
-            {
-                var weekSummary = await cnwService.GetWeekSummaryAsync(date);
-                return Request.CreateResponse(HttpStatusCode.OK, weekSummary);
-            }
-            else
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, true);
-            }
-            
+            var weekSummaries = (await cnwService.GetWeekSummariesAsync());
+            return Request.CreateResponse(HttpStatusCode.OK, new {
+                WeekSummaries = weekSummaries.Select(x => new
+                {
+                    x.Id,
+                    x.InvoiceNo,
+                    WeekDate = x.WeekDate.ToString("dd-MM-yy"),
+                    x.ActualMiles,
+                    x.ActualRoutePay,
+                    x.ActualTotalPay
+                })
+            });
         }
 
         [Route("syncweek/{weekPeriod}")]

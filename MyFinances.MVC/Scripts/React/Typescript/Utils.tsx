@@ -29,3 +29,7 @@ export const priceFormatter = (cell: any, row: any) => {
     // `<i class='glyphicon glyphicon-gbp'></i> ${cell}`;
     return `£${cell}`;
 }
+
+
+export const rootUrl: string = window.location.origin;
+export const weekSummaryUrl = (date: string) => `${rootUrl}/cnw/weeksummary/${date}`;

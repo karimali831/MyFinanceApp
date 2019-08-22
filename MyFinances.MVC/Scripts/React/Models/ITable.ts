@@ -9,5 +9,6 @@ export interface ITableProps {
     headerClasses?: string, 
     classes?: string
     hidden?: boolean,
-    formatter?: (cell, row) => void
+    formatter?: (cell, row) => void,
+    editable?: boolean
 }

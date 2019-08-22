@@ -13,9 +13,9 @@ namespace MyFinances.Service
     {
         Task<IEnumerable<CNWRoute>> GetAllRoutesAsync();
         Task InsertRouteAsync(CNWRouteDTO dto);
-        Task<IEnumerable<CNWPayment>> GetAllPaymentsAsync();
         Task SyncWeekPeriodAsync(DateTime weekStart);
-        Task<CNWPaymentDTO> GetWeekSummaryAsync(DateTime weekStart);
+        Task<CNWPayment> GetWeekSummaryAsync(DateTime weekStart);
+        Task<IEnumerable<CNWPayment>> GetWeekSummariesAsync();
     }
 
     public class CNWService : ICNWService
@@ -68,12 +68,26 @@ namespace MyFinances.Service
             return routes;
         }
 
-        public async Task<IEnumerable<CNWPayment>> GetAllPaymentsAsync()
+        public async Task<CNWPayment> GetWeekSummaryAsync(DateTime weekStart)
+        {
+            var weekSummary = await cnwPaymentsRepository.GetAsync(weekStart);
+            var rates = await cnwRatesRepository.GetAsync();
+
+            if (weekSummary != null)
+            {
+                weekSummary.ActualMileagePay = rates.Mileage * weekSummary.ActualMiles;
+            }
+
+            return weekSummary;
+        }
+
+        public async Task<IEnumerable<CNWPayment>> GetWeekSummariesAsync()
         {
             return await cnwPaymentsRepository.GetAllAsync();
         }
 
-        public async Task<CNWPaymentDTO> GetWeekSummaryAsync(DateTime weekStart)
+
+        public async Task SyncWeekPeriodAsync(DateTime weekStart)
         {
             if (weekStart.DayOfWeek != DayOfWeek.Sunday)
             {
@@ -82,9 +96,15 @@ namespace MyFinances.Service
 
             var endOfWeek = weekStart.AddDays(6);
 
-            if ( DateTime.UtcNow <= endOfWeek)
+            if (DateTime.UtcNow <= endOfWeek)
             {
                 throw new ApplicationException("You can only sync at the end of the week");
+            }
+
+            // if exists, re-sync by deleting
+            if (await cnwPaymentsRepository.WeekPaymentSummaryExists(weekStart))
+            {
+                await cnwPaymentsRepository.DeleteAsync(weekStart);
             }
 
             var rates = await cnwRatesRepository.GetAsync();
@@ -108,16 +128,8 @@ namespace MyFinances.Service
                 model.CalcMileagePay = rates.Mileage * model.CalcMiles;
                 model.CalcTotalPay = (model.CalcRoutePay + model.CalcMileagePay) - deductions;
 
-                return model;
+                await cnwPaymentsRepository.InsertAsync(model);
             }
-
-            return null;
-        }
-
-        public async Task SyncWeekPeriodAsync(DateTime weekStart)
-        {
-            var weekSummary = await GetWeekSummaryAsync(weekStart);
-            await cnwPaymentsRepository.InsertAsync(weekSummary);
         }
 
         public async Task InsertRouteAsync(CNWRouteDTO dto)

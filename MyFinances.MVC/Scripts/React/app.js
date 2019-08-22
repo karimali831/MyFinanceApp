@@ -8,6 +8,7 @@ import Incomes from './Typescript/Incomes'
 import AddSpending from './Typescript/AddSpending'
 import AddExpense from './Typescript/AddExpense'
 import AddIncome from './Typescript/AddIncome'
+import WeekSummaries from './Typescript/WeekSummaries'
 import Menu from './Typescript/Menu'
 import AddRoute from './Typescript/AddRoute'
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/income/" component={Incomes} />
                 <Route path="/spending/" component={Spendings} />
                 <Route path="/route/" component={Routes} />
+                <Route path="/summary/" component={WeekSummaries} />
             </Router>
         </div>
     );

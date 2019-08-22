@@ -7,6 +7,7 @@ import { ISpendingDTO } from '../Models/ISpending';
 import { Loader } from './Loader';
 import { IFinance } from '../Models/IFinance';
 import { api } from '../Api/Api';
+import { Link } from "react-router-dom";
 
 interface IOwnProps {
 }
@@ -111,6 +112,15 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
 
         return (
             <div style={{margin: '0 auto', border: 1}}>
+                <nav className="navbar navbar-default">
+                    <div className="container-fluid">
+                        <ul className="nav navbar-nav">
+                            <li><Link className={"nav-link"} to="/addroute">Add Route</Link></li>
+                            <li><Link className={"nav-link"} to="/addincome/">Add Income</Link></li>
+                            <li><Link className={"nav-link"} to="/addexpense/">Add Expense</Link></li>
+                        </ul>
+                    </div>
+                </nav>
                 <div className="form-group">
                     <input className="form-control" type="text" value={this.state.name} placeholder="Enter item" onChange={(e) => { this.onSpendingChanged(e);}} />
                 </div>

@@ -140,14 +140,14 @@ namespace MyFinances.Service
 
         public async Task InsertRouteAsync(CNWRouteDTO dto)
         {
+            await cnwRoutesRepository.InsertAsync(dto);
+
             // auto sync if adding route on last day of the week
             if (dto.RouteDate.DayOfWeek == DayOfWeek.Saturday)
             {
                 var firstWorkingDateOfWeek = dto.RouteDate.AddDays(-6);
                 await SyncWeekPeriodAsync(firstWorkingDateOfWeek);
             }
-
-            await cnwRoutesRepository.InsertAsync(dto);
         }
 
         public async Task<decimal> GetFuelIn(int daysInterval)

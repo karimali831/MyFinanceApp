@@ -70,8 +70,10 @@ namespace MyFinances.Service
                 return null;
             }
 
-            var strDate = $"{DateTime.Now.ToString("MM")}-{monthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
-            var date = DateTime.Parse(strDate);
+            int monthElapsed = monthlyDueDate >= DateTime.Now.Month ? 0 : 1;
+
+            var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{monthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
+            var date = DateTime.Parse(dueDate);
             return (int)(date - DateTime.UtcNow).TotalDays;
         }
 
@@ -83,9 +85,16 @@ namespace MyFinances.Service
             }
 
             var daysUntilDue = DaysUntilDue(monthlyDueDate.Value);
-            var paid = spendingService.CheckExpenseIsPaid(Id);
+            var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(Id);
 
-            if (paid)
+            if (!expenseLastPaidDate.HasValue)
+            {
+                return PaymentStatus.Unknown;
+            }
+
+            var daysLastPaid = (DateTime.UtcNow - expenseLastPaidDate.Value).TotalDays;
+
+            if (daysLastPaid <= 7)
             {
                 return PaymentStatus.Paid;
             }

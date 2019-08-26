@@ -10,6 +10,7 @@ namespace MyFinances.Enums
     {
         NotWeekstartPeriod,
         NotSynced,
+        NotSyncedWait,
         Synced
     }
 }

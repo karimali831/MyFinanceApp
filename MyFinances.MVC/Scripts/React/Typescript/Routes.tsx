@@ -7,9 +7,7 @@ import Table from './CommonTable';
 import { WeekPeriodSync } from '../Enums/WeekPeriodSync';
 import { weekSummaryUrl } from '../Typescript/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRetweet, faInfo } from '@fortawesome/free-solid-svg-icons'
-import { Redirect } from 'react-router-dom'
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { faInfo, faExclamationCircle, faSync } from '@fortawesome/free-solid-svg-icons'
 
 interface IOwnProps {
 }
@@ -68,13 +66,15 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
 
     private syncWeekButton = (cell: any, row: any) => {
         switch (cell) {
-            case WeekPeriodSync.NotWeekstartPeriod:
+            case WeekPeriodSync.NotWeekstartPeriod :
                 return null
+            case WeekPeriodSync.NotSyncedWait :
+              return <span><FontAwesomeIcon icon={faExclamationCircle} /> Wait</span>
             case WeekPeriodSync.NotSynced:
-                return <span><FontAwesomeIcon icon={faRetweet} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Sync</a></span>
+                return <span><FontAwesomeIcon icon={faSync} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Sync</a></span>
             case WeekPeriodSync.Synced:
                 return <span>
-                           <FontAwesomeIcon icon={faRetweet} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Re-Sync</a><br />
+                           <FontAwesomeIcon icon={faSync} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Re-Sync</a><br />
                            <FontAwesomeIcon icon={faInfo} /> <a href={weekSummaryUrl(row['routeDate'])}>Details</a>
                         </span>
         }
@@ -86,11 +86,8 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
         }
 
         if (this.state.redirectToSummary !== null) {
-          
             window.location.assign(weekSummaryUrl(this.state.redirectToSummary))
         }
-
-        {console.log("wtf = " + this.state.redirectToSummary)}
 
         const columns: ITableProps[] = [{
             dataField: 'id',

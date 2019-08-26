@@ -55,10 +55,15 @@ namespace MyFinances.Service
                     {
                         route.WeekstartPeriod = WeekPeriodSync.Synced;
                     }
+                    else if (DateTime.UtcNow <= route.RouteDate.AddDays(6))
+                    {
+                        route.WeekstartPeriod = WeekPeriodSync.NotSyncedWait;
+                    }
                     else
                     {
                         route.WeekstartPeriod = WeekPeriodSync.NotSynced;
                     }
+
                 }
                 else
                 {
@@ -135,6 +140,13 @@ namespace MyFinances.Service
 
         public async Task InsertRouteAsync(CNWRouteDTO dto)
         {
+            // auto sync if adding route on last day of the week
+            if (dto.RouteDate.DayOfWeek == DayOfWeek.Saturday)
+            {
+                var firstWorkingDateOfWeek = dto.RouteDate.AddDays(-6);
+                await SyncWeekPeriodAsync(firstWorkingDateOfWeek);
+            }
+
             await cnwRoutesRepository.InsertAsync(dto);
         }
 

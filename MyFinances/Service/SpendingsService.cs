@@ -14,7 +14,7 @@ namespace MyFinances.Service
         Task<IEnumerable<Spending>> GetAllAsync();
         Task InsertAsync(SpendingDTO dto);
         Task<decimal> GetFuelIn(int daysInterval);
-        bool CheckExpenseIsPaid(int financeId);
+        DateTime? ExpenseLastPaidDate(int financeId);
         Task<decimal> GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
     }
 
@@ -42,9 +42,9 @@ namespace MyFinances.Service
             await spendingRepository.InsertAsync(dto);
         }
 
-        public bool CheckExpenseIsPaid(int financeId)
+        public DateTime? ExpenseLastPaidDate(int financeId)
         {
-            return spendingRepository.PaidWithinLastWeek(financeId);
+            return spendingRepository.ExpenseLastPaidDate(financeId);
         }
 
         public async Task<decimal> GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId, Categories? secondCatId) 

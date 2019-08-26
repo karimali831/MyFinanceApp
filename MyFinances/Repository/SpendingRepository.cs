@@ -14,7 +14,7 @@ namespace MyFinances.Repository
     {
         Task<IEnumerable<Spending>> GetAllAsync();
         Task<Spending> GetAsync(int Id);
-        bool PaidWithinLastWeek(int financeId);
+        DateTime? ExpenseLastPaidDate(int financeId);
         Task InsertAsync(SpendingDTO dto);
     }
 
@@ -68,16 +68,17 @@ namespace MyFinances.Repository
             }
         }
 
-        public bool PaidWithinLastWeek(int financeId)
+        public DateTime? ExpenseLastPaidDate(int financeId)
         {
+            //AND Date >= DATEADD(mm, -1, CURRENT_TIMESTAMP) 
+
             using (var sql = dbConnectionFactory())
             {
                 return   
-                    (sql.Query<bool>($@"
-                            SELECT 1
+                    (sql.Query<DateTime?>($@"
+                            SELECT Date
                             FROM Spendings
                             WHERE FinanceId = @FinanceId 
-                            AND Date >= DATEADD(dd, -7, CURRENT_TIMESTAMP) 
                             ORDER BY Date DESC",
                             new { FinanceId = financeId }
                     ))

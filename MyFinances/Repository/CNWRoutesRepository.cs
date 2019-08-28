@@ -34,7 +34,7 @@ namespace MyFinances.Repository
             string sqlText = $@"
                 SELECT 
                     r.Id,
-                    r.RouteNo,
+                    r.WeekNo,
                     r.RouteDate,
                     r.Mileage,
                     r.ExtraMileage,

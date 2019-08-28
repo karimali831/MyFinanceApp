@@ -9,7 +9,6 @@ namespace MyFinances.DTOs
 {
     public class CNWRouteDTO
     {
-        public string RouteNo { get; set; }
         public int RouteTypeId { get; set; }
         public DateTime RouteDate { get; set; }
         public decimal? Mileage { get; set; }

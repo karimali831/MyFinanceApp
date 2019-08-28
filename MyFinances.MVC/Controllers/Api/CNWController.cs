@@ -35,7 +35,7 @@ namespace MyFinances.Website.Controllers.API
                 Routes = routes.Select(x => new
                 {
                     x.Id,
-                    x.RouteNo,
+                    x.WeekNo,
                     x.RouteType,
                     RouteDate = x.RouteDate.ToString("dd-MM-yy"),
                     x.Mileage,

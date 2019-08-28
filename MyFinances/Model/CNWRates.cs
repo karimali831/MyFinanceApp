@@ -6,9 +6,9 @@ namespace MyFinances.Model
     public class CNWRates
     {
         public int Id { get; set; }
-        public int FullRoute { get; set; }
-        public int HalfRoute { get; set; }
-        public int MissortRoute { get; set; }
+        public decimal FullRoute { get; set; }
+        public decimal HalfRoute { get; set; }
+        public decimal MissortRoute { get; set; }
         public decimal Mileage { get; set; }
         public decimal VanRental { get; set; }
         public decimal AdminFee { get; set; }

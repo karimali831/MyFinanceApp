@@ -94,8 +94,8 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
             text: '#',
             hidden: true
           }, {
-            dataField: 'routeNo',
-            text: 'Route',
+            dataField: 'weekNo',
+            text: 'Week',
             headerClasses: "hidden-xs",
             classes: "hidden-xs"
           }, {

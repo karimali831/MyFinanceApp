@@ -8,7 +8,7 @@ namespace MyFinances.Model
     public class CNWRoute
     {
         public int Id { get; set; }
-        public string RouteNo { get; set; }
+        public int WeekNo { get; set; }
         public string RouteType { get; set; }
         public Categories RouteTypeId { get; set; }
         public DateTime RouteDate { get; set; }

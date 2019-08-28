@@ -15,7 +15,6 @@ export interface IOwnState {
     selectedRouteType?: number | undefined,
     loading: boolean,
     redirect: boolean,
-    routeNo: string,
     routeDate: string,
     mileage?: number | undefined,
     extraMileage?: number | undefined,
@@ -33,7 +32,6 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             selectedRouteType: undefined,
             loading: true,
             redirect: false,
-            routeNo: "",
             routeDate: "",
             mileage: undefined,
             extraMileage: undefined,
@@ -76,9 +74,6 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
         return (
             <div style={{margin: '0 auto', border: 1}}>
                 {AddMenu("route")}
-                <div className="form-group">
-                    <input className="form-control" type="text" value={this.state.routeNo} placeholder="Enter route no" onChange={(e) => { this.onRouteNoChanged(e);}} />
-                </div>
                 <div className="form-group">
                     <input className="form-control" type="date" value={this.state.routeDate} placeholder="dd-MM-yy" onChange={(e) => { this.onRouteDateChanged(e);}} />
                 </div>
@@ -154,7 +149,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
     }
 
     private addRoute = () => {
-        if (this.state.routeNo && this.state.routeDate && this.state.routeNo.length > 2 && this.state.selectedRouteType)
+        if (this.state.routeDate && this.state.routeNo.length > 2 && this.state.selectedRouteType)
         {
             this.setState({ ...this.state, 
                 ...{ 
@@ -162,7 +157,6 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                     selectedRouteType: undefined,
                     loading: true,
                     redirect: true,
-                    routeNo: "",
                     routeDate: undefined,
                     mileage: undefined,
                     extraMileage: undefined,
@@ -174,7 +168,6 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             })  
 
             const addModel: IRouteDTO = {
-                routeNo: this.state.routeNo,
                 routeTypeId: this.state.selectedRouteType,
                 routeDate: this.state.routeDate,
                 mileage: this.state.mileage,

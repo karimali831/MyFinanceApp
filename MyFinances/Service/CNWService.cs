@@ -118,14 +118,15 @@ namespace MyFinances.Service
 
             if (routes != null && routes.Any())
             {
+                var fullRoutePay = rates.FullRoute * routes.Count(x => x.RouteTypeId == Categories.Full);
+                var halfRoutePay = rates.HalfRoute * routes.Count(x => x.RouteTypeId == Categories.Half);
+                var missortRoutePay = rates.HalfRoute * routes.Count(x => x.RouteTypeId == Categories.Missort);
+
                 var model = new CNWPaymentDTO
                 {
                     Routes = routes.Count(),
                     CalcMiles = routes.Sum(x => x.Mileage) ?? 0,
-                    CalcRoutePay =
-                        rates.FullRoute * routes.Count(x => x.RouteTypeId == Categories.Full) +
-                        rates.HalfRoute * routes.Count(x => x.RouteTypeId == Categories.Half) +
-                        rates.MissortRoute * routes.Count(x => x.RouteTypeId == Categories.Missort),
+                    CalcRoutePay = fullRoutePay + halfRoutePay + missortRoutePay,
                     AverageMpg = routes.Average(x => x.Mpg) ?? 0,
                     WeekDate = weekStart
                 };

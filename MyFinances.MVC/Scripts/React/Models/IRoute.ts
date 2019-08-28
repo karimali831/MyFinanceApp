@@ -2,7 +2,7 @@ import { WeekPeriodSync } from '../Enums/WeekPeriodSync'
 
 export interface IRoute {
     id: number,
-    routeNo: string,
+    weekNo: string,
     routeType: string
     routeDate: Date,
     mileage: number,
@@ -15,7 +15,6 @@ export interface IRoute {
 }
 
 export interface IRouteDTO {
-    routeNo: string,
     routeTypeId: number,
     routeDate: string,
     mileage: number,

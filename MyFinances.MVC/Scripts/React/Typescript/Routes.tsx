@@ -5,7 +5,7 @@ import { Loader } from './Loader';
 import { ITableProps, ITableOptions } from '../Models/ITable';
 import Table from './CommonTable';
 import { WeekPeriodSync } from '../Enums/WeekPeriodSync';
-import { weekSummaryUrl } from '../Typescript/Utils';
+import { weekSummaryUrl, routeSummaryUrl } from '../Typescript/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfo, faExclamationCircle, faSync } from '@fortawesome/free-solid-svg-icons'
 
@@ -67,15 +67,24 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
     private syncWeekButton = (cell: any, row: any) => {
         switch (cell) {
             case WeekPeriodSync.NotWeekstartPeriod :
-                return null
+                return <span>
+                           <FontAwesomeIcon icon={faInfo} /> <a href={routeSummaryUrl(row['id'])}>Route Summary</a>
+                       </span>
             case WeekPeriodSync.NotSyncedWait :
-              return <span><FontAwesomeIcon icon={faExclamationCircle} /> Wait</span>
+                return <span>
+                           <FontAwesomeIcon icon={faExclamationCircle} /> Wait<br />
+                           <FontAwesomeIcon icon={faInfo} /> <a href={routeSummaryUrl(row['id'])}>Route Summary</a>
+                       </span>
             case WeekPeriodSync.NotSynced:
-                return <span><FontAwesomeIcon icon={faSync} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Sync</a></span>
+                return <span>
+                           <FontAwesomeIcon icon={faSync} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Sync</a><br />
+                           <FontAwesomeIcon icon={faInfo} /> <a href={routeSummaryUrl(row['id'])}>Route Summary</a>
+                      </span>
             case WeekPeriodSync.Synced:
                 return <span>
                            <FontAwesomeIcon icon={faSync} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Re-Sync</a><br />
-                           <FontAwesomeIcon icon={faInfo} /> <a href={weekSummaryUrl(row['routeDate'])}>Details</a>
+                           <FontAwesomeIcon icon={faInfo} /> <a href={weekSummaryUrl(row['routeDate'])}>Week Summary</a><br />
+                           <span><FontAwesomeIcon icon={faInfo} /> <a href={routeSummaryUrl(row['id'])}>Route Summary</a></span>
                         </span>
         }
     }
@@ -135,7 +144,7 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
           }
           , {
             dataField: 'weekstartPeriod',
-            text: 'Sync Week',
+            text: 'Info',
             editable: false,
             formatter: this.syncWeekButton
           }

@@ -9,6 +9,7 @@ namespace MyFinances.Model
     {
         public int Id { get; set; }
         public int WeekNo { get; set; }
+        [DbIgnore]
         public string RouteType { get; set; }
         public Categories RouteTypeId { get; set; }
         public DateTime RouteDate { get; set; }

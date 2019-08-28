@@ -11,7 +11,8 @@ namespace MyFinances.Service
 {
     public interface ICNWService
     {
-        Task<IEnumerable<CNWRoute>> GetAllRoutesAsync();
+        Task<IEnumerable<CNWRoute>> GetAllRoutesAsync(int? weekNo = null);
+        Task<CNWRoute> GetRouteSummaryAsync(int Id);
         Task InsertRouteAsync(CNWRouteDTO dto);
         Task SyncWeekPeriodAsync(DateTime weekStart);
         Task<CNWPayment> GetWeekSummaryAsync(DateTime weekStart);
@@ -35,9 +36,14 @@ namespace MyFinances.Service
             this.cnwRatesRepository = cnwRatesRepository ?? throw new ArgumentNullException(nameof(cnwRatesRepository));
         }
 
-        public async Task<IEnumerable<CNWRoute>> GetAllRoutesAsync()
+        public async Task<CNWRoute> GetRouteSummaryAsync(int Id)
         {
-            var routes = await cnwRoutesRepository.GetAllAsync();
+            return await cnwRoutesRepository.GetAsync(Id);
+        }
+
+        public async Task<IEnumerable<CNWRoute>> GetAllRoutesAsync(int? weekNo = null)
+        {
+            var routes = await cnwRoutesRepository.GetAllAsync(weekNo);
 
             var weekPeriod = routes
                 .Select(x => new { x.Id, x.RouteDate })

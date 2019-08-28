@@ -6,66 +6,82 @@
 
     <h2>CNW Week Summary</h2>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th scope="row">Invoice No</th>
-                <td>@Model.InvoiceNo</td>
-            </tr>
-            <tr>
-                <th scope="row" width="30%">Week No</th>
-                <td>@Model.WeekNo</td>
-            <tr>
-                <th scope="row">Week Date</th>
-                <td>@Model.WeekDate.ToShortDateString()</td>
-            </tr>
-            <tr>
-                <th scope="row">Invoice Date</th>
-                <td>@Model.PayDate.ToShortDateString()</td>
-            </tr>
-            <tr>
-                <th scope="row">Routes</th>
-                <td>@Model.Routes</td>
-            </tr>
-            <tr>
-                <th scope="row">Info</th>
-                <td>@Model.Info</td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col" width="25%"></th>
-                <th scope="col" width="25%">Calculated</th>
-                <th scope="col" width="25%">Actual</th>
-                <th scope="col">Difference</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">Miles</th>
-                <td>@Model.CalcMiles</td>
-                <td>@Model.ActualMiles</td>
-                <td>@Html.Raw(Utils.AmountDifference(Model.ActualMiles, Model.CalcMiles, ""))</td>
-            </tr>
-            <tr>
-                <th scope="row">Route Pay</th>
-                <td>£@Model.CalcRoutePay.ToString("#.##")</td>
-                <td>£@(Model.ActualRoutePay.HasValue ? Model.ActualRoutePay.Value.ToString("#.##") : null)</td>
-                <td>@Html.Raw(Utils.AmountDifference(Model.ActualRoutePay, Model.CalcRoutePay))</td>
-            </tr>
-            <tr>
-                <th scope="row">Mileage Pay</th>
-                <td>£@Model.CalcMileagePay.ToString("#.##")</td>
-                <td>£@(Model.ActualMileagePay.HasValue ? Model.ActualMileagePay.Value.ToString("#.##") : null)</td>
-                <td>@Html.Raw(Utils.AmountDifference(Model.ActualMileagePay, Model.CalcMileagePay))</td>
-            </tr>
-            <tr>
-                <th scope="row">Total Pay</th>
-                <td>£@Model.CalcTotalPay.ToString("#.##")</td>
-                <td>£@(Model.ActualTotalPay.HasValue ? Model.ActualTotalPay.Value.ToString("#.##") : null)</td>
-                <td>@Html.Raw(Utils.AmountDifference(Model.ActualTotalPay, Model.CalcTotalPay))</td>
-            </tr>
-        </tbody>
-    </table>
+    @if (Model != null)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="2"><< @Html.ActionLink("Previous Week", "WeekSummary", new { Id = Model.WeekDate.AddDays(-7).ToString("dd-MM-yy") }) || @Html.ActionLink("Next Week", "WeekSummary", new { Id = Model.WeekDate.AddDays(7).ToString("dd-MM-yy") }) >></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Invoice No</th>
+                    <td>@Model.InvoiceNo</td>
+                </tr>
+                <tr>
+                    <th scope="row" width="30%">Week No</th>
+                    <td>@Model.WeekNo</td>
+                <tr>
+                    <th scope="row">Week Date</th>
+                    <td>@Model.WeekDate.ToShortDateString()</td>
+                </tr>
+                <tr>
+                    <th scope="row">Invoice Date</th>
+                    <td>@Model.PayDate.ToShortDateString()</td>
+                </tr>
+                <tr>
+                    <th scope="row">Routes</th>
+                    <td>@Model.Routes</td>
+                </tr>
+                <tr>
+                    <th scope="row">Info</th>
+                    <td>@Model.Info</td>
+                </tr>
+                <tr>
+                    <th scope="row">View Routes</th>
+                    <td><a href="">Here</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" width="25%"></th>
+                    <th scope="col" width="25%">Calculated</th>
+                    <th scope="col" width="25%">Actual</th>
+                    <th scope="col">Difference</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Miles</th>
+                    <td>@Model.CalcMiles</td>
+                    <td>@Model.ActualMiles</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualMiles, Model.CalcMiles, ""))</td>
+                </tr>
+                <tr>
+                    <th scope="row">Route Pay</th>
+                    <td>£@Model.CalcRoutePay.ToString("#.##")</td>
+                    <td>£@(Model.ActualRoutePay.HasValue ? Model.ActualRoutePay.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualRoutePay, Model.CalcRoutePay))</td>
+                </tr>
+                <tr>
+                    <th scope="row">Mileage Pay</th>
+                    <td>£@Model.CalcMileagePay.ToString("#.##")</td>
+                    <td>£@(Model.ActualMileagePay.HasValue ? Model.ActualMileagePay.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualMileagePay, Model.CalcMileagePay))</td>
+                </tr>
+                <tr>
+                    <th scope="row">Total Pay</th>
+                    <td>£@Model.CalcTotalPay.ToString("#.##")</td>
+                    <td>£@(Model.ActualTotalPay.HasValue ? Model.ActualTotalPay.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualTotalPay, Model.CalcTotalPay))</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h2>Week not recorded</h2>
+    }

@@ -1,0 +1,51 @@
+﻿@model MyFinances.Model.CNWRoute
+@using MyFinances.Helpers
+@using MyFinances.Enums
+@{
+    ViewBag.Title = "CNW Route Summary";
+}
+
+    <h2>CNW Route Summary</h2>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row" width="15%">Week No</th>
+                <td>@Model.WeekNo</td>
+            <tr>
+                <th scope="row">Type</th>
+                <td>
+                    @{ var category = (Categories)Model.RouteTypeId; }
+                    @category.ToString()
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Date</th>
+                <td>@Model.RouteDate.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <th scope="row">Mileage</th>
+                <td>@Model.Mileage</td>
+            </tr>
+            <tr>
+                <th scope="row">MPG</th>
+                <td>@Model.Mpg</td>
+            </tr>
+            <tr>
+                <th scope="row">Stops</th>
+                <td>@Model.Drops</td>
+            </tr>
+            <tr>
+                <th scope="row">Support Stops</th>
+                <td>@Model.ExtraDrops</td>
+            </tr>
+            <tr>
+                <th scope="row">Spport Mileage</th>
+                <td>@Model.ExtraMileage</td>
+            </tr>
+            <tr>
+                <th scope="row">Info</th>
+                <td>@Model.Info</td>
+            </tr>
+        </tbody>
+    </table>

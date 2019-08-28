@@ -118,8 +118,8 @@ export class Api {
         .then(data => data as IWeekSummariesResponse);
     }
 
-    public routes = async (): Promise<ICNWResponse> => {
-        return fetch(`${this.rootUrl}/cnw`, {
+    public routes = async (weekNo?: number): Promise<ICNWResponse> => {
+        return fetch(`${this.rootUrl}/cnw/${weekNo}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",

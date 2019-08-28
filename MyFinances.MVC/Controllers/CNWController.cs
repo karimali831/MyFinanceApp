@@ -27,5 +27,18 @@ namespace MyFinances.Controllers
 
             return new EmptyResult();
         }
+
+        [HttpGet]
+        public async Task<ActionResult> RouteSummary(int Id)
+        {
+            var routeSummary = await cnwService.GetRouteSummaryAsync(Id);
+
+            if (routeSummary != null)
+            {
+                return View(routeSummary);
+            }
+
+            return new EmptyResult();
+        }
     }
 }

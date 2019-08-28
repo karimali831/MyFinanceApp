@@ -27,9 +27,10 @@ namespace MyFinances.Website.Controllers.API
         }
 
         [HttpGet]
-        public async Task<HttpResponseMessage> GetRoutesAsync()
+        [Route("{weekNo?}")]
+        public async Task<HttpResponseMessage> GetRoutesAsync(int? weekNo = null)
         {
-            var routes = await cnwService.GetAllRoutesAsync();
+            var routes = await cnwService.GetAllRoutesAsync(weekNo);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Routes = routes.Select(x => new

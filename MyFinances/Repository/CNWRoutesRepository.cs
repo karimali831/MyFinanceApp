@@ -13,7 +13,8 @@ namespace MyFinances.Repository
 {
     public interface ICNWRoutesRepository
     {
-        Task<IEnumerable<CNWRoute>> GetAllAsync();
+        Task<IEnumerable<CNWRoute>> GetAllAsync(int? weekNo = null);
+        Task<CNWRoute> GetAsync(int Id);
         Task InsertAsync(CNWRouteDTO dto);
     }
 
@@ -29,7 +30,7 @@ namespace MyFinances.Repository
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<IEnumerable<CNWRoute>> GetAllAsync()
+        public async Task<IEnumerable<CNWRoute>> GetAllAsync(int? weekNo = null)
         {
             string sqlText = $@"
                 SELECT 
@@ -50,7 +51,22 @@ namespace MyFinances.Repository
 
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<CNWRoute>(sqlText)).ToArray();
+                var routes =  (await sql.QueryAsync<CNWRoute>(sqlText));
+
+                if (weekNo != null)
+                {
+                    routes = routes.Where(x => x.WeekNo == weekNo);
+                }
+
+                return routes.ToArray();
+            }
+        }
+
+        public async Task<CNWRoute> GetAsync(int Id)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<CNWRoute>($@"{DapperHelper.SELECT(TABLE, FIELDS)}")).SingleOrDefault(x => x.Id == Id);
             }
         }
 

@@ -112,10 +112,6 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
         )
     }
 
-    private onRouteNoChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ ...this.state, routeNo: e.target.value })  
-    }
-
     private onChangeSelectedRouteType = (e: React.ChangeEvent<HTMLSelectElement>) => {
         this.setState({ ...this.state, selectedRouteType: Number(e.target.value) })
     }
@@ -149,7 +145,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
     }
 
     private addRoute = () => {
-        if (this.state.routeDate && this.state.routeNo.length > 2 && this.state.selectedRouteType)
+        if (this.state.routeDate > 2 && this.state.selectedRouteType)
         {
             this.setState({ ...this.state, 
                 ...{ 

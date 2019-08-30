@@ -43,6 +43,7 @@ namespace MyFinances.Enums
         Mark,
         OverdraftFees,
         AbbeyGuy,
-        CCInterest
+        CCInterest,
+        HairProducts
     }
 }

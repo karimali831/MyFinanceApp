@@ -48,8 +48,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">Top-Up from Flat Rate VAT Pot</th>
-                    <td>£@Model.CNWRates.VATFlatRate.ToString("#.##")</td>
+                    <th scope="row">Estimated fuel cost</th>
+                    <td>@Model.EstimatedFuelCost.ToString("#.##") <small><i>(averaged @Model.AverageMpg mpg)</i></small></td>
                 </tr>
                 @if (!string.IsNullOrEmpty(Model.Info))
                 {
@@ -78,7 +78,7 @@
                     <th scope="row">Miles</th>
                     <td>@(Model.CalcMiles + @Model.CalcSupportMiles) <small><i>(miles: @Model.CalcMiles + support: @Model.CalcSupportMiles)</i></small></td>
                     <td>@Model.ActualMiles</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualMiles, (Model.CalcMiles+Model.CalcSupportMiles), ""))</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualMiles, (Model.CalcMiles + Model.CalcSupportMiles), ""))</td>
                 </tr>
                 <tr>
                     <th scope="row">Support Pay</th>
@@ -104,6 +104,10 @@
                     <td>£@Model.CalcNetAmount.Value.ToString("#.##")</td>
                     <td>£@(Model.ActualNetAmount.HasValue ? Model.ActualNetAmount.Value.ToString("#.##") : null)</td>
                     <td>@Html.Raw(Utils.AmountDifference(Model.ActualNetAmount, Model.CalcNetAmount))</td>
+                </tr>
+                <tr>
+                    <th scope="row">Top-Up from Flat Rate VAT Pot</th>
+                    <td colspan="3">£@Model.CNWRates.VATFlatRate.ToString("#.##")</td>
                 </tr>
                 <tr>
                     <th scope="row">Total Pay</th>

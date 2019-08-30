@@ -92,7 +92,8 @@ namespace MyFinances.Service
                 weekSummary.CNWRates = rates;
                 weekSummary.ActualNetAmount = weekSummary.ActualTotalPay - rates.VATFlatRate;
                 weekSummary.CalcTotalPayToDriver = weekSummary.CalcNetAmount + rates.VATFlatRate;
-            }
+                weekSummary.EstimatedFuelCost = (weekSummary.CalcMiles + weekSummary.CalcSupportMiles.Value) * (decimal)1.29 * (weekSummary.AverageMpg / 100);
+            } 
 
             return weekSummary;
         }
@@ -167,9 +168,11 @@ namespace MyFinances.Service
 
         public async Task<decimal> GetFuelIn(int daysInterval)
         {
+            var rates = await cnwRatesRepository.GetAsync();
+
             return (await cnwPaymentsRepository.GetAllAsync())
                 .Where(x => x.PayDate >= DateTime.Now.Date.AddDays(daysInterval))
-                .Sum(x => x.ActualMileagePay) ?? 0;
+                .Sum(x => rates.Mileage * x.ActualMiles) ?? 0;
         }
     }
 }

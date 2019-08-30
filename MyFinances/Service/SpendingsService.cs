@@ -61,13 +61,7 @@ namespace MyFinances.Service
                 getSpendings = getSpendings.Where(x => (Categories)x.SecondCatId == secondCatId);
             }
 
-            decimal fuelIn = 0;
-            if (catId == Categories.Fuel)
-            {
-                fuelIn = await GetFuelIn(daysInterval);
-            }
-
-            return getSpendings.Sum(x => x.Amount) - fuelIn;
+            return getSpendings.Sum(x => x.Amount);
         }
 
         public async Task<decimal> GetFuelIn(int daysInterval)

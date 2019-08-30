@@ -15,9 +15,14 @@ namespace MyFinances.Helpers
             }
         }
 
+        public static decimal CalculateVat(decimal value)
+        {
+            return (value / 100) * 20;
+        }
+
         public static string AmountDifference(decimal? firstValue, decimal? secondValue, string currency = "£", bool highlight = true)
         {
-            if (!firstValue.HasValue || !secondValue.HasValue || firstValue.Value == 0)
+            if (!firstValue.HasValue || !secondValue.HasValue)
                 return "";
 
             decimal difference = firstValue.Value - secondValue.Value;

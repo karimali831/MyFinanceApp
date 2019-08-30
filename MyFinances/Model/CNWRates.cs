@@ -10,8 +10,8 @@ namespace MyFinances.Model
         public decimal HalfRoute { get; set; }
         public decimal MissortRoute { get; set; }
         public decimal Mileage { get; set; }
-        public decimal VanRental { get; set; }
-        public decimal AdminFee { get; set; }
+        public decimal VATFlatRate { get; set; }
+        public int VATRate { get; set; }
         public bool CurrentPeriod { get; set; }
     }
 

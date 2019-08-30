@@ -66,14 +66,22 @@ export default class WeekSummaries extends React.Component<IOwnProps, IOwnState>
             classes: "hidden-xs"
           }, {
             dataField: 'actualMiles',
-            text: 'Actual Miles'
+            text: 'Invoice Miles'
           }, {
             dataField: 'actualRoutePay',
-            text: 'Actual Route Pay',
+            text: 'Invoice Route Pay',
             formatter: priceFormatter
           }, {
             dataField: 'actualTotalPay',
-            text: 'Actual Total Pay',
+            text: 'Invoice Total Pay',
+            formatter: priceFormatter
+          }, {
+            dataField: 'actualSupportPay',
+            text: 'Invoice Support Pay',
+            formatter: priceFormatter
+          }, {
+            dataField: 'byod',
+            text: 'Invoice BYOD',
             formatter: priceFormatter
           }, {
             dataField: 'info',

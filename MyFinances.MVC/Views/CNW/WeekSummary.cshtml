@@ -35,9 +35,29 @@
                     <td>@Model.Routes</td>
                 </tr>
                 <tr>
-                    <th scope="row">Info</th>
-                    <td>@Model.Info</td>
+                    <th scope="row">Deductions</th>
+                    <td>
+                        <small>
+                            <i>
+                                Admin fee: £@Model.DeduAdminFee.ToString("#.##") <br />
+                                Van rental: £@Model.DeduVanRental.ToString("#.##") <br />
+                                Van fines: £@Model.DeduVanFines.ToString("#.##") <br />
+                                Van damges: £@Model.DeduVanDamages.ToString("#.##")
+                            </i>
+                        </small>
+                    </td>
                 </tr>
+                <tr>
+                    <th scope="row">Top-Up from Flat Rate VAT Pot</th>
+                    <td>£@Model.CNWRates.VATFlatRate.ToString("#.##")</td>
+                </tr>
+                @if (!string.IsNullOrEmpty(Model.Info))
+                {
+                    <tr>
+                        <th scope="row">Info</th>
+                        <td>@Model.Info</td>
+                    </tr>
+                }
                 <tr>
                     <th scope="row">View Routes</th>
                     <td><a href="">Here</a></td>
@@ -49,16 +69,22 @@
                 <tr>
                     <th scope="col" width="25%"></th>
                     <th scope="col" width="25%">Calculated</th>
-                    <th scope="col" width="25%">Actual</th>
+                    <th scope="col" width="25%">Invoice</th>
                     <th scope="col">Difference</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <th scope="row">Miles</th>
-                    <td>@Model.CalcMiles</td>
+                    <td>@(Model.CalcMiles + @Model.CalcSupportMiles) <small><i>(miles: @Model.CalcMiles + support: @Model.CalcSupportMiles)</i></small></td>
                     <td>@Model.ActualMiles</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualMiles, Model.CalcMiles, ""))</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualMiles, (Model.CalcMiles+Model.CalcSupportMiles), ""))</td>
+                </tr>
+                <tr>
+                    <th scope="row">Support Pay</th>
+                    <td>£@Model.CalcSupportPay.Value.ToString("#.##") <small><i>(@Model.CalcSupportDrops.Value.ToString("#.##") drops + £@Model.CalcSupportMileagePay.Value.ToString("#.##") fuel)</i></small></td>
+                    <td>£@(Model.ActualSupportPay.HasValue ? Model.ActualSupportPay.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualSupportPay, Model.CalcSupportPay, ""))</td>
                 </tr>
                 <tr>
                     <th scope="row">Route Pay</th>
@@ -72,11 +98,18 @@
                     <td>£@(Model.ActualMileagePay.HasValue ? Model.ActualMileagePay.Value.ToString("#.##") : null)</td>
                     <td>@Html.Raw(Utils.AmountDifference(Model.ActualMileagePay, Model.CalcMileagePay))</td>
                 </tr>
+                @*total amount for all additions minus deductions*@
+                <tr>
+                    <th scope="row">Net Amount</th>
+                    <td>£@Model.CalcNetAmount.Value.ToString("#.##")</td>
+                    <td>£@(Model.ActualNetAmount.HasValue ? Model.ActualNetAmount.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualNetAmount, Model.CalcNetAmount))</td>
+                </tr>
                 <tr>
                     <th scope="row">Total Pay</th>
-                    <td>£@Model.CalcTotalPay.ToString("#.##")</td>
+                    <td>£@Model.CalcTotalPayToDriver.Value.ToString("#.##")</td>
                     <td>£@(Model.ActualTotalPay.HasValue ? Model.ActualTotalPay.Value.ToString("#.##") : null)</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualTotalPay, Model.CalcTotalPay))</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualTotalPay, Model.CalcTotalPayToDriver))</td>
                 </tr>
             </tbody>
         </table>

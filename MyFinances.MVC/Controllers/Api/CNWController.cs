@@ -71,7 +71,9 @@ namespace MyFinances.Website.Controllers.API
                     WeekDate = x.WeekDate.ToString("dd-MM-yy"),
                     x.ActualMiles,
                     x.ActualRoutePay,
-                    x.ActualTotalPay
+                    x.ActualTotalPay,
+                    x.ActualSupportPay,
+                    x.Byod
                 })
             });
         }

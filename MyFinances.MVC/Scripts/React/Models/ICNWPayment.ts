@@ -6,5 +6,7 @@ export interface ICNWPayment
     actualMiles?: number,
     actualRoutePay?: number,
     actualTotalPay?: number,
+    actualSupportPay?: number,
+    byod?: number,
     info: string
 }

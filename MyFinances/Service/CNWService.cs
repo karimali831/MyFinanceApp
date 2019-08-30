@@ -1,5 +1,6 @@
 ﻿using MyFinances.DTOs;
 using MyFinances.Enums;
+using MyFinances.Helpers;
 using MyFinances.Model;
 using MyFinances.Repository;
 using System;
@@ -88,6 +89,9 @@ namespace MyFinances.Service
             if (weekSummary != null)
             {
                 weekSummary.ActualMileagePay = rates.Mileage * weekSummary.ActualMiles;
+                weekSummary.CNWRates = rates;
+                weekSummary.ActualNetAmount = weekSummary.ActualTotalPay - rates.VATFlatRate;
+                weekSummary.CalcTotalPayToDriver = weekSummary.CalcNetAmount + rates.VATFlatRate;
             }
 
             return weekSummary;
@@ -127,19 +131,23 @@ namespace MyFinances.Service
                 var fullRoutePay = rates.FullRoute * routes.Count(x => x.RouteTypeId == Categories.Full);
                 var halfRoutePay = rates.HalfRoute * routes.Count(x => x.RouteTypeId == Categories.Half);
                 var missortRoutePay = rates.HalfRoute * routes.Count(x => x.RouteTypeId == Categories.Missort);
+                var supportDrops = routes.Sum(x => x.ExtraDrops) ?? 0;
 
                 var model = new CNWPaymentDTO
                 {
                     Routes = routes.Count(),
                     CalcMiles = routes.Sum(x => x.Mileage) ?? 0,
-                    CalcRoutePay = fullRoutePay + halfRoutePay + missortRoutePay,
+                    CalcSupportMiles = routes.Sum(x => x.ExtraMileage) ?? 0,
+                    CalcSupportDrops = supportDrops,
+                    CalcRoutePay = fullRoutePay + halfRoutePay + missortRoutePay + supportDrops,
                     AverageMpg = routes.Average(x => x.Mpg) ?? 0,
                     WeekDate = weekStart
                 };
 
-                decimal deductions = rates.VanRental + rates.AdminFee;
-                model.CalcMileagePay = rates.Mileage * model.CalcMiles;
-                model.CalcTotalPay = (model.CalcRoutePay + model.CalcMileagePay) - deductions;
+                model.CalcMileagePay = rates.Mileage * (model.CalcMiles + model.CalcSupportMiles);
+                model.CalcSupportMileagePay = rates.Mileage * model.CalcSupportMiles;
+                model.CalcTotalPay = model.CalcRoutePay + model.CalcMileagePay;
+                model.CalcSupportPay = supportDrops + model.CalcSupportMileagePay;
 
                 await cnwPaymentsRepository.InsertAsync(model);
             }

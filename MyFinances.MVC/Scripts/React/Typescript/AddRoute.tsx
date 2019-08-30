@@ -145,7 +145,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
     }
 
     private addRoute = () => {
-        if (this.state.routeDate > 2 && this.state.selectedRouteType)
+        if (this.state.routeDate && this.state.selectedRouteType)
         {
             this.setState({ ...this.state, 
                 ...{ 

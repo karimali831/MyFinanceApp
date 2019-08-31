@@ -39,17 +39,25 @@
                     <td>
                         <small>
                             <i>
-                                Admin fee: £@Model.DeduAdminFee.ToString("#.##") <br />
-                                Van rental: £@Model.DeduVanRental.ToString("#.##") <br />
-                                Van fines: £@Model.DeduVanFines.ToString("#.##") <br />
-                                Van damges: £@Model.DeduVanDamages.ToString("#.##")
+                                <span class="label label-danger">Admin fee: £@Model.DeduAdminFee.ToString("#.##")</span> <br />
+                                <span class="label label-danger">Van rental: £@Model.DeduVanRental.ToString("#.##")</span> <br />
+                                <span class="label label-danger">Van fines: £@Model.DeduVanFines.ToString("#.##")</span> <br />
+                                <span class="label label-danger">Van damges: £@Model.DeduVanDamages.ToString("#.##")</span>
                             </i>
                         </small>
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row">BYOD</th>
+                    <td colspan="3">£@Model.Byod.Value.ToString("#.##")</td>
+                </tr>
+                <tr>
+                    <th scope="row">Top-Up from Flat Rate VAT Pot</th>
+                    <td>£@Model.CNWRates.VATFlatRate.ToString("#.##")</td>
+                </tr>
+                <tr>
                     <th scope="row">Estimated fuel cost</th>
-                    <td>@Model.EstimatedFuelCost.ToString("#.##") <small><i>(averaged @Model.AverageMpg mpg)</i></small></td>
+                    <td>--@*@Model.EstimatedFuelCost.ToString("#.##")*@ <small><i>(averaged @Model.AverageMpg mpg)</i></small></td>
                 </tr>
                 @if (!string.IsNullOrEmpty(Model.Info))
                 {
@@ -99,16 +107,12 @@
                     <td>@Html.Raw(Utils.AmountDifference(Model.ActualMileagePay, Model.CalcMileagePay))</td>
                 </tr>
                 @*total amount for all additions minus deductions*@
-                <tr>
+                @*<tr>
                     <th scope="row">Net Amount</th>
                     <td>£@Model.CalcNetAmount.Value.ToString("#.##")</td>
                     <td>£@(Model.ActualNetAmount.HasValue ? Model.ActualNetAmount.Value.ToString("#.##") : null)</td>
                     <td>@Html.Raw(Utils.AmountDifference(Model.ActualNetAmount, Model.CalcNetAmount))</td>
-                </tr>
-                <tr>
-                    <th scope="row">Top-Up from Flat Rate VAT Pot</th>
-                    <td colspan="3">£@Model.CNWRates.VATFlatRate.ToString("#.##")</td>
-                </tr>
+                </tr>*@
                 <tr>
                     <th scope="row">Total Pay</th>
                     <td>£@Model.CalcTotalPayToDriver.Value.ToString("#.##")</td>

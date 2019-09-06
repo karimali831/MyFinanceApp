@@ -18,6 +18,7 @@ namespace MyFinances.DTOs
     {
         public IEnumerable<SpendingSummaryDTO> FirstCats { get; set; }
         public IEnumerable<SecondCategories> SecondCats { get; set; }
+        public decimal TotalSpent { get; set; }
     }
 
     public class SecondCategories

@@ -1,5 +1,6 @@
 ﻿
 using MyFinances.Service;
+using MyFinances.Website.ViewModels;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -22,7 +23,14 @@ namespace MyFinances.Controllers
             if (DateTime.TryParseExact(Id, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date))
             {
                 var weekSummary = await cnwService.GetWeekSummaryAsync(date);
-                return View(weekSummary);
+                var routes = await cnwService.GetAllRoutesAsync(weekSummary.WeekNo);
+
+                return View(
+                    new WeekSummaryVM {
+                        Payment = weekSummary,
+                        Routes = routes
+                    }
+                );
             }
 
             return new EmptyResult();

@@ -95,7 +95,8 @@ namespace MyFinances.Service
             return new SpendingSummaryVM
             {
                 FirstCats = firstCats,
-                SecondCats = secondCats
+                SecondCats = secondCats,
+                TotalSpent = spendingsSummary.Sum(x => x.TotalSpent)
             };
         }
 

@@ -4,7 +4,7 @@ import { Loader } from './Loader';
 import { ISpendingSummary } from '../Models/ISpending';
 import IncomeSummary from './IncomeSummary';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
 interface IOwnProps {
 }
@@ -85,20 +85,20 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row">Fuel In</th>
+                            <th scope="row"><FontAwesomeIcon icon={faArrowUp} /> Fuel In</th>
                             <td>
                                 £{this.state.fuelIn}
                             </td>
                         </tr>
                         {this.state.spendingSummary.firstCats.map(s => 
                             <tr>
-                                <th scope="row">{s.cat1}</th>
+                                <th scope="row"><FontAwesomeIcon icon={faArrowDown} /> {s.cat1}</th>
                                 <td>£{s.totalSpent}</td>
                             </tr>
                         )}
                         {this.state.spendingSummary.secondCats.map(s => 
                             <tr>
-                                <th scope="row">{s.category}</th>
+                                <th scope="row"><FontAwesomeIcon icon={faArrowDown} /> {s.category}</th>
                                 <td> 
                                     <div onClick={() => this.showSecondCatSummary(s.category)}>
                                         <FontAwesomeIcon icon={faSearch} /> £{s.totalSpent}
@@ -120,6 +120,10 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                 </td>
                             </tr>
                         )}
+                        <tr>
+                            <th scope="row"><FontAwesomeIcon icon={faArrowDown} /> Total Spent</th>
+                            <td>£{this.state.spendingSummary.totalSpent}</td>
+                        </tr>
                     </tbody>
                 </table>
                 <IncomeSummary />

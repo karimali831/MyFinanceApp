@@ -94,7 +94,7 @@ namespace MyFinances.Service
                 weekSummary.CNWRates = rates;
                 weekSummary.ActualNetAmount = weekSummary.ActualTotalPay - rates.VATFlatRate;
                 weekSummary.CalcTotalPayToDriver = weekSummary.CalcNetAmount + rates.VATFlatRate;
-                weekSummary.EstimatedFuelCost = (weekSummary.CalcMiles + weekSummary.CalcSupportMiles.Value) * (decimal)1.29 * (weekSummary.AverageMpg / 100);
+                weekSummary.EstimatedFuelCost = (weekSummary.CalcMiles + (weekSummary.CalcSupportMiles.HasValue ? weekSummary.CalcSupportMiles.Value : 0)) * (decimal)1.29 * (weekSummary.AverageMpg / 100);
             } 
 
             return weekSummary;
@@ -102,7 +102,7 @@ namespace MyFinances.Service
 
         public async Task<IEnumerable<CNWPayment>> GetWeekSummariesAsync()
         {
-            return await cnwPaymentsRepository.GetAllAsync();
+            return (await cnwPaymentsRepository.GetAllAsync()).OrderByDescending(x => x.WeekDate);
         }
 
 

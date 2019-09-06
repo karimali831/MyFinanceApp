@@ -1,4 +1,4 @@
-﻿@model MyFinances.Model.CNWPayment
+﻿@model MyFinances.Website.ViewModels.WeekSummaryVM
 @using MyFinances.Helpers
 @{
     ViewBag.Title = "CNW Week Summary";
@@ -11,64 +11,69 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th colspan="2"><< @Html.ActionLink("Previous Week", "WeekSummary", new { Id = Model.WeekDate.AddDays(-7).ToString("dd-MM-yy") }) || @Html.ActionLink("Next Week", "WeekSummary", new { Id = Model.WeekDate.AddDays(7).ToString("dd-MM-yy") }) >></th>
+                    <th colspan="2"><< @Html.ActionLink("Previous Week", "WeekSummary", new { Id = Model.Payment.WeekDate.AddDays(-7).ToString("dd-MM-yy") }) || @Html.ActionLink("Next Week", "WeekSummary", new { Id = Model.Payment.WeekDate.AddDays(7).ToString("dd-MM-yy") }) >></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <th scope="row">Invoice No</th>
-                    <td>@Model.InvoiceNo</td>
+                    <td>@Model.Payment.InvoiceNo</td>
                 </tr>
                 <tr>
                     <th scope="row" width="30%">Week No</th>
-                    <td>@Model.WeekNo</td>
+                    <td>@Model.Payment.WeekNo</td>
                 <tr>
                     <th scope="row">Week Date</th>
-                    <td>@Model.WeekDate.ToShortDateString()</td>
+                    <td>@Model.Payment.WeekDate.ToShortDateString()</td>
                 </tr>
                 <tr>
                     <th scope="row">Invoice Date</th>
-                    <td>@Model.PayDate.ToShortDateString()</td>
+                    <td>@Model.Payment.PayDate.ToShortDateString()</td>
                 </tr>
                 <tr>
                     <th scope="row">Routes</th>
-                    <td>@Model.Routes</td>
+                    <td>@Model.Payment.Routes</td>
                 </tr>
                 <tr>
                     <th scope="row">Deductions</th>
                     <td>
                         <small>
-                            <i>
-                                <span class="label label-danger">Admin fee: £@Model.DeduAdminFee.ToString("#.##")</span> <br />
-                                <span class="label label-danger">Van rental: £@Model.DeduVanRental.ToString("#.##")</span> <br />
-                                <span class="label label-danger">Van fines: £@Model.DeduVanFines.ToString("#.##")</span> <br />
-                                <span class="label label-danger">Van damges: £@Model.DeduVanDamages.ToString("#.##")</span>
-                            </i>
+                            <span class="label label-danger">Admin fee: £@Model.Payment.DeduAdminFee.ToString("#.##")</span> <br />
+                            <span class="label label-danger">Van rental: £@Model.Payment.DeduVanRental.ToString("#.##")</span> <br />
+                            <span class="label label-danger">Van fines: £@Model.Payment.DeduVanFines.ToString("#.##")</span> <br />
+                            <span class="label label-danger">Van damges: £@Model.Payment.DeduVanDamages.ToString("#.##")</span>
                         </small>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">BYOD</th>
-                    <td colspan="3">£@Model.Byod.Value.ToString("#.##")</td>
+                    <td colspan="3">£@(Model.Payment.Byod.HasValue ? Model.Payment.Byod.Value.ToString("#.##") : null)</td>
                 </tr>
                 <tr>
                     <th scope="row">Top-Up from Flat Rate VAT Pot</th>
-                    <td>£@Model.CNWRates.VATFlatRate.ToString("#.##")</td>
+                    <td>£@Model.Payment.CNWRates.VATFlatRate.ToString("#.##")</td>
                 </tr>
                 <tr>
                     <th scope="row">Estimated fuel cost</th>
-                    <td>--@*@Model.EstimatedFuelCost.ToString("#.##")*@ <small><i>(averaged @Model.AverageMpg mpg)</i></small></td>
+                    <td>--@*@Model.Payment.EstimatedFuelCost.ToString("#.##")*@ <small><i>(averaged @Model.Payment.AverageMpg mpg)</i></small></td>
                 </tr>
-                @if (!string.IsNullOrEmpty(Model.Info))
+                @if (!string.IsNullOrEmpty(Model.Payment.Info))
                 {
                     <tr>
                         <th scope="row">Info</th>
-                        <td>@Model.Info</td>
+                        <td>@Model.Payment.Info</td>
                     </tr>
                 }
                 <tr>
-                    <th scope="row">View Routes</th>
-                    <td><a href="">Here</a></td>
+                    <th scope="row">Routes</th>
+                    <td>
+                        @foreach (var route in Model.Routes)
+                        {
+                            <div>
+                                @Html.ActionLink(route.RouteDate.ToShortDateString() + " - " + route.RouteType, "RouteSummary", new { Id = route.Id })  @(route.ExtraDrops.HasValue ? Html.Raw("<small><span class='label label-success'>+ support</span></small>") : null)
+                            </div>
+                        }
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -84,40 +89,43 @@
             <tbody>
                 <tr>
                     <th scope="row">Miles</th>
-                    <td>@(Model.CalcMiles + @Model.CalcSupportMiles) <small><i>(miles: @Model.CalcMiles + support: @Model.CalcSupportMiles)</i></small></td>
-                    <td>@Model.ActualMiles</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualMiles, (Model.CalcMiles + Model.CalcSupportMiles), ""))</td>
+                    <td>@(Model.Payment.CalcMiles + @Model.Payment.CalcSupportMiles) <small><i>(miles: @Model.Payment.CalcMiles + support: @Model.Payment.CalcSupportMiles)</i></small></td>
+                    <td>@Model.Payment.ActualMiles</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualMiles, (Model.Payment.CalcMiles + Model.Payment.CalcSupportMiles), ""))</td>
                 </tr>
+                @if (Model.Payment.CalcSupportPay.HasValue)
+                {
                 <tr>
                     <th scope="row">Support Pay</th>
-                    <td>£@Model.CalcSupportPay.Value.ToString("#.##") <small><i>(@Model.CalcSupportDrops.Value.ToString("#.##") drops + £@Model.CalcSupportMileagePay.Value.ToString("#.##") fuel)</i></small></td>
-                    <td>£@(Model.ActualSupportPay.HasValue ? Model.ActualSupportPay.Value.ToString("#.##") : null)</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualSupportPay, Model.CalcSupportPay, ""))</td>
+                    <td>£@Model.Payment.CalcSupportPay.Value.ToString("#.##") <small><i>(@Model.Payment.CalcSupportDrops.Value.ToString("#.##") drops + £@Model.Payment.CalcSupportMileagePay.Value.ToString("#.##") fuel)</i></small></td>
+                    <td>£@(Model.Payment.ActualSupportPay.HasValue ? Model.Payment.ActualSupportPay.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualSupportPay, Model.Payment.CalcSupportPay, ""))</td>
                 </tr>
+                }
                 <tr>
                     <th scope="row">Route Pay</th>
-                    <td>£@Model.CalcRoutePay.ToString("#.##")</td>
-                    <td>£@(Model.ActualRoutePay.HasValue ? Model.ActualRoutePay.Value.ToString("#.##") : null)</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualRoutePay, Model.CalcRoutePay))</td>
+                    <td>£@Model.Payment.CalcRoutePay.ToString("#.##")</td>
+                    <td>£@(Model.Payment.ActualRoutePay.HasValue ? Model.Payment.ActualRoutePay.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualRoutePay, Model.Payment.CalcRoutePay))</td>
                 </tr>
                 <tr>
                     <th scope="row">Mileage Pay</th>
-                    <td>£@Model.CalcMileagePay.ToString("#.##")</td>
-                    <td>£@(Model.ActualMileagePay.HasValue ? Model.ActualMileagePay.Value.ToString("#.##") : null)</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualMileagePay, Model.CalcMileagePay))</td>
+                    <td>£@Model.Payment.CalcMileagePay.ToString("#.##")</td>
+                    <td>£@(Model.Payment.ActualMileagePay.HasValue ? Model.Payment.ActualMileagePay.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualMileagePay, Model.Payment.CalcMileagePay))</td>
                 </tr>
                 @*total amount for all additions minus deductions*@
                 @*<tr>
                     <th scope="row">Net Amount</th>
-                    <td>£@Model.CalcNetAmount.Value.ToString("#.##")</td>
-                    <td>£@(Model.ActualNetAmount.HasValue ? Model.ActualNetAmount.Value.ToString("#.##") : null)</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualNetAmount, Model.CalcNetAmount))</td>
+                    <td>£@Model.Payment.CalcNetAmount.Value.ToString("#.##")</td>
+                    <td>£@(Model.Payment.ActualNetAmount.HasValue ? Model.Payment.ActualNetAmount.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualNetAmount, Model.Payment.CalcNetAmount))</td>
                 </tr>*@
                 <tr>
                     <th scope="row">Total Pay</th>
-                    <td>£@Model.CalcTotalPayToDriver.Value.ToString("#.##")</td>
-                    <td>£@(Model.ActualTotalPay.HasValue ? Model.ActualTotalPay.Value.ToString("#.##") : null)</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.ActualTotalPay, Model.CalcTotalPayToDriver))</td>
+                    <td>£@(Model.Payment.CalcTotalPayToDriver.HasValue ? Model.Payment.CalcTotalPayToDriver.Value.ToString("#.##") : null)</td>
+                    <td>£@(Model.Payment.ActualTotalPay.HasValue ? Model.Payment.ActualTotalPay.Value.ToString("#.##") : null)</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualTotalPay, Model.Payment.CalcTotalPayToDriver))</td>
                 </tr>
             </tbody>
         </table>

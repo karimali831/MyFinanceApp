@@ -2,11 +2,22 @@
     ViewBag.Title = "Spendings";
 }
 
-<div id="root"></div>
+@if (Session["myFinanceApp-Authentication"] != null && Session["myFinanceApp-Authentication"].ToString() == "542769")
+{
+    <div id="root"></div>
+    @Scripts.Render("~/Scripts/React/dist/bundle.js")
 
-@Scripts.Render("~/Scripts/React/dist/bundle.js")
-
-<a href='@Url.Action("Index", "Home")'>
-    <img src='@Url.Content("~/Content/Images/refresh.png")' />
-</a>
-
+    <a href='@Url.Action("Index", "Home")'>
+        <img src='@Url.Content("~/Content/Images/refresh.png")' />
+    </a>
+}
+else
+{
+    using (Html.BeginForm())
+    {
+        <div class="form-group">
+            <input type="text" class="form-control" name="pwd" placeholder="Enter passcode" />
+            <input type="submit" class="btn btn-primary" value="Enter App" />
+        </div>
+    }
+}

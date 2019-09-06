@@ -7,9 +7,23 @@ using System.Web.Mvc;
 namespace MyFinances.Controllers
 {
     public class HomeController : Controller
-    {
+    { 
+        public string pwd = "542769";
+
         public ActionResult Index()
         {
+            ViewBag.Pwd = pwd;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Index(string pwd)
+        {
+            if (pwd.Equals(this.pwd))
+            {
+                Session["myFinanceApp-Authentication"] = pwd;
+                return RedirectToAction("Index");
+            }
             return View();
         }
 

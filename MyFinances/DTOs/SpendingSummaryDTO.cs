@@ -9,13 +9,21 @@ namespace MyFinances.DTOs
 {
     public class SpendingSummaryDTO
     {
+        public string Cat1 { get; set; }
+        public string Cat2 { get; set; }
         public decimal TotalSpent { get; set; }
-        public decimal FuelCost { get; set; }
-        public decimal[] FuelCostByType { get; set; }
-        public decimal FuelIn { get; set; }
-        public decimal FoodCost { get; set; }
-        public decimal InterestAndFees { get; set; }
-        public decimal OverdraftFees { get; set; }
-        public decimal CreditcardFees { get; set; }
+    }
+
+    public class SpendingSummaryVM
+    {
+        public IEnumerable<SpendingSummaryDTO> FirstCats { get; set; }
+        public IEnumerable<SecondCategories> SecondCats { get; set; }
+    }
+
+    public class SecondCategories
+    {
+        public string Category { get; set; }
+        public decimal TotalSpent { get; set; }
+        public IEnumerable<SpendingSummaryDTO> SecondCats { get; set; }
     }
 }

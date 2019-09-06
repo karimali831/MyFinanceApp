@@ -46,7 +46,7 @@ namespace MyFinances.Website.Controllers.API
                     x.ExtraMileage,
                     x.Info,
                     x.WeekstartPeriod
-                }).OrderByDescending(x => x.RouteDate)
+                })
             });
         }
 

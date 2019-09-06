@@ -10,11 +10,11 @@ interface IOwnProps {
 }
 
 export interface IOwnState {
-    spendingSummary: ISpendingSummary
+    spendingSummary: ISpendingSummary,
+    fuelIn: number,
     daysPeriod: number,
     loading: boolean,
-    showFuelTypes: boolean,
-    showInterestAndFeesTypes: boolean
+    showSecondCatSummary: string | null
 }
 
 export default class SpendingSummary extends React.Component<IOwnProps, IOwnState> {
@@ -22,10 +22,10 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
         super(props);
         this.state = { 
             spendingSummary: undefined,
-            daysPeriod: -1,
+            fuelIn: 0,
+            daysPeriod: 1,
             loading: true,
-            showFuelTypes: false,
-            showInterestAndFeesTypes: false
+            showSecondCatSummary: null
         };
     }
 
@@ -41,14 +41,15 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
 
     private loadSummary = () => {
         api.summary(this.state.daysPeriod)
-            .then(response => this.loadSummarySuccess(response.spendingSummary));
+            .then(response => this.loadSummarySuccess(response.spendingSummary, response.fuelIn));
     }
 
-    private loadSummarySuccess = (spendingSummary: ISpendingSummary) => {
+    private loadSummarySuccess = (spendingSummary: ISpendingSummary, fuelIn: number) => {
         this.setState({ ...this.state,
             ...{ 
                 loading: false, 
-                spendingSummary: spendingSummary
+                spendingSummary: spendingSummary,
+                fuelIn: fuelIn
             }
         }) 
     }
@@ -57,21 +58,14 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
         this.setState({ ...this.state, daysPeriod: Number(e.target.value) })
     }
 
-    private showFuelTypes = () => {
-        this.setState({ ...this.state, showFuelTypes: !this.state.showFuelTypes })
-    }
-
-    private showInterestAndFeesTypes = () => {
-        this.setState({ ...this.state, showInterestAndFeesTypes: !this.state.showInterestAndFeesTypes })
+    private showSecondCatSummary = (category: string) => {
+        this.setState({ ...this.state, showSecondCatSummary: this.state.showSecondCatSummary === category ? null : category })
     }
 
     render() {
         if (this.state.loading) {
             return <Loader text="Loading spending summary..." />
         }
-
-        const summary = this.state.spendingSummary;
-
         return (
             <div>
                 <table className="table">
@@ -81,9 +75,9 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                 Spendings breakdown summary in the last
                                 <div className="form-group">
                                     <select onChange={(e) => this.onChangeSelectedDaysPeriod(e)} className="form-control">
-                                        <option value="-1" selected>24 hours</option>
-                                        <option value="-7">7 days</option>
-                                        <option value="-30">30 days</option>
+                                        <option value="1" selected>1 day</option>
+                                        <option value="7">7 days</option>
+                                        <option value="30">30 days</option>
                                     </select>
                                 </div>
                             </th>
@@ -91,58 +85,41 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row">Total Spent</th>
-                            <td>£{summary.totalSpent}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Fuel Cost</th>
-                            <td>
-                                <div onClick={() => this.showFuelTypes()}>
-                                    <FontAwesomeIcon icon={faSearch} /> £{summary.fuelCost} 
-                                    {this.state.showFuelTypes ? 
-                                    <>
-                                        <br />
-                                        <small>
-                                            <i>
-                                                <strong>van:</strong> £{summary.fuelCostByType[0]} <br />
-                                                <strong>gti:</strong> £{summary.fuelCostByType[1]} <br />
-                                                <strong>rcz:</strong> £{summary.fuelCostByType[2]}
-                                            </i>
-                                        </small>
-                                    </>
-                                    : null}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
                             <th scope="row">Fuel In</th>
                             <td>
-                                £{summary.fuelIn}
+                                £{this.state.fuelIn}
                             </td>
                         </tr>
-                        <tr>
-                            <th scope="row">Foods & Drinks</th>
-                            <td>£{summary.foodCost}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Interest & Fees</th>
-                            <td>
-                                <div onClick={() => this.showInterestAndFeesTypes()}>
-                                    <FontAwesomeIcon icon={faSearch} /> £{summary.interestAndFees}               
-                                    {this.state.showInterestAndFeesTypes ? 
-                                    <>
-                                        <br />
-                                        <small>
-                                            <i>
-                                                <strong>overdrafts:</strong> £{summary.overdraftFees} <br />
-                                                <strong>credit cards:</strong> £{summary.creditcardFees}
-                                            </i>
-                                        </small>
-                                    </>
-                                    : null}
-                                </div>
-                            </td>
-                        </tr>
+                        {this.state.spendingSummary.firstCats.map(s => 
+                            <tr>
+                                <th scope="row">{s.cat1}</th>
+                                <td>£{s.totalSpent}</td>
+                            </tr>
+                        )}
+                        {this.state.spendingSummary.secondCats.map(s => 
+                            <tr>
+                                <th scope="row">{s.category}</th>
+                                <td> 
+                                    <div onClick={() => this.showSecondCatSummary(s.category)}>
+                                        <FontAwesomeIcon icon={faSearch} /> £{s.totalSpent}
+                                        {this.state.showSecondCatSummary === s.category ? 
+                                        <>
+                                            <br />
+                                            <small>
+                                                <i> 
+                                                    {s.secondCats.map(c =>   
+                                                        <div>            
+                                                            <strong>{c.cat2}</strong> {c.totalSpent}
+                                                        </div>
+                                                    )}
+                                                </i>
+                                            </small>
+                                        </>
+                                        : null}
+                                    </div>
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
                 <IncomeSummary />

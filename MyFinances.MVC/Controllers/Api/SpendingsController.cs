@@ -41,7 +41,7 @@ namespace MyFinances.Website.Controllers.API
                     x.Info,
                     x.Category,
                     x.SecondCategory
-                }).OrderByDescending(x => x.Date).ThenBy(x => x.Name).ThenBy(x => x.Category)
+                })
             });
         }
 
@@ -49,37 +49,13 @@ namespace MyFinances.Website.Controllers.API
         [HttpGet]
         public async Task<HttpResponseMessage> GetSpendingSummaryAsync(int daysPeriod)
         {
-            var spendings = await spendingService.GetAllAsync();
+            var spendings = await spendingService.GetSpendingSummary(daysPeriod);
+            decimal fuelIn = await spendingService.GetFuelIn(daysPeriod);
 
-            decimal totalSpent = await spendingService.GetTotalSpent(spendings, daysPeriod);
-            decimal totalFuelCost = await spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel);
-            decimal totalVanFuelCost = await spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel, Categories.Van);
-            decimal totalGTIFuelCost = await spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel, Categories.GTI);
-            decimal totalRCZFuelCost = await spendingService.GetTotalSpent(spendings, daysPeriod, Categories.Fuel, Categories.RCZ);
-            decimal totalFoodCost = await spendingService.GetTotalSpent(spendings, daysPeriod, Categories.FoodAndDrinks);
-            decimal totalInterestAndFees = await spendingService.GetTotalSpent(spendings, daysPeriod, Categories.InterestAndFees);
-            decimal totalODFees = await spendingService.GetTotalSpent(spendings, daysPeriod, Categories.InterestAndFees, Categories.OverdraftFees);
-            decimal totalCCFees = await spendingService.GetTotalSpent(spendings, daysPeriod, Categories.InterestAndFees, Categories.CCInterest);
-            decimal totalFuelIn = await spendingService.GetFuelIn(daysPeriod);
-
-            var totalFuelCostByType = new decimal[3];
-            totalFuelCostByType[0] = totalVanFuelCost;
-            totalFuelCostByType[1] = totalGTIFuelCost;
-            totalFuelCostByType[2] = totalRCZFuelCost;
-
-            return Request.CreateResponse(HttpStatusCode.OK, 
+            return Request.CreateResponse(HttpStatusCode.OK,
                 new {
-                    SpendingSummary = new SpendingSummaryDTO
-                    {
-                        TotalSpent = totalSpent,
-                        FuelCost = totalFuelCost,
-                        FuelCostByType = totalFuelCostByType,
-                        FuelIn = totalFuelIn,
-                        FoodCost = totalFoodCost,
-                        InterestAndFees = totalInterestAndFees,
-                        OverdraftFees = totalODFees,
-                        CreditcardFees = totalCCFees
-                    }
+                    SpendingSummary = spendings,
+                    FuelIn = fuelIn
                 }
             );
         }

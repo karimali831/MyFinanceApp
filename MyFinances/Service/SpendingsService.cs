@@ -15,7 +15,8 @@ namespace MyFinances.Service
         Task InsertAsync(SpendingDTO dto);
         Task<decimal> GetFuelIn(int daysInterval);
         DateTime? ExpenseLastPaidDate(int financeId);
-        Task<decimal> GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
+        decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
+        Task<SpendingSummaryVM> GetSpendingSummary(int period);
     }
 
     public class SpendingService : ISpendingService
@@ -33,7 +34,10 @@ namespace MyFinances.Service
 
         public async Task<IEnumerable<Spending>> GetAllAsync()
         {
-            return await spendingRepository.GetAllAsync();
+            return (await spendingRepository.GetAllAsync())
+                .OrderByDescending(x => x.Date)
+                .ThenBy(x => x.Name)
+                .ThenBy(x => x.Category);
         }
 
 
@@ -47,7 +51,7 @@ namespace MyFinances.Service
             return spendingRepository.ExpenseLastPaidDate(financeId);
         }
 
-        public async Task<decimal> GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId, Categories? secondCatId) 
+        public decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId, Categories? secondCatId) 
         {
             var getSpendings = spendings.Where(x => x.Date >= DateTime.Now.Date.AddDays(daysInterval));
                 
@@ -62,6 +66,37 @@ namespace MyFinances.Service
             }
 
             return getSpendings.Sum(x => x.Amount);
+        }
+
+        public async Task<SpendingSummaryVM> GetSpendingSummary(int period)
+        {
+            var spendingsSummary = (await spendingRepository.GetSpendingsSummaryAsync(period));
+
+            var secondCats = spendingsSummary
+                .Where(x => x.Cat2 != null)
+                .GroupBy(
+                    p => p.Cat1,
+                    p => new { p.Cat2, p.TotalSpent },
+                    (key, g) =>
+                        new SecondCategories
+                        {
+                            Category = key,
+                            TotalSpent = spendingsSummary.Where(x => x.Cat1 == key).Sum(X => X.TotalSpent),
+                            SecondCats = g.Select(s => new SpendingSummaryDTO
+                            {
+                                Cat2 = s.Cat2,
+                                TotalSpent = s.TotalSpent
+                            })
+                        }
+                 );
+
+            var firstCats = spendingsSummary.Where(x => x.Cat2 == null);
+
+            return new SpendingSummaryVM
+            {
+                FirstCats = firstCats,
+                SecondCats = secondCats
+            };
         }
 
         public async Task<decimal> GetFuelIn(int daysInterval)

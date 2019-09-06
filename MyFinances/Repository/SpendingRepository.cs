@@ -16,6 +16,7 @@ namespace MyFinances.Repository
         Task<Spending> GetAsync(int Id);
         DateTime? ExpenseLastPaidDate(int financeId);
         Task InsertAsync(SpendingDTO dto);
+        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(int weekPeriod);
     }
 
     public class SpendingRepository : ISpendingRepository
@@ -56,6 +57,35 @@ namespace MyFinances.Repository
             using (var sql = dbConnectionFactory())
             {
                 return (await sql.QueryAsync<Spending>(sqlTxt)).ToArray();
+            }
+        }
+
+        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(int weekPeriod)
+        {
+            string sqlTxt = $@"
+                SELECT 
+	                CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Cat1,
+	                c2.Name AS Cat2, SUM(s.Amount) as TotalSpent
+                FROM 
+	                [myfinances].[dbo].[Spendings] as s
+	            LEFT JOIN Categories c1 
+                    ON c1.Id = s.CatId
+	            LEFT JOIN Categories c2
+                    ON c2.Id = s.SecondCatId
+	            LEFT JOIN Finances f 
+                    ON f.Id = s.FinanceId
+                WHERE Display = 1
+                    AND [date] >= DATEADD(DAY, 0, DATEDIFF(DAY, @Days, CURRENT_TIMESTAMP))
+                    AND [date] <  DATEADD(DAY, 1, DATEDIFF(DAY, 0, CURRENT_TIMESTAMP))
+                GROUP BY 
+                    c1.Name, c2.Name, f.Name
+                ORDER BY 
+                    TotalSpent DESC";
+
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<SpendingSummaryDTO>(sqlTxt, new { Days = weekPeriod })).ToArray();
+
             }
         }
 

@@ -44,7 +44,9 @@ namespace MyFinances.Service
 
         public async Task<IEnumerable<CNWRoute>> GetAllRoutesAsync(int? weekNo = null)
         {
-            var routes = await cnwRoutesRepository.GetAllAsync(weekNo);
+            var routes = (
+                await cnwRoutesRepository.GetAllAsync(weekNo))
+                .OrderByDescending(x => x.RouteDate);
 
             var weekPeriod = routes
                 .Select(x => new { x.Id, x.RouteDate })

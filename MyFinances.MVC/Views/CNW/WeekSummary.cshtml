@@ -6,7 +6,7 @@
 
     <h2>CNW Week Summary</h2>
 
-    @if (Model != null)
+    @if (Model != null && Model.Payment.InvoiceNo.HasValue && Model.Payment.InvoiceNo != 0)
     {
         <table class="table">
             <thead>
@@ -132,5 +132,5 @@
     }
     else
     {
-        <h2>Week not recorded</h2>
+        <h2>Week not recorded yet</h2>
     }

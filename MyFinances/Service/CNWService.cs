@@ -173,7 +173,7 @@ namespace MyFinances.Service
             var rates = await cnwRatesRepository.GetAsync();
 
             return (await cnwPaymentsRepository.GetAllAsync())
-                .Where(x => x.PayDate >= DateTime.Now.Date.AddDays(daysInterval))
+                .Where(x => DateTime.Now >= x.PayDate && DateTime.Now.Date <= x.PayDate.Date.AddDays(daysInterval))
                 .Sum(x => rates.Mileage * x.ActualMiles) ?? 0;
         }
     }

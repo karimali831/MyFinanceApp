@@ -6,7 +6,7 @@
 
     <h2>CNW Week Summary</h2>
 
-    @if (Model != null && Model.Payment.InvoiceNo.HasValue && Model.Payment.InvoiceNo != 0)
+    @if (Model != null)
     {
         <table class="table">
             <thead>
@@ -70,7 +70,7 @@
                         @foreach (var route in Model.Routes)
                         {
                             <div>
-                                @Html.ActionLink(route.RouteDate.ToShortDateString() + " - " + route.RouteType, "RouteSummary", new { Id = route.Id })  @(route.ExtraDrops.HasValue ? Html.Raw("<small><span class='label label-success'>+ support</span></small>") : null)
+                                @Html.ActionLink(route.RouteDate.ToShortDateString() + " - " + route.RouteType, "RouteSummary", new { Id = route.Id })  @(route.ExtraDrops.HasValue && route.ExtraDrops != 0 ? Html.Raw("<small><span class='label label-success'>+ support</span></small>") : null)
                             </div>
                         }
                     </td>

@@ -109,7 +109,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                                 <i> 
                                                     {s.secondCats.map(c =>   
                                                         <div>            
-                                                            <strong>{c.cat2}</strong> {c.totalSpent}
+                                                            <strong>{c.cat2}</strong> £{c.totalSpent}
                                                         </div>
                                                     )}
                                                 </i>

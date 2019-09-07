@@ -2,6 +2,9 @@ import * as React from 'react';
 import { api } from '../Api/Api'
 import { Loader } from './Loader';
 import { IIncomeSummary } from '../Models/IIncome';
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 interface IOwnProps {
 }
@@ -75,19 +78,19 @@ export default class IncomeSummary extends React.Component<IOwnProps, IOwnState>
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row">Total Income</th>
+                        <th scope="row"><FontAwesomeIcon icon={faArrowUp} /> Total Income</th>
                         <td>£{summary.totalIncome}</td>
                     </tr>
                     <tr>
-                        <th scope="row">CWTL Income</th>
+                        <th scope="row"><FontAwesomeIcon icon={faArrowUp} /> CWTL Income</th>
                         <td>£{summary.incomeCWTL}</td>
                     </tr>
                     <tr>
-                        <th scope="row">UberEats</th>
+                        <th scope="row"><FontAwesomeIcon icon={faArrowUp} /> UberEats</th>
                         <td>£{summary.incomeUberEats}</td>
                     </tr>
                     <tr>
-                        <th scope="row">Freelance</th>
+                        <th scope="row"><FontAwesomeIcon icon={faArrowUp} /> Freelance</th>
                         <td>£{summary.incomeSB}</td>
                     </tr>
                 </tbody>

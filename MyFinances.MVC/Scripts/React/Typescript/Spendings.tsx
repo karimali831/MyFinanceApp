@@ -3,7 +3,6 @@ import { api } from '../Api/Api';
 import { ISpending } from "../Models/ISpending";
 import { Loader } from './Loader';
 import { ITableOptions, ITableProps } from '../Models/ITable';
-import { textFilter } from 'react-bootstrap-table2-filter';
 import Table from './CommonTable';
 import { priceFormatter } from './Utils';
 

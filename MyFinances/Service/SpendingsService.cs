@@ -16,7 +16,7 @@ namespace MyFinances.Service
         Task<decimal> GetFuelIn(int daysInterval);
         DateTime? ExpenseLastPaidDate(int financeId);
         decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
-        Task<SpendingSummaryVM> GetSpendingSummary(int period);
+        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(int period);
     }
 
     public class SpendingService : ISpendingService
@@ -68,7 +68,7 @@ namespace MyFinances.Service
             return getSpendings.Sum(x => x.Amount);
         }
 
-        public async Task<SpendingSummaryVM> GetSpendingSummary(int period)
+        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(int period)
         {
             var spendingsSummary = (await spendingRepository.GetSpendingsSummaryAsync(period));
 
@@ -78,9 +78,9 @@ namespace MyFinances.Service
                     p => p.Cat1,
                     p => new { p.Cat2, p.TotalSpent },
                     (key, g) =>
-                        new SecondCategories
+                        new SpendingSummaryDTO
                         {
-                            Category = key,
+                            Cat1 = key,
                             TotalSpent = spendingsSummary.Where(x => x.Cat1 == key).Sum(X => X.TotalSpent),
                             SecondCats = g.Select(s => new SpendingSummaryDTO
                             {
@@ -92,12 +92,7 @@ namespace MyFinances.Service
 
             var firstCats = spendingsSummary.Where(x => x.Cat2 == null);
 
-            return new SpendingSummaryVM
-            {
-                FirstCats = firstCats,
-                SecondCats = secondCats,
-                TotalSpent = spendingsSummary.Sum(x => x.TotalSpent)
-            };
+            return firstCats.Concat(secondCats).OrderByDescending(x => x.TotalSpent).ToArray();
         }
 
         public async Task<decimal> GetFuelIn(int daysInterval)

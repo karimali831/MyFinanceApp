@@ -19,21 +19,8 @@ export interface ISpendingDTO {
 
 export interface ISpendingSummary
 {
-    firstCats: ISpendingSummaryCats[],
-    secondCats: ISpendingSummarySecondCats[],
-    totalSpent: number
-}
-
-export interface ISpendingSummaryCats
-{
     cat1: string,
     cat2: string,
+    secondCats: ISpendingSummary[],
     totalSpent: number,
-}
-
-export interface ISpendingSummarySecondCats
-{
-    category: string,
-    totalSpent: number,
-    secondCats: ISpendingSummaryCats[]
 }

@@ -10,8 +10,9 @@ interface IOwnProps {
 }
 
 export interface IOwnState {
-    spendingSummary: ISpendingSummary,
+    spendingSummary: ISpendingSummary[],
     fuelIn: number,
+    totalSpent: number,
     daysPeriod: number,
     loading: boolean,
     showSecondCatSummary: string | null
@@ -21,8 +22,9 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
     constructor(props: IOwnProps) {
         super(props);
         this.state = { 
-            spendingSummary: undefined,
+            spendingSummary: [],
             fuelIn: 0,
+            totalSpent: 0,
             daysPeriod: 1,
             loading: true,
             showSecondCatSummary: null
@@ -41,15 +43,16 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
 
     private loadSummary = () => {
         api.summary(this.state.daysPeriod)
-            .then(response => this.loadSummarySuccess(response.spendingSummary, response.fuelIn));
+            .then(response => this.loadSummarySuccess(response.spendingSummary, response.fuelIn, response.totalSpent));
     }
 
-    private loadSummarySuccess = (spendingSummary: ISpendingSummary, fuelIn: number) => {
+    private loadSummarySuccess = (spendingSummary: ISpendingSummary[], fuelIn: number, totalSpent: number) => {
         this.setState({ ...this.state,
             ...{ 
                 loading: false, 
                 spendingSummary: spendingSummary,
-                fuelIn: fuelIn
+                fuelIn: fuelIn,
+                totalSpent: totalSpent
             }
         }) 
     }
@@ -90,39 +93,35 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                 £{this.state.fuelIn}
                             </td>
                         </tr>
-                        {this.state.spendingSummary.firstCats.map(s => 
+                        {this.state.spendingSummary.map(s => 
                             <tr>
                                 <th scope="row"><FontAwesomeIcon icon={faArrowDown} /> {s.cat1}</th>
-                                <td>£{s.totalSpent}</td>
-                            </tr>
-                        )}
-                        {this.state.spendingSummary.secondCats.map(s => 
-                            <tr>
-                                <th scope="row"><FontAwesomeIcon icon={faArrowDown} /> {s.category}</th>
-                                <td> 
-                                    <div onClick={() => this.showSecondCatSummary(s.category)}>
-                                        <FontAwesomeIcon icon={faSearch} /> £{s.totalSpent}
-                                        {this.state.showSecondCatSummary === s.category ? 
-                                        <>
-                                            <br />
-                                            <small>
-                                                <i> 
-                                                    {s.secondCats.map(c =>   
-                                                        <div>            
-                                                            <strong>{c.cat2}</strong> £{c.totalSpent}
-                                                        </div>
-                                                    )}
-                                                </i>
-                                            </small>
-                                        </>
-                                        : null}
-                                    </div>
+                                <td>
+                                    {s.secondCats != null ? 
+                                        <div onClick={() => this.showSecondCatSummary(s.cat1)}>
+                                            <FontAwesomeIcon icon={faSearch} /> £{s.totalSpent}
+                                            {this.state.showSecondCatSummary === s.cat1 ? 
+                                            <>
+                                                <br />
+                                                <small>
+                                                    <i> 
+                                                        {s.secondCats.map(c =>   
+                                                            <div>            
+                                                                <strong>{c.cat2}</strong> £{c.totalSpent}
+                                                            </div>
+                                                        )}
+                                                    </i>
+                                                </small>
+                                            </>
+                                            : null}
+                                        </div>
+                                     : "£"+s.totalSpent}
                                 </td>
                             </tr>
                         )}
                         <tr>
                             <th scope="row"><FontAwesomeIcon icon={faArrowDown} /> Total Spent</th>
-                            <td>£{this.state.spendingSummary.totalSpent}</td>
+                            <td>£{this.state.totalSpent}</td>
                         </tr>
                     </tbody>
                 </table>

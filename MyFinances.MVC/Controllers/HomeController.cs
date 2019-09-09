@@ -8,7 +8,7 @@ namespace MyFinances.Controllers
 {
     public class HomeController : Controller
     { 
-        public string pwd = "542769";
+        public string pwd = "5424";
 
         public ActionResult Index()
         {
@@ -24,6 +24,8 @@ namespace MyFinances.Controllers
                 Session["myFinanceApp-Authentication"] = pwd;
                 return RedirectToAction("Index");
             }
+
+            ViewBag.ErrorMessage = "The password was entered incorrectly";
             return View();
         }
 

@@ -2,7 +2,9 @@
     ViewBag.Title = "Spendings";
 }
 
-@if (Session["myFinanceApp-Authentication"] != null && Session["myFinanceApp-Authentication"].ToString() == "542769")
+    <p style="color: red; font-weight: bold">@ViewBag.ErrorMessage</p>
+
+@if (Session["myFinanceApp-Authentication"] != null && Session["myFinanceApp-Authentication"].ToString() == ViewBag.Pwd)
 {
     <div id="root"></div>
     @Scripts.Render("~/Scripts/React/dist/bundle.js")

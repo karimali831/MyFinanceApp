@@ -5,6 +5,7 @@ import { ISpendingSummary } from '../Models/ISpending';
 import IncomeSummary from './IncomeSummary';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { Link } from "react-router-dom";
 
 interface IOwnProps {
 }
@@ -95,7 +96,10 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                         </tr>
                         {this.state.spendingSummary.map(s => 
                             <tr>
-                                <th scope="row"><FontAwesomeIcon icon={faArrowDown} /> {s.cat1}</th>
+                                <th scope="row">
+                                    <FontAwesomeIcon icon={faArrowDown} /> 
+                                    <Link to={`spending/${s.cat1Id}/${this.state.daysPeriod}`}> {s.cat1}</Link>
+                                </th>
                                 <td>
                                     {s.secondCats != null ? 
                                         <div onClick={() => this.showSecondCatSummary(s.cat1)}>

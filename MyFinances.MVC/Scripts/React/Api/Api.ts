@@ -10,8 +10,8 @@ export class Api {
 
     public rootUrl: string = `${rootUrl}/api`;
 
-    public spendings = async (): Promise<ISpendingResponse> => {
-        return fetch(`${this.rootUrl}/spendings`, {
+    public spendings = async (cat1Id?: number, period?: number): Promise<ISpendingResponse> => {
+        return fetch(`${this.rootUrl}/spendings/${cat1Id != null ? `${cat1Id}/` : ""}${period != null ? period : ""}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",

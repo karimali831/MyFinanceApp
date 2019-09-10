@@ -64,7 +64,8 @@ namespace MyFinances.Repository
         {
             string sqlTxt = $@"
                 SELECT 
-	                CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Cat1,
+                    CASE WHEN c1.Name IS NULL THEN f.CatId ELSE C1.Id END AS Cat1Id,
+                    CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Cat1,
 	                c2.Name AS Cat2, SUM(s.Amount) as TotalSpent
                 FROM 
 	                [myfinances].[dbo].[Spendings] as s
@@ -78,7 +79,7 @@ namespace MyFinances.Repository
                     AND [date] >= DATEADD(DAY, 0, DATEDIFF(DAY, @Days, CURRENT_TIMESTAMP))
                     AND [date] <  DATEADD(DAY, 1, DATEDIFF(DAY, 0, CURRENT_TIMESTAMP))
                 GROUP BY 
-                    c1.Name, c2.Name, f.Name
+                    c1.Id, f.CatId, c1.Name, c2.Name, f.Name
                 ORDER BY 
                     TotalSpent DESC";
 

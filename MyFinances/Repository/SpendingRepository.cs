@@ -43,7 +43,8 @@ namespace MyFinances.Repository
                     s.SecondCatId,
 					CASE WHEN s.CatId IS NULL THEN (SELECT CatID FROM Finances WHERE ID = s.FinanceId) ELSE s.CatId END AS CatId,
                     CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
-	                c2.Name AS SecondCategory
+	                c2.Name AS SecondCategory,
+                    s.FinanceId AS FinanceId
                 FROM {TABLE} s 
                 LEFT JOIN Categories c1 
                     ON c1.Id = s.CatId
@@ -64,11 +65,12 @@ namespace MyFinances.Repository
         {
             string sqlTxt = $@"
                 SELECT 
-                    CASE WHEN c1.Name IS NULL THEN f.CatId ELSE C1.Id END AS Cat1Id,
+                    CASE WHEN s.CatId IS NULL THEN s.FinanceId ELSE s.CatId END AS CatId,
                     CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Cat1,
+                    CASE WHEN s.CatId IS NULL THEN 1 ELSE 0 END AS IsFinance,
 	                c2.Name AS Cat2, SUM(s.Amount) as TotalSpent
                 FROM 
-	                [myfinances].[dbo].[Spendings] as s
+	                {TABLE} as s
 	            LEFT JOIN Categories c1 
                     ON c1.Id = s.CatId
 	            LEFT JOIN Categories c2
@@ -79,7 +81,7 @@ namespace MyFinances.Repository
                     AND [date] >= DATEADD(DAY, 0, DATEDIFF(DAY, @Days, CURRENT_TIMESTAMP))
                     AND [date] <  DATEADD(DAY, 1, DATEDIFF(DAY, 0, CURRENT_TIMESTAMP))
                 GROUP BY 
-                    c1.Id, f.CatId, c1.Name, c2.Name, f.Name
+                    s.CatId, s.FinanceId, c1.Name, c2.Name, f.Name
                 ORDER BY 
                     TotalSpent DESC";
 

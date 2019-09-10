@@ -20,6 +20,8 @@ export interface ISpendingDTO {
 export interface ISpendingSummary
 {
     cat1: string,
+    catId: number,
+    isFinance: boolean,
     cat2: string,
     secondCats: ISpendingSummary[],
     totalSpent: number,

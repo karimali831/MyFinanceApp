@@ -11,7 +11,7 @@ namespace MyFinances.Service
 {
     public interface ISpendingService
     {
-        Task<IEnumerable<Spending>> GetAllAsync(int? cat1Id, int? period);
+        Task<IEnumerable<Spending>> GetAllAsync(int? catId, int? period, bool isFinance);
         Task InsertAsync(SpendingDTO dto);
         Task<decimal> GetFuelIn(int daysInterval);
         DateTime? ExpenseLastPaidDate(int financeId);
@@ -32,13 +32,13 @@ namespace MyFinances.Service
             this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
         }
 
-        public async Task<IEnumerable<Spending>> GetAllAsync(int? cat1Id, int? period)
+        public async Task<IEnumerable<Spending>> GetAllAsync(int? catId, int? period, bool isFinance)
         {
             var spendings = (await spendingRepository.GetAllAsync());
                 
-            if (cat1Id.HasValue)
+            if (catId.HasValue)
             {
-                spendings = spendings.Where(x => x.CatId == cat1Id.Value);
+                spendings = spendings.Where(x => (isFinance && x.FinanceId == catId.Value) || (!isFinance && x.CatId == catId.Value));
             }
 
             if (period.HasValue)
@@ -87,14 +87,15 @@ namespace MyFinances.Service
             var secondCats = spendingsSummary
                 .Where(x => x.Cat2 != null)
                 .GroupBy(
-                    p => new { p.Cat1Id, p.Cat1 },
+                    p => new { p.CatId, p.IsFinance, p.Cat1 },
                     p => new { p.Cat2, p.TotalSpent },
                     (key, g) =>
                         new SpendingSummaryDTO
                         {
                             Cat1 = key.Cat1,
-                            Cat1Id = key.Cat1Id,
-                            TotalSpent = spendingsSummary.Where(x => x.Cat1Id == key.Cat1Id).Sum(X => X.TotalSpent),
+                            CatId = key.CatId,
+                            IsFinance = key.IsFinance,
+                            TotalSpent = spendingsSummary.Where(x => x.CatId == key.CatId).Sum(X => X.TotalSpent),
                             SecondCats = g.Select(s => new SpendingSummaryDTO
                             {
                                 Cat2 = s.Cat2,

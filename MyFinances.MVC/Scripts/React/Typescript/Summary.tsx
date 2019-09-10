@@ -82,6 +82,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                         <option value="1" selected>1 day</option>
                                         <option value="7">7 days</option>
                                         <option value="30">30 days</option>
+                                        <option value="100">100 days</option>
                                     </select>
                                 </div>
                             </th>
@@ -98,7 +99,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                             <tr>
                                 <th scope="row">
                                     <FontAwesomeIcon icon={faArrowDown} /> 
-                                    <Link to={`spending/${s.cat1Id}/${this.state.daysPeriod}`}> {s.cat1}</Link>
+                                    <Link to={`spending/${s.catId}/${this.state.daysPeriod}/${s.isFinance}`}> {s.cat1}</Link>
                                 </th>
                                 <td>
                                     {s.secondCats != null ? 

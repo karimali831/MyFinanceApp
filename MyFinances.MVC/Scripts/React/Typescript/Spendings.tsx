@@ -12,8 +12,9 @@ interface IOwnProps {
 export interface IOwnState {
     spendings: ISpending[],
     loading: boolean,
-    cat1Id: number | undefined,
-    period: number | undefined
+    catId: number | undefined,
+    period: number | undefined,
+    isFinance: boolean
 }
 
 export default class Spendings extends React.Component<IOwnProps, IOwnState> {
@@ -22,8 +23,9 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
         this.state = { 
             loading: true,
             spendings: [],
-            cat1Id: this.props.match.params.cat1Id,
-            period: this.props.match.params.period
+            catId: this.props.match.params.catId,
+            period: this.props.match.params.period,
+            isFinance: this.props.match.params.isFinance
         };
     }
 
@@ -34,7 +36,7 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
     }
 
     private loadSpendings = () => {
-        api.spendings(this.state.cat1Id, this.state.period)
+        api.spendings(this.state.catId, this.state.period, this.state.isFinance)
             .then(response => this.loadSpendingsSuccess(response.spendings));
     }
 

@@ -16,6 +16,7 @@ namespace MyFinances.Model
         public int? SecondCatId { get; set; }
         public string Category { get; set; }
         public string SecondCategory { get; set; }
+        public int? FinanceId { get; set; }
     }
 
     public class SpendingMap : EntityTypeConfiguration<Spending>

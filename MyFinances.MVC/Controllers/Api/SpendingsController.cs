@@ -27,10 +27,10 @@ namespace MyFinances.Website.Controllers.API
         }
 
         [HttpGet]
-        [Route("{cat1Id?}/{period?}")]
-        public async Task<HttpResponseMessage> GetSpendingsAsync(int? cat1Id = null, int? period = null)
+        [Route("{catId?}/{period?}/{isFinance?}")]
+        public async Task<HttpResponseMessage> GetSpendingsAsync(int? catId = null, int? period = null, bool isFinance = false)
         {
-            var spendings = await spendingService.GetAllAsync(cat1Id, period);
+            var spendings = await spendingService.GetAllAsync(catId, period, isFinance);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Spendings = spendings.Select(x => new

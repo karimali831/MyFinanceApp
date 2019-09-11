@@ -12,6 +12,7 @@ namespace MyFinances.Model
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public int? MonthlyDueDate { get; set; }
+        public DateTime? NextDueDate { get; set; }
         public decimal? Remaining { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? TotalPaid { get; set; }

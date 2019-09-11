@@ -33,8 +33,8 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         this.loadFinances();
     }
 
-    private loadFinances = () => {
-        api.finances()
+    private loadFinances = (resyncNextDueDates = false) => {
+        api.finances(resyncNextDueDates)
             .then(response => this.loadFinancesSuccess(response.finances, response.totalAvgCost));
     }
 
@@ -55,7 +55,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             case 1:
                 return <span className="label label-warning">{PaymentStatus[PaymentStatus.Upcoming]} ({row['daysUntilDue']} days)</span>
             case 2:
-                return <span className="label label-danger">{PaymentStatus[PaymentStatus.Late]} ({row['daysUntilDue']} days)</span>
+                return <span className="label label-danger">{PaymentStatus[PaymentStatus.Late]} ({row['daysLate']} days)</span>
             case 3:
                 return <span className="label label-default">{PaymentStatus[PaymentStatus.Unknown]}</span>
             case 4:
@@ -94,11 +94,14 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             text: 'Due Date',
             formatter: intToOrdinalNumberString
           }, {
+            dataField: 'daysLate',
+            text: 'Days Late',
+            hidden: true
+          }, {
             dataField: 'daysUntilDue',
             text: 'Next Due',
             hidden: true
-          }
-          , {
+          }, {
             dataField: 'paymentStatus',
             text: 'Status',
             formatter: this.paymentStatus
@@ -117,6 +120,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
                     columns={columns}
                     options={options}
                 /> 
+                <a onClick={() => this.loadFinances(true)}>Re-sync next due dates</a><br />
                 <label>Total average monthly cost: £{this.state.totalAvgCost}</label>
             </div>
         )

@@ -9,6 +9,7 @@ export interface IFinance {
     monthlyDueDate: number,
     manualPayment: boolean,
     daysUntilDue: number,
+    daysLate: number,
     paymentStatus: PaymentStatus
 }
 

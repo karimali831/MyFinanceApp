@@ -14,6 +14,7 @@ namespace MyFinances.Repository
     {
         Task<IEnumerable<Finance>> GetAllAsync();
         Task InsertAsync(FinanceDTO dto);
+        Task UpdateNextDueDateAsync(DateTime dueDate, int Id);
     }
 
     public class FinanceRepository : IFinanceRepository
@@ -33,6 +34,16 @@ namespace MyFinances.Repository
             using (var sql = dbConnectionFactory())
             {
                 return (await sql.QueryAsync<Finance>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
+            }
+        }
+
+        public async Task UpdateNextDueDateAsync(DateTime dueDate, int Id)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($@"
+                    UPDATE {TABLE} SET NextDueDate = @DueDate WHERE Id = @Id", new { DueDate = dueDate, Id }
+                );
             }
         }
 

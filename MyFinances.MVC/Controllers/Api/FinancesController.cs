@@ -26,10 +26,11 @@ namespace MyFinances.Website.Controllers.API
             this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
         }
 
+        [Route("{resyncNextDueDates}")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetFinancesAsync()
+        public async Task<HttpResponseMessage> GetFinancesAsync(bool resyncNextDueDates)
         {
-            var finances = await financeService.GetAllAsync();
+            var finances = await financeService.GetAllAsync(resyncNextDueDates);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Finances =
@@ -42,10 +43,14 @@ namespace MyFinances.Website.Controllers.API
                         x.Remaining,
                         x.MonthlyDueDate,
                         x.ManualPayment,
-                        DaysUntilDue = financeService.DaysUntilDue(x.MonthlyDueDate),
-                        PaymentStatus = financeService.PaymentStatusAsync(x.Id, x.MonthlyDueDate)
+                        x.NextDueDate,
+                        DaysUntilDue = financeService.CalculateDays(x.NextDueDate, DateTime.UtcNow),
+                        DaysLate = financeService.DaysLastPaid(x.Id),
+                        PaymentStatus = financeService.PaymentStatusAsync(x.Id, x.NextDueDate)
                     })
-                    .OrderByDescending(x => x.MonthlyDueDate)
+                    .OrderByDescending(x => x.PaymentStatus)
+                    .ThenByDescending(x => (x.PaymentStatus == PaymentStatus.Late ? x.DaysLate : null))
+                    .ThenBy(x => (x.PaymentStatus == PaymentStatus.Upcoming ? x.DaysUntilDue : null))
                     .ThenBy(x => x.Name),
                 TotalAvgCost = finances
                     .Where(x => x.EndDate == null || DateTime.UtcNow < x.EndDate)

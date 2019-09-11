@@ -64,8 +64,8 @@ export class Api {
         .then(data => data as IIncomeSummaryResponse);
     }
 
-    public finances = async (): Promise<IFinanceResponse> => {
-        return fetch(`${this.rootUrl}/finances`, {
+    public finances = async (resyncNextDueDates = false): Promise<IFinanceResponse> => {
+        return fetch(`${this.rootUrl}/finances/${resyncNextDueDates}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",

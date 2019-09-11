@@ -6,18 +6,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Nager.Date;
+using Nager.Date.Extensions;
 
 namespace MyFinances.Service
 {
     public interface IFinanceService
     {
-        Task<IEnumerable<Finance>> GetAllAsync();
+        Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates);
         Task<IEnumerable<Income>> GetAllIncomesAsync();
         Task InsertAsync(FinanceDTO dto);
         Task InsertIncomeAsync(IncomeDTO dto);
         decimal GetTotalIncome(IEnumerable<Income> incomes, int monthsInterval, Categories? sourceId = null, Categories? secondSourceId = null);
-        int? DaysUntilDue(int? monthlyDueDate);
-        PaymentStatus PaymentStatusAsync(int Id, int? monthlyDueDate);
+        int? CalculateDays(DateTime? Date1, DateTime? Date2);
+        int? DaysLastPaid(int Id);
+        PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
     }
 
     public class FinanceService : IFinanceService
@@ -36,9 +39,35 @@ namespace MyFinances.Service
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
         }
 
-        public async Task<IEnumerable<Finance>> GetAllAsync()
+        public DateTime CalculateNextDueDate(DateTime date)
         {
-            return await financeRepository.GetAllAsync();
+            while (DateSystem.IsPublicHoliday(date, CountryCode.GB) || date.IsWeekend(CountryCode.GB))
+            {
+                date = date.AddDays(1);
+            }
+
+            return date;
+        }
+
+        public async Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates)
+        {
+            var finances = await financeRepository.GetAllAsync();
+
+            if (finances.Any())
+            {
+                foreach(var finance in finances)
+                {
+                    if (finance.NextDueDate == null || DateTime.Now >= finance.NextDueDate || resyncNextDueDates)
+                    {
+                        int monthElapsed = finance.MonthlyDueDate >= DateTime.Now.Month ? 0 : 1;
+                        var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
+                        var date = CalculateNextDueDate(DateTime.Parse(dueDate));
+                        await financeRepository.UpdateNextDueDateAsync(date, finance.Id);
+                    }
+                }
+            }
+
+            return finances;
         }
 
         public async Task<IEnumerable<Income>> GetAllIncomesAsync()
@@ -63,40 +92,44 @@ namespace MyFinances.Service
             return getIncomes.Sum(x => x.Amount);
         }
 
-        public int? DaysUntilDue(int? monthlyDueDate)
+        public int? CalculateDays(DateTime? Date1, DateTime? Date2)
         {
-            if (!monthlyDueDate.HasValue || monthlyDueDate == 0)
+            if (!Date1.HasValue || !Date2.HasValue)
             {
                 return null;
             }
 
-            int monthElapsed = monthlyDueDate >= DateTime.Now.Month ? 0 : 1;
-
-            var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{monthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
-            var date = DateTime.Parse(dueDate);
-            return (int)(date - DateTime.UtcNow).TotalDays;
+            return (int)(Date1.Value - Date2.Value).TotalDays;
         }
 
-        public PaymentStatus PaymentStatusAsync(int Id, int? monthlyDueDate)
+        public int? DaysLastPaid(int Id)
         {
-            if (!monthlyDueDate.HasValue || monthlyDueDate == 0)
-            {
-                return PaymentStatus.Unknown;
-            }
-
-            var daysUntilDue = DaysUntilDue(monthlyDueDate.Value);
             var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(Id);
+            return CalculateDays(DateTime.UtcNow, expenseLastPaidDate);
+        }
 
-            if (!expenseLastPaidDate.HasValue)
+        public PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate)
+        {
+            if (!nextDueDate.HasValue)
             {
                 return PaymentStatus.Unknown;
             }
 
-            var daysLastPaid = (DateTime.UtcNow - expenseLastPaidDate.Value).TotalDays;
+            var daysUntilDue = CalculateDays(nextDueDate, DateTime.UtcNow);
+            var daysLastPaid = DaysLastPaid(Id);
+
+            if (daysUntilDue == null || daysLastPaid == null)
+            {
+                return PaymentStatus.Unknown;
+            }
 
             if (daysLastPaid <= 7)
             {
                 return PaymentStatus.Paid;
+            }
+            else if (daysLastPaid > 31)
+            {
+                return PaymentStatus.Late;
             }
             else
             {

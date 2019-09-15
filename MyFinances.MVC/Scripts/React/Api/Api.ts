@@ -1,5 +1,5 @@
 import { ICategory } from '../Models/ICategory'
-import { ISpending, ISpendingSummary} from '../Models/ISpending'
+import { ISpending, ISpendingSummary } from '../Models/ISpending'
 import { IFinance } from '../Models/IFinance'
 import { IRoute } from '../Models/IRoute'
 import { IIncome, IIncomeSummary } from '../Models/IIncome';
@@ -64,8 +64,8 @@ export class Api {
         .then(data => data as IIncomeSummaryResponse);
     }
 
-    public finances = async (resyncNextDueDates = false): Promise<IFinanceResponse> => {
-        return fetch(`${this.rootUrl}/finances/${resyncNextDueDates}`, {
+    public finances = async (resyncNextDueDates = false, upcomingPayments = false): Promise<IFinanceResponse> => {
+        return fetch(`${this.rootUrl}/finances/${resyncNextDueDates}/${upcomingPayments}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",

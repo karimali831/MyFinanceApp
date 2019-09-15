@@ -44,6 +44,7 @@ namespace MyFinances.Enums
         OverdraftFees,
         AbbeyGuy,
         CCInterest,
-        HairProducts
+        HairProducts,
+        PCN
     }
 }

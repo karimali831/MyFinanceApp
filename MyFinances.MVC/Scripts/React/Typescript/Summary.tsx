@@ -6,6 +6,7 @@ import IncomeSummary from './IncomeSummary';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
+import UpcomingPayments from './UpcomingPayments';
 
 interface IOwnProps {
 }
@@ -131,6 +132,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                     </tbody>
                 </table>
                 <IncomeSummary />
+                <UpcomingPayments />
             </div>
         )
     }

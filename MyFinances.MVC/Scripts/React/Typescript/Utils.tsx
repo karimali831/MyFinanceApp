@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PaymentStatus } from '../Models/IFinance';
 
 export const intToOrdinalNumberString = (cell: any, row: any) => {
 	cell = Math.round(cell);
@@ -30,6 +31,20 @@ export const priceFormatter = (cell: any, row: any) => {
     return `£${cell}`;
 }
 
+export const paymentStatus = (status: number, daysUntilDue: number, daysLate: number) => {
+	switch (status) {
+		case 0:
+			return <span className="label label-success">{PaymentStatus[PaymentStatus.Paid]}</span>
+		case 1:
+			return <span className="label label-warning">{PaymentStatus[PaymentStatus.Upcoming]} ({daysUntilDue} days)</span>
+		case 2:
+			return <span className="label label-danger">{PaymentStatus[PaymentStatus.Late]} ({daysLate} days)</span>
+		case 3:
+			return <span className="label label-default">{PaymentStatus[PaymentStatus.Unknown]}</span>
+		case 4:
+			return <span className="label label-danger">{PaymentStatus[PaymentStatus.DueToday]} ({daysUntilDue} days)</span>
+	}
+}
 
 export const rootUrl: string = window.location.origin;
 export const weekSummaryUrl = (date: string) => `${rootUrl}/cnw/weeksummary/${date}`;

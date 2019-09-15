@@ -57,12 +57,15 @@ namespace MyFinances.Service
             {
                 foreach(var finance in finances)
                 {
-                    if (finance.NextDueDate == null || DateTime.Now >= finance.NextDueDate || resyncNextDueDates)
+                    if (finance.OverrideNextDueDate)
                     {
-                        int monthElapsed = finance.MonthlyDueDate >= DateTime.Now.Month ? 0 : 1;
-                        var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
-                        var date = CalculateNextDueDate(DateTime.Parse(dueDate));
-                        await financeRepository.UpdateNextDueDateAsync(date, finance.Id);
+                        if (finance.NextDueDate == null || DateTime.Now >= finance.NextDueDate || resyncNextDueDates)
+                        {
+                            int monthElapsed = finance.MonthlyDueDate >= DateTime.Now.Month ? 0 : 1;
+                            var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
+                            var date = CalculateNextDueDate(DateTime.Parse(dueDate));
+                            await financeRepository.UpdateNextDueDateAsync(date, finance.Id);
+                        }
                     }
                 }
             }
@@ -119,7 +122,7 @@ namespace MyFinances.Service
             var daysLastPaid = DaysLastPaid(Id);
             var daysLate = DaysLastPaid(Id, true);
 
-            if (daysUntilDue == null || daysLastPaid == null)
+            if (daysUntilDue == null)
             {
                 return PaymentStatus.Unknown;
             }

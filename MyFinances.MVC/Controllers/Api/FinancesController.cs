@@ -26,11 +26,16 @@ namespace MyFinances.Website.Controllers.API
             this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
         }
 
-        [Route("{resyncNextDueDates}")]
+        [Route("{resyncNextDueDates}/{upcomingPayments}")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetFinancesAsync(bool resyncNextDueDates)
+        public async Task<HttpResponseMessage> GetFinancesAsync(bool resyncNextDueDates, bool upcomingPayments)
         {
             var finances = await financeService.GetAllAsync(resyncNextDueDates);
+
+            if (upcomingPayments)
+            {
+                finances = finances.Where(x => (x.NextDueDate <= DateTime.UtcNow.AddDays(7) && x.NextDueDate >= DateTime.UtcNow) || x.ManualPayment);
+            }
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Finances =
@@ -43,7 +48,7 @@ namespace MyFinances.Website.Controllers.API
                         x.Remaining,
                         x.MonthlyDueDate,
                         x.ManualPayment,
-                        x.NextDueDate,
+                        NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null,
                         DaysUntilDue = financeService.CalculateDays(x.NextDueDate, DateTime.UtcNow),
                         DaysLate = financeService.DaysLastPaid(x.Id, true),
                         PaymentStatus = financeService.PaymentStatusAsync(x.Id, x.NextDueDate)

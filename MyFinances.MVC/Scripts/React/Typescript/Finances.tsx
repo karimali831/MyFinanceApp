@@ -4,7 +4,7 @@ import { IFinance, PaymentStatus } from "../Models/IFinance";
 import { Loader } from './Loader';
 import Table from './CommonTable';
 import { ITableOptions, ITableProps } from '../Models/ITable';
-import { priceFormatter, intToOrdinalNumberString } from './Utils';
+import { priceFormatter, intToOrdinalNumberString, paymentStatus } from './Utils';
 
 interface IOwnProps {
 }
@@ -49,18 +49,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
     }
 
     private paymentStatus = (cell: any, row: any) => {
-        switch (cell) {
-            case 0:
-                return <span className="label label-success">{PaymentStatus[PaymentStatus.Paid]}</span>
-            case 1:
-                return <span className="label label-warning">{PaymentStatus[PaymentStatus.Upcoming]} ({row['daysUntilDue']} days)</span>
-            case 2:
-                return <span className="label label-danger">{PaymentStatus[PaymentStatus.Late]} ({row['daysLate']} days)</span>
-            case 3:
-                return <span className="label label-default">{PaymentStatus[PaymentStatus.Unknown]}</span>
-            case 4:
-                return <span className="label label-danger">{PaymentStatus[PaymentStatus.DueToday]} ({row['daysUntilDue']} days)</span>
-        }
+        return paymentStatus(cell, row['daysUntilDue'], row['daysLate'])
     }
 
     render() {

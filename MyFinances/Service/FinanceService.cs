@@ -19,7 +19,7 @@ namespace MyFinances.Service
         Task InsertIncomeAsync(IncomeDTO dto);
         decimal GetTotalIncome(IEnumerable<Income> incomes, int monthsInterval, Categories? sourceId = null, Categories? secondSourceId = null);
         int? CalculateDays(DateTime? Date1, DateTime? Date2);
-        int? DaysLastPaid(int Id);
+        int? DaysLastPaid(int Id, bool calcLateDays = false);
         PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
     }
 
@@ -102,10 +102,10 @@ namespace MyFinances.Service
             return (int)(Date1.Value - Date2.Value).TotalDays;
         }
 
-        public int? DaysLastPaid(int Id)
+        public int? DaysLastPaid(int Id, bool calcLateDays = false)
         {
             var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(Id);
-            return CalculateDays(DateTime.UtcNow, expenseLastPaidDate);
+            return CalculateDays(calcLateDays ? DateTime.UtcNow.AddMonths(-1) : DateTime.UtcNow, expenseLastPaidDate);
         }
 
         public PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate)
@@ -117,6 +117,7 @@ namespace MyFinances.Service
 
             var daysUntilDue = CalculateDays(nextDueDate, DateTime.UtcNow);
             var daysLastPaid = DaysLastPaid(Id);
+            var daysLate = DaysLastPaid(Id, true);
 
             if (daysUntilDue == null || daysLastPaid == null)
             {
@@ -127,7 +128,7 @@ namespace MyFinances.Service
             {
                 return PaymentStatus.Paid;
             }
-            else if (daysLastPaid > 31)
+            else if (daysLate > 0)
             {
                 return PaymentStatus.Late;
             }
@@ -143,7 +144,7 @@ namespace MyFinances.Service
                 }
                 else
                 {
-                    return PaymentStatus.Late;
+                    return PaymentStatus.Unknown;
                 }
             }
         }

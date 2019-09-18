@@ -34,7 +34,8 @@ namespace MyFinances.Website.Controllers.API
 
             if (upcomingPayments)
             {
-                finances = finances.Where(x => (x.NextDueDate <= DateTime.UtcNow.AddDays(7) && x.NextDueDate >= DateTime.UtcNow) || x.ManualPayment);
+                //&& x.NextDueDate >= DateTime.UtcNow
+                finances = finances.Where(x => x.NextDueDate <= DateTime.UtcNow.AddDays(7) || x.ManualPayment);
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new {

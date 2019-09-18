@@ -57,11 +57,11 @@ namespace MyFinances.Service
             {
                 foreach(var finance in finances)
                 {
-                    if (finance.OverrideNextDueDate)
+                    if (finance.OverrideNextDueDate && finance.MonthlyDueDate.HasValue)
                     {
                         if (finance.NextDueDate == null || DateTime.Now >= finance.NextDueDate || resyncNextDueDates)
                         {
-                            int monthElapsed = finance.MonthlyDueDate >= DateTime.Now.Month ? 0 : 1;
+                            int monthElapsed = finance.MonthlyDueDate >= DateTime.Now.Day ? 0 : 1;
                             var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
                             var date = CalculateNextDueDate(DateTime.Parse(dueDate));
                             await financeRepository.UpdateNextDueDateAsync(date, finance.Id);
@@ -75,7 +75,7 @@ namespace MyFinances.Service
 
         public async Task<IEnumerable<Income>> GetAllIncomesAsync()
         {
-            return await incomeRepository.GetAllAsync();
+            return (await incomeRepository.GetAllAsync()).OrderByDescending(x => x.Date);
         }
 
         public decimal GetTotalIncome(IEnumerable<Income> incomes, int monthsInterval, Categories? sourceId, Categories? secondSourceId)
@@ -102,7 +102,7 @@ namespace MyFinances.Service
                 return null;
             }
 
-            return (int)(Date1.Value - Date2.Value).TotalDays;
+            return (int)(Date1.Value - Date2.Value).TotalDays + 1;
         }
 
         public int? DaysLastPaid(int Id, bool calcLateDays = false)

@@ -40,7 +40,7 @@ namespace MyFinances.Model
         public decimal? Byod { get; set; }
         public string Info { get; set; }
         [DbIgnore]
-        public decimal EstimatedFuelCost { get; set; }
+        public double EstimatedFuelCost { get; set; }
         [DbIgnore]
         public CNWRates CNWRates { get; set; }
     }

@@ -37,12 +37,10 @@
                 <tr>
                     <th scope="row">Deductions</th>
                     <td>
-                        <small>
-                            <span class="label label-danger">Admin fee: £@Model.Payment.DeduAdminFee.ToString("#.##")</span> <br />
-                            <span class="label label-danger">Van rental: £@Model.Payment.DeduVanRental.ToString("#.##")</span> <br />
-                            <span class="label label-danger">Van fines: £@Model.Payment.DeduVanFines.ToString("#.##")</span> <br />
-                            <span class="label label-danger">Van damges: £@Model.Payment.DeduVanDamages.ToString("#.##")</span>
-                        </small>
+                        <span class="label label-danger">Admin fee: £@Model.Payment.DeduAdminFee.ToString("#.##")</span> <br />
+                        <span class="label label-danger">Van rental: £@Model.Payment.DeduVanRental.ToString("#.##")</span> <br />
+                        <span class="label label-danger">Van fines: £@Model.Payment.DeduVanFines.ToString("#.##")</span> <br />
+                        <span class="label label-danger">Van damges: £@Model.Payment.DeduVanDamages.ToString("#.##")</span>
                     </td>
                 </tr>
                 <tr>
@@ -55,7 +53,10 @@
                 </tr>
                 <tr>
                     <th scope="row">Estimated fuel cost</th>
-                    <td>--@*@Model.Payment.EstimatedFuelCost.ToString("#.##")*@ <small><i>(averaged @Model.Payment.AverageMpg mpg)</i></small></td>
+                    <td>
+                        £@Model.Payment.EstimatedFuelCost.ToString("#.##") <small><i>(averaged @Model.Payment.AverageMpg mpg)</i></small><br />
+                        @Html.Raw(Utils.AmountDifference(Model.Payment.ActualMileagePay, (decimal)Model.Payment.EstimatedFuelCost, "Fuel difference: £"))
+                    </td>
                 </tr>
                 @if (!string.IsNullOrEmpty(Model.Payment.Info))
                 {

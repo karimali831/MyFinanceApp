@@ -45,6 +45,11 @@ namespace MyFinances.Enums
         AbbeyGuy,
         CCInterest,
         HairProducts,
-        PCN
+        PCN,
+        AfricanGuy,
+        Supplements,
+        Gadgets = 48,
+        ClothesAndFootwear,
+        Subscriptions
     }
 }

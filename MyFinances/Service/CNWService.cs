@@ -94,8 +94,19 @@ namespace MyFinances.Service
                 weekSummary.CNWRates = rates;
                 weekSummary.ActualNetAmount = weekSummary.ActualTotalPay - rates.VATFlatRate;
                 weekSummary.CalcTotalPayToDriver = weekSummary.CalcNetAmount + rates.VATFlatRate;
-                weekSummary.EstimatedFuelCost = (weekSummary.CalcMiles + (weekSummary.CalcSupportMiles.HasValue ? weekSummary.CalcSupportMiles.Value : 0)) * (decimal)1.29 * (weekSummary.AverageMpg / 100);
-            } 
+
+                /*
+                 * Estimated fuel cost formula 
+                 * 1. Convert Pounds Per Liter (lb/l) to Pounds Per Gallon (imperial) (lb/gal)
+                 *    i.e. 1.30 (pence per liter) * 4.5460900000046 = 5.91 
+                 * 2. Divide miles by mpg
+                 *    i.e. 50 miles / 25 mpg = galloons needed for trip
+                 * 3. Multiply that figure by the cost of fuel
+                 *    i.e. 50 / 25 = 2 * 5.91
+                 */
+                decimal totalMiles = weekSummary.CalcMiles + (weekSummary.CalcSupportMiles.HasValue ? weekSummary.CalcSupportMiles.Value : 0);
+                weekSummary.EstimatedFuelCost = ((double)totalMiles / (double)weekSummary.AverageMpg) * 1.30 * 4.5460900000046;
+            }
 
             return weekSummary;
         }

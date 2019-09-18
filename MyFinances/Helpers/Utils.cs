@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 
 namespace MyFinances.Helpers
@@ -20,7 +21,7 @@ namespace MyFinances.Helpers
             return (value / 100) * 20;
         }
 
-        public static string AmountDifference(decimal? firstValue, decimal? secondValue, string currency = "£", bool highlight = true)
+        public static string AmountDifference(decimal? firstValue, decimal? secondValue, bool showCurrency = true, string appendText = "", bool highlight = true)
         {
             if (!firstValue.HasValue || !secondValue.HasValue)
                 return "";
@@ -47,7 +48,8 @@ namespace MyFinances.Helpers
                     break;
             }
 
-            string formatAmount = string.Format("{0}{1}", currency, difference.ToString("#.##"));
+            string appendCurrency = showCurrency ? difference.ToString("C", CultureInfo.CreateSpecificCulture("en-GB")) : difference.ToString();
+            string formatAmount = string.Format("{0}{1}", appendText, appendCurrency);
             return highlight == false ? formatAmount : $"<span class='label label-{label}'>{formatAmount}</span>";
         }
     }

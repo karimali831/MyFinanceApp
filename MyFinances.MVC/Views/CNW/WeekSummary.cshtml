@@ -55,7 +55,7 @@
                     <th scope="row">Estimated fuel cost</th>
                     <td>
                         £@Model.Payment.EstimatedFuelCost.ToString("#.##") <small><i>(averaged @Model.Payment.AverageMpg mpg)</i></small><br />
-                        @Html.Raw(Utils.AmountDifference(Model.Payment.ActualMileagePay, (decimal)Model.Payment.EstimatedFuelCost, "Fuel difference: £"))
+                        @Html.Raw(Utils.AmountDifference(Model.Payment.ActualMileagePay, (decimal)Model.Payment.EstimatedFuelCost, true, "Fuel difference: "))
                     </td>
                 </tr>
                 @if (!string.IsNullOrEmpty(Model.Payment.Info))
@@ -92,7 +92,7 @@
                     <th scope="row">Miles</th>
                     <td>@(Model.Payment.CalcMiles + @Model.Payment.CalcSupportMiles) <small><i>(miles: @Model.Payment.CalcMiles + support: @Model.Payment.CalcSupportMiles)</i></small></td>
                     <td>@Model.Payment.ActualMiles</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualMiles, (Model.Payment.CalcMiles + Model.Payment.CalcSupportMiles), ""))</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualMiles, (Model.Payment.CalcMiles + Model.Payment.CalcSupportMiles), false))</td>
                 </tr>
                 @if (Model.Payment.CalcSupportPay.HasValue)
                 {
@@ -100,7 +100,7 @@
                     <th scope="row">Support Pay</th>
                     <td>£@Model.Payment.CalcSupportPay.Value.ToString("#.##") <small><i>(@Model.Payment.CalcSupportDrops.Value.ToString("#.##") drops + £@Model.Payment.CalcSupportMileagePay.Value.ToString("#.##") fuel)</i></small></td>
                     <td>£@(Model.Payment.ActualSupportPay.HasValue ? Model.Payment.ActualSupportPay.Value.ToString("#.##") : null)</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualSupportPay, Model.Payment.CalcSupportPay, ""))</td>
+                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualSupportPay, Model.Payment.CalcSupportPay))</td>
                 </tr>
                 }
                 <tr>

@@ -27,10 +27,10 @@ namespace MyFinances.Website.Controllers.API
         }
 
         [HttpGet]
-        [Route("{catId?}/{period?}/{isFinance?}")]
-        public async Task<HttpResponseMessage> GetSpendingsAsync(int? catId = null, int? period = null, bool isFinance = false)
+        [Route("{catId?}/{frequency?}/{interval?}/{isFinance?}")]
+        public async Task<HttpResponseMessage> GetSpendingsAsync(int? catId = null, DateFrequency? frequency = null, int? interval = null, bool isFinance = false)
         {
-            var spendings = await spendingService.GetAllAsync(catId, period, isFinance);
+            var spendings = await spendingService.GetAllAsync(catId, frequency, interval, isFinance);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Spendings = spendings.Select(x => new
@@ -46,12 +46,12 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("summary/{daysPeriod}")]
+        [Route("summary/{frequency}/{interval}")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetSpendingSummaryAsync(int daysPeriod)
+        public async Task<HttpResponseMessage> GetSpendingSummaryAsync(DateFrequency frequency, int interval)
         {
-            var spendings = await spendingService.GetSpendingSummary(daysPeriod);
-            decimal fuelIn = await spendingService.GetFuelIn(daysPeriod);
+            var spendings = await spendingService.GetSpendingSummary(frequency, interval);
+            decimal fuelIn = await spendingService.GetFuelIn(interval);
 
             return Request.CreateResponse(HttpStatusCode.OK,
                 new {

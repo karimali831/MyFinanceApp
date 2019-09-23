@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MyFinances.Enums;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -51,6 +53,24 @@ namespace MyFinances.Helpers
             string appendCurrency = showCurrency ? difference.ToString("C", CultureInfo.CreateSpecificCulture("en-GB")) : difference.ToString();
             string formatAmount = string.Format("{0}{1}", appendText, appendCurrency);
             return highlight == false ? formatAmount : $"<span class='label label-{label}'>{formatAmount}</span>";
+        }
+
+        public static string FilterDateSql(DateFrequency frequency, int interval)
+        {
+            switch (frequency)
+            {
+                case DateFrequency.Today:
+                    return $"AND [date] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                case DateFrequency.Yesterday:
+                    return $"AND [date] >= DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0) " +
+                           $"AND [date] <  DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                case DateFrequency.DaysAgo:
+                    return $"AND [date] >=  DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), - {interval})";
+                case DateFrequency.MonthsAgo:
+                    return $"AND [date] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) - {interval}, DAY(GETDATE())-1)";
+                default:
+                    return "";
+            }
         }
     }
 }

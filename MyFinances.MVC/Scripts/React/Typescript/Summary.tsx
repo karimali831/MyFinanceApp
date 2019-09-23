@@ -2,9 +2,11 @@ import * as React from 'react';
 import { api } from '../Api/Api'
 import { Loader } from './Loader';
 import { ISpendingSummary } from '../Models/ISpending';
+import { DateFrequency } from '../Enums/DateFrequency';
 import IncomeSummary from './IncomeSummary';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { cleanText } from './Utils';
 import { Link } from "react-router-dom";
 import UpcomingPayments from './UpcomingPayments';
 
@@ -15,7 +17,8 @@ export interface IOwnState {
     spendingSummary: ISpendingSummary[],
     fuelIn: number,
     totalSpent: number,
-    daysPeriod: number,
+    frequency: string,
+    interval: number,
     loading: boolean,
     showSecondCatSummary: string | null
 }
@@ -27,7 +30,8 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
             spendingSummary: [],
             fuelIn: 0,
             totalSpent: 0,
-            daysPeriod: 1,
+            frequency: DateFrequency[DateFrequency.Today],
+            interval: 1,
             loading: true,
             showSecondCatSummary: null
         };
@@ -38,13 +42,13 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
     }
 
     public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
-        if (prevState.daysPeriod !== this.state.daysPeriod) {
+        if (prevState.frequency !== this.state.frequency || prevState.interval !== this.state.interval) {
             this.loadSummary();
         }
     }
 
     private loadSummary = () => {
-        api.summary(this.state.daysPeriod)
+        api.summary(DateFrequency[this.state.frequency], this.state.interval)
             .then(response => this.loadSummarySuccess(response.spendingSummary, response.fuelIn, response.totalSpent));
     }
 
@@ -59,8 +63,12 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
         }) 
     }
 
-    private onChangeSelectedDaysPeriod = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({ ...this.state, daysPeriod: Number(e.target.value) })
+    private onChangeSelectedFrequency = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        this.setState({ ...this.state, frequency: DateFrequency[e.target.value] })
+    }
+
+    private onChangeSelectedInterval = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        this.setState({ ...this.state, interval: Number(e.target.value) })
     }
 
     private showSecondCatSummary = (category: string) => {
@@ -78,13 +86,26 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                         <tr>
                             <th scope="col" colSpan={2}>
                                 Spendings breakdown summary in the last
-                                <div className="form-group">
-                                    <select onChange={(e) => this.onChangeSelectedDaysPeriod(e)} className="form-control">
-                                        <option value="1" selected>1 day</option>
-                                        <option value="7">7 days</option>
-                                        <option value="30">30 days</option>
-                                        <option value="100">100 days</option>
+                                <div className="form-group" style={{width: 'auto'}}>
+                                    <select onChange={(e) => this.onChangeSelectedFrequency(e)} className="form-control">
+                                    {
+                                        Object.keys(DateFrequency).filter(o => !isNaN(o as any)).map(key => 
+                                            <option value={key}>{cleanText(DateFrequency[key])}</option>
+                                        )
+                                    }
                                     </select>
+                                    {
+                                        this.state.frequency.toString() !== DateFrequency[DateFrequency.Today] && 
+                                        this.state.frequency.toString() !== DateFrequency[DateFrequency.Yesterday] ?
+                                            <select onChange={(e) => this.onChangeSelectedInterval(e)} className="form-control">
+                                            {
+                                                Array.from(Array(30), (e, i) => {
+                                                    return <option key={i+1}>{i+1}</option>
+                                                })
+                                            }
+                                            </select>
+                                        : null
+                                    }
                                 </div>
                             </th>
                         </tr>
@@ -100,7 +121,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                             <tr>
                                 <th scope="row">
                                     <FontAwesomeIcon icon={faArrowDown} /> 
-                                    <Link to={`spending/${s.catId}/${this.state.daysPeriod}/${s.isFinance}`}> {s.cat1}</Link>
+                                    <Link to={`spending/${s.catId}/${DateFrequency[this.state.frequency]}/${this.state.interval}/${s.isFinance}`}> {s.cat1}</Link>
                                 </th>
                                 <td>
                                     {s.secondCats != null ? 

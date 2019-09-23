@@ -31,6 +31,10 @@ export const priceFormatter = (cell: any, row: any) => {
     return `£${cell}`;
 }
 
+export const cleanText = (text: string) => {
+	return text.toString().replace(/([A-Z])/g, ' $1').trim()
+}
+
 export const paymentStatus = (status: number, daysUntilDue: number, daysLate: number) => {
 	switch (status) {
 		case 0:

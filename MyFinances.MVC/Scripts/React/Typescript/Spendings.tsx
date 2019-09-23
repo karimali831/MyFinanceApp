@@ -5,6 +5,7 @@ import { Loader } from './Loader';
 import { ITableOptions, ITableProps } from '../Models/ITable';
 import Table from './CommonTable';
 import { priceFormatter } from './Utils';
+import { DateFrequency } from '../Enums/DateFrequency';
 
 interface IOwnProps {
 }
@@ -12,8 +13,9 @@ interface IOwnProps {
 export interface IOwnState {
     spendings: ISpending[],
     loading: boolean,
-    catId: number | undefined,
-    period: number | undefined,
+    catId: number | null,
+    frequency: DateFrequency | null,
+    interval: number | null,
     isFinance: boolean
 }
 
@@ -24,7 +26,8 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
             loading: true,
             spendings: [],
             catId: this.props.match.params.catId,
-            period: this.props.match.params.period,
+            frequency: this.props.match.params.frequency,
+            interval: this.props.match.params.interval,
             isFinance: this.props.match.params.isFinance
         };
     }
@@ -36,7 +39,7 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
     }
 
     private loadSpendings = () => {
-        api.spendings(this.state.catId, this.state.period, this.state.isFinance)
+        api.spendings(this.state.catId, this.state.frequency, this.state.interval, this.state.isFinance)
             .then(response => this.loadSpendingsSuccess(response.spendings));
     }
 

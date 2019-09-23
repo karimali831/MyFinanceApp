@@ -102,7 +102,8 @@ namespace MyFinances.Service
                 return null;
             }
 
-            return (int)(Date1.Value - Date2.Value).TotalDays;
+            var difference = (int)(Date1.Value - Date2.Value).TotalDays;
+            return difference == 0 ? 0 : difference + 1;
         }
 
         public int? DaysLastPaid(int Id, bool calcLateDays = false)

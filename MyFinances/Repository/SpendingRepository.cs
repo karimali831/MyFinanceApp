@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using DFM.Utils;
 using MyFinances.DTOs;
+using MyFinances.Enums;
+using MyFinances.Helpers;
 using MyFinances.Model;
 using System;
 using System.Collections.Generic;
@@ -12,18 +14,18 @@ namespace MyFinances.Repository
 {
     public interface ISpendingRepository
     {
-        Task<IEnumerable<Spending>> GetAllAsync();
+        Task<IEnumerable<Spending>> GetAllAsync(DateFrequency? frequency = null, int? interval = null);
         Task<Spending> GetAsync(int Id);
         DateTime? ExpenseLastPaidDate(int financeId);
         Task InsertAsync(SpendingDTO dto);
-        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(int weekPeriod);
+        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFrequency frequency, int interval);
     }
 
     public class SpendingRepository : ISpendingRepository
     {
         private readonly Func<IDbConnection> dbConnectionFactory;
         private static readonly string TABLE = "Spendings";
-        private static readonly string[]FIELDS = typeof(Spending).DapperFields();
+        private static readonly string[] FIELDS = typeof(Spending).DapperFields();
         private static readonly string[] DTOFIELDS = typeof(SpendingDTO).DapperFields();
 
         public SpendingRepository(Func<IDbConnection> dbConnectionFactory)
@@ -31,7 +33,7 @@ namespace MyFinances.Repository
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<IEnumerable<Spending>> GetAllAsync()
+        public async Task<IEnumerable<Spending>> GetAllAsync(DateFrequency? frequency = null, int? interval = null)
         {
             string sqlTxt =
                 $@"SELECT 
@@ -53,7 +55,8 @@ namespace MyFinances.Repository
 				LEFT JOIN Finances f 
                     ON f.Id = s.FinanceId
                 WHERE 
-                    Display = 1";
+                    Display = 1
+                    {(frequency.HasValue && interval.HasValue ? Utils.FilterDateSql(frequency.Value, interval.Value) : null)}";
 
             using (var sql = dbConnectionFactory())
             {
@@ -61,7 +64,7 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(int weekPeriod)
+        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFrequency frequency, int interval)
         {
             string sqlTxt = $@"
                 SELECT 
@@ -77,9 +80,9 @@ namespace MyFinances.Repository
                     ON c2.Id = s.SecondCatId
 	            LEFT JOIN Finances f 
                     ON f.Id = s.FinanceId
-                WHERE Display = 1
-                    AND [date] >= DATEADD(DAY, 0, DATEDIFF(DAY, @Days, CURRENT_TIMESTAMP))
-                    AND [date] <  DATEADD(DAY, 1, DATEDIFF(DAY, 0, CURRENT_TIMESTAMP))
+                WHERE 
+                    Display = 1
+                    {Utils.FilterDateSql(frequency, interval)}
                 GROUP BY 
                     s.CatId, s.FinanceId, c1.Name, c2.Name, f.Name
                 ORDER BY 
@@ -87,7 +90,7 @@ namespace MyFinances.Repository
 
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<SpendingSummaryDTO>(sqlTxt, new { Days = weekPeriod })).ToArray();
+                return (await sql.QueryAsync<SpendingSummaryDTO>(sqlTxt)).ToArray();
 
             }
         }

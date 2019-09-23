@@ -5,13 +5,14 @@ import { IRoute } from '../Models/IRoute'
 import { IIncome, IIncomeSummary } from '../Models/IIncome';
 import { ICNWPayment } from '../Models/ICNWPayment';
 import { rootUrl } from '../Typescript/Utils';
+import { DateFrequency } from '../Enums/DateFrequency';
 
 export class Api {
 
     public rootUrl: string = `${rootUrl}/api`;
 
-    public spendings = async (catId?: number, period?: number, isFinance?: boolean): Promise<ISpendingResponse> => {
-        return fetch(`${this.rootUrl}/spendings/${catId != null ? `${catId}/` : ""}${period != null ? `${period}/` : ""}${isFinance}`, {
+    public spendings = async (catId?: number, frequency?: DateFrequency, interval?: number, isFinance?: boolean): Promise<ISpendingResponse> => {
+        return fetch(`${this.rootUrl}/spendings/${catId != null ? `${catId}/` : ""}${frequency != null ? `${frequency}/` : ""}${interval != null ? `${interval}/` : ""}${isFinance}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",
@@ -28,8 +29,8 @@ export class Api {
         .then(data => data as ISpendingResponse);
     }
 
-    public summary = async (daysPeriod: number): Promise<ISpendingSummaryResponse> => {
-        return fetch(`${this.rootUrl}/spendings/summary/${daysPeriod}`, {
+    public summary = async (frequency: DateFrequency, interval: number): Promise<ISpendingSummaryResponse> => {
+        return fetch(`${this.rootUrl}/spendings/summary/${frequency}/${interval}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",

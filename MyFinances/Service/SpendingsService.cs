@@ -11,12 +11,12 @@ namespace MyFinances.Service
 {
     public interface ISpendingService
     {
-        Task<IEnumerable<Spending>> GetAllAsync(int? catId, int? period, bool isFinance);
+        Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance);
         Task InsertAsync(SpendingDTO dto);
         Task<decimal> GetFuelIn(int daysInterval);
         DateTime? ExpenseLastPaidDate(int financeId);
         decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
-        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(int period);
+        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval);
     }
 
     public class SpendingService : ISpendingService
@@ -32,18 +32,13 @@ namespace MyFinances.Service
             this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
         }
 
-        public async Task<IEnumerable<Spending>> GetAllAsync(int? catId, int? period, bool isFinance)
+        public async Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance)
         {
-            var spendings = (await spendingRepository.GetAllAsync());
+            var spendings = (await spendingRepository.GetAllAsync(frequency, interval));
                 
             if (catId.HasValue)
             {
                 spendings = spendings.Where(x => (isFinance && x.FinanceId == catId.Value) || (!isFinance && x.CatId == catId.Value));
-            }
-
-            if (period.HasValue)
-            {
-                spendings = spendings.Where(x => DateTime.Now >= x.Date && DateTime.Now.Date <= x.Date.Date.AddDays(period.Value));
             }
             
             return spendings
@@ -80,9 +75,36 @@ namespace MyFinances.Service
             return getSpendings.Sum(x => x.Amount);
         }
 
-        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(int period)
+        private static readonly IDictionary<string, Func<DateTime, DateTime>> methodMap =
+            new Dictionary<string, Func<DateTime, DateTime>>
+            {
+                { "Day", date => date.AddDays(1) },
+                { "Week", date => date.AddDays(7) },
+                { "Month", date => date.AddMonths(1) },
+                { "Quarterly", date => date.AddMonths(3) },
+                { "SemiAnnually", date => date.AddMonths(6) },
+                { "Annually", date => date.AddYears(1) }
+            };
+
+        private static readonly IDictionary<char, int> intervalMap =
+            new Dictionary<char, int>
+            {
+                { 'D', 1 },
+                { 'W', 7 },
+                { 'M', 30 },
+                { 'Q', 90 },
+                { 'S', 182 },
+                { 'A', 365 }
+            };
+
+        //if (!methodMap.TryGetValue(freq, out moveDate))
+        //        {
+        //            moveDate = date => date.AddDays(1);
+        //        }
+
+    public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval)
         {
-            var spendingsSummary = (await spendingRepository.GetSpendingsSummaryAsync(period));
+            var spendingsSummary = await spendingRepository.GetSpendingsSummaryAsync(frequency, interval);
 
             var secondCats = spendingsSummary
                 .Where(x => x.Cat2 != null)

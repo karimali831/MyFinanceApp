@@ -220,18 +220,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
     private addSpending = () => {
         if (this.state.name && this.state.name.length > 2 && (this.state.selectedCat || this.state.selectedFinanceId) && this.state.amount)
         {
-            this.setState({ ...this.state, 
-                ...{ 
-                    loading: true, 
-                    redirect: true,
-                    name: "", 
-                    amount: 0,
-                    selectedCat: undefined,
-                    selectedSecondCat: undefined,
-                    secondTypeId: undefined,
-                    selectedFinanceId: undefined
-                }
-            })  
+            this.setState({ ...this.state, redirect: true })    
 
             const addModel: ISpendingDTO = {
                 name: this.state.name,

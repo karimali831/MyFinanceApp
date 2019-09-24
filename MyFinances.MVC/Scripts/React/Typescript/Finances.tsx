@@ -68,7 +68,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             dataField: 'avgMonthlyAmount',
             text: 'Avg Monthly Cost',
             formatter: priceFormatter
-          },, {
+          }, {
             dataField: 'endDate',
             text: 'End Date',
             headerClasses: "hidden-xs",

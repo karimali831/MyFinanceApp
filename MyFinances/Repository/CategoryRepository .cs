@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using DFM.Utils;
+using MyFinances.DTOs;
 using MyFinances.Enums;
 using MyFinances.Model;
 using System;
@@ -12,7 +13,8 @@ namespace MyFinances.Repository
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<Category>> GetAllAsync(CategoryType typeId);
+        Task<IEnumerable<Category>> GetAllAsync();
+        Task AddCategory(CategoryDTO dto);
     }
 
     public class CategoryRepository : ICategoryRepository
@@ -20,19 +22,26 @@ namespace MyFinances.Repository
         private readonly Func<IDbConnection> dbConnectionFactory;
         private static readonly string TABLE = "Categories";
         private static readonly string[] FIELDS = typeof(Category).DapperFields();
+        private static readonly string[] DTOFIELDS = typeof(CategoryDTO).DapperFields();
 
         public CategoryRepository(Func<IDbConnection> dbConnectionFactory)
         {
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync(CategoryType typeId)
+        public async Task<IEnumerable<Category>> GetAllAsync()
         {
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<Category>($"{DapperHelper.SELECT(TABLE, FIELDS)}"))
-                    .Where(x => x.TypeId == typeId)
-                    .ToArray();
+                return (await sql.QueryAsync<Category>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
+            }
+        }
+
+        public async Task AddCategory(CategoryDTO dto)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($@"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
             }
         }
     }

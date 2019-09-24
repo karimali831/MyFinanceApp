@@ -1,5 +1,7 @@
-﻿using MyFinances.Enums;
+﻿using MyFinances.DTOs;
+using MyFinances.Enums;
 using MyFinances.Helpers;
+using MyFinances.Model;
 using MyFinances.Service;
 using MyFinances.Website.Controllers.Api;
 using System;
@@ -25,12 +27,20 @@ namespace MyFinances.Website.Controllers.API
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
         }
 
-        [Route("categories/{typeId}")]
+        [Route("categories/{typeId?}/{catsWithSubs}")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetCategoriesAsync(CategoryType typeId)
+        public async Task<HttpResponseMessage> GetCategoriesAsync(CategoryType? typeId = null, bool catsWithSubs = false)
         {
-            var categories = await baseService.GetAllCategories(typeId);
+            var categories = await baseService.GetAllCategories(typeId, catsWithSubs);
             return Request.CreateResponse(HttpStatusCode.OK, new { Categories = categories });
+        }
+
+        [Route("categories/add")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> AddCategoryAsync(CategoryDTO dto)
+        {
+            await baseService.AddCategory(dto);
+            return Request.CreateResponse(HttpStatusCode.OK, true);
         }
 
         [Route("update/{table}/{field}/{id}/{value?}/")]

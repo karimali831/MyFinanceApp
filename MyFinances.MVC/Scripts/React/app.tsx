@@ -5,9 +5,11 @@ import Spendings from './Typescript/Spendings'
 import Summary from './Typescript/Summary'
 import Routes from './Typescript/Routes'
 import Incomes from './Typescript/Incomes'
+import Categories from './Typescript/Categories'
 import AddSpending from './Typescript/AddSpending'
 import AddExpense from './Typescript/AddExpense'
 import AddIncome from './Typescript/AddIncome'
+import AddCategory from './Typescript/AddCategory'
 import WeekSummaries from './Typescript/WeekSummaries'
 import Menu from './Typescript/Menu'
 import AddRoute from './Typescript/AddRoute'
@@ -25,11 +27,13 @@ class App extends React.Component{
                     <Route path="/addspending/" component={AddSpending} />
                     <Route path="/addexpense/" component={AddExpense} />
                     <Route path="/addincome/" component={AddIncome} />
+                    <Route path="/addcategory" component={AddCategory} />
                     <Route path="/finance/" component={Finances} />
                     <Route path="/income/:sourceId?/:frequency?/:interval?" exact component={Incomes} />
                     <Route path="/spending/:catId?/:frequency?/:interval?/:isFinance?" exact component={Spendings} />
                     <Route path="/route/" component={Routes} />
                     <Route path="/summary/" component={WeekSummaries} />
+                    <Route path="/category/" component={Categories} />
                 </Router>
             </div>
         );

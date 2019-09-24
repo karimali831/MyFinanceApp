@@ -54,8 +54,8 @@ export class CommonApi {
         })
     }
 
-    public categories = async (typeId: CategoryType): Promise<ICategoryResponse> => {
-        return fetch(`${this.rootUrl}/categories/${typeId}`, {
+    public categories = async (typeId: CategoryType = null, catsWithSubs: boolean = false): Promise<ICategoryResponse> => {
+        return fetch(`${this.rootUrl}/categories/${typeId}/${catsWithSubs}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",

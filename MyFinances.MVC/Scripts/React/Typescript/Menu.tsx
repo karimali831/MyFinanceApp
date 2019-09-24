@@ -17,7 +17,8 @@ export const AddMenu = (active: string) =>
                 <li className={active === "spending" ? "active" : null}><Link to="/addspending">Add Spending</Link></li>
                 <li className={active === "route" ? "active" : null} ><Link to="/addroute">Add Route</Link></li>
                 <li className={active === "income" ? "active" : null}><Link to="/addincome/">Add Income</Link></li>
-                <li className={active === "expense" ? "active" : null}><Link to="/addexpense/">Add Expense</Link></li>
+                <li className={active === "expense" ? "active" : null}><Link to="/addexpense/">Add Finance</Link></li>
+                <li className={active === "category" ? "active" : null}><Link to="/addcategory/">Add Category</Link></li>
             </ul>
         </div>
     </nav>
@@ -40,6 +41,7 @@ export default class Menu extends React.Component<IOwnProps, IOwnState> {
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/spending/">Spendings</Link>
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/route/">Routes</Link>
                 <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/summary/">Summaries</Link>
+                <Link className={"nav-link" + this.state.active} onClick={() => this.onMenuActive()} to="/category/">Categories</Link>
                 <a href="javascript:void(0);" className="icon" onClick={() => this.myFunction()}>
                     <FontAwesomeIcon icon={faBars} />
                 </a>

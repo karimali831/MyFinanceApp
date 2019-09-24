@@ -94,15 +94,7 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
     private addExpense = () => {
         if (this.state.name && this.state.name.length > 2 && this.state.selectedCat)
         {
-            this.setState({ ...this.state, 
-                ...{ 
-                    categories: [],
-                    selectedCat: undefined,
-                    loading: true,
-                    redirect: true,
-                    name: ""
-                }
-            })  
+            this.setState({ ...this.state, redirect: true })  
 
             const addModel: IFinanceDTO = {
                 name: this.state.name,

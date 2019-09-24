@@ -1,8 +1,10 @@
-﻿using MyFinances.Enums;
+﻿using MyFinances.DTOs;
+using MyFinances.Enums;
 using MyFinances.Model;
 using MyFinances.Repository;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyFinances.Service
@@ -11,7 +13,8 @@ namespace MyFinances.Service
     {
         Task UpdateAsync<T>(string field, T value, int id, string table) where T : class;
         Task DeleteAsync(int id, string table);
-        Task<IEnumerable<Category>> GetAllCategories(CategoryType typeId);
+        Task<IEnumerable<Category>> GetAllCategories(CategoryType? typeId, bool catsWithSubs);
+        Task AddCategory(CategoryDTO dto);
     }
 
     public class BaseService : IBaseService
@@ -35,9 +38,26 @@ namespace MyFinances.Service
             await baseRepository.DeleteAsync(id, table);
         }
 
-        public async Task<IEnumerable<Category>> GetAllCategories(CategoryType typeId)
+        public async Task<IEnumerable<Category>> GetAllCategories(CategoryType? typeId, bool catsWithSubs)
         {
-            return await categoryRepository.GetAllAsync(typeId);
+            var cats = (await categoryRepository.GetAllAsync());
+
+            if (typeId.HasValue)
+            {
+                cats = cats.Where(x => x.TypeId == typeId.Value);  
+            }
+
+            if (catsWithSubs)
+            {
+                cats = cats.Where(x => x.SecondTypeId != null && x.SecondTypeId != 0);
+            }
+
+            return cats;
+        }
+
+        public async Task AddCategory(CategoryDTO dto)
+        {
+            await categoryRepository.AddCategory(dto);
         }
     }
 }

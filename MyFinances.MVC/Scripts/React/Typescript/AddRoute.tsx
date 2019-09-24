@@ -147,21 +147,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
     private addRoute = () => {
         if (this.state.routeDate && this.state.selectedRouteType)
         {
-            this.setState({ ...this.state, 
-                ...{ 
-                    routeTypes: [],
-                    selectedRouteType: undefined,
-                    loading: true,
-                    redirect: true,
-                    routeDate: undefined,
-                    mileage: undefined,
-                    extraMileage: undefined,
-                    mpg: undefined,
-                    drops: undefined,
-                    extraDrops: undefined,
-                    info: null
-                }
-            })  
+            this.setState({ ...this.state, redirect: true })  
 
             const addModel: IRouteDTO = {
                 routeTypeId: this.state.selectedRouteType,

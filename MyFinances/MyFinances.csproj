@@ -111,6 +111,7 @@
   <ItemGroup>
     <Compile Include="DTOs\CNWPaymentDTO.cs" />
     <Compile Include="DTOs\CNWRouteDTO.cs" />
+    <Compile Include="DTOs\CategoryDTO.cs" />
     <Compile Include="DTOs\IncomeDTO.cs" />
     <Compile Include="DTOs\FinanceDTO.cs" />
     <Compile Include="DTOs\IncomeSummaryDTO.cs" />

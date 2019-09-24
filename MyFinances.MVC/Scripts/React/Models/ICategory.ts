@@ -4,3 +4,8 @@ export interface ICategory {
     name: string,
     secondTypeId: number
 }
+
+export interface ICategoryDTO {
+    name: string,
+    typeId: number
+}

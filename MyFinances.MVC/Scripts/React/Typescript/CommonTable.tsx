@@ -13,14 +13,16 @@ export interface IOwnProps {
 }
 
 export interface IOwnState {
-    deleteId: number | undefined
+    selectedId: number | undefined,
+    deletedIds: number[]
 }
 
 export default class Table extends React.Component<IOwnProps, IOwnState> {
     constructor(props: IOwnProps) {
         super(props);
         this.state = { 
-            deleteId: undefined
+            selectedId: undefined,
+            deletedIds: []
         };
     }
 
@@ -37,7 +39,7 @@ export default class Table extends React.Component<IOwnProps, IOwnState> {
             onSelect: (row: any) => {
                 this.setState({ ...this.state, 
                     ...{ 
-                        deleteId: row['id']
+                        selectedId: row['id']
                     }
                 }) 
             }
@@ -52,7 +54,7 @@ export default class Table extends React.Component<IOwnProps, IOwnState> {
                 <BootstrapTable 
                     keyField='id' 
                     selectRow={ this.props.options && this.props.options.deleteRow ? selectRow : false }
-                    data={ this.props.data } 
+                    data={ this.props.data.filter(a => !this.state.deletedIds.includes(a.id)) } 
                     columns={ this.props.columns } 
                     striped={ true } 
                     hover={ true }
@@ -91,15 +93,12 @@ export default class Table extends React.Component<IOwnProps, IOwnState> {
     }
 
     private remove = () => {
-        if (this.state.deleteId && this.props.options && this.props.options.deleteRow) {
-            this.setState({ ...this.state, 
-                ...{ 
-                    loading: true,
-                    deleteId: undefined
-                }
-            }) 
+        if (this.state.selectedId && this.props.options && this.props.options.deleteRow) {
+            commonApi.remove(this.state.selectedId, this.props.table);
 
-            commonApi.remove(this.state.deleteId, this.props.table);
+            this.setState(prevState => ({ 
+                deletedIds: [...prevState.deletedIds, this.state.selectedId] 
+            })) 
         }
     }
 }

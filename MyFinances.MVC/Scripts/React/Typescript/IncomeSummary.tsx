@@ -74,10 +74,7 @@ export default class IncomeSummary extends React.Component<IOwnProps, IOwnState>
         if (this.state.loading) {
             return <Loader text="Loading income summary..." />
         }
-
-        const summary = this.state.incomeSummary;
-    
-        {console.log("freq = " + this.state.frequency)}
+        
         return (
             <table className="table">
                 <thead className="thead-light">

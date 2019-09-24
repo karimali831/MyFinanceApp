@@ -147,8 +147,6 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
     private addRoute = () => {
         if (this.state.routeDate && this.state.selectedRouteType)
         {
-            this.setState({ ...this.state, redirect: true })  
-
             const addModel: IRouteDTO = {
                 routeTypeId: this.state.selectedRouteType,
                 routeDate: this.state.routeDate,
@@ -161,6 +159,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             }
 
             commonApi.add(addModel, "cnw");
+            this.setState({ ...this.state, redirect: true })  
         }
         else{
             alert("Enter route, date & type");

@@ -114,14 +114,13 @@ export default class AddCategory extends React.Component<IOwnProps, IOwnState> {
     private addCategory = () => {
         if (this.state.catName && this.state.catName.length > 2)
         {
-            this.setState({ ...this.state, redirect: true })  
-
             const addModel: ICategoryDTO = {
                 name: this.state.catName,
                 typeId: this.state.selectedSecondTypeId
             }
 
             commonApi.add(addModel, "categories");
+            this.setState({ ...this.state, redirect: true })  
         }
         else{
             alert("Enter category name");

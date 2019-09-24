@@ -158,8 +158,6 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
     private addExpense = () => {
         if (this.state.date && this.state.amount && this.state.selectedCat)
         {
-            this.setState({ ...this.state, redirect: true })  
-            
             const addModel: IIncomeDTO = {
                 sourceId: this.state.selectedCat,
                 secondCatId: this.state.selectedSecondCat,
@@ -168,6 +166,7 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
             }
 
             commonApi.add(addModel, "finances", "income");
+            this.setState({ ...this.state, redirect: true })  
         }
         else{
             alert("Enter date, amount and select income source");

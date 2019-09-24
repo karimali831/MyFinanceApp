@@ -95,12 +95,11 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                     }
                                     </select>
                                     {
-                                        this.state.frequency.toString() !== DateFrequency[DateFrequency.Today] && 
-                                        this.state.frequency.toString() !== DateFrequency[DateFrequency.Yesterday] ?
+                                        this.state.frequency.toString().includes("Last")?
                                             <select onChange={(e) => this.onChangeSelectedInterval(e)} className="form-control">
                                             {
                                                 Array.from(Array(30), (e, i) => {
-                                                    return <option key={i+1}>{i+1}</option>
+                                                    return <option value={i+1}>X = {i+1}</option>
                                                 })
                                             }
                                             </select>
@@ -111,12 +110,16 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row"><FontAwesomeIcon icon={faArrowUp} /> Fuel In</th>
-                            <td>
-                                £{this.state.fuelIn}
-                            </td>
-                        </tr>
+                        {
+                            this.state.fuelIn !== 0 ? 
+                                <tr>
+                                    <th scope="row"><FontAwesomeIcon icon={faArrowUp} /> Fuel In</th>
+                                    <td>
+                                        £{this.state.fuelIn}
+                                    </td>
+                                </tr>
+                            : null
+                        }
                         {this.state.spendingSummary.map(s => 
                             <tr>
                                 <th scope="row">

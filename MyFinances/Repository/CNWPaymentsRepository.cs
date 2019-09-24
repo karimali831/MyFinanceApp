@@ -2,6 +2,7 @@
 using DFM.Utils;
 using MyFinances.DTOs;
 using MyFinances.Enums;
+using MyFinances.Helpers;
 using MyFinances.Model;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace MyFinances.Repository
 {
     public interface ICNWPaymentsRepository
     {
-        Task<IEnumerable<CNWPayment>> GetAllAsync();
+        Task<IEnumerable<CNWPayment>> GetAllAsync(DateFrequency? frequency = null, int? interval = null);
         Task<CNWPayment> GetAsync(DateTime weekPeriod);
         Task InsertAsync(CNWPaymentDTO dto);
         Task DeleteAsync(DateTime weekStart);
@@ -32,11 +33,16 @@ namespace MyFinances.Repository
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<IEnumerable<CNWPayment>> GetAllAsync()
+        public async Task<IEnumerable<CNWPayment>> GetAllAsync(DateFrequency? frequency = null, int? interval = null)
         {
+            string sqlText = $@"
+                {DapperHelper.SELECT(TABLE, FIELDS)} 
+                {(frequency.HasValue && interval.HasValue ? " WHERE " + Utils.FilterDateSql(frequency.Value, interval.Value, "PayDate") : null)}
+            ";
+
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<CNWPayment>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
+                return (await sql.QueryAsync<CNWPayment>(sqlText)).ToArray();
             }
         }
 

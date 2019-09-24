@@ -18,7 +18,7 @@ namespace MyFinances.Service
         Task SyncWeekPeriodAsync(DateTime weekStart);
         Task<CNWPayment> GetWeekSummaryAsync(DateTime weekStart);
         Task<IEnumerable<CNWPayment>> GetWeekSummariesAsync();
-        Task<decimal> GetFuelIn(int daysInterval);
+        Task<decimal> GetFuelIn(DateFrequency frequency, int interval);
     }
 
     public class CNWService : ICNWService
@@ -179,12 +179,11 @@ namespace MyFinances.Service
             }
         }
 
-        public async Task<decimal> GetFuelIn(int daysInterval)
+        public async Task<decimal> GetFuelIn(DateFrequency frequency, int interval)
         {
             var rates = await cnwRatesRepository.GetAsync();
 
-            return (await cnwPaymentsRepository.GetAllAsync())
-                .Where(x => DateTime.Now >= x.PayDate && DateTime.Now.Date <= x.PayDate.Date.AddDays(daysInterval))
+            return (await cnwPaymentsRepository.GetAllAsync(frequency, interval))
                 .Sum(x => rates.Mileage * x.ActualMiles) ?? 0;
         }
     }

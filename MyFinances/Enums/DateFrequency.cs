@@ -10,8 +10,20 @@ namespace MyFinances.Enums
     {
         Today,
         Yesterday,
-        DaysAgo,
-        MonthsAgo,
-        YearsAgo
+        LastXDays,
+        LastXMonths,
+        LastXYears,
+        January,
+        February,
+        March,
+        April,
+        May,
+        June,
+        July,
+        August,
+        September,
+        October,
+        November,
+        December
     }
 }

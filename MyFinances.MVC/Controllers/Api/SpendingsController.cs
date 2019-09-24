@@ -20,10 +20,12 @@ namespace MyFinances.Website.Controllers.API
     public class SpendingsController : ApiController
     {
         private readonly ISpendingService spendingService;
+        private readonly ICNWService cnwService;
 
-        public SpendingsController(ISpendingService spendingService)
+        public SpendingsController(ISpendingService spendingService, ICNWService cnwService)
         {
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
+            this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
         }
 
         [HttpGet]
@@ -51,7 +53,7 @@ namespace MyFinances.Website.Controllers.API
         public async Task<HttpResponseMessage> GetSpendingSummaryAsync(DateFrequency frequency, int interval)
         {
             var spendings = await spendingService.GetSpendingSummary(frequency, interval);
-            decimal fuelIn = await spendingService.GetFuelIn(interval);
+            decimal fuelIn = await cnwService.GetFuelIn(frequency, interval);
 
             return Request.CreateResponse(HttpStatusCode.OK,
                 new {

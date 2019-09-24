@@ -56,7 +56,7 @@ namespace MyFinances.Repository
                     ON f.Id = s.FinanceId
                 WHERE 
                     Display = 1
-                    {(frequency.HasValue && interval.HasValue ? Utils.FilterDateSql(frequency.Value, interval.Value) : null)}";
+                    {(frequency.HasValue && interval.HasValue ? "AND " + Utils.FilterDateSql(frequency.Value, interval.Value) : null)}";
 
             using (var sql = dbConnectionFactory())
             {
@@ -82,7 +82,7 @@ namespace MyFinances.Repository
                     ON f.Id = s.FinanceId
                 WHERE 
                     Display = 1
-                    {Utils.FilterDateSql(frequency, interval)}
+                    AND {Utils.FilterDateSql(frequency, interval)}
                 GROUP BY 
                     s.CatId, s.FinanceId, c1.Name, c2.Name, f.Name
                 ORDER BY 

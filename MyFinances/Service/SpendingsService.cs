@@ -13,7 +13,6 @@ namespace MyFinances.Service
     {
         Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance);
         Task InsertAsync(SpendingDTO dto);
-        Task<decimal> GetFuelIn(int daysInterval);
         DateTime? ExpenseLastPaidDate(int financeId);
         decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval);
@@ -75,34 +74,8 @@ namespace MyFinances.Service
             return getSpendings.Sum(x => x.Amount);
         }
 
-        private static readonly IDictionary<string, Func<DateTime, DateTime>> methodMap =
-            new Dictionary<string, Func<DateTime, DateTime>>
-            {
-                { "Day", date => date.AddDays(1) },
-                { "Week", date => date.AddDays(7) },
-                { "Month", date => date.AddMonths(1) },
-                { "Quarterly", date => date.AddMonths(3) },
-                { "SemiAnnually", date => date.AddMonths(6) },
-                { "Annually", date => date.AddYears(1) }
-            };
 
-        private static readonly IDictionary<char, int> intervalMap =
-            new Dictionary<char, int>
-            {
-                { 'D', 1 },
-                { 'W', 7 },
-                { 'M', 30 },
-                { 'Q', 90 },
-                { 'S', 182 },
-                { 'A', 365 }
-            };
-
-        //if (!methodMap.TryGetValue(freq, out moveDate))
-        //        {
-        //            moveDate = date => date.AddDays(1);
-        //        }
-
-    public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval)
+        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval)
         {
             var spendingsSummary = await spendingRepository.GetSpendingsSummaryAsync(frequency, interval);
 
@@ -129,11 +102,6 @@ namespace MyFinances.Service
             var firstCats = spendingsSummary.Where(x => x.Cat2 == null);
 
             return firstCats.Concat(secondCats).OrderByDescending(x => x.TotalSpent).ToArray();
-        }
-
-        public async Task<decimal> GetFuelIn(int daysInterval)
-        {
-            return await cnwService.GetFuelIn(daysInterval);
         }
     }
 }

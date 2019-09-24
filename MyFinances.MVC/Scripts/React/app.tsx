@@ -26,7 +26,7 @@ class App extends React.Component{
                     <Route path="/addexpense/" component={AddExpense} />
                     <Route path="/addincome/" component={AddIncome} />
                     <Route path="/finance/" component={Finances} />
-                    <Route path="/income/" component={Incomes} />
+                    <Route path="/income/:sourceId?/:frequency?/:interval?" exact component={Incomes} />
                     <Route path="/spending/:catId?/:frequency?/:interval?/:isFinance?" exact component={Spendings} />
                     <Route path="/route/" component={Routes} />
                     <Route path="/summary/" component={WeekSummaries} />

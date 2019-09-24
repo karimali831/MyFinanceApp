@@ -5,13 +5,17 @@ import { Loader } from './Loader';
 import Table from './CommonTable';
 import { ITableOptions, ITableProps } from '../Models/ITable';
 import { priceFormatter } from './Utils';
+import { DateFrequency } from '../Enums/DateFrequency';
 
 interface IOwnProps {
 }
 
 export interface IOwnState {
     incomes: IIncome[],
-    loading: boolean
+    loading: boolean,
+    sourceId: number | null,
+    frequency: DateFrequency | null,
+    interval: number | null,
 }
 
 export default class Finances extends React.Component<IOwnProps, IOwnState> {
@@ -19,7 +23,10 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         super(props);
         this.state = { 
             loading: true,
-            incomes: []
+            incomes: [],
+            sourceId: this.props.match.params.sourceId,
+            frequency: this.props.match.params.frequency,
+            interval: this.props.match.params.interval,
         };
     }
 
@@ -30,7 +37,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
     }
 
     private loadIncomes = () => {
-        api.incomes()
+        api.incomes(this.state.sourceId, this.state.frequency, this.state.interval)
             .then(response => this.loadIncomesSuccess(response.incomes));
     }
 

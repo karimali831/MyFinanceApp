@@ -47,8 +47,8 @@ export class Api {
         .then(data => data as ISpendingSummaryResponse);
     }
 
-    public incomeSummary = async (monthsPeriod: number): Promise<IIncomeSummaryResponse> => {
-        return fetch(`${this.rootUrl}/finances/summary/income/${monthsPeriod}`, {
+    public incomeSummary = async (frequency: DateFrequency, interval: number): Promise<IIncomeSummaryResponse> => {
+        return fetch(`${this.rootUrl}/finances/summary/income/${frequency}/${interval}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",
@@ -83,8 +83,8 @@ export class Api {
         .then(data => data as IFinanceResponse);
     }
 
-    public incomes = async (): Promise<IIncomeResponse> => {
-        return fetch(`${this.rootUrl}/finances/incomes`, {
+    public incomes = async (sourceId?: number, frequency?: DateFrequency, interval?: number): Promise<IIncomeResponse> => {
+        return fetch(`${this.rootUrl}/finances/incomes/${sourceId != null ? `${sourceId}/` : ""}${frequency != null ? `${frequency}/` : ""}${interval != null ? interval : ""}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",
@@ -171,7 +171,8 @@ export interface ISpendingSummaryResponse {
 }
 
 export interface IIncomeSummaryResponse {
-    incomeSummary: IIncomeSummary
+    incomeSummary: IIncomeSummary[],
+    totalIncome: number
 }
 
 export interface IFinanceResponse {

@@ -14,7 +14,6 @@ namespace MyFinances.Service
         Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance);
         Task InsertAsync(SpendingDTO dto);
         DateTime? ExpenseLastPaidDate(int financeId);
-        decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId = null, Categories? secondCatId = null);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval);
     }
 
@@ -56,24 +55,6 @@ namespace MyFinances.Service
         {
             return spendingRepository.ExpenseLastPaidDate(financeId);
         }
-
-        public decimal GetTotalSpent(IEnumerable<Spending> spendings, int daysInterval, Categories? catId, Categories? secondCatId) 
-        {
-            var getSpendings = spendings.Where(x => x.Date >= DateTime.Now.Date.AddDays(daysInterval));
-                
-            if (catId.HasValue)
-            {
-                getSpendings = getSpendings.Where(x => (Categories)x.CatId == catId);
-            }
-
-            if (secondCatId.HasValue)
-            {
-                getSpendings = getSpendings.Where(x => (Categories)x.SecondCatId == secondCatId);
-            }
-
-            return getSpendings.Sum(x => x.Amount);
-        }
-
 
         public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval)
         {

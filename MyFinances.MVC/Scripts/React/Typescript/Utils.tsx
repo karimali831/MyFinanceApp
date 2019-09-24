@@ -35,6 +35,8 @@ export const cleanText = (text: string) => {
 	return text.toString().replace(/([A-Z])/g, ' $1').trim()
 }
 
+export const monthNames = ["January", "February", "March", "April", "May","June","July", "August", "September", "October", "November","December"]
+
 export const paymentStatus = (status: number, daysUntilDue: number, daysLate: number) => {
 	switch (status) {
 		case 0:

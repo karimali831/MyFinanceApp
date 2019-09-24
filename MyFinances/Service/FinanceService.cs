@@ -14,10 +14,10 @@ namespace MyFinances.Service
     public interface IFinanceService
     {
         Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates);
-        Task<IEnumerable<Income>> GetAllIncomesAsync();
+        Task<IEnumerable<Income>> GetAllIncomesAsync(int? sourceId, DateFrequency? frequency, int? interval);
+        Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFrequency frequency, int interval);
         Task InsertAsync(FinanceDTO dto);
         Task InsertIncomeAsync(IncomeDTO dto);
-        decimal GetTotalIncome(IEnumerable<Income> incomes, int monthsInterval, Categories? sourceId = null, Categories? secondSourceId = null);
         int? CalculateDays(DateTime? Date1, DateTime? Date2);
         int? DaysLastPaid(int Id, bool calcLateDays = false);
         PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
@@ -73,26 +73,44 @@ namespace MyFinances.Service
             return finances;
         }
 
-        public async Task<IEnumerable<Income>> GetAllIncomesAsync()
+        public async Task<IEnumerable<Income>> GetAllIncomesAsync(int? sourceId, DateFrequency? frequency, int? interval)
         {
-            return (await incomeRepository.GetAllAsync()).OrderByDescending(x => x.Date);
-        }
-
-        public decimal GetTotalIncome(IEnumerable<Income> incomes, int monthsInterval, Categories? sourceId, Categories? secondSourceId)
-        {
-            var getIncomes = incomes.Where(x => x.Date >= DateTime.Now.Date.AddMonths(monthsInterval));
+            var incomes = (await incomeRepository.GetAllAsync(frequency, interval));
 
             if (sourceId.HasValue)
             {
-                getIncomes = getIncomes.Where(x => (Categories)x.SourceId == sourceId);
+                incomes = incomes.Where(x => x.SourceId == sourceId.Value);
             }
 
-            if (secondSourceId.HasValue)
-            {
-                getIncomes = getIncomes.Where(x => (Categories)x.SecondSourceId == secondSourceId);
-            }
+            return incomes.OrderByDescending(x => x.Date).ThenBy(x => x.Source);
+        }
 
-            return getIncomes.Sum(x => x.Amount);
+        public async Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFrequency frequency, int interval)
+        {
+            var incomeSummary = await incomeRepository.GetSummaryAsync(frequency, interval);
+
+            var secondCats = incomeSummary
+                .Where(x => x.SecondSource != null)
+                .GroupBy(
+                    p => new { p.SourceId, p.Source },
+                    p => new { p.SecondSource, p.TotalIncome },
+                    (key, g) =>
+                        new IncomeSummaryDTO
+                        {
+                            Source = key.Source,
+                            SourceId = key.SourceId,
+                            TotalIncome = incomeSummary.Where(x => x.SourceId == key.SourceId).Sum(x => x.TotalIncome),
+                            SecondCats = g.Select(s => new IncomeSummaryDTO
+                            {
+                                SecondSource = s.SecondSource,
+                                TotalIncome = s.TotalIncome
+                            })
+                        }
+                 );
+
+            var firstCats = incomeSummary.Where(x => x.SecondSource == null);
+
+            return firstCats.Concat(secondCats).OrderByDescending(x => x.TotalIncome).ToArray();
         }
 
         public int? CalculateDays(DateTime? Date1, DateTime? Date2)

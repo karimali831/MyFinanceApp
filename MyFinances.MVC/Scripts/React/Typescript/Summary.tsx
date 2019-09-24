@@ -85,12 +85,14 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
-                                Spendings breakdown summary in the last
+                                Spendings breakdown summary for
                                 <div className="form-group" style={{width: 'auto'}}>
                                     <select onChange={(e) => this.onChangeSelectedFrequency(e)} className="form-control">
                                     {
                                         Object.keys(DateFrequency).filter(o => !isNaN(o as any)).map(key => 
-                                            <option value={key}>{cleanText(DateFrequency[key])}</option>
+                                            <option value={key} selected={this.state.frequency == DateFrequency[key]}>
+                                                {cleanText(DateFrequency[key])}
+                                            </option>
                                         )
                                     }
                                     </select>

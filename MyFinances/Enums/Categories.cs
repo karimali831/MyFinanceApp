@@ -35,7 +35,7 @@ namespace MyFinances.Enums
         Haircut,
         Cars,
         Groceries,
-        SB,
+        Freelancer,
         CWTL,
         UberEats,
         Loans,

@@ -14,8 +14,9 @@ export interface IIncomeDTO {
 }
 
 export interface IIncomeSummary {
+    source: string,
+    sourceId: number,
+    secondSource: string,
+    secondCats: IIncomeSummary[],
     totalIncome: number,
-    incomeSB: number,
-    incomeCWTL: number,
-    incomeUberEats: number
 }

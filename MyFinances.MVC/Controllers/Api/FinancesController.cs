@@ -64,11 +64,11 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("incomes")]
+        [Route("incomes/{sourceId?}/{frequency?}/{interval?}")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetIncomesAsync()
+        public async Task<HttpResponseMessage> GetIncomesAsync(int? sourceId = null, DateFrequency? frequency = null, int? interval = null)
         {
-            var incomes = await financeService.GetAllIncomesAsync();
+            var incomes = await financeService.GetAllIncomesAsync(sourceId, frequency, interval);
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Incomes = 
                     incomes.Select(x => new
@@ -82,26 +82,16 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("summary/income/{monthsPeriod}")]
+        [Route("summary/income/{frequency}/{interval}")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetIncomesSummaryAsync(int monthsPeriod)
+        public async Task<HttpResponseMessage> GetIncomesSummaryAsync(DateFrequency frequency, int interval)
         {
-            var incomes = await financeService.GetAllIncomesAsync();
-            var totalIncome = financeService.GetTotalIncome(incomes, monthsPeriod);
-            var totalIncomeSB = financeService.GetTotalIncome(incomes, monthsPeriod, Categories.SB);
-            var totalIncomeCWTL = financeService.GetTotalIncome(incomes, monthsPeriod, Categories.CWTL);
-            var totalIncomeUber = financeService.GetTotalIncome(incomes, monthsPeriod, Categories.UberEats);
+            var incomeSummary = await financeService.GetIncomeSummaryAsync(frequency, interval);
 
             return Request.CreateResponse(HttpStatusCode.OK, 
-                new
-                {
-                    IncomeSummary = new IncomeSummaryDTO
-                    {
-                        TotalIncome = totalIncome,
-                        IncomeSB = totalIncomeSB,
-                        IncomeCWTL = totalIncomeCWTL,
-                        IncomeUberEats = totalIncomeUber
-                    }
+                new {
+                    IncomeSummary = incomeSummary,
+                    TotalIncome = incomeSummary.Sum(x => x.TotalIncome)
                 }
             );
         }

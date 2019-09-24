@@ -4,6 +4,7 @@ export enum DateFrequency {
     LastXDays,
     LastXMonths,
     LastXYears,
+    Upcoming,
     January,
     February,
     March,

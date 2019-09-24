@@ -14,7 +14,7 @@ namespace MyFinances.Service
     public interface IFinanceService
     {
         Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates);
-        Task<IEnumerable<Income>> GetAllIncomesAsync(int? sourceId, DateFrequency? frequency, int? interval);
+        Task<IEnumerable<Income>> GetAllIncomesAsync(int? sourceId = null, DateFrequency? frequency = null, int? interval = null);
         Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFrequency frequency, int interval);
         Task InsertAsync(FinanceDTO dto);
         Task InsertIncomeAsync(IncomeDTO dto);

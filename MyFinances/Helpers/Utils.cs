@@ -60,20 +60,24 @@ namespace MyFinances.Helpers
             if (DateTime.TryParseExact(frequency.ToString(), "MMMM", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime freq))
             {
                 var year = DateTime.Now.Month <= freq.Month ? DateTime.Now.Year : DateTime.Now.Year - 1;
-                return $"Month({dateField}) = {freq.Month} AND YEAR({dateField}) = {DateTime.Now.Year}";
+                return $"MONTH({dateField}) = {freq.Month} AND YEAR({dateField}) = {DateTime.Now.Year} " +
+                       $"AND [{dateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
             }
 
             switch (frequency)
             {
                 case DateFrequency.Today:
-                    return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                    return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0) AND " +
+                           $"[{dateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
                 case DateFrequency.Yesterday:
-                    return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0) " +
-                           $"AND [{dateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                    return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0) AND " +
+                           $"[{dateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                case DateFrequency.Upcoming:
+                    return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
                 case DateFrequency.LastXDays:
                     return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), - {interval})";
                 case DateFrequency.LastXMonths:
-                    return $"[{dateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) - {interval}, DAY(GETDATE())-1)";
+                    return $"[{dateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) - {interval}, DAY(GETDATE()) - 1)";
                 default:
                     return "";
             }

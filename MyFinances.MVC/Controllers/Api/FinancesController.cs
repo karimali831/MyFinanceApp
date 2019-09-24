@@ -34,7 +34,6 @@ namespace MyFinances.Website.Controllers.API
 
             if (upcomingPayments)
             {
-                //&& x.NextDueDate >= DateTime.UtcNow
                 finances = finances.Where(x => x.NextDueDate <= DateTime.UtcNow.AddDays(7) || x.ManualPayment);
             }
 
@@ -69,6 +68,7 @@ namespace MyFinances.Website.Controllers.API
         public async Task<HttpResponseMessage> GetIncomesAsync(int? sourceId = null, DateFrequency? frequency = null, int? interval = null)
         {
             var incomes = await financeService.GetAllIncomesAsync(sourceId, frequency, interval);
+
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Incomes = 
                     incomes.Select(x => new

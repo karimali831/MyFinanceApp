@@ -71,12 +71,14 @@ namespace MyFinances.Service
                             Cat1 = key.Cat1,
                             CatId = key.CatId,
                             IsFinance = key.IsFinance,
-                            TotalSpent = spendingsSummary.Where(x => x.CatId == key.CatId).Sum(X => X.TotalSpent),
-                            SecondCats = g.Select(s => new SpendingSummaryDTO
-                            {
-                                Cat2 = s.Cat2,
-                                TotalSpent = s.TotalSpent
-                            })
+                            TotalSpent = spendingsSummary
+                                .Where(x => x.CatId == key.CatId && x.Cat1 == key.Cat1)
+                                .Sum(x => x.TotalSpent),
+                                    SecondCats = g.Select(s => new SpendingSummaryDTO
+                                    {
+                                        Cat2 = s.Cat2,
+                                        TotalSpent = s.TotalSpent
+                                    })
                         }
                  );
 

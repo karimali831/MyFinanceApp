@@ -99,12 +99,14 @@ namespace MyFinances.Service
                         {
                             Source = key.Source,
                             SourceId = key.SourceId,
-                            TotalIncome = incomeSummary.Where(x => x.SourceId == key.SourceId).Sum(x => x.TotalIncome),
-                            SecondCats = g.Select(s => new IncomeSummaryDTO
-                            {
-                                SecondSource = s.SecondSource,
-                                TotalIncome = s.TotalIncome
-                            })
+                            TotalIncome = incomeSummary
+                                .Where(x => x.SourceId == key.SourceId && x.Source == key.Source)
+                                .Sum(x => x.TotalIncome),
+                                    SecondCats = g.Select(s => new IncomeSummaryDTO
+                                    {
+                                        SecondSource = s.SecondSource,
+                                        TotalIncome = s.TotalIncome
+                                    })
                         }
                  );
 

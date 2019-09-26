@@ -52,7 +52,7 @@ namespace MyFinances.Service
                 cats = cats.Where(x => x.SecondTypeId != null && x.SecondTypeId != 0);
             }
 
-            return cats;
+            return cats.OrderBy(x => x.Name);
         }
 
         public async Task AddCategory(CategoryDTO dto)

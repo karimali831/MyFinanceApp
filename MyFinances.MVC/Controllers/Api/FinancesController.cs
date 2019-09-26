@@ -50,7 +50,7 @@ namespace MyFinances.Website.Controllers.API
                         x.ManualPayment,
                         NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null,
                         DaysUntilDue = financeService.CalculateDays(x.NextDueDate, DateTime.UtcNow),
-                        DaysLate = financeService.DaysLastPaid(x.Id, true),
+                        DaysLate = financeService.DaysLastPaid(x.Id),
                         PaymentStatus = financeService.PaymentStatusAsync(x.Id, x.NextDueDate)
                     })
                     .OrderByDescending(x => x.PaymentStatus)

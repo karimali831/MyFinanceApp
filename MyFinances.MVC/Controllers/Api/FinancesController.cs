@@ -47,6 +47,7 @@ namespace MyFinances.Website.Controllers.API
                         EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
                         x.Remaining,
                         x.MonthlyDueDate,
+                        x.OverrideNextDueDate,
                         x.ManualPayment,
                         NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null,
                         DaysUntilDue = financeService.CalculateDays(x.NextDueDate, DateTime.UtcNow),

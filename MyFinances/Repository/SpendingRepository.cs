@@ -69,6 +69,7 @@ namespace MyFinances.Repository
             string sqlTxt = $@"
                 SELECT 
                     CASE WHEN s.CatId IS NULL THEN s.FinanceId ELSE s.CatId END AS CatId,
+                    CASE WHEN s.SecondCatId IS NULL THEN s.FinanceId ELSE s.SecondCatId END AS SecondCatId,
                     CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Cat1,
                     CASE WHEN s.CatId IS NULL THEN 1 ELSE 0 END AS IsFinance,
 	                c2.Name AS Cat2, SUM(s.Amount) as TotalSpent
@@ -84,7 +85,7 @@ namespace MyFinances.Repository
                     Display = 1
                     AND {Utils.FilterDateSql(frequency, interval)}
                 GROUP BY 
-                    s.CatId, s.FinanceId, c1.Name, c2.Name, f.Name
+                    s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name
                 ORDER BY 
                     TotalSpent DESC";
 

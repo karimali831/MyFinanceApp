@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyFinances.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.ModelConfiguration;
 
@@ -13,7 +14,7 @@ namespace MyFinances.Model
         public DateTime? EndDate { get; set; }
         public int? MonthlyDueDate { get; set; }
         public DateTime? NextDueDate { get; set; }
-        public bool OverrideNextDueDate { get; set; }
+        public OverrideDueDate OverrideNextDueDate { get; set; }
         public decimal? Remaining { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? TotalPaid { get; set; }

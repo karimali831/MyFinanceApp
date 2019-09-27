@@ -11,8 +11,8 @@ export class Api {
 
     public rootUrl: string = `${rootUrl}/api`;
 
-    public spendings = async (catId?: number, frequency?: DateFrequency, interval?: number, isFinance?: boolean): Promise<ISpendingResponse> => {
-        return fetch(`${this.rootUrl}/spendings/${catId != null ? `${catId}/` : ""}${frequency != null ? `${frequency}/` : ""}${interval != null ? `${interval}/` : ""}${isFinance}`, {
+    public spendings = async (catId?: number, frequency?: DateFrequency, interval?: number, isFinance: boolean = false, isSecondCat: boolean = false): Promise<ISpendingResponse> => {
+        return fetch(`${this.rootUrl}/spendings/${catId != null ? `${catId}/` : ""}${frequency != null ? `${frequency}/` : ""}${interval != null ? `${interval}/` : ""}${isFinance}/${isSecondCat}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",
@@ -177,7 +177,9 @@ export interface IIncomeSummaryResponse {
 
 export interface IFinanceResponse {
     finances: IFinance[]
-    totalAvgCost: number
+    totalAvgCost: number,
+    spentThisMonth,
+    spentLastMonth
 }
 
 export interface IIncomeResponse {

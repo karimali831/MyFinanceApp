@@ -21,6 +21,7 @@ export interface ISpendingSummary
 {
     cat1: string,
     catId: number,
+    secondCatId: number,
     isFinance: boolean,
     cat2: string,
     secondCats: ISpendingSummary[],

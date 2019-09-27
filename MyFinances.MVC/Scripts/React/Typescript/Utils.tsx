@@ -35,6 +35,10 @@ export const cleanText = (text: string) => {
 	return text.toString().replace(/([A-Z])/g, ' $1').trim()
 }
 
+export const boolHighlight = (bool: boolean) => {
+	return <span className={"label label-" + (bool ? "success" : "danger")}>{bool ? "Yes" : "No"}</span>
+}
+
 export const monthNames = ["January", "February", "March", "April", "May","June","July", "August", "September", "October", "November","December"]
 
 export const paymentStatus = (status: number, daysUntilDue: number, daysLate: number) => {

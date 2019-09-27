@@ -20,10 +20,12 @@ namespace MyFinances.Website.Controllers.API
     public class FinancesController : ApiController
     {
         private readonly IFinanceService financeService;
+        private readonly ISpendingService spendingService;
 
-        public FinancesController(IFinanceService financeService)
+        public FinancesController(IFinanceService financeService, ISpendingService spendingService)
         {
             this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
+            this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
         }
 
         [Route("{resyncNextDueDates}/{upcomingPayments}")]
@@ -31,6 +33,12 @@ namespace MyFinances.Website.Controllers.API
         public async Task<HttpResponseMessage> GetFinancesAsync(bool resyncNextDueDates, bool upcomingPayments)
         {
             var finances = await financeService.GetAllAsync(resyncNextDueDates);
+
+            var currentMonth = Enum.TryParse(DateTime.UtcNow.ToString("MMMM"), out DateFrequency thisMonth);
+            var spentThisMonth = await spendingService.GetSpendingSummary(thisMonth, 1);
+
+            var lastMonth = Enum.TryParse(DateTime.UtcNow.AddMonths(-1).ToString("MMMM"), out DateFrequency previousMonth);
+            var spentLastMonth = await spendingService.GetSpendingSummary(previousMonth, 1);
 
             if (upcomingPayments)
             {
@@ -60,7 +68,9 @@ namespace MyFinances.Website.Controllers.API
                     .ThenBy(x => x.Name),
                 TotalAvgCost = finances
                     .Where(x => x.EndDate == null || DateTime.UtcNow < x.EndDate)
-                    .Sum(x => x.AvgMonthlyAmount)
+                    .Sum(x => x.AvgMonthlyAmount),
+                SpentThisMonth = spentThisMonth.Where(x => x.IsFinance == true).Sum(x => x.TotalSpent),
+                SpentLastMonth = spentLastMonth.Where(x => x.IsFinance == true).Sum(x => x.TotalSpent)
             });
         }
 

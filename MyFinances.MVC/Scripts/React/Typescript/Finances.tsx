@@ -4,7 +4,8 @@ import { IFinance, PaymentStatus } from "../Models/IFinance";
 import { Loader } from './Loader';
 import Table from './CommonTable';
 import { ITableOptions, ITableProps } from '../Models/ITable';
-import { priceFormatter, intToOrdinalNumberString, paymentStatus } from './Utils';
+import { priceFormatter, intToOrdinalNumberString, paymentStatus, cleanText, boolHighlight } from './Utils';
+import { OverrideDueDate } from '../Enums/OverrideDueDate';
 
 interface IOwnProps {
 }
@@ -12,6 +13,8 @@ interface IOwnProps {
 export interface IOwnState {
     finances: IFinance[],
     totalAvgCost: number | undefined,
+    spentThisMonth: number | undefined,
+    spentLastMonth: number | undefined,
     loading: boolean,
     showEdit: number | undefined
 }
@@ -23,6 +26,8 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             loading: true,
             finances: [],
             totalAvgCost: undefined,
+            spentThisMonth: undefined,
+            spentLastMonth: undefined,
             showEdit: undefined
         };
     }
@@ -35,21 +40,27 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
 
     private loadFinances = (resyncNextDueDates = false) => {
         api.finances(resyncNextDueDates)
-            .then(response => this.loadFinancesSuccess(response.finances, response.totalAvgCost));
+            .then(response => this.loadFinancesSuccess(response.finances, response.totalAvgCost, response.spentThisMonth, response.spentLastMonth));
     }
 
-    private loadFinancesSuccess = (finances: IFinance[], totalAvgCost: number) => {
+    private loadFinancesSuccess = (finances: IFinance[], totalAvgCost: number, spentThisMonth: number, spentLastMonth: number) => {
         this.setState({ ...this.state,
             ...{ 
                 loading: false, 
                 finances: finances,
-                totalAvgCost: totalAvgCost
+                totalAvgCost: totalAvgCost,
+                spentThisMonth: spentThisMonth,
+                spentLastMonth: spentLastMonth
             }
         }) 
     }
 
     private paymentStatus = (cell: any, row: any) => {
         return paymentStatus(cell, row['daysUntilDue'], row['daysLate'])
+    }
+
+    private overrideDueDate = (cell: any, row: any) => {
+        return <span className="label label-primary">{cleanText(OverrideDueDate[cell])}</span>
     }
 
     render() {
@@ -72,12 +83,14 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             dataField: 'overrideNextDueDate',
             text: 'Override Due Date',
             headerClasses: "hidden-xs",
-            classes: "hidden-xs"
+            classes: "hidden-xs",
+            formatter: this.overrideDueDate
           }, {
             dataField: 'manualPayment',
             text: 'One-Off Payment',
             headerClasses: "hidden-xs",
-            classes: "hidden-xs"
+            classes: "hidden-xs",
+            formatter: boolHighlight
           }, {
             dataField: 'monthlyDueDate',
             text: 'Due Date',
@@ -110,7 +123,9 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
                     options={options}
                 /> 
                 <a onClick={() => this.loadFinances(true)}>Re-sync next due dates</a><br />
-                <label>Total average monthly cost: £{this.state.totalAvgCost}</label>
+                <label>Total average monthly cost: £{this.state.totalAvgCost}</label><br />
+                <label>Spent last month: £{this.state.spentLastMonth}</label><br />
+                <label>Spent this month: £{this.state.spentThisMonth}</label>
             </div>
         )
     }

@@ -6,7 +6,7 @@ export interface IFinance {
     endDate: Date,
     monthlyDueDate: number,
     nextDueDate: Date,
-    overrideNextDueDate: boolean,
+    overrideNextDueDate: number,
     remaining: number,
     totalAmount: number,
     totalPaid: number,

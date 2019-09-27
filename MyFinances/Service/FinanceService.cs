@@ -57,14 +57,15 @@ namespace MyFinances.Service
             {
                 foreach(var finance in finances)
                 {
-                    if (finance.OverrideNextDueDate && finance.MonthlyDueDate.HasValue)
+                    if (finance.OverrideNextDueDate != OverrideDueDate.No && finance.MonthlyDueDate.HasValue)
                     {
                         if (finance.NextDueDate == null || DateTime.Now >= finance.NextDueDate || resyncNextDueDates)
                         {
                             int monthElapsed = finance.MonthlyDueDate >= DateTime.Now.Day ? 0 : 1;
                             var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
-                            var date = CalculateNextDueDate(DateTime.Parse(dueDate));
-                            await financeRepository.UpdateNextDueDateAsync(date, finance.Id);
+                            var date = DateTime.Parse(dueDate);
+                            var calcDate = finance.OverrideNextDueDate == OverrideDueDate.WorkingDays ? CalculateNextDueDate(date) : date;
+                            await financeRepository.UpdateNextDueDateAsync(calcDate, finance.Id);
                         }
                     }
                 }

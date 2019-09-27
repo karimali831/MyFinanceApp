@@ -118,6 +118,7 @@
     <Compile Include="DTOs\SpendingSummaryDTO.cs" />
     <Compile Include="DTOs\SpendingDTO.cs" />
     <Compile Include="Enums\Categories.cs" />
+    <Compile Include="Enums\OverrideDueDate.cs" />
     <Compile Include="Enums\DateFrequency.cs" />
     <Compile Include="Enums\WeekPeriodSync.cs" />
     <Compile Include="Enums\PaymentStatus.cs" />

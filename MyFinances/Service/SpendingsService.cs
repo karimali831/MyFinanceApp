@@ -11,7 +11,7 @@ namespace MyFinances.Service
 {
     public interface ISpendingService
     {
-        Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance);
+        Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance, bool isSecondCat);
         Task InsertAsync(SpendingDTO dto);
         DateTime? ExpenseLastPaidDate(int financeId);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval);
@@ -30,13 +30,13 @@ namespace MyFinances.Service
             this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
         }
 
-        public async Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance)
+        public async Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance, bool isSecondCat)
         {
             var spendings = (await spendingRepository.GetAllAsync(frequency, interval));
                 
             if (catId.HasValue)
             {
-                spendings = spendings.Where(x => (isFinance && x.FinanceId == catId.Value) || (!isFinance && x.CatId == catId.Value));
+                spendings = spendings.Where(x => (isFinance && x.FinanceId == catId.Value) || (!isFinance && (isSecondCat ? x.SecondCatId == catId.Value : x.CatId == catId.Value)));
             }
             
             return spendings
@@ -63,8 +63,8 @@ namespace MyFinances.Service
             var secondCats = spendingsSummary
                 .Where(x => x.Cat2 != null)
                 .GroupBy(
-                    p => new { p.CatId, p.IsFinance, p.Cat1 },
-                    p => new { p.Cat2, p.TotalSpent },
+                    p => new { p.CatId, p.Cat1, p.IsFinance },
+                    p => new { p.SecondCatId, p.Cat2, p.TotalSpent },
                     (key, g) =>
                         new SpendingSummaryDTO
                         {
@@ -76,6 +76,7 @@ namespace MyFinances.Service
                                 .Sum(x => x.TotalSpent),
                                     SecondCats = g.Select(s => new SpendingSummaryDTO
                                     {
+                                        SecondCatId = s.SecondCatId,
                                         Cat2 = s.Cat2,
                                         TotalSpent = s.TotalSpent
                                     })

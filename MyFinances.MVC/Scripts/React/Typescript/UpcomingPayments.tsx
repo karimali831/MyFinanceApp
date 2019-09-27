@@ -4,7 +4,7 @@ import { Loader } from './Loader';
 import { IFinance } from '../Models/IFinance';
 import { faArrowDown, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { paymentStatus } from './Utils';
+import { paymentStatus, cleanText } from './Utils';
 
 
 interface IOwnProps {

@@ -126,7 +126,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                             <tr>
                                 <th scope="row">
                                     <FontAwesomeIcon icon={faArrowDown} /> 
-                                    <Link to={`spending/${s.catId}/${DateFrequency[this.state.frequency]}/${this.state.interval}/${s.isFinance}`}> {s.cat1}</Link>
+                                    <Link to={`spending/${s.catId}/${DateFrequency[this.state.frequency]}/${this.state.interval}/${s.isFinance}/false`}> {s.cat1}</Link>
                                 </th>
                                 <td>
                                     {s.secondCats != null ? 
@@ -138,8 +138,8 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                                 <small>
                                                     <i> 
                                                         {s.secondCats.map(c =>   
-                                                            <div>            
-                                                                <strong>{c.cat2}</strong> £{c.totalSpent}
+                                                            <div>    
+                                                                <Link to={`spending/${c.secondCatId}/${DateFrequency[this.state.frequency]}/${this.state.interval}/${s.isFinance}/true`}> {c.cat2}</Link> £{c.totalSpent}
                                                             </div>
                                                         )}
                                                     </i>

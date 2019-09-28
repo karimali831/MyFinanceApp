@@ -12,7 +12,6 @@ export interface IFinance {
     totalPaid: number,
     manualPayment: boolean,
     daysUntilDue: number,
-    daysLate: number,
     paymentStatus: PaymentStatus
 }
 

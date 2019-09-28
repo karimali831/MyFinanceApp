@@ -59,11 +59,10 @@ namespace MyFinances.Website.Controllers.API
                         x.ManualPayment,
                         NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null,
                         DaysUntilDue = financeService.CalculateDays(x.NextDueDate, DateTime.UtcNow),
-                        DaysLate = financeService.DaysLastPaid(x.Id),
                         PaymentStatus = financeService.PaymentStatusAsync(x.Id, x.NextDueDate)
                     })
                     .OrderByDescending(x => x.PaymentStatus)
-                    .ThenByDescending(x => (x.PaymentStatus == PaymentStatus.Late ? x.DaysLate : null))
+                    .ThenByDescending(x => (x.PaymentStatus == PaymentStatus.Late ? x.DaysUntilDue : null))
                     .ThenBy(x => (x.PaymentStatus == PaymentStatus.Upcoming ? x.DaysUntilDue : null))
                     .ThenBy(x => x.Name),
                 TotalAvgCost = finances

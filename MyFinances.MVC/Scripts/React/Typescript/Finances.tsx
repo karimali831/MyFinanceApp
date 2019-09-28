@@ -56,7 +56,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
     }
 
     private paymentStatus = (cell: any, row: any) => {
-        return paymentStatus(cell, row['daysUntilDue'], row['daysLate'])
+        return paymentStatus(cell, row['daysUntilDue'])
     }
 
     private overrideDueDate = (cell: any, row: any) => {
@@ -95,10 +95,6 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             dataField: 'monthlyDueDate',
             text: 'Due Date',
             formatter: intToOrdinalNumberString
-          }, {
-            dataField: 'daysLate',
-            text: 'Days Late',
-            hidden: true
           }, {
             dataField: 'daysUntilDue',
             text: 'Next Due',

@@ -19,7 +19,7 @@ namespace MyFinances.Service
         Task InsertAsync(FinanceDTO dto);
         Task InsertIncomeAsync(IncomeDTO dto);
         int? CalculateDays(DateTime? Date1, DateTime? Date2);
-        int? DaysLastPaid(int Id, bool calcLateDays = false);
+        int? DaysLastPaid(int Id);
         PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
     }
 
@@ -59,13 +59,20 @@ namespace MyFinances.Service
                 {
                     if (finance.OverrideNextDueDate != OverrideDueDate.No && finance.MonthlyDueDate.HasValue)
                     {
-                        if (finance.NextDueDate == null || DateTime.Now >= finance.NextDueDate || resyncNextDueDates)
+                        if (finance.NextDueDate == null || DateTime.UtcNow >= finance.NextDueDate || resyncNextDueDates)
                         {
-                            int monthElapsed = finance.MonthlyDueDate >= DateTime.Now.Day ? 0 : 1;
-                            var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
-                            var date = DateTime.Parse(dueDate);
-                            var calcDate = finance.OverrideNextDueDate == OverrideDueDate.WorkingDays ? CalculateNextDueDate(date) : date;
-                            await financeRepository.UpdateNextDueDateAsync(calcDate, finance.Id);
+                            // don't set next due date if previous month not paid!
+                            var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(finance.Id);
+
+                            if (DateTime.UtcNow <= expenseLastPaidDate)
+                            {
+
+                                int monthElapsed = finance.MonthlyDueDate >= DateTime.Now.Day ? 0 : 1;
+                                var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
+                                var date = DateTime.Parse(dueDate);
+                                var calcDate = finance.OverrideNextDueDate == OverrideDueDate.WorkingDays ? CalculateNextDueDate(date) : date;
+                                await financeRepository.UpdateNextDueDateAsync(calcDate, finance.Id);
+                            }
                         }
                     }
                 }
@@ -126,10 +133,10 @@ namespace MyFinances.Service
             return (int)(Date1.Value.Date - Date2.Value.Date).TotalDays;
         }
 
-        public int? DaysLastPaid(int Id, bool calcLateDays = false)
+        public int? DaysLastPaid(int Id)
         {
             var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(Id);
-            return CalculateDays(calcLateDays ? DateTime.UtcNow.AddMonths(-1) : DateTime.UtcNow, expenseLastPaidDate);
+            return CalculateDays(DateTime.UtcNow, expenseLastPaidDate);
         }
 
         public PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate)
@@ -141,7 +148,6 @@ namespace MyFinances.Service
 
             var daysUntilDue = CalculateDays(nextDueDate, DateTime.UtcNow);
             var daysLastPaid = DaysLastPaid(Id);
-            var daysLate = DaysLastPaid(Id, true);
 
             if (daysUntilDue == null)
             {
@@ -152,24 +158,21 @@ namespace MyFinances.Service
             {
                 return PaymentStatus.Paid;
             }
-            else if (daysLate > 0)
+            else if (daysUntilDue < 0)
             {
                 return PaymentStatus.Late;
             }
+            else if (daysUntilDue == 0)
+            {
+                return PaymentStatus.DueToday;
+            }
+            else if (daysUntilDue > 0)
+            {
+                return PaymentStatus.Upcoming;
+            }
             else
             {
-                if (daysUntilDue == 0)
-                {
-                    return PaymentStatus.DueToday;
-                }
-                else if (daysUntilDue > 0)
-                {
-                    return PaymentStatus.Upcoming;
-                }
-                else
-                {
-                    return PaymentStatus.Unknown;
-                }
+                return PaymentStatus.Unknown;
             }
         }
 

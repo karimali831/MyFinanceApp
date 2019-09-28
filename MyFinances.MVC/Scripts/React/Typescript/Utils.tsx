@@ -41,14 +41,14 @@ export const boolHighlight = (bool: boolean) => {
 
 export const monthNames = ["January", "February", "March", "April", "May","June","July", "August", "September", "October", "November","December"]
 
-export const paymentStatus = (status: number, daysUntilDue: number, daysLate: number) => {
+export const paymentStatus = (status: number, daysUntilDue: number) => {
 	switch (status) {
 		case 0:
 			return <span className="label label-success">{PaymentStatus[PaymentStatus.Paid]}</span>
 		case 1:
 			return <span className="label label-warning">{PaymentStatus[PaymentStatus.Upcoming]} ({daysUntilDue} days)</span>
 		case 2:
-			return <span className="label label-danger">{PaymentStatus[PaymentStatus.Late]} ({daysLate} days)</span>
+			return <span className="label label-danger">{PaymentStatus[PaymentStatus.Late]} ({daysUntilDue} days)</span>
 		case 3:
 			return <span className="label label-default">{PaymentStatus[PaymentStatus.Unknown]}</span>
 		case 4:

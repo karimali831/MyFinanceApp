@@ -64,7 +64,7 @@ export default class UpcomingPayments extends React.Component<IOwnProps, IOwnSta
                                  {p.name} - £{p.totalAmount == null ? p.avgMonthlyAmount : p.totalAmount}
                             </th>
                             <td>
-                                {paymentStatus(p.paymentStatus, p.daysUntilDue, p.daysLate)}
+                                {paymentStatus(p.paymentStatus, p.daysUntilDue)}
                             </td>
                         </tr>
                     )}

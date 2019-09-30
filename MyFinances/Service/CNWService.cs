@@ -64,7 +64,7 @@ namespace MyFinances.Service
                     {
                         route.WeekstartPeriod = WeekPeriodSync.Synced;
                     }
-                    else if (DateTime.UtcNow <= route.RouteDate.AddDays(6))
+                    else if (DateTime.UtcNow.Date <= route.RouteDate.AddDays(6))
                     {
                         route.WeekstartPeriod = WeekPeriodSync.NotSyncedWait;
                     }
@@ -124,9 +124,9 @@ namespace MyFinances.Service
                 throw new ApplicationException("The date selected must be the start of the week i.e. Sunday.");
             }
 
-            var endOfWeek = weekStart.AddDays(6);
+            var endOfWeek = weekStart.Date.AddDays(6);
 
-            if (DateTime.UtcNow <= endOfWeek)
+            if (DateTime.UtcNow.Date <= endOfWeek)
             {
                 throw new ApplicationException("You can only sync at the end of the week");
             }

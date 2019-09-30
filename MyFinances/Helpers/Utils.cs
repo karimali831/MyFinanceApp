@@ -59,8 +59,8 @@ namespace MyFinances.Helpers
         {
             if (DateTime.TryParseExact(frequency.ToString(), "MMMM", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime freq))
             {
-                var year = DateTime.Now.Month <= freq.Month ? DateTime.Now.Year : DateTime.Now.Year - 1;
-                return $"MONTH({dateField}) = {freq.Month} AND YEAR({dateField}) = {DateTime.Now.Year} " +
+                var year = DateTime.UtcNow.Month <= freq.Month ? DateTime.UtcNow.Year : DateTime.UtcNow.Year - 1;
+                return $"MONTH({dateField}) = {freq.Month} AND YEAR({dateField}) = {DateTime.UtcNow.Year} " +
                        $"AND [{dateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
             }
 

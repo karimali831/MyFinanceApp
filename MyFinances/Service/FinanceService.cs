@@ -59,16 +59,16 @@ namespace MyFinances.Service
                 {
                     if (finance.OverrideNextDueDate != OverrideDueDate.No && finance.MonthlyDueDate.HasValue)
                     {
-                        if (finance.NextDueDate == null || DateTime.UtcNow >= finance.NextDueDate || resyncNextDueDates)
+                        if (finance.NextDueDate == null || DateTime.UtcNow.Date >= finance.NextDueDate || resyncNextDueDates)
                         {
                             // don't set next due date if previous month not paid!
                             var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(finance.Id);
 
-                            if (DateTime.UtcNow <= expenseLastPaidDate)
+                            if (DateTime.UtcNow.Date <= expenseLastPaidDate)
                             {
 
-                                int monthElapsed = finance.MonthlyDueDate >= DateTime.Now.Day ? 0 : 1;
-                                var dueDate = $"{DateTime.Now.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.Now.ToString("yyyy")}";
+                                int monthElapsed = finance.MonthlyDueDate >= DateTime.UtcNow.Day ? 0 : 1;
+                                var dueDate = $"{DateTime.UtcNow.Date.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.UtcNow.ToString("yyyy")}";
                                 var date = DateTime.Parse(dueDate);
                                 var calcDate = finance.OverrideNextDueDate == OverrideDueDate.WorkingDays ? CalculateNextDueDate(date) : date;
                                 await financeRepository.UpdateNextDueDateAsync(calcDate, finance.Id);

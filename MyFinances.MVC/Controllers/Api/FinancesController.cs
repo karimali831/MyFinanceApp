@@ -34,15 +34,15 @@ namespace MyFinances.Website.Controllers.API
         {
             var finances = await financeService.GetAllAsync(resyncNextDueDates);
 
-            var currentMonth = Enum.TryParse(DateTime.UtcNow.ToString("MMMM"), out DateFrequency thisMonth);
+            var currentMonth = Enum.TryParse(DateTime.UtcNow.Date.ToString("MMMM"), out DateFrequency thisMonth);
             var spentThisMonth = await spendingService.GetSpendingSummary(thisMonth, 1);
 
-            var lastMonth = Enum.TryParse(DateTime.UtcNow.AddMonths(-1).ToString("MMMM"), out DateFrequency previousMonth);
+            var lastMonth = Enum.TryParse(DateTime.UtcNow.Date.AddMonths(-1).ToString("MMMM"), out DateFrequency previousMonth);
             var spentLastMonth = await spendingService.GetSpendingSummary(previousMonth, 1);
 
             if (upcomingPayments)
             {
-                finances = finances.Where(x => x.NextDueDate <= DateTime.UtcNow.AddDays(7) || x.ManualPayment);
+                finances = finances.Where(x => x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7) || x.ManualPayment);
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
@@ -66,7 +66,7 @@ namespace MyFinances.Website.Controllers.API
                     .ThenBy(x => (x.PaymentStatus == PaymentStatus.Upcoming ? x.DaysUntilDue : null))
                     .ThenBy(x => x.Name),
                 TotalAvgCost = finances
-                    .Where(x => x.EndDate == null || DateTime.UtcNow < x.EndDate)
+                    .Where(x => x.EndDate == null || DateTime.UtcNow.Date < x.EndDate)
                     .Sum(x => x.AvgMonthlyAmount),
                 SpentThisMonth = spentThisMonth.Where(x => x.IsFinance == true).Sum(x => x.TotalSpent),
                 SpentLastMonth = spentLastMonth.Where(x => x.IsFinance == true).Sum(x => x.TotalSpent)

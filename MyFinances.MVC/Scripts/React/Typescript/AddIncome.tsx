@@ -146,7 +146,7 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
         this.setState({ ...this.state, 
             ...{ 
                 selectedCat: Number(ids[0]),
-                secondTypeId: ids[1] !== "0" ? Number(ids[1]) : undefined
+                secondTypeId: ids[1] != "null" && ids[1] != "0" ? Number(ids[1]) : undefined
             }
         })  
     }

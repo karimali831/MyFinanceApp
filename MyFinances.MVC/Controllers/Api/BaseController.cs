@@ -27,7 +27,7 @@ namespace MyFinances.Website.Controllers.API
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
         }
 
-        [Route("categories/{typeId?}/{catsWithSubs}")]
+        [Route("categories/{typeId?}/{catsWithSubs?}")]
         [HttpGet]
         public async Task<HttpResponseMessage> GetCategoriesAsync(CategoryType? typeId = null, bool catsWithSubs = false)
         {

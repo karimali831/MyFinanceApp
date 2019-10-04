@@ -12,6 +12,8 @@ namespace MyFinances.Service
     public interface ISpendingService
     {
         Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance, bool isSecondCat);
+        Task<int?> GetIdFromFinanceAsync(int Id);
+        Task MakeSpendingFinanceless(int id, int catId);
         Task InsertAsync(SpendingDTO dto);
         DateTime? ExpenseLastPaidDate(int financeId);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval);
@@ -45,6 +47,18 @@ namespace MyFinances.Service
                 .ThenBy(x => x.Category);
         }
 
+        public async Task<int?> GetIdFromFinanceAsync(int Id)
+        {
+            return await spendingRepository.GetIdFromFinanceAsync(Id);
+        }
+
+        // if finance is a one-off payment, we need to delete the finance once its paid
+        // but not delete the item from spendings table. so we need to set catId accordingly
+        // getting the value from the finance table and then set financeId to null
+        public async Task MakeSpendingFinanceless(int id, int catId)
+        {
+            await spendingRepository.MakeSpendingFinanceless(id, catId);
+        }
 
         public async Task InsertAsync(SpendingDTO dto) 
         {

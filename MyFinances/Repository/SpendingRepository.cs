@@ -15,7 +15,8 @@ namespace MyFinances.Repository
     public interface ISpendingRepository
     {
         Task<IEnumerable<Spending>> GetAllAsync(DateFrequency? frequency = null, int? interval = null);
-        Task<Spending> GetAsync(int Id);
+        Task<int?> GetIdFromFinanceAsync(int Id);
+        Task MakeSpendingFinanceless(int id, int catId);
         DateTime? ExpenseLastPaidDate(int financeId);
         Task InsertAsync(SpendingDTO dto);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFrequency frequency, int interval);
@@ -96,12 +97,22 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<Spending> GetAsync(int Id)
+        public async Task<int?> GetIdFromFinanceAsync(int Id)
         {
             using (var sql = dbConnectionFactory())
             {
                 return 
-                    (await sql.QueryAsync<Spending>($@"{DapperHelper.SELECT(TABLE, FIELDS)} WHERE Id = @Id", new { Id })).FirstOrDefault();
+                    (await sql.QueryAsync<int?>($@"SELECT Id FROM {TABLE} WHERE FinanceId = @Id", new { Id })).FirstOrDefault();
+            }
+        }
+
+        public async Task MakeSpendingFinanceless(int id, int catId)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($@"
+                    UPDATE {TABLE} SET CatId = @CatId, FinanceId = null WHERE Id = @Id", new { CatId = catId, Id = id }
+                );
             }
         }
 

@@ -27,16 +27,19 @@ namespace MyFinances.Service
     {
         private readonly IFinanceRepository financeRepository;
         private readonly IIncomeRepository incomeRepository;
-        private readonly ISpendingService spendingService; 
-   
+        private readonly ISpendingService spendingService;
+        private readonly IBaseService baseService;
+
         public FinanceService(
             IFinanceRepository financeRepository, 
             IIncomeRepository incomeRepository,
-            ISpendingService spendingService)
+            ISpendingService spendingService,
+            IBaseService baseService)
         {
             this.financeRepository = financeRepository ?? throw new ArgumentNullException(nameof(financeRepository));
             this.incomeRepository = incomeRepository ?? throw new ArgumentNullException(nameof(incomeRepository));
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
+            this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
         }
 
         public DateTime CalculateNextDueDate(DateTime date)
@@ -57,16 +60,28 @@ namespace MyFinances.Service
             {
                 foreach(var finance in finances)
                 {
+                    var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(finance.Id);
+
+                    // delete finance if one-off payment and is paid (i.e. ManualPayment = 1)
+                    if (finance.ManualPayment && DateTime.UtcNow.Date >= expenseLastPaidDate)
+                    {
+                        int? financePaidId = await spendingService.GetIdFromFinanceAsync(finance.Id);
+
+                        if (financePaidId.HasValue)
+                        {
+                            await spendingService.MakeSpendingFinanceless(financePaidId.Value, finance.CatId);
+                            await baseService.DeleteAsync(finance.Id, "Finances");
+                        }
+                    }
+
+                    // auto set next due date
                     if (finance.OverrideNextDueDate != OverrideDueDate.No && finance.MonthlyDueDate.HasValue)
                     {
                         if (finance.NextDueDate == null || DateTime.UtcNow.Date >= finance.NextDueDate || resyncNextDueDates)
                         {
                             // don't set next due date if previous month not paid!
-                            var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(finance.Id);
-
                             if (DateTime.UtcNow.Date <= expenseLastPaidDate)
                             {
-
                                 int monthElapsed = finance.MonthlyDueDate >= DateTime.UtcNow.Day ? 0 : 1;
                                 var dueDate = $"{DateTime.UtcNow.Date.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.UtcNow.ToString("yyyy")}";
                                 var date = DateTime.Parse(dueDate);

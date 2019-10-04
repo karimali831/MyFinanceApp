@@ -15,6 +15,7 @@ namespace MyFinances.Model
         public int? MonthlyDueDate { get; set; }
         public DateTime? NextDueDate { get; set; }
         public OverrideDueDate OverrideNextDueDate { get; set; }
+        public int CatId { get; set; }
         public decimal? Remaining { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? TotalPaid { get; set; }

@@ -75,12 +75,12 @@ namespace MyFinances.Service
                     }
 
                     // auto set next due date
-                    if (finance.OverrideNextDueDate != OverrideDueDate.No && finance.MonthlyDueDate.HasValue)
+                    if ((finance.OverrideNextDueDate != OverrideDueDate.No || finance.NextDueDate == null) && finance.MonthlyDueDate.HasValue && finance.MonthlyDueDate != 0)
                     {
                         if (finance.NextDueDate == null || DateTime.UtcNow.Date >= finance.NextDueDate || resyncNextDueDates)
                         {
-                            // don't set next due date if previous month not paid!
-                            if (DateTime.UtcNow.Date <= expenseLastPaidDate)
+                            // don't set next due date if previous month not paid !
+                            if (finance.NextDueDate == null || DateTime.UtcNow.Date <= expenseLastPaidDate)
                             {
                                 int monthElapsed = finance.MonthlyDueDate >= DateTime.UtcNow.Day ? 0 : 1;
                                 var dueDate = $"{DateTime.UtcNow.Date.AddMonths(monthElapsed).ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.UtcNow.ToString("yyyy")}";

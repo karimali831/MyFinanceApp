@@ -1,4 +1,5 @@
-﻿using MyFinances.Enums;
+﻿using MyFinances.DTOs;
+using MyFinances.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -55,29 +56,34 @@ namespace MyFinances.Helpers
             return highlight == false ? formatAmount : $"<span class='label label-{label}'>{formatAmount}</span>";
         }
 
-        public static string FilterDateSql(DateFrequency frequency, int interval, string dateField = "date")
+        public static string FilterDateSql(DateFilter dateFilter)
         {
-            if (DateTime.TryParseExact(frequency.ToString(), "MMMM", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime freq))
+            if (dateFilter.FromDateRange.HasValue && dateFilter.ToDateRange.HasValue)
             {
-                var year = DateTime.UtcNow.Month <= freq.Month ? DateTime.UtcNow.Year : DateTime.UtcNow.Year - 1;
-                return $"MONTH({dateField}) = {freq.Month} AND YEAR({dateField}) = {DateTime.UtcNow.Year} " +
-                       $"AND [{dateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
+                return $"{dateFilter.DateField} >= '{dateFilter.FromDateRange.Value}' AND {dateFilter.DateField} <= '{dateFilter.ToDateRange.Value}'";
             }
 
-            switch (frequency)
+            if (DateTime.TryParseExact(dateFilter.Frequency.ToString(), "MMMM", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime freq))
+            {
+                var year = DateTime.UtcNow.Month <= freq.Month ? DateTime.UtcNow.Year : DateTime.UtcNow.Year - 1;
+                return $"MONTH({dateFilter.DateField}) = {freq.Month} AND YEAR({dateFilter.DateField}) = {DateTime.UtcNow.Year} " +
+                       $"AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
+            }
+
+            switch (dateFilter.Frequency)
             {
                 case DateFrequency.Today:
-                    return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0) AND " +
-                           $"[{dateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
+                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0) AND " +
+                           $"[{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
                 case DateFrequency.Yesterday:
-                    return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0) AND " +
-                           $"[{dateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0) AND " +
+                           $"[{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
                 case DateFrequency.Upcoming:
-                    return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
                 case DateFrequency.LastXDays:
-                    return $"[{dateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), - {interval})";
+                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), - {dateFilter.Interval})";
                 case DateFrequency.LastXMonths:
-                    return $"[{dateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) - {interval}, DAY(GETDATE()) - 1)";
+                    return $"[{dateFilter.DateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) - {dateFilter.Interval}, DAY(GETDATE()) - 1)";
                 default:
                     return "";
             }

@@ -49,7 +49,14 @@ namespace MyFinances.Repository
                         ON c1.Id = i.SourceId
                     LEFT JOIN Categories c2
                         ON c2.Id = i.SecondSourceId
-                    {(frequency.HasValue && interval.HasValue ? "WHERE " + Utils.FilterDateSql(frequency.Value, interval.Value) : null)}";
+                    {(frequency.HasValue && interval.HasValue ? "WHERE " + 
+                        Utils.FilterDateSql(
+                            new DateFilter {
+                                Frequency = frequency.Value,
+                                Interval = interval.Value
+                            }
+                        ) 
+                    : null)}";
 
                 return (await sql.QueryAsync<Income>(sqlTxt)).ToArray();
             }
@@ -72,7 +79,13 @@ namespace MyFinances.Repository
                     LEFT JOIN Categories c2
 	                    ON c2.Id = i.SecondSourceId
                     WHERE 
-                        {Utils.FilterDateSql(frequency, interval)}
+                        {Utils.FilterDateSql(
+                            new DateFilter
+                            {
+                                Frequency = frequency,
+                                Interval = interval
+                            })
+                        }
                     GROUP BY 
 	                    i.SourceId, c1.Name, c2.Name
                     ORDER BY 

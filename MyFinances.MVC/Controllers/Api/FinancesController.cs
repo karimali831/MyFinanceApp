@@ -35,10 +35,10 @@ namespace MyFinances.Website.Controllers.API
             var finances = await financeService.GetAllAsync(resyncNextDueDates);
 
             var currentMonth = Enum.TryParse(DateTime.UtcNow.Date.ToString("MMMM"), out DateFrequency thisMonth);
-            var spentThisMonth = await spendingService.GetSpendingSummary(thisMonth, 1);
+            var spentThisMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = thisMonth, Interval = 1 });
 
             var lastMonth = Enum.TryParse(DateTime.UtcNow.Date.AddMonths(-1).ToString("MMMM"), out DateFrequency previousMonth);
-            var spentLastMonth = await spendingService.GetSpendingSummary(previousMonth, 1);
+            var spentLastMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = previousMonth, Interval = 1 });
 
             if (upcomingPayments)
             {

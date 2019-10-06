@@ -28,11 +28,10 @@ namespace MyFinances.Website.Controllers.API
             this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
         }
 
-        [HttpGet]
-        [Route("{catId?}/{frequency?}/{interval?}/{isFinance?}/{isSecondCat?}")]
-        public async Task<HttpResponseMessage> GetSpendingsAsync(int? catId = null, DateFrequency? frequency = null, int? interval = null, bool isFinance = false, bool isSecondCat = false)
+        [HttpPost]
+        public async Task<HttpResponseMessage> GetSpendingsAsync(SpendingRequestDTO request)
         {
-            var spendings = await spendingService.GetAllAsync(catId, frequency, interval, isFinance, isSecondCat);
+            var spendings = await spendingService.GetAllAsync(request);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Spendings = spendings.Select(x => new
@@ -48,12 +47,25 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("summary/{frequency}/{interval}")]
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetSpendingSummaryAsync(DateFrequency frequency, int interval)
+        [Route("summary")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> GetSpendingSummaryAsync(DateFilter dateFilter)
         {
-            var spendings = await spendingService.GetSpendingSummary(frequency, interval);
-            decimal fuelIn = await cnwService.GetFuelIn(frequency, interval);
+
+            if (DateTime.TryParseExact(dateFilter.FromDateRange.ToString(), "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime fromDateRange))
+            {
+                dateFilter.FromDateRange = fromDateRange;
+            }
+
+            if (DateTime.TryParseExact(dateFilter.ToDateRange.ToString(), "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime toDateRange))
+            {
+                dateFilter.ToDateRange = toDateRange;
+            }
+
+            var spendings = await spendingService.GetSpendingSummary(dateFilter);
+
+            dateFilter.DateField = "PayDate";
+            decimal fuelIn = await cnwService.GetFuelIn(dateFilter);
 
             return Request.CreateResponse(HttpStatusCode.OK,
                 new {

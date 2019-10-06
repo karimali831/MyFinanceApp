@@ -9,6 +9,7 @@ import { faSearch, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-ic
 import { cleanText } from './Utils';
 import { Link } from "react-router-dom";
 import UpcomingPayments from './UpcomingPayments';
+import { IDateFilter } from '../Models/IDateFilter';
 
 interface IOwnProps {
 }
@@ -20,6 +21,8 @@ export interface IOwnState {
     frequency: string,
     interval: number,
     loading: boolean,
+    fromDate: string | null,
+    toDate: string | null,
     showSecondCatSummary: string | null
 }
 
@@ -33,6 +36,8 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
             frequency: DateFrequency[DateFrequency.Today],
             interval: 1,
             loading: true,
+            fromDate: null,
+            toDate: null,
             showSecondCatSummary: null
         };
     }
@@ -42,13 +47,28 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
     }
 
     public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
-        if (prevState.frequency !== this.state.frequency || prevState.interval !== this.state.interval) {
-            this.loadSummary();
+        if (DateFrequency[this.state.frequency] !== DateFrequency.DateRange && (
+            prevState.frequency !== this.state.frequency || 
+            prevState.interval !== this.state.interval)) {
+                this.loadSummary();
+        }
+        else if ((
+            this.state.fromDate != null && this.state.toDate != null) && 
+            prevState.fromDate !== this.state.fromDate ||
+            prevState.toDate !== this.state.toDate) {
+                this.loadSummary();
         }
     }
 
     private loadSummary = () => {
-        api.summary(DateFrequency[this.state.frequency], this.state.interval)
+        const dateFilter: IDateFilter = {
+            frequency: DateFrequency[this.state.frequency],
+            interval: this.state.interval,
+            fromDateRange: this.state.fromDate,
+            toDateRange: this.state.toDate
+        }
+
+        api.summary(dateFilter)
             .then(response => this.loadSummarySuccess(response.spendingSummary, response.fuelIn, response.totalSpent));
     }
 
@@ -64,11 +84,19 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
     }
 
     private onChangeSelectedFrequency = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({ ...this.state, frequency: DateFrequency[e.target.value] })
+        this.setState({ ...this.state, frequency: DateFrequency[e.target.value], fromDate: null, toDate: null })
     }
 
     private onChangeSelectedInterval = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({ ...this.state, interval: Number(e.target.value) })
+        this.setState({ ...this.state, interval: Number(e.target.value), fromDate: null, toDate: null })
+    }
+
+    private onFromDateChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, fromDate: e.target.value })  
+    }
+
+    private onToDateChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, toDate: e.target.value })  
     }
 
     private showSecondCatSummary = (category: string) => {
@@ -79,6 +107,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
         if (this.state.loading) {
             return <Loader text="Loading spending summary..." />
         }
+
         return (
             <div>
                 <table className="table">
@@ -97,7 +126,9 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                     }
                                     </select>
                                     {
-                                        this.state.frequency.toString().includes("Last")?
+
+
+                                        this.state.frequency.toString().includes("Last") ?
                                             <select onChange={(e) => this.onChangeSelectedInterval(e)} className="form-control">
                                             {
                                                 Array.from(Array(30), (e, i) => {
@@ -105,6 +136,15 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                                 })
                                             }
                                             </select>
+                                        : DateFrequency[this.state.frequency] == DateFrequency.DateRange ? 
+                                        <>
+                                            <div className="form-group">
+                                                <input className="form-control" type="date" value={this.state.fromDate} placeholder="dd-MM-yy" onChange={(e) => { this.onFromDateChanged(e);}} />
+                                            </div>
+                                            <div className="form-group">
+                                                <input className="form-control" type="date" value={this.state.toDate} placeholder="dd-MM-yy" onChange={(e) => { this.onToDateChanged(e);}} />
+                                            </div>
+                                        </>
                                         : null
                                     }
                                 </div>

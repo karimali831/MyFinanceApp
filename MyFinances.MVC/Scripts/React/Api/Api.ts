@@ -1,19 +1,21 @@
 import { ICategory } from '../Models/ICategory'
-import { ISpending, ISpendingSummary } from '../Models/ISpending'
+import { ISpending, ISpendingSummary, ISpendingRequestDTO } from '../Models/ISpending'
 import { IFinance } from '../Models/IFinance'
 import { IRoute } from '../Models/IRoute'
 import { IIncome, IIncomeSummary } from '../Models/IIncome';
 import { ICNWPayment } from '../Models/ICNWPayment';
 import { rootUrl } from '../Typescript/Utils';
 import { DateFrequency } from '../Enums/DateFrequency';
+import { IDateFilter } from '../Models/IDateFilter';
 
 export class Api {
 
     public rootUrl: string = `${rootUrl}/api`;
 
-    public spendings = async (catId?: number, frequency?: DateFrequency, interval?: number, isFinance: boolean = false, isSecondCat: boolean = false): Promise<ISpendingResponse> => {
-        return fetch(`${this.rootUrl}/spendings/${catId != null ? `${catId}/` : ""}${frequency != null ? `${frequency}/` : ""}${interval != null ? `${interval}/` : ""}${isFinance}/${isSecondCat}`, {
-            method: "GET",
+    public spendings = async (request: ISpendingRequestDTO): Promise<ISpendingResponse> => {
+        return fetch(`${this.rootUrl}/spendings`, {
+            method: "POST",
+            body: JSON.stringify(request),
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
@@ -29,9 +31,10 @@ export class Api {
         .then(data => data as ISpendingResponse);
     }
 
-    public summary = async (frequency: DateFrequency, interval: number): Promise<ISpendingSummaryResponse> => {
-        return fetch(`${this.rootUrl}/spendings/summary/${frequency}/${interval}`, {
-            method: "GET",
+    public summary = async (dateFilter: IDateFilter): Promise<ISpendingSummaryResponse> => {
+        return fetch(`${this.rootUrl}/spendings/summary`, {
+            method: "POST",
+            body: JSON.stringify(dateFilter),
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"

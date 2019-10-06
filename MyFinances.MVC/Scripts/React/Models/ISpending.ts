@@ -1,3 +1,5 @@
+import { IDateFilter } from '../Models/IDateFilter'
+
 export interface ISpending {
     id: number,
     name: string,
@@ -26,4 +28,12 @@ export interface ISpendingSummary
     cat2: string,
     secondCats: ISpendingSummary[],
     totalSpent: number,
+}
+
+export interface ISpendingRequestDTO 
+{
+    catId: number,
+    dateFilter: IDateFilter,
+    isFinance: boolean,
+    isSecondCat: boolean
 }

@@ -11,12 +11,12 @@ namespace MyFinances.Service
 {
     public interface ISpendingService
     {
-        Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance, bool isSecondCat);
+        Task<IEnumerable<Spending>> GetAllAsync(SpendingRequestDTO request);
         Task<int?> GetIdFromFinanceAsync(int Id);
         Task MakeSpendingFinanceless(int id, int catId);
         Task InsertAsync(SpendingDTO dto);
         DateTime? ExpenseLastPaidDate(int financeId);
-        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval);
+        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter);
     }
 
     public class SpendingService : ISpendingService
@@ -32,13 +32,13 @@ namespace MyFinances.Service
             this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
         }
 
-        public async Task<IEnumerable<Spending>> GetAllAsync(int? catId, DateFrequency? frequency, int? interval, bool isFinance, bool isSecondCat)
+        public async Task<IEnumerable<Spending>> GetAllAsync(SpendingRequestDTO request)
         {
-            var spendings = (await spendingRepository.GetAllAsync(frequency, interval));
+            var spendings = (await spendingRepository.GetAllAsync(request.DateFilter));
                 
-            if (catId.HasValue)
+            if (request.CatId.HasValue)
             {
-                spendings = spendings.Where(x => (isFinance && x.FinanceId == catId.Value) || (!isFinance && (isSecondCat ? x.SecondCatId == catId.Value : x.CatId == catId.Value)));
+                spendings = spendings.Where(x => (request.IsFinance && x.FinanceId == request.CatId.Value) || (!request.IsFinance && (request.IsSecondCat ? x.SecondCatId == request.CatId.Value : x.CatId == request.CatId.Value)));
             }
             
             return spendings
@@ -70,9 +70,9 @@ namespace MyFinances.Service
             return spendingRepository.ExpenseLastPaidDate(financeId);
         }
 
-        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFrequency frequency, int interval)
+        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter)
         {
-            var spendingsSummary = await spendingRepository.GetSpendingsSummaryAsync(frequency, interval);
+            var spendingsSummary = await spendingRepository.GetSpendingsSummaryAsync(dateFilter);
 
             var secondCats = spendingsSummary
                 .Where(x => x.Cat2 != null)

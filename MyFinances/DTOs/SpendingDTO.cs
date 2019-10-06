@@ -16,4 +16,12 @@ namespace MyFinances.DTOs
         public int? SecondCatId { get; set; }
         public int? FinanceId { get; set; }
     }
+
+    public class SpendingRequestDTO
+    {
+        public int? CatId { get; set; }
+        public DateFilter DateFilter { get; set; }
+        public bool IsFinance { get; set; } = false;
+        public bool IsSecondCat { get; set; } = false;
+    }
 }

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { api } from '../Api/Api';
-import { ISpending } from "../Models/ISpending";
+import { ISpending, ISpendingRequestDTO } from "../Models/ISpending";
 import { Loader } from './Loader';
 import { ITableOptions, ITableProps } from '../Models/ITable';
 import Table from './CommonTable';
 import { priceFormatter } from './Utils';
 import { DateFrequency } from '../Enums/DateFrequency';
+import { IDateFilter } from '../Models/IDateFilter';
 
 interface IOwnProps {
 }
@@ -41,7 +42,19 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
     }
 
     private loadSpendings = () => {
-        api.spendings(this.state.catId, this.state.frequency, this.state.interval, this.state.isFinance, this.state.isSecondCat)
+        const dateFilter: IDateFilter = {
+            frequency: this.state.frequency,
+            interval: this.state.interval
+        }
+
+        const request: ISpendingRequestDTO = {
+            catId: this.state.catId,
+            dateFilter: dateFilter,
+            isFinance: this.state.isFinance,
+            isSecondCat: this.state.isSecondCat
+        }
+
+        api.spendings(request)
             .then(response => this.loadSpendingsSuccess(response.spendings));
     }
 

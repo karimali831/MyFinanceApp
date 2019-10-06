@@ -13,6 +13,7 @@ namespace MyFinances.Enums
         LastXDays,
         LastXMonths,
         LastXYears,
+        DateRange,
         Upcoming,
         January,
         February,

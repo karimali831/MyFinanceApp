@@ -14,12 +14,12 @@ namespace MyFinances.Repository
 {
     public interface ISpendingRepository
     {
-        Task<IEnumerable<Spending>> GetAllAsync(DateFrequency? frequency = null, int? interval = null);
+        Task<IEnumerable<Spending>> GetAllAsync(DateFilter dateFilter);
         Task<int?> GetIdFromFinanceAsync(int Id);
         Task MakeSpendingFinanceless(int id, int catId);
         DateTime? ExpenseLastPaidDate(int financeId);
         Task InsertAsync(SpendingDTO dto);
-        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFrequency frequency, int interval);
+        Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFilter dateFilter);
     }
 
     public class SpendingRepository : ISpendingRepository
@@ -34,7 +34,7 @@ namespace MyFinances.Repository
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<IEnumerable<Spending>> GetAllAsync(DateFrequency? frequency = null, int? interval = null)
+        public async Task<IEnumerable<Spending>> GetAllAsync(DateFilter dateFilter)
         {
             string sqlTxt =
                 $@"SELECT 
@@ -57,7 +57,7 @@ namespace MyFinances.Repository
                     ON f.Id = s.FinanceId
                 WHERE 
                     Display = 1
-                    {(frequency.HasValue && interval.HasValue ? "AND " + Utils.FilterDateSql(frequency.Value, interval.Value) : null)}";
+                    {(dateFilter.Frequency.HasValue ? " AND " + Utils.FilterDateSql(dateFilter) : null)}";
 
             using (var sql = dbConnectionFactory())
             {
@@ -65,7 +65,7 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFrequency frequency, int interval)
+        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFilter dateFilter)
         {
             string sqlTxt = $@"
                 SELECT 
@@ -83,8 +83,8 @@ namespace MyFinances.Repository
 	            LEFT JOIN Finances f 
                     ON f.Id = s.FinanceId
                 WHERE 
-                    Display = 1
-                    AND {Utils.FilterDateSql(frequency, interval)}
+                    Display = 1 AND 
+                    {Utils.FilterDateSql(dateFilter)}
                 GROUP BY 
                     s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name
                 ORDER BY 

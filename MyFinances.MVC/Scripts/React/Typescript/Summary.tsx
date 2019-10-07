@@ -92,7 +92,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
     }
 
     private onFromDateChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ ...this.state, fromDate: e.target.value })  
+        this.setState({ ...this.state, fromDate: e.target.value, toDate: this.state.toDate == null ? e.target.value : this.state.toDate  })  
     }
 
     private onToDateChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -166,7 +166,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                             <tr>
                                 <th scope="row">
                                     <FontAwesomeIcon icon={faArrowDown} /> 
-                                    <Link to={`spending/${s.catId}/${DateFrequency[this.state.frequency]}/${this.state.interval}/${s.isFinance}/false`}> {s.cat1}</Link>
+                                    <Link to={`spending/${s.catId}/${DateFrequency[this.state.frequency]}/${this.state.interval}/${s.isFinance}/false/${this.state.fromDate}/${this.state.toDate}`}> {s.cat1}</Link>
                                 </th>
                                 <td>
                                     {s.secondCats != null ? 
@@ -179,7 +179,7 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                                     <i> 
                                                         {s.secondCats.map(c =>   
                                                             <div>    
-                                                                <Link to={`spending/${c.secondCatId}/${DateFrequency[this.state.frequency]}/${this.state.interval}/${s.isFinance}/true`}> {c.cat2}</Link> £{c.totalSpent}
+                                                                <Link to={`spending/${c.secondCatId}/${DateFrequency[this.state.frequency]}/${this.state.interval}/${s.isFinance}/true/${this.state.fromDate}/${this.state.toDate}`}> {c.cat2}</Link> £{c.totalSpent}
                                                             </div>
                                                         )}
                                                     </i>

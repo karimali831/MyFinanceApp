@@ -17,6 +17,8 @@ export interface IOwnState {
     catId: number | null,
     frequency: DateFrequency | null,
     interval: number | null,
+    fromDate: string | null,
+    toDate: string | null,
     isFinance: boolean,
     isSecondCat: boolean
 }
@@ -29,6 +31,8 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
             spendings: [],
             catId: this.props.match.params.catId,
             frequency: this.props.match.params.frequency,
+            fromDate: this.props.match.params.fromDate,
+            toDate: this.props.match.params.toDate,
             interval: this.props.match.params.interval,
             isFinance: this.props.match.params.isFinance,
             isSecondCat: this.props.match.params.isSecondCat
@@ -44,7 +48,9 @@ export default class Spendings extends React.Component<IOwnProps, IOwnState> {
     private loadSpendings = () => {
         const dateFilter: IDateFilter = {
             frequency: this.state.frequency,
-            interval: this.state.interval
+            interval: this.state.interval,
+            fromDateRange: this.state.fromDate,
+            toDateRange: this.state.toDate
         }
 
         const request: ISpendingRequestDTO = {

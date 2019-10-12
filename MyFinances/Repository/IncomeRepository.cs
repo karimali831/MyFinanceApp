@@ -14,8 +14,8 @@ namespace MyFinances.Repository
 {
     public interface IIncomeRepository
     {
-        Task<IEnumerable<Income>> GetAllAsync(DateFrequency? frequency = null, int? interval = null);
-        Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFrequency frequency, int interval);
+        Task<IEnumerable<Income>> GetAllAsync(DateFilter filter);
+        Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(IncomeDTO dto);
     }
 
@@ -31,7 +31,7 @@ namespace MyFinances.Repository
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<IEnumerable<Income>> GetAllAsync(DateFrequency? frequency = null, int? interval = null)
+        public async Task<IEnumerable<Income>> GetAllAsync(DateFilter dateFilter)
         {
             using (var sql = dbConnectionFactory())
             {
@@ -49,20 +49,13 @@ namespace MyFinances.Repository
                         ON c1.Id = i.SourceId
                     LEFT JOIN Categories c2
                         ON c2.Id = i.SecondSourceId
-                    {(frequency.HasValue && interval.HasValue ? "WHERE " + 
-                        Utils.FilterDateSql(
-                            new DateFilter {
-                                Frequency = frequency.Value,
-                                Interval = interval.Value
-                            }
-                        ) 
-                    : null)}";
+                    {(dateFilter.Frequency.HasValue ? " WHERE " + Utils.FilterDateSql(dateFilter) : null)}";;
 
                 return (await sql.QueryAsync<Income>(sqlTxt)).ToArray();
             }
         }
 
-        public async Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFrequency frequency, int interval)
+        public async Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFilter dateFilter)
         {
             using (var sql = dbConnectionFactory())
             {
@@ -79,13 +72,7 @@ namespace MyFinances.Repository
                     LEFT JOIN Categories c2
 	                    ON c2.Id = i.SecondSourceId
                     WHERE 
-                        {Utils.FilterDateSql(
-                            new DateFilter
-                            {
-                                Frequency = frequency,
-                                Interval = interval
-                            })
-                        }
+                         {Utils.FilterDateSql(dateFilter)}
                     GROUP BY 
 	                    i.SourceId, c1.Name, c2.Name
                     ORDER BY 

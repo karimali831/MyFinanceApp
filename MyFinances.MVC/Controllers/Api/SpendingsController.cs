@@ -64,7 +64,7 @@ namespace MyFinances.Website.Controllers.API
 
             var spendings = await spendingService.GetSpendingSummary(dateFilter);
 
-            dateFilter.DateField = "PayDate";
+            dateFilter.DateField = "";
             decimal fuelIn = await cnwService.GetFuelIn(dateFilter);
 
             return Request.CreateResponse(HttpStatusCode.OK,

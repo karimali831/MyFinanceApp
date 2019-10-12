@@ -29,7 +29,7 @@ class App extends React.Component{
                     <Route path="/addincome/" component={AddIncome} />
                     <Route path="/addcategory" component={AddCategory} />
                     <Route path="/finance/" component={Finances} />
-                    <Route path="/income/:sourceId?/:frequency?/:interval?" exact component={Incomes} />
+                    <Route path="/income/:sourceId?/:frequency?/:interval?/:fromDate?/:toDate?" exact component={Incomes} />
                     <Route path="/spending/:catId?/:frequency?/:interval?/:isFinance?/:isSecondCat?/:fromDate?/:toDate?" exact component={Spendings} />
                     <Route path="/route/" component={Routes} />
                     <Route path="/summary/" component={WeekSummaries} />

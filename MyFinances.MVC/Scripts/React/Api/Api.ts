@@ -50,9 +50,10 @@ export class Api {
         .then(data => data as ISpendingSummaryResponse);
     }
 
-    public incomeSummary = async (frequency: DateFrequency, interval: number): Promise<IIncomeSummaryResponse> => {
-        return fetch(`${this.rootUrl}/finances/summary/income/${frequency}/${interval}`, {
-            method: "GET",
+    public incomeSummary = async (dateFilter: IDateFilter): Promise<IIncomeSummaryResponse> => {
+        return fetch(`${this.rootUrl}/finances/summary/income`, {
+            method: "POST",
+            body: JSON.stringify(dateFilter),
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
@@ -86,9 +87,10 @@ export class Api {
         .then(data => data as IFinanceResponse);
     }
 
-    public incomes = async (sourceId?: number, frequency?: DateFrequency, interval?: number): Promise<IIncomeResponse> => {
-        return fetch(`${this.rootUrl}/finances/incomes/${sourceId != null ? `${sourceId}/` : ""}${frequency != null ? `${frequency}/` : ""}${interval != null ? interval : ""}`, {
-            method: "GET",
+    public incomes = async (dateFilter: IDateFilter, sourceId?: number): Promise<IIncomeResponse> => {
+        return fetch(`${this.rootUrl}/finances/incomes/${sourceId}`, {
+            method: "POST",
+            body: JSON.stringify(dateFilter),
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"

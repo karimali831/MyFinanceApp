@@ -14,8 +14,8 @@ namespace MyFinances.Service
     public interface IFinanceService
     {
         Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates);
-        Task<IEnumerable<Income>> GetAllIncomesAsync(int? sourceId = null, DateFrequency? frequency = null, int? interval = null);
-        Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFrequency frequency, int interval);
+        Task<IEnumerable<Income>> GetAllIncomesAsync(DateFilter dateFilter, int? sourceId = null);
+        Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(FinanceDTO dto);
         Task InsertIncomeAsync(IncomeDTO dto);
         int? CalculateDays(DateTime? Date1, DateTime? Date2);
@@ -95,9 +95,9 @@ namespace MyFinances.Service
             return finances;
         }
 
-        public async Task<IEnumerable<Income>> GetAllIncomesAsync(int? sourceId, DateFrequency? frequency, int? interval)
+        public async Task<IEnumerable<Income>> GetAllIncomesAsync(DateFilter dateFilter, int? sourceId)
         {
-            var incomes = (await incomeRepository.GetAllAsync(frequency, interval));
+            var incomes = (await incomeRepository.GetAllAsync(dateFilter));
 
             if (sourceId.HasValue)
             {
@@ -107,9 +107,9 @@ namespace MyFinances.Service
             return incomes.OrderByDescending(x => x.Date).ThenBy(x => x.Source);
         }
 
-        public async Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFrequency frequency, int interval)
+        public async Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFilter dateFilter)
         {
-            var incomeSummary = await incomeRepository.GetSummaryAsync(frequency, interval);
+            var incomeSummary = await incomeRepository.GetSummaryAsync(dateFilter);
 
             var secondCats = incomeSummary
                 .Where(x => x.SecondSource != null)

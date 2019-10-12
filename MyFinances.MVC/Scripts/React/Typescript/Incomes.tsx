@@ -16,6 +16,8 @@ export interface IOwnState {
     sourceId: number | null,
     frequency: DateFrequency | null,
     interval: number | null,
+    fromDate: string | null,
+    toDate: string | null
 }
 
 export default class Finances extends React.Component<IOwnProps, IOwnState> {
@@ -26,6 +28,8 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             incomes: [],
             sourceId: this.props.match.params.sourceId,
             frequency: this.props.match.params.frequency,
+            fromDate: this.props.match.params.fromDate,
+            toDate: this.props.match.params.toDate,
             interval: this.props.match.params.interval,
         };
     }
@@ -37,7 +41,14 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
     }
 
     private loadIncomes = () => {
-        api.incomes(this.state.sourceId, this.state.frequency, this.state.interval)
+        const dateFilter: IDateFilter = {
+            frequency: this.state.frequency,
+            interval: this.state.interval,
+            fromDateRange: this.state.fromDate,
+            toDateRange: this.state.toDate
+        }
+
+        api.incomes(dateFilter, this.state.sourceId)
             .then(response => this.loadIncomesSuccess(response.incomes));
     }
 

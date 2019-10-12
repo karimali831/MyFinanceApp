@@ -73,11 +73,11 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("incomes/{sourceId?}/{frequency?}/{interval?}")]
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetIncomesAsync(int? sourceId = null, DateFrequency? frequency = null, int? interval = null)
+        [Route("incomes/{sourceId?}")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> GetIncomesAsync(DateFilter dateFilter, int? sourceId = null)
         {
-            var incomes = await financeService.GetAllIncomesAsync(sourceId, frequency, interval);
+            var incomes = await financeService.GetAllIncomesAsync(dateFilter, sourceId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Incomes = 
@@ -92,11 +92,11 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("summary/income/{frequency}/{interval}")]
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetIncomesSummaryAsync(DateFrequency frequency, int interval)
+        [Route("summary/income")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> GetIncomesSummaryAsync(DateFilter dateFilter)
         {
-            var incomeSummary = await financeService.GetIncomeSummaryAsync(frequency, interval);
+            var incomeSummary = await financeService.GetIncomeSummaryAsync(dateFilter);
 
             return Request.CreateResponse(HttpStatusCode.OK, 
                 new {

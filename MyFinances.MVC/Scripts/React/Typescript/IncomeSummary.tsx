@@ -17,6 +17,8 @@ export interface IOwnState {
     frequency: string,
     interval: number,
     loading: boolean,
+    fromDate: string | null,
+    toDate: string | null,
     showSecondCatSummary: string | null
 }
 
@@ -29,6 +31,8 @@ export default class IncomeSummary extends React.Component<IOwnProps, IOwnState>
             frequency: monthNames[new Date().getMonth()],
             interval: 1,
             loading: true,
+            fromDate: null,
+            toDate: null,
             showSecondCatSummary: null
         };
     }
@@ -38,13 +42,28 @@ export default class IncomeSummary extends React.Component<IOwnProps, IOwnState>
     }
 
     public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
-        if (prevState.frequency !== this.state.frequency || prevState.interval !== this.state.interval) {
-            this.loadSummary();
+        if (DateFrequency[this.state.frequency] !== DateFrequency.DateRange && (
+            prevState.frequency !== this.state.frequency || 
+            prevState.interval !== this.state.interval)) {
+                this.loadSummary();
+        }
+        else if ((
+            this.state.fromDate != null && this.state.toDate != null) && 
+            prevState.fromDate !== this.state.fromDate ||
+            prevState.toDate !== this.state.toDate) {
+                this.loadSummary();
         }
     }
 
     private loadSummary = () => {
-        api.incomeSummary(DateFrequency[this.state.frequency], this.state.interval)
+        const dateFilter: IDateFilter = {
+            frequency: DateFrequency[this.state.frequency],
+            interval: this.state.interval,
+            fromDateRange: this.state.fromDate,
+            toDateRange: this.state.toDate
+        }
+
+        api.incomeSummary(dateFilter)
             .then(response => this.loadSummarySuccess(response.incomeSummary, response.totalIncome));
     }
 

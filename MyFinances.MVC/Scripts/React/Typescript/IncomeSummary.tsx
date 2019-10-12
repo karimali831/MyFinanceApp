@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cleanText, monthNames } from './Utils';
 import { DateFrequency } from '../Enums/DateFrequency';
 import { Link } from "react-router-dom";
+import { IDateFilter } from '../Models/IDateFilter';
 
 interface IOwnProps {
 }
@@ -111,7 +112,7 @@ export default class IncomeSummary extends React.Component<IOwnProps, IOwnState>
                                 }
                                 </select>
                                 {
-                                    this.state.frequency.toString().includes("Last")?
+                                    this.state.frequency.toString().includes("Last") ?
                                         <select onChange={(e) => this.onChangeSelectedInterval(e)} className="form-control">
                                         {
                                             Array.from(Array(30), (e, i) => {
@@ -119,8 +120,17 @@ export default class IncomeSummary extends React.Component<IOwnProps, IOwnState>
                                             })
                                         }
                                         </select>
+                                    : DateFrequency[this.state.frequency] == DateFrequency.DateRange ? 
+                                    <>
+                                        <div className="form-group">
+                                            <input className="form-control" type="date" value={this.state.fromDate} placeholder="dd-MM-yy" onChange={(e) => { this.onFromDateChanged(e);}} />
+                                        </div>
+                                        <div className="form-group">
+                                            <input className="form-control" type="date" value={this.state.toDate} placeholder="dd-MM-yy" onChange={(e) => { this.onToDateChanged(e);}} />
+                                        </div>
+                                    </>
                                     : null
-                                }
+                                    }
                             </div>
                         </th>
                     </tr>

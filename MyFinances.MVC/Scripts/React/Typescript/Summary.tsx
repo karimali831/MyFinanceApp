@@ -126,8 +126,6 @@ export default class SpendingSummary extends React.Component<IOwnProps, IOwnStat
                                     }
                                     </select>
                                     {
-
-
                                         this.state.frequency.toString().includes("Last") ?
                                             <select onChange={(e) => this.onChangeSelectedInterval(e)} className="form-control">
                                             {

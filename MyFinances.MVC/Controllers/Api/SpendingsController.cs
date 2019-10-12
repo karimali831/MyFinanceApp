@@ -51,7 +51,6 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> GetSpendingSummaryAsync(DateFilter dateFilter)
         {
-
             if (DateTime.TryParseExact(dateFilter.FromDateRange.ToString(), "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime fromDateRange))
             {
                 dateFilter.FromDateRange = fromDateRange;
@@ -64,7 +63,7 @@ namespace MyFinances.Website.Controllers.API
 
             var spendings = await spendingService.GetSpendingSummary(dateFilter);
 
-            dateFilter.DateField = "";
+            dateFilter.DateField = "PayDate";
             decimal fuelIn = await cnwService.GetFuelIn(dateFilter);
 
             return Request.CreateResponse(HttpStatusCode.OK,

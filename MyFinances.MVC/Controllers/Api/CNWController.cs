@@ -41,11 +41,10 @@ namespace MyFinances.Website.Controllers.API
                     RouteDate = x.RouteDate.ToString("dd-MM-yy"),
                     x.Mileage,
                     x.Mpg,
-                    x.Drops,
+                    x.FuelCost,
                     x.ExtraDrops,
                     x.ExtraMileage,
-                    x.Info,
-                    x.WeekstartPeriod
+                    x.Info
                 })
             });
         }
@@ -67,8 +66,8 @@ namespace MyFinances.Website.Controllers.API
                 WeekSummaries = weekSummaries.Select(x => new
                 {
                     x.Id,
-                    x.InvoiceNo,
-                    WeekDate = x.WeekDate.ToString("dd-MM-yy"),
+                    x.WeekNo,
+                    PayDate = x.PayDate.ToString("dd-MM-yy"),
                     x.ActualMiles,
                     x.ActualRoutePay,
                     x.ActualTotalPay,
@@ -78,19 +77,12 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("syncweek/{weekPeriod}")]
+        [Route("resyncweek/{weekNo}")]
         [HttpPost]
-        public async Task<HttpResponseMessage> SyncWeek(string weekPeriod)
+        public async Task<HttpResponseMessage> ResyncWeek(int weekNo)
         {
-            if (DateTime.TryParseExact(weekPeriod, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date))
-            {
-                await cnwService.SyncWeekPeriodAsync(date);
-                return Request.CreateResponse(HttpStatusCode.OK, true);
-            }
-            else
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, true);
-            }
+            await cnwService.SyncWeekPeriodAsync(weekNo, true);
+            return Request.CreateResponse(HttpStatusCode.OK, true);
         }
     }
 }

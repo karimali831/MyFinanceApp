@@ -121,7 +121,6 @@
     <Compile Include="Enums\Categories.cs" />
     <Compile Include="Enums\OverrideDueDate.cs" />
     <Compile Include="Enums\DateFrequency.cs" />
-    <Compile Include="Enums\WeekPeriodSync.cs" />
     <Compile Include="Enums\PaymentStatus.cs" />
     <Compile Include="Enums\CategoryType.cs" />
     <Compile Include="Helpers\Utils.cs" />

@@ -4,17 +4,15 @@ import { IRoute } from "../Models/IRoute";
 import { Loader } from './Loader';
 import { ITableProps, ITableOptions } from '../Models/ITable';
 import Table from './CommonTable';
-import { WeekPeriodSync } from '../Enums/WeekPeriodSync';
 import { weekSummaryUrl, routeSummaryUrl } from '../Typescript/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfo, faExclamationCircle, faSync } from '@fortawesome/free-solid-svg-icons'
+import { faInfo } from '@fortawesome/free-solid-svg-icons'
 
 interface IOwnProps {
 }
 
 export interface IOwnState {
     loading: boolean,
-    redirectToSummary: string
     routes: IRoute[]
 }
 
@@ -23,7 +21,6 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
         super(props);
         this.state = { 
             loading: true,
-            redirectToSummary: null,
             routes: []
         };
     }
@@ -48,54 +45,13 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
         }) 
     }
 
-    private syncWeekSuccess = (date: string) => {
-        this.setState({ ...this.state,
-            ...{ 
-                loading: false, 
-                redirectToSummary: date
-            }
-        }) 
-    }
-
-    private syncWeek = (date: string) => {
-        this.setState({ ...this.state, loading: true })
-
-        api.syncWeek(date)
-          .then(() => this.syncWeekSuccess(date));
-    }
-
-    private syncWeekButton = (cell: any, row: any) => {
-        switch (cell) {
-            case WeekPeriodSync.NotWeekstartPeriod :
-                return <span>
-                           <FontAwesomeIcon icon={faInfo} /> <a href={routeSummaryUrl(row['id'])}>Route Summary</a>
-                       </span>
-            case WeekPeriodSync.NotSyncedWait :
-                return <span>
-                           <FontAwesomeIcon icon={faExclamationCircle} /> Wait<br />
-                           <FontAwesomeIcon icon={faInfo} /> <a href={routeSummaryUrl(row['id'])}>Route Summary</a>
-                       </span>
-            case WeekPeriodSync.NotSynced:
-                return <span>
-                           <FontAwesomeIcon icon={faSync} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Sync</a><br />
-                           <FontAwesomeIcon icon={faInfo} /> <a href={routeSummaryUrl(row['id'])}>Route Summary</a>
-                      </span>
-            case WeekPeriodSync.Synced:
-                return <span>
-                           <FontAwesomeIcon icon={faSync} /> <a onClick={() => this.syncWeek(row['routeDate'])}>Re-Sync</a><br />
-                           <FontAwesomeIcon icon={faInfo} /> <a href={weekSummaryUrl(row['routeDate'])}>Week Summary</a><br />
-                           <span><FontAwesomeIcon icon={faInfo} /> <a href={routeSummaryUrl(row['id'])}>Route Summary</a></span>
-                        </span>
-        }
+    private routeSummary = (cell: any, row: any) => {
+        return <span><FontAwesomeIcon icon={faInfo} /> <a href={routeSummaryUrl(row['id'])}>Route Summary</a></span>
     }
 
     render() {
         if (this.state.loading) {
             return <Loader text="Loading routes..." />
-        }
-
-        if (this.state.redirectToSummary !== null) {
-            window.location.assign(weekSummaryUrl(this.state.redirectToSummary))
         }
 
         const columns: ITableProps[] = [{
@@ -115,8 +71,8 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
             text: 'Date',
 
           }, {
-            dataField: 'drops',
-            text: 'Stops'
+            dataField: 'fuelCost',
+            text: 'Fuel Cost'
           }, {
             dataField: 'extraDrops',
             text: 'Extra Stops'
@@ -143,10 +99,10 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
             hidden: true
           }
           , {
-            dataField: 'weekstartPeriod',
+            dataField: null,
             text: 'Info',
             editable: false,
-            formatter: this.syncWeekButton
+            formatter: this.routeSummary
           }
         ];
 

@@ -142,8 +142,8 @@ export class Api {
         .then(data => data as ICNWResponse);
     }
 
-    public syncWeek = async (date: string) => {
-        return fetch(`${this.rootUrl}/cnw/syncweek/${date}`, {
+    public resyncWeek = async (weekNo: number) => {
+        return fetch(`${this.rootUrl}/cnw/resyncweek/${weekNo}`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",

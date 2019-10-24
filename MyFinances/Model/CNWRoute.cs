@@ -13,14 +13,14 @@ namespace MyFinances.Model
         public string RouteType { get; set; }
         public Categories RouteTypeId { get; set; }
         public DateTime RouteDate { get; set; }
-        public decimal? Mileage { get; set; }
-        public decimal? Mpg { get; set; }
-        public int? Drops { get; set; }
+        public decimal Mileage { get; set; }
+        public decimal Mpg { get; set; }
         public int? ExtraDrops { get; set; }
         public decimal? ExtraMileage { get; set; }
         public string Info { get; set; }
+        public decimal FuelCost { get; set; }
         [DbIgnore]
-        public WeekPeriodSync WeekstartPeriod { get; set; }
+        public decimal EstimatedFuelCost { get; set; }
     }
 
     public class CNWRouteMap : EntityTypeConfiguration<CNWRoute>

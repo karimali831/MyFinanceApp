@@ -19,7 +19,7 @@ export interface IOwnState {
     mileage?: number | undefined,
     extraMileage?: number | undefined,
     mpg?: number | undefined,
-    drops?: number | undefined,
+    fuelCost?: number | undefined,
     extraDrops?: number | undefined,
     info?: string | null
 }
@@ -36,7 +36,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             mileage: undefined,
             extraMileage: undefined,
             mpg: undefined,
-            drops: undefined,
+            fuelCost: undefined,
             extraDrops: undefined,
             info: null
         };
@@ -84,10 +84,10 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                     <input className="form-control" type="number" value={this.state.mpg} placeholder="Enter route mpg" onChange={(e) => { this.onMPGChanged(e);}} />
                 </div>
                 <div className="form-group">
-                    <input className="form-control" type="number" value={this.state.drops} placeholder="Enter drops" onChange={(e) => { this.onDropsChanged(e);}} />
+                    <input className="form-control" type="number" value={this.state.fuelCost} placeholder="Enter fuel cost" onChange={(e) => { this.onFuelCostChanged(e);}} />
                 </div>
                 <div className="form-group">
-                    <input className="form-control" type="number" value={this.state.extraDrops} placeholder="Enter extra drops" onChange={(e) => { this.onExtraDropsChanged(e);}} />
+                    <input className="form-control" type="text" value={this.state.extraDrops} placeholder="Drops adjustment" onChange={(e) => { this.onExtraDropsChanged(e);}} />
                 </div>
                 <div className="form-group">
                     <input className="form-control" type="number" value={this.state.extraMileage} placeholder="Enter extra mileage" onChange={(e) => { this.onExtraMileageChanged(e);}} />
@@ -132,8 +132,8 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
         this.setState({ ...this.state, mpg: Number(e.target.value) })  
     }
 
-    private onDropsChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ ...this.state, drops: Number(e.target.value) })  
+    private onFuelCostChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, fuelCost: Number(e.target.value) })  
     }
 
     private onExtraDropsChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,7 +153,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                 mileage: this.state.mileage,
                 extraMileage: this.state.extraMileage,
                 mpg: this.state.mpg,
-                drops: this.state.drops,
+                fuelCost: this.state.fuelCost,
                 extraDrops: this.state.extraDrops,
                 info: this.state.info
             }

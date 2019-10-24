@@ -18,22 +18,18 @@ namespace MyFinances.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> WeekSummary(string Id)
+        public async Task<ActionResult> WeekSummary(int Id)
         {
-            if (DateTime.TryParseExact(Id, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date))
-            {
-                var weekSummary = await cnwService.GetWeekSummaryAsync(date);
-                var routes = await cnwService.GetAllRoutesAsync(weekSummary.WeekNo);
+            var weekSummary = await cnwService.GetWeekSummaryAsync(Id);
+            var routes = await cnwService.GetAllRoutesAsync(Id);
 
-                return View(
-                    new WeekSummaryVM {
-                        Payment = weekSummary,
-                        Routes = routes
-                    }
-                );
-            }
-
-            return new EmptyResult();
+            return View(
+                new WeekSummaryVM
+                {
+                    Payment = weekSummary,
+                    Routes = routes
+                }
+            );
         }
 
         [HttpGet]
@@ -43,6 +39,9 @@ namespace MyFinances.Controllers
 
             if (routeSummary != null)
             {
+                decimal totalMiles = routeSummary.Mileage + (routeSummary.ExtraMileage ?? 0);
+                routeSummary.EstimatedFuelCost = cnwService.EstimatedFuelCost(totalMiles, routeSummary.Mpg, routeSummary.FuelCost);
+
                 return View(routeSummary);
             }
 

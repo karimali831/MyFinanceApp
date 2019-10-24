@@ -15,10 +15,10 @@ namespace MyFinances.Repository
     public interface ICNWPaymentsRepository
     {
         Task<IEnumerable<CNWPayment>> GetAllAsync(DateFilter dateFilter);
-        Task<CNWPayment> GetAsync(DateTime weekPeriod);
+        Task<CNWPayment> GetAsync(int weekNo);
         Task InsertAsync(CNWPaymentDTO dto);
-        Task DeleteAsync(DateTime weekStart);
-        Task<bool> WeekPaymentSummaryExists(DateTime weekstartDate);
+        Task DeleteAsync(int weekNo);
+        Task<bool> WeekPaymentSummaryExists(int weekNo);
     }
 
     public class CNWPaymentsRepository : ICNWPaymentsRepository
@@ -46,11 +46,11 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<CNWPayment> GetAsync(DateTime weekPeriod)
+        public async Task<CNWPayment> GetAsync(int weekNo)
         {
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<CNWPayment>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).SingleOrDefault(x => x.WeekDate == weekPeriod);
+                return (await sql.QueryAsync<CNWPayment>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).SingleOrDefault(x => x.WeekNo == weekNo);
             }
         }
 
@@ -62,21 +62,21 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task DeleteAsync(DateTime weekStart)
+        public async Task DeleteAsync(int weekNo)
         {
             using (var sql = dbConnectionFactory())
             {
-                await sql.ExecuteAsync($@"{DapperHelper.DELETE(TABLE)} WHERE WeekDate = @WeekStart ", new { WeekStart = weekStart });
+                await sql.ExecuteAsync($@"{DapperHelper.DELETE(TABLE)} WHERE WeekNo = @WeekNo ", new { WeekNo = weekNo });
             }
         }
 
-        public async Task<bool> WeekPaymentSummaryExists(DateTime weekstartDate)
+        public async Task<bool> WeekPaymentSummaryExists(int weekNo)
         {
             using (var sql = dbConnectionFactory())
             {
                 return (await sql.ExecuteScalarAsync<bool>($@"
-                    SELECT count(1) FROM {TABLE} WHERE WeekDate = @WeekstartDate", 
-                    new { WeekstartDate = weekstartDate }
+                    SELECT count(1) FROM {TABLE} WHERE WeekNo = @WeekNo", 
+                    new { WeekNo = weekNo }
                 ));
             }
         }

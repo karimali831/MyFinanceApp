@@ -5,6 +5,8 @@ import { Loader } from './Loader';
 import Table from './CommonTable';
 import { ITableOptions, ITableProps } from '../Models/ITable';
 import { priceFormatter, weekSummaryUrl } from './Utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSync } from '@fortawesome/free-solid-svg-icons';
 
 interface IOwnProps {
 }
@@ -29,6 +31,12 @@ export default class WeekSummaries extends React.Component<IOwnProps, IOwnState>
         this.loadWeekSummaries();
     }
 
+    // public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
+    //   if (prevState.loading !== this.state.loading) {
+    //       this.loadWeekSummaries()
+    //   }
+    // }
+    
     private loadWeekSummaries = () => {
         api.weekSummaries()
             .then(response => this.loadWeekSummariesSuccess(response.weekSummaries));
@@ -43,7 +51,26 @@ export default class WeekSummaries extends React.Component<IOwnProps, IOwnState>
         }) 
     }
 
-    private weekSummary = (cell: any, row: any) => <a href={weekSummaryUrl(cell)}>{cell}</a>
+    private resyncWeek = (weekNo: number) => {
+      this.setState({ ...this.state, loading: true })
+
+      api.resyncWeek(weekNo)
+        .then(() => this.syncWeekSuccess(weekNo));
+    }
+
+    private syncWeekSuccess = (weekNo: number) => {
+      this.setState({ ...this.state,
+          ...{ 
+              loading: false
+          }
+      }) 
+    }
+
+    private weekSummary = (cell: any, row: any) => {
+      return <span>
+                <a href={weekSummaryUrl(cell)}>{cell}</a> <FontAwesomeIcon icon={faSync} /> <a onClick={() => this.resyncWeek(cell)}>Re-Sync</a>
+             </span>               
+    }
 
     render() {
         if (this.state.loading) {
@@ -55,15 +82,14 @@ export default class WeekSummaries extends React.Component<IOwnProps, IOwnState>
             text: '#',
             hidden: true
           }, {
-            dataField: 'weekDate',
-            text: 'Week Date',
+            dataField: 'payDate',
+            text: 'Pay Date',
+            editable: false
+          }, {
+            dataField: 'weekNo',
+            text: 'Week No',
             editable: false,
             formatter: this.weekSummary
-          }, {
-            dataField: 'invoiceNo',
-            text: 'Invoice No',
-            headerClasses: "hidden-xs",
-            classes: "hidden-xs"
           }, {
             dataField: 'actualMiles',
             text: 'Invoice Miles'

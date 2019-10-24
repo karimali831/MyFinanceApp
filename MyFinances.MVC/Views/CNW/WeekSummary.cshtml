@@ -6,12 +6,16 @@
 
     <h2>CNW Week Summary</h2>
 
-    @if (Model != null)
+    @if (Model != null && Model.Payment != null && Model.Routes.Any())
     {
         <table class="table">
             <thead>
                 <tr>
-                    <th colspan="2"><< @Html.ActionLink("Previous Week", "WeekSummary", new { Id = Model.Payment.WeekDate.AddDays(-7).ToString("dd-MM-yy") }) || @Html.ActionLink("Next Week", "WeekSummary", new { Id = Model.Payment.WeekDate.AddDays(7).ToString("dd-MM-yy") }) >></th>
+                    @{ 
+                        var previousWeek = Model.Payment.WeekNo - 1;
+                        var nextWeek = Model.Payment.WeekNo + 1;
+                    }
+                    <th colspan="2"><< @Html.ActionLink("Week " + previousWeek, "WeekSummary", new { Id = previousWeek }) || @Html.ActionLink("Next " + nextWeek, "WeekSummary", new { Id = nextWeek }) >></th>
                 </tr>
             </thead>
             <tbody>
@@ -71,7 +75,7 @@
                         @foreach (var route in Model.Routes)
                         {
                             <div>
-                                @Html.ActionLink(route.RouteDate.ToShortDateString() + " - " + route.RouteType, "RouteSummary", new { Id = route.Id })  @(route.ExtraDrops.HasValue && route.ExtraDrops != 0 ? Html.Raw("<small><span class='label label-success'>+ support</span></small>") : null)
+                                @Html.ActionLink(route.RouteDate.ToShortDateString() + " - " + route.RouteType, "RouteSummary", new { Id = route.Id })  @(route.ExtraDrops.HasValue && route.ExtraDrops != 0 ? Html.Raw($"<small><span class='label label-{(route.ExtraDrops > 0 ? "success" : "danger")}'>+ support</span></small>") : null)
                             </div>
                         }
                     </td>

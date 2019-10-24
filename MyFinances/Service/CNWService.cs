@@ -15,10 +15,11 @@ namespace MyFinances.Service
         Task<IEnumerable<CNWRoute>> GetAllRoutesAsync(int? weekNo = null);
         Task<CNWRoute> GetRouteSummaryAsync(int Id);
         Task InsertRouteAsync(CNWRouteDTO dto);
-        Task SyncWeekPeriodAsync(DateTime weekStart);
-        Task<CNWPayment> GetWeekSummaryAsync(DateTime weekStart);
+        Task SyncWeekPeriodAsync(int weekNo, bool resync = false);
+        Task<CNWPayment> GetWeekSummaryAsync(int weekNo);
         Task<IEnumerable<CNWPayment>> GetWeekSummariesAsync();
         Task<decimal> GetFuelIn(DateFilter dateFilter);
+        decimal EstimatedFuelCost(decimal miles, decimal averageMpg, decimal fuelCost);
     }
 
     public class CNWService : ICNWService
@@ -48,44 +49,22 @@ namespace MyFinances.Service
                 await cnwRoutesRepository.GetAllAsync(weekNo))
                 .OrderByDescending(x => x.RouteDate);
 
-            var weekPeriod = routes
-                .Select(x => new { x.Id, x.RouteDate })
-                .Where(x => x.RouteDate.DayOfWeek == DayOfWeek.Sunday);
-
-            foreach (var route in routes)
+            if (routes != null && routes.Any())
             {
-                var isWeekStartPeriod =  weekPeriod.Select(w => w.Id).Contains(route.Id);
+                var groupRoutesByWeekNo = routes.Select(x => new { x.WeekNo }).GroupBy(x => x.WeekNo);
 
-                if (isWeekStartPeriod)
+                foreach (var route in groupRoutesByWeekNo)
                 {
-                    var weekPeriodSummaryExists = await cnwPaymentsRepository.WeekPaymentSummaryExists(route.RouteDate);
-
-                    if (weekPeriodSummaryExists)
-                    {
-                        route.WeekstartPeriod = WeekPeriodSync.Synced;
-                    }
-                    else if (DateTime.UtcNow.Date <= route.RouteDate.AddDays(6))
-                    {
-                        route.WeekstartPeriod = WeekPeriodSync.NotSyncedWait;
-                    }
-                    else
-                    {
-                        route.WeekstartPeriod = WeekPeriodSync.NotSynced;
-                    }
-
-                }
-                else
-                {
-                    route.WeekstartPeriod = WeekPeriodSync.NotWeekstartPeriod;
+                    await SyncWeekPeriodAsync(route.First().WeekNo);
                 }
             }
 
             return routes;
         }
 
-        public async Task<CNWPayment> GetWeekSummaryAsync(DateTime weekStart)
+        public async Task<CNWPayment> GetWeekSummaryAsync(int weekNo)
         {
-            var weekSummary = await cnwPaymentsRepository.GetAsync(weekStart);
+            var weekSummary = await cnwPaymentsRepository.GetAsync(weekNo);
             var rates = await cnwRatesRepository.GetAsync();
 
             if (weekSummary != null)
@@ -104,11 +83,16 @@ namespace MyFinances.Service
                  * 3. Multiply that figure by the cost of fuel
                  *    i.e. 50 / 25 = 2 * 5.91
                  */
-                decimal totalMiles = weekSummary.CalcMiles + (weekSummary.CalcSupportMiles.HasValue ? weekSummary.CalcSupportMiles.Value : 0);
-                weekSummary.EstimatedFuelCost = ((double)totalMiles / (double)weekSummary.AverageMpg) * 1.30 * 4.5460900000046;
+                decimal totalMiles = weekSummary.CalcMiles + (weekSummary.CalcSupportMiles ?? 0);
+                weekSummary.EstimatedFuelCost = EstimatedFuelCost(totalMiles, weekSummary.AverageMpg, weekSummary.AverageFuelCost);
             }
 
             return weekSummary;
+        }
+
+        public decimal EstimatedFuelCost(decimal miles, decimal averageMpg, decimal fuelCost)
+        {
+            return (miles / averageMpg) * fuelCost * (decimal)4.5460900000046;
         }
 
         public async Task<IEnumerable<CNWPayment>> GetWeekSummariesAsync()
@@ -122,66 +106,55 @@ namespace MyFinances.Service
         }
 
 
-        public async Task SyncWeekPeriodAsync(DateTime weekStart)
+        public async Task SyncWeekPeriodAsync(int weekNo, bool resync = false)
         {
-            if (weekStart.DayOfWeek != DayOfWeek.Sunday)
+            // here we want to sync week period if it does not exist and if we have already started the next weeks route.
+            var weekPaymentSummaryExists = await cnwPaymentsRepository.WeekPaymentSummaryExists(weekNo);
+            var routes = await cnwRoutesRepository.GetAllAsync(weekNo);
+            var nextWeekRoutes = await cnwRoutesRepository.GetAllAsync(weekNo + 1);
+
+            // if re-syncing then delete
+            if (weekPaymentSummaryExists && resync)
             {
-                throw new ApplicationException("The date selected must be the start of the week i.e. Sunday.");
+                await cnwPaymentsRepository.DeleteAsync(weekNo);
             }
 
-            var endOfWeek = weekStart.Date.AddDays(6);
-
-            if (DateTime.UtcNow.Date <= endOfWeek)
+            if (!weekPaymentSummaryExists && nextWeekRoutes != null && nextWeekRoutes.Any())
             {
-                throw new ApplicationException("You can only sync at the end of the week");
-            }
+                var rates = await cnwRatesRepository.GetAsync();
 
-            // if exists, re-sync by deleting
-            if (await cnwPaymentsRepository.WeekPaymentSummaryExists(weekStart))
-            {
-                await cnwPaymentsRepository.DeleteAsync(weekStart);
-            }
-
-            var rates = await cnwRatesRepository.GetAsync();
-            var routes = (await GetAllRoutesAsync()).Where(x => x.RouteDate.Date >= weekStart && x.RouteDate.Date <= endOfWeek);
-
-            if (routes != null && routes.Any())
-            {
-                var fullRoutePay = rates.FullRoute * routes.Count(x => x.RouteTypeId == Categories.Full);
-                var halfRoutePay = rates.HalfRoute * routes.Count(x => x.RouteTypeId == Categories.Half);
-                var missortRoutePay = rates.MissortRoute * routes.Count(x => x.RouteTypeId == Categories.Missort);
-                var supportDrops = routes.Sum(x => x.ExtraDrops) ?? 0;
-
-                var model = new CNWPaymentDTO
+                if (routes != null && routes.Any())
                 {
-                    Routes = routes.Count(),
-                    CalcMiles = routes.Sum(x => x.Mileage) ?? 0,
-                    CalcSupportMiles = routes.Sum(x => x.ExtraMileage) ?? 0,
-                    CalcSupportDrops = supportDrops,
-                    CalcRoutePay = fullRoutePay + halfRoutePay + missortRoutePay,
-                    AverageMpg = routes.Average(x => x.Mpg) ?? 0,
-                    WeekDate = weekStart
-                };
+                    var fullRoutePay = rates.FullRoute * routes.Count(x => x.RouteTypeId == Categories.Full);
+                    var halfRoutePay = rates.HalfRoute * routes.Count(x => x.RouteTypeId == Categories.Half);
+                    var missortRoutePay = rates.MissortRoute * routes.Count(x => x.RouteTypeId == Categories.Missort);
+                    var supportDrops = routes.Sum(x => x.ExtraDrops) ?? 0;
+                    var firstWeekDate = routes.OrderBy(x => x.RouteDate).Select(x => x.RouteDate).FirstOrDefault();
 
-                model.CalcMileagePay = rates.Mileage * (model.CalcMiles + model.CalcSupportMiles);
-                model.CalcSupportMileagePay = rates.Mileage * model.CalcSupportMiles;
-                model.CalcTotalPay = model.CalcRoutePay + model.CalcMileagePay;
-                model.CalcSupportPay = supportDrops + model.CalcSupportMileagePay;
+                    var model = new CNWPaymentDTO
+                    {
+                        Routes = routes.Count(),
+                        CalcMiles = routes.Sum(x => x.Mileage),
+                        CalcSupportMiles = routes.Sum(x => x.ExtraMileage) ?? 0,
+                        CalcSupportDrops = supportDrops,
+                        CalcRoutePay = fullRoutePay + halfRoutePay + missortRoutePay,
+                        AverageMpg = routes.Average(x => x.Mpg),
+                        WeekDate = firstWeekDate
+                    };
 
-                await cnwPaymentsRepository.InsertAsync(model);
+                    model.CalcMileagePay = rates.Mileage * (model.CalcMiles + model.CalcSupportMiles);
+                    model.CalcSupportMileagePay = rates.Mileage * model.CalcSupportMiles;
+                    model.CalcTotalPay = model.CalcRoutePay + model.CalcMileagePay;
+                    model.CalcSupportPay = supportDrops + model.CalcSupportMileagePay;
+
+                    await cnwPaymentsRepository.InsertAsync(model);
+                }
             }
         }
 
         public async Task InsertRouteAsync(CNWRouteDTO dto)
         {
             await cnwRoutesRepository.InsertAsync(dto);
-
-            // auto sync if adding route on last day of the week
-            if (dto.RouteDate.DayOfWeek == DayOfWeek.Saturday)
-            {
-                var firstWorkingDateOfWeek = dto.RouteDate.AddDays(-6);
-                await SyncWeekPeriodAsync(firstWorkingDateOfWeek);
-            }
         }
 
         public async Task<decimal> GetFuelIn(DateFilter dateFilter)

@@ -30,6 +30,7 @@ namespace MyFinances.Model
         [DbIgnore]
         public decimal? ActualNetAmount { get; set; }
         public decimal AverageMpg { get; set; }
+        public decimal AverageFuelCost { get; set; }
         public DateTime PayDate { get; set; }
         public int WeekNo { get; set; }
         public DateTime WeekDate { get; set; }
@@ -40,7 +41,7 @@ namespace MyFinances.Model
         public decimal? Byod { get; set; }
         public string Info { get; set; }
         [DbIgnore]
-        public double EstimatedFuelCost { get; set; }
+        public decimal EstimatedFuelCost { get; set; }
         [DbIgnore]
         public CNWRates CNWRates { get; set; }
     }

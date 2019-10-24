@@ -40,7 +40,7 @@ namespace MyFinances.Repository
                     r.Mileage,
                     r.ExtraMileage,
                     r.MPG,
-                    r.Drops,
+                    r.FuelCost,
                     r.ExtraDrops,
                     r.Info,
                     r.RouteTypeId,

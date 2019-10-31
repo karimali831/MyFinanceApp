@@ -83,9 +83,21 @@ namespace MyFinances.Service
                             if (finance.NextDueDate == null || !expenseLastPaidDate.HasValue || DateTime.UtcNow.Date >= expenseLastPaidDate.Value)
                             {
                                 int monthElapsed = finance.MonthlyDueDate >= DateTime.UtcNow.Day ? 0 : 1;
-                                var dueMonth = expenseLastPaidDate.HasValue ? expenseLastPaidDate.Value.Date.AddMonths(1) : DateTime.UtcNow.AddMonths(monthElapsed);
-                                var dueDate = $"{dueMonth.ToString("MM")}-{finance.MonthlyDueDate}-{DateTime.UtcNow.ToString("yyyy")}";
-                                var date = DateTime.Parse(dueDate);
+                                var previousDueDate = expenseLastPaidDate.HasValue ? expenseLastPaidDate.Value.Date : DateTime.UtcNow;
+                                var nextDueMonth = expenseLastPaidDate.HasValue ? previousDueDate.AddMonths(1).Month : previousDueDate.AddMonths(monthElapsed).Month;
+                
+                                // i.e. 31/10/2019 cannot set next due date to 31/11/2019 so check last day of the month
+                                var lastDayInPreviousMonth = DateTime.DaysInMonth(DateTime.UtcNow.Year, previousDueDate.Month);
+                                var lastDayInNextMonth = DateTime.DaysInMonth(DateTime.UtcNow.Year, nextDueMonth);
+
+                                if (previousDueDate.Day == lastDayInPreviousMonth && lastDayInPreviousMonth > lastDayInNextMonth)
+                                {
+                                    finance.MonthlyDueDate = lastDayInNextMonth;
+                                }
+
+                                var nextDueDate = $"{nextDueMonth}-{finance.MonthlyDueDate}-{DateTime.UtcNow.ToString("yyyy")}";
+
+                                var date = DateTime.Parse(nextDueDate);
                                 var calcDate = finance.OverrideNextDueDate == OverrideDueDate.WorkingDays ? CalculateNextDueDate(date) : date;
                                 await financeRepository.UpdateNextDueDateAsync(calcDate, finance.Id);
                             }

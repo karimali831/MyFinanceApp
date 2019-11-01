@@ -7,7 +7,7 @@ import { ISpendingDTO } from '../Models/ISpending';
 import { Loader } from './Loader';
 import { IFinance } from '../Models/IFinance';
 import { api } from '../Api/Api';
-import { Link } from "react-router-dom";
+import * as moment from 'moment'
 import { AddMenu } from './Menu';
 
 interface IOwnProps {
@@ -41,7 +41,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
             amount: undefined,
             loading: true,
             name: "",
-            date: "",
+            date: moment(new Date()).format('YYYY-MM-DD'),
             selectedFinanceId: undefined,
             redirect: false
         };

@@ -128,7 +128,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
                         <option value={0}>-- of finance --</option>
                         {
                             this.state.finances.map(f =>
-                                <option key={f.id} value={f.id}>{f.name}</option>
+                                <option key={f.id} value={f.id + "-" + f.avgMonthlyAmount}>{f.name}</option>
                             )
                         }
                     </select>
@@ -210,9 +210,13 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
     }
 
     private onChangeSelectedFinance = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        var value = e.target.value;
+        var finance = value.split("-", 2);
+
         this.setState({ ...this.state, 
             ...{ 
-                selectedFinanceId: Number(e.target.value)
+                selectedFinanceId: Number(finance[0]),
+                amount: Number(finance[1])
             }
         })  
     }

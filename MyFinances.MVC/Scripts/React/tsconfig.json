@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "node_modules/@types/*",
+        "*"
+      ]
+    },
+    "outDir": "build/dist",
     "module": "esnext",
-    "importHelpers": true,
-    "noImplicitAny": false,
-    "sourceMap": true,
-    "outDir": "./dist",
+    "target": "es5",
     "lib": [
       "dom",
       "es5",
@@ -21,13 +24,29 @@
       "es2015.reflect",
       "es2017.typedarrays"
     ],
-    "jsx": "react"
+    "sourceMap": true,
+    "allowJs": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "rootDir": "",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "importHelpers": true,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "typeRoots": ["node_modules/@types", "typings"],
+    "removeComments": false
   },
-  "include": [
-    "./Typescript/**/*"
-  ],
   "exclude": [
     "node_modules",
-    "wwwroot"
+    "build",
+    "scripts",
+    "acceptance-tests",
+    "webpack",
+    "jest",
+    "src/setupTests.ts"
   ]
 }

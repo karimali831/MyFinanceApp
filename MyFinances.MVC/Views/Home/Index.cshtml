@@ -7,7 +7,7 @@
 @if (Session["myFinanceApp-Authentication"] != null && Session["myFinanceApp-Authentication"].ToString() == ViewBag.Pwd)
 {
     <div id="root"></div>
-    @Scripts.Render("~/Scripts/React/dist/bundle.js")
+    @Scripts.Render("~/Scripts/React/static/js/bundle.js")
 
     <a href='@Url.Action("Index", "Home")'>
         <img src='@Url.Content("~/Content/Images/refresh.png")' />

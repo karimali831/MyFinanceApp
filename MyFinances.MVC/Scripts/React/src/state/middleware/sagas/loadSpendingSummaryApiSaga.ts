@@ -1,12 +1,12 @@
 import {  api, ISpendingSummaryResponse } from '../../../Api/Api'
 import { select, call, put, takeLatest } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../contexts/error/Actions';
-import { SpendingSummaryActionTypes, LoadSpendingSummarySuccessAction, LoadSpendingSummaryFailureAction } from '../../contexts/landing/Actions';
+import { LandingSummaryActionTypes, LoadSpendingSummarySuccessAction, LoadSpendingSummaryFailureAction } from '../../contexts/landing/Actions';
 import { IDateFilter } from '../../../models/IDateFilter';
-import { getSpendingSummaryRequest } from '../../contexts/landing/Selectors';
+import { initialSpendingSummaryDateFilter, getSelectedDateFilter } from 'src/state/contexts/landing/Selectors';
 
 export default function* loadSpendingSummaryApiSaga() {
-    yield takeLatest(SpendingSummaryActionTypes.LoadSpendingSummary, loadSpendingSummary);
+    yield takeLatest(LandingSummaryActionTypes.LoadSpendingSummary, loadSpendingSummary);
 }
 
 export function* loadSpendingSummary() {
@@ -14,7 +14,8 @@ export function* loadSpendingSummary() {
 
         // Create Request object
         // selectors to access the state for call params
-        const request: IDateFilter = yield select(getSpendingSummaryRequest)
+        const dateFilter = yield select(getSelectedDateFilter);
+        const request: IDateFilter = dateFilter !== null ? dateFilter : yield select(initialSpendingSummaryDateFilter)
 
         // Start the API call asynchronously
         const result: ISpendingSummaryResponse = yield call(api.summary, request);

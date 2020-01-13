@@ -1,9 +1,6 @@
-import { takeLatest, call, select, put } from "redux-saga/effects";
+import { takeLatest, call, select } from "redux-saga/effects";
 import { LOCATION_CHANGE, getHash, getLocation } from "connected-react-router";
 import * as Route from 'route-parser';
-// import { api, ISpendingSummaryResponse } from "../../../Api/Api";
-import { IDateFilter } from "../../../models/IDateFilter";
-import { LoadSpendingSummaryAction } from "../../contexts/landing/Actions";
 
 interface IRoute {
     route: string,
@@ -41,16 +38,18 @@ const routes: IRoute[] = [
     {
         route: '/home',
         action: function* (params: ISpendingSummaryParam) {
-            const dateFilter: IDateFilter = {
-                frequency: params.frequency,
-                interval: params.interval,
-                fromDateRange: params.fromDate,
-                toDateRange: params.toDate
-            }
+            // const dateFilter: IDateFilter = {
+            //     frequency: params.frequency,
+            //     interval: params.interval,
+            //     fromDateRange: params.fromDate,
+            //     toDateRange: params.toDate
+            // }
 
             // const result: ISpendingSummaryResponse = yield call(api.summary, dateFilter);
 
-            yield put(new LoadSpendingSummaryAction(dateFilter));
+            // yield put(new LoadSpendingSummaryAction(dateFilter));
+
+            yield null
         
         }
     }

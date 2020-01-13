@@ -1,14 +1,12 @@
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import RootReducer from "./RootReducer";
-// import { StoreState } from './IStoreState';
 import { rootSaga } from './middleware/sagas/rootSaga';
 import { actionToPlainObject } from './middleware/actionToPlainObject';
 import { History } from 'history';
 import { routerMiddleware } from 'connected-react-router';
-import { LoadSpendingSummaryAction } from './contexts/landing/Actions';
-import { DateFrequency } from '../enums/DateFrequency';
-import { IDateFilter } from '../models/IDateFilter';
+import { LoadSpendingSummaryAction, LoadIncomeSummaryAction } from './contexts/landing/Actions';
+import { spendingSummaryDateFilter, incomeSummaryDateFilter } from './contexts/common/ICommonState';
 
 export default function initialiseStore(history: History<any>) {
 
@@ -19,7 +17,6 @@ export default function initialiseStore(history: History<any>) {
 	const store =
 		createStore(
 			RootReducer(history),
-			// StoreState.initialState,
 			composeEnhancers ?
 				composeEnhancers(
 					applyMiddleware(
@@ -35,15 +32,9 @@ export default function initialiseStore(history: History<any>) {
 				)
 		);
 
-	const dateFilter: IDateFilter = {
-		frequency: DateFrequency.Today,
-		interval: 1,
-		fromDateRange: null,
-		toDateRange: null
-	}
-
 	sagaMiddleware.run(rootSaga);
-	store.dispatch(new LoadSpendingSummaryAction(dateFilter));
+	store.dispatch(new LoadSpendingSummaryAction(spendingSummaryDateFilter));
+	store.dispatch(new LoadIncomeSummaryAction(incomeSummaryDateFilter))
 
 	return store;
 

@@ -59,6 +59,6 @@ export const paymentStatus = (status: number, daysUntilDue: number) => {
 }
 
 // export const rootUrl: string = window.location.origin;
-export const rootUrl: string = "http://localhost:53822/";
+export const rootUrl: string = "http://localhost:53822";
 export const weekSummaryUrl = (weekNo: number) => `${rootUrl}/cnw/weeksummary/${weekNo}`;
 export const routeSummaryUrl = (id: string) => `${rootUrl}/cnw/routesummary/${id}`;

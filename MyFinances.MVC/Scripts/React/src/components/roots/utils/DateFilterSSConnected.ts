@@ -1,8 +1,8 @@
 import IStoreState from '../../../state/IStoreState';
 import { connect } from 'react-redux';
-import DateFilter, { IPropsFromState, IPropsFromDispatch } from './DateFilter';
+import DateFilterForSummary, { IPropsFromState, IPropsFromDispatch } from './DateFilterForSummary';
 import { DateFilterChangeAction } from '../../../state/contexts/common/Actions';
-
+import { initialSpendingSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -10,9 +10,9 @@ import { DateFilterChangeAction } from '../../../state/contexts/common/Actions';
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
-        dateFilter: state.common.dateFilter,
-        type: state.common.categoryType,
-        loading: state.common.loading
+        dateFilter: initialSpendingSummaryDateFilter(state),
+        categoryType: state.spendingSummary.categoryType,
+        selectedFrequency: state.common.spendingSummaryDateFilter.frequency
     });
 
 // Add required action creators for component
@@ -22,6 +22,6 @@ const mapPropsFromDispatch: IPropsFromDispatch =
 };
 
 
-// This does the magic of subscribing to state changes and ensuring the wrapped
+// This does the magic of subscwribing to state changes and ensuring the wrapped
 // stateless component gets all the properties it needs from the Redux state
-export default connect(mapStateToProps, mapPropsFromDispatch)(DateFilter);
+export default connect(mapStateToProps, mapPropsFromDispatch)(DateFilterForSummary);

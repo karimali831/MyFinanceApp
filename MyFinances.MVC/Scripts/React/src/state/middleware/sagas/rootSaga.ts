@@ -4,6 +4,7 @@ import { all, fork } from 'redux-saga/effects';
 import locationChangeSaga from './locationChangeSaga';
 import loadSpendingSummaryApiSaga from './loadSpendingSummaryApiSaga';
 import { dateFilterWatchSaga } from './dateFilterSaga';
+import loadIncomeSummaryApiSaga from './loadIncomeSummaryApiSaga';
 
 
 // We `fork()` these tasks so they execute in the background.
@@ -14,7 +15,10 @@ export function* rootSaga() {
 
     // Spendings
     // fork(loadSpendingsApiSaga),
+
+    // Summary
     fork(loadSpendingSummaryApiSaga),
+    fork(loadIncomeSummaryApiSaga),
 
     // utils
     fork(dateFilterWatchSaga)

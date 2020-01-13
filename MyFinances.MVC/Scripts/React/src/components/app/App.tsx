@@ -6,7 +6,6 @@ import initialiseStore from '../../state/InitialiseStore';
 import AddRoute from '../roots/AddRoute';
 import AddSpending from '../roots/spending/AddSpending';
 import AddExpense from '../roots/AddExpense';
-import Summary from '../roots/landing/SummaryConnected'
 import Incomes from '../roots/Incomes'
 import AddIncome from '../roots/AddIncome';
 import AddCategory from '../roots/AddCategory';
@@ -17,6 +16,7 @@ import Categories from '../roots/Categories';
 import { ConnectedRouter } from 'connected-react-router';
 import Menu from '../base/Menu';
 import { createHashHistory, createBrowserHistory } from 'history';
+import Landing from '../roots/landing/Landing';
 
 const browserHistory = history.pushState ? createBrowserHistory() : createHashHistory();
 
@@ -32,8 +32,8 @@ class App extends React.Component {
           <div className="App" ref={this.appElement}>>
             <Menu />
             <Switch>
-                <Route exact={true} path="/" component={Summary} />
-                <Route path="/home" component={Summary} />
+                <Route exact={true} path="/" component={Landing} />
+                <Route path="/home" component={Landing} />
                 <Route path="/addroute" component={AddRoute} />
                 <Route path="/addspending/" component={AddSpending} />
                 <Route path="/addexpense/" component={AddExpense} />

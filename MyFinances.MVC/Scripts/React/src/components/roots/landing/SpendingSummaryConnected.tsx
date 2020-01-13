@@ -1,8 +1,7 @@
 import IStoreState from '../../../state/IStoreState';
 import { connect } from 'react-redux';
-import SpendingSummary, { IPropsFromState, IPropsFromDispatch } from './Summary';
+import SpendingSummary, { IPropsFromState, IPropsFromDispatch } from './SpendingSummary';
 import { LoadSpendingSummaryAction } from '../../../state/contexts/landing/Actions';
-import { DateFrequency } from "../../../enums/DateFrequency";
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -10,15 +9,13 @@ import { DateFrequency } from "../../../enums/DateFrequency";
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
+        dateFilter: state.common.spendingSummaryDateFilter,
         spendingSummary: state.spendingSummary.spendingSummary,
         fuelIn: state.spendingSummary.fuelIn,
         totalSpent: state.spendingSummary.totalSpent,
-        frequency: DateFrequency[state.spendingSummary.frequency],
-        interval: state.spendingSummary.interval,
-        fromDate: state.spendingSummary.fromDate,
-        toDate: state.spendingSummary.toDate,
         showSecondCatSummary: state.spendingSummary.showSecondCatSummary,
         loading: state.spendingSummary.loading,
+        categoryType: state.spendingSummary.categoryType,
         location: state.router.location.pathname + '?' + state.router.location.search
     });
 

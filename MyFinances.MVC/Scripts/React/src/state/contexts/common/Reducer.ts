@@ -13,7 +13,6 @@ const CommonReducer: Reducer<ICommonState, CommonActions> =
                     } 
                 };
 
-
             default:
                 return state;
         }

@@ -6,6 +6,7 @@ import ICommonState, { CommonState } from './contexts/common/ICommonState';
 import ISpendingSummaryState, { SpendingSummaryState } from './contexts/landing/ISpendingSummaryState';
 // import IErrorState, { ErrorState } from './contexts/error/IErrorState';
 import { IRouteState, RouteState } from './contexts/router/IRouteState';
+import IIncomeSummaryState, { IncomeSummaryState } from './contexts/landing/IIncomeSummaryState';
 
 // this represents the state of the 'entire' application
 // it should be composed of other state definitions which represent state 'contexts'
@@ -19,7 +20,8 @@ export default interface IStoreState {
     // error: IErrorState,
     // income: IIncomeState,
     // spending: ISpendingState,
-    spendingSummary: ISpendingSummaryState 
+    spendingSummary: ISpendingSummaryState,
+    incomeSummary: IIncomeSummaryState
 }
 
 export class StoreState {
@@ -31,7 +33,8 @@ export class StoreState {
         // error: ErrorState.intialState,
         // income: IncomeState.intialState,
         // spending: SpendingState.intialState,
-        spendingSummary: SpendingSummaryState.intialState
+        spendingSummary: SpendingSummaryState.intialState,
+        incomeSummary: IncomeSummaryState.intialState
     };
 }
 

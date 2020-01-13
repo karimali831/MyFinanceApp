@@ -1,26 +1,24 @@
 import * as React from 'react';
-import IncomeSummary from '../IncomeSummary';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
-import UpcomingPayments from '../UpcomingPayments';
 import { ISpendingSummary } from '../../../models/ISpending';
 import { DateFrequency } from '../../../enums/DateFrequency';
 import { Loader } from '../../base/Loader';
 import { LoadSpendingSummaryAction } from '../../../state/contexts/landing/Actions';
-import DateFilter from '../utils/DateFilterConnected'
+import DateFilter from '../utils/DateFilterSSConnected'
+import { IDateFilter } from 'src/models/IDateFilter';
+import { CategoryType } from 'src/enums/CategoryType';
 
 export interface IPropsFromState {
+    dateFilter?: IDateFilter | undefined,
     spendingSummary: ISpendingSummary[],
     fuelIn: number,
     totalSpent: number,
-    frequency: string,
-    interval: number,
     loading: boolean,
-    fromDate: string | null,
-    toDate: string | null,
     showSecondCatSummary: string | null,
-    location: string
+    location: string,
+    categoryType: CategoryType
 }
 
 export interface IPropsFromDispatch {
@@ -29,58 +27,7 @@ export interface IPropsFromDispatch {
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
 
-
 export default class SpendingSummary extends React.Component<AllProps> {
-
-
-    // public componentDidMount() {
-    //     const dateFilter: IDateFilter = {
-    //         frequency: DateFrequency[this.props.frequency],
-    //         interval: this.props.interval,
-    //         fromDateRange: this.props.fromDate,
-    //         toDateRange: this.props.toDate
-    //     }
-
-    //     this.props.loadSpendingSummary(dateFilter);
-    // }
-
-    // public componentDidUpdate(prevProps: AllProps) {
-    //     if (DateFrequency[prevProps.frequency] !== DateFrequency.DateRange && (
-    //         prevProps.frequency !== this.state.frequency || 
-    //         prevProps.interval !== this.state.interval)) {
-    //             this.loadSummary();
-    //     }
-    //     else if ((
-    //         this.state.fromDate != null && this.state.toDate != null) && 
-    //         prevState.fromDate !== this.state.fromDate ||
-    //         prevState.toDate !== this.state.toDate) {
-    //             this.loadSummary();
-    //     }
-    // }
-
-    // private loadSummary = () => {
-    //     const dateFilter: IDateFilter = {
-    //         frequency: DateFrequency[this.state.frequency],
-    //         interval: this.state.interval,
-    //         fromDateRange: this.state.fromDate,
-    //         toDateRange: this.state.toDate
-    //     }
-
-    //     api.summary(dateFilter)
-    //         .then(response => this.loadSummarySuccess(response.spendingSummary, response.fuelIn, response.totalSpent));
-    // }
-
-    // private loadSummarySuccess = (spendingSummary: ISpendingSummary[], fuelIn: number, totalSpent: number) => {
-    //     this.setState({ ...this.state,
-    //         ...{ 
-    //             loading: false, 
-    //             spendingSummary: spendingSummary,
-    //             fuelIn: fuelIn,
-    //             totalSpent: totalSpent
-    //         }
-    //     }) 
-    // }
-
     
     public render() {
         if (this.props.loading) {
@@ -113,7 +60,11 @@ export default class SpendingSummary extends React.Component<AllProps> {
                             <tr key={key}>
                                 <th scope="row">
                                     <FontAwesomeIcon icon={faArrowDown} /> 
-                                    <Link to={`spending/${s.catId}/${DateFrequency[this.props.frequency]}/${this.props.interval}/${s.isFinance}/false/${this.props.fromDate}/${this.props.toDate}`}> {s.cat1}</Link>
+                                    {
+                                        this.props.dateFilter !== undefined ?    
+                                            <Link to={`spending/${s.catId}/${DateFrequency[this.props.dateFilter.frequency]}/${this.props.dateFilter.interval}/${s.isFinance}/false/${this.props.dateFilter.fromDateRange}/${this.props.dateFilter.toDateRange}`}> {s.cat1}</Link>
+                                        : null
+                                    }
                                 </th>
                                 <td>
                                     {s.secondCats !== null ? 
@@ -125,8 +76,13 @@ export default class SpendingSummary extends React.Component<AllProps> {
                                                 <small>
                                                     <i> 
                                                         {s.secondCats.map((c, key2) =>   
-                                                            <div key={key2}>    
-                                                                <Link to={`spending/${c.secondCatId}/${DateFrequency[this.props.frequency]}/${this.props.interval}/${s.isFinance}/true/${this.props.fromDate}/${this.props.toDate}`}> {c.cat2}</Link> £{c.totalSpent}
+                                                            <div key={key2}>                            {
+                                                               this.props.dateFilter !== null && this.props.dateFilter !== undefined ?
+                                                                    <> 
+                                                                        <Link to={`spending/${c.secondCatId}/${DateFrequency[this.props.dateFilter.frequency]}/${this.props.dateFilter.interval}/${s.isFinance}/true/${this.props.dateFilter.fromDateRange}/${this.props.dateFilter.toDateRange}`}> {c.cat2}</Link> £{c.totalSpent}
+                                                                    </>
+                                                                : null 
+                                                                }
                                                             </div>
                                                         )}
                                                     </i>
@@ -144,8 +100,6 @@ export default class SpendingSummary extends React.Component<AllProps> {
                         </tr>
                     </tbody>
                 </table>
-                <IncomeSummary />
-                <UpcomingPayments />
             </div>
         )
     }

@@ -1,23 +1,19 @@
 
 import ISpendingSummaryState, { SpendingSummaryState } from './ISpendingSummaryState';
 import { Reducer } from 'redux';
-import { SpendingSummaryActions, SpendingSummaryActionTypes } from './Actions';
+import { LandingSummaryActions, LandingSummaryActionTypes } from './Actions';
 
-const SpendingSummaryReducer: Reducer<ISpendingSummaryState, SpendingSummaryActions> =
+const SpendingSummaryReducer: Reducer<ISpendingSummaryState, LandingSummaryActions> =
     (state = SpendingSummaryState.intialState, action) => {
         switch (action.type) {
-            case SpendingSummaryActionTypes.LoadSpendingSummarySuccess:
+            case LandingSummaryActionTypes.LoadSpendingSummarySuccess:
                 return {
                     ...state,
                     ...{
                         spendingSummary: action.spendingSummary, 
                         fuelIn: action.fuelIn, 
                         totalSpent: action.totalSpent,
-                        frequency: state.frequency,
-                        interval: state.interval,
                         loading: false,
-                        fromDate: state.fromDate,
-                        toDate: state.toDate,
                         showSecondCatSummary: state.showSecondCatSummary
                     }
                 }

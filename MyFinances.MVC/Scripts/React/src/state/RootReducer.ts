@@ -8,7 +8,8 @@ import commonReducer from './contexts/common/Reducer';
 import { connectRouter } from 'connected-react-router';
 import { History } from 'history';
 // import errorReducer from './contexts/error/Reducer';
-import SpendingSummaryReducer from './contexts/landing/Reducer';
+import IncomeSummaryReducer from './contexts/landing/IncomeSummaryReducer';
+import SpendingSummaryReducer from './contexts/landing/SpendingSummaryReducer';
 
 // Root reducer combining all other state reducers
 export default
@@ -16,6 +17,7 @@ export default
         combineReducers<IStoreState>({
             router: connectRouter(history),
             spendingSummary: SpendingSummaryReducer,
+            incomeSummary: IncomeSummaryReducer,
             common: commonReducer,
             // cwtl: cwtlReducer,
             // finance: financeReducer,

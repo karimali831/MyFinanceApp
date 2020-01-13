@@ -20,8 +20,15 @@ export class DateFilterChangeAction {
     ) { }
 }
 
+export class DateFilterChangeSuccessAction {
+    public static readonly creator = () => new DateFilterChangeSuccessAction();
+
+    public readonly type = CommonActionTypes.DateFilterChangeSuccess;
+
+}
 
 // Create a discriminated union of all action typed used to correctly type the
 // actions in the reducer switch statement
 export type CommonActions =
-    DateFilterChangeAction
+    DateFilterChangeAction |
+    DateFilterChangeSuccessAction 

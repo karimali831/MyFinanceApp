@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { DateFrequency } from 'src/enums/DateFrequency';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { cleanText } from './Utils';

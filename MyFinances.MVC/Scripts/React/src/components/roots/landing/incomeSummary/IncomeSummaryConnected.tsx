@@ -1,7 +1,7 @@
-import IStoreState from '../../../state/IStoreState';
+import IStoreState from '../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import IncomeSummary, { IPropsFromState, IPropsFromDispatch } from './IncomeSummary';
-import { LoadIncomeSummaryAction } from '../../../state/contexts/landing/Actions';
+import { LoadIncomeSummaryAction } from '../../../../state/contexts/landing/Actions';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component

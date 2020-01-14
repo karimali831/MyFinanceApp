@@ -2,11 +2,11 @@ import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
-import { ISpendingSummary } from '../../../models/ISpending';
-import { DateFrequency } from '../../../enums/DateFrequency';
-import { Loader } from '../../base/Loader';
-import { LoadSpendingSummaryAction } from '../../../state/contexts/landing/Actions';
-import DateFilter from '../utils/DateFilterSSConnected'
+import { ISpendingSummary } from '../../../../models/ISpending';
+import { DateFrequency } from '../../../../enums/DateFrequency';
+import { Loader } from '../../../base/Loader';
+import { LoadSpendingSummaryAction } from '../../../../state/contexts/landing/Actions';
+import DateFilter from './DateFilterSSConnected'
 import { IDateFilter } from 'src/models/IDateFilter';
 import { CategoryType } from 'src/enums/CategoryType';
 

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { faArrowUp, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import DateFilter from '../utils/DateFilterISConnected'
+import DateFilter from './DateFilterISConnected'
 import { Link } from "react-router-dom";
-import { IIncomeSummary } from '../../../models/IIncome';
-import { DateFrequency } from '../../../enums/DateFrequency';
-import { Loader } from '../../base/Loader';
+import { IIncomeSummary } from '../../../../models/IIncome';
+import { DateFrequency } from '../../../../enums/DateFrequency';
+import { Loader } from '../../../base/Loader';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { LoadIncomeSummaryAction } from 'src/state/contexts/landing/Actions';
 import { CategoryType } from 'src/enums/CategoryType';

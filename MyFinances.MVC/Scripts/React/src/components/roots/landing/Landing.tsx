@@ -1,6 +1,6 @@
 import * as React from 'react';
-import SpendingSummary from './SpendingSummaryConnected';
-import IncomeSummary from './IncomeSummaryConnected';
+import SpendingSummary from './spendingSummary/SpendingSummaryConnected';
+import IncomeSummary from './incomeSummary/IncomeSummaryConnected';
 import UpcomingPayments from '../UpcomingPayments';
 
 class Landing extends React.Component {

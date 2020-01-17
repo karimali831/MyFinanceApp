@@ -26,7 +26,7 @@ export class IncomeSummaryState {
         totalIncome: 0,
         loading: true,
         showSecondCatSummary: null,
-        categoryType: CategoryType.Income,
+        categoryType: CategoryType.Incomes,
         dateFilter: incomeSummaryDateFilter
     }
 }

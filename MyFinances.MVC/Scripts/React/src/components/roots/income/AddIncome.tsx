@@ -46,7 +46,7 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
         const { redirect, loading } = this.state;
 
         if (redirect) {
-            return <Redirect to='/income'/>;
+            return <Redirect to='/income/'/>;
         }
 
         if (loading) {

@@ -14,7 +14,7 @@ export function* dateFilterChange(action: DateFilterChangeAction) {
         yield put(new LoadSpendingSummaryAction(action.filter));
         yield put(new SpendingSummaryDateFilterChangeAction(action.filter))
     } 
-    else if (action.categoryType === CategoryType.Income) {
+    else if (action.categoryType === CategoryType.Incomes) {
         yield put(new LoadIncomeSummaryAction(action.filter));
         yield put(new IncomeSummaryDateFilterChangeAction(action.filter))
     }

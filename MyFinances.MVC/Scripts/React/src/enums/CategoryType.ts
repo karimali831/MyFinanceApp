@@ -1,6 +1,6 @@
 export enum CategoryType {
     Spendings,
-    Income,
+    Incomes,
     CNWRouteType,
     Vehicles,
     Maintenance,

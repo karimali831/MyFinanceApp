@@ -83,7 +83,7 @@ const routes: IRoute[] = [
             if (params.categorytype === CategoryType[CategoryType.Spendings].toLowerCase()) {
                 yield call(loadSpendings, spendingsRequest)
             } 
-            else if (CategoryType[params.categorytype] === CategoryType[CategoryType.Income].toLowerCase()) {
+            else if (CategoryType[params.categorytype] === CategoryType[CategoryType.Incomes].toLowerCase()) {
                 yield call(loadIncomes, incomesRequest)
             }
 

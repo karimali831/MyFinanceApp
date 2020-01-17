@@ -115,7 +115,7 @@ namespace MyFinances.Service
 
             if (request.SourceId.HasValue)
             {
-                incomes = incomes.Where(x => x.SourceId == request.SourceId.Value);
+                incomes = incomes.Where(x => request.IsSecondCat ? x.SecondSourceId == request.SourceId.Value : x.SourceId == request.SourceId.Value);
             }
 
             return incomes.OrderByDescending(x => x.Date).ThenBy(x => x.Source);

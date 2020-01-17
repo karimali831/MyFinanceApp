@@ -12,7 +12,6 @@ import { loadSpendings } from './loadSpendingsApiSaga';
 import { ISpendingRequest, IIncomeRequest } from 'src/api/Api';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DateFrequency } from 'src/enums/DateFrequency';
-import { CategoryType } from 'src/enums/CategoryType';
 import { loadIncomes } from './loadIncomesApiSaga';
 
 interface IRoute {
@@ -58,7 +57,7 @@ const routes: IRoute[] = [
         }
     },
     {
-        route: '/:categorytype*/:catId*/:frequency*/:interval*/:isFinance*/:isSecondCat*/:fromDate*/:toDate*',
+        route: '/:categorytype*/:catId*/:frequency*/:interval*/:isFinance/:isSecondCat/:fromDate*/:toDate*',
         action: function* (params: ISummaryListParam) {
 
             const dateFilter: IDateFilter = {
@@ -75,18 +74,27 @@ const routes: IRoute[] = [
                 isSecondCat: params.issecondcat
             }
 
+            yield call(loadSpendings, spendingsRequest)
+        }
+    },
+    {
+        route: '/:categorytype*/:catId*/:frequency*/:interval*/:isSecondCat/:fromDate*/:toDate*',
+        action: function* (params: ISummaryListParam) {
+
+            const dateFilter: IDateFilter = {
+                frequency: params.frequency,
+                interval: params.interval,
+                fromDateRange: params.fromdate,
+                toDateRange: params.todate
+            }
+
             const incomesRequest: IIncomeRequest = {
                 sourceId: params.catid,
-                dateFilter: dateFilter
+                dateFilter: dateFilter,
+                isSecondCat: params.issecondcat
             }
 
-            if (params.categorytype === CategoryType[CategoryType.Spendings].toLowerCase()) {
-                yield call(loadSpendings, spendingsRequest)
-            } 
-            else if (CategoryType[params.categorytype] === CategoryType[CategoryType.Incomes].toLowerCase()) {
-                yield call(loadIncomes, incomesRequest)
-            }
-
+            yield call(loadIncomes, incomesRequest)
         }
     },
     {

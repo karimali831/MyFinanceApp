@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { ISpendingSummary } from '../../../../models/ISpending';
-import { Loader } from '../../../base/Loader';
+import { Load } from '../../../base/Loader';
 import { ShowSecondCategorySpendingSummaryAction } from '../../../../state/contexts/landing/Actions';
 import DateFilter from './DateFilterSSConnected'
 import { IDateFilter } from 'src/models/IDateFilter';
@@ -30,7 +30,7 @@ export default class SpendingSummary extends React.Component<AllProps> {
     
     public render() {
         if (this.props.loading) {
-            return <Loader text="Loading spending summary..." />
+            return <Load text="Loading spending summary..." />
         }
 
         return (

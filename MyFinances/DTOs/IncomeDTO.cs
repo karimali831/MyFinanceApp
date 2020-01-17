@@ -19,5 +19,6 @@ namespace MyFinances.DTOs
     {
         public int? SourceId { get; set; }
         public DateFilter DateFilter { get; set; }
+        public bool IsSecondCat { get; set; } = false;
     }
 }

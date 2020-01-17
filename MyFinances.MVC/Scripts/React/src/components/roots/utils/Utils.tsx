@@ -67,4 +67,4 @@ export const weekSummaryUrl = (weekNo: number) => `${rootUrl}/cnw/weeksummary/${
 export const routeSummaryUrl = (id: string) => `${rootUrl}/cnw/routesummary/${id}`;
 
 export const SummaryFilteredList =
-	(categoryType: CategoryType, catId?: number, frequency?: DateFrequency, interval?: number, isFinance?: boolean, isSecondCat?: boolean, fromDate?: string | null, toDate?: string | null) => `${CategoryType[categoryType]}/${catId}/${frequency}/${interval}/${isFinance}/${isSecondCat}/${fromDate}/${toDate}`;
+	(categoryType: CategoryType, catId?: number, frequency?: DateFrequency, interval?: number, isFinance?: boolean, isSecondCat?: boolean, fromDate?: string | null, toDate?: string | null) => `${CategoryType[categoryType]}/${catId}/${frequency}/${interval}/${categoryType === CategoryType.Spendings ? isFinance + "/" : ""}${isSecondCat}/${fromDate}/${toDate}`;

@@ -4,7 +4,7 @@ import { faArrowDown, faExclamationCircle } from '@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { paymentStatus } from './utils/Utils';
 import { IFinance } from '../../models/IFinance';
-import { Loader } from '../base/Loader';
+import { Load } from '../base/Loader';
 
 
 interface IOwnProps {
@@ -30,7 +30,7 @@ export default class UpcomingPayments extends React.Component<IOwnProps, IOwnSta
 
     public render() {
         if (this.state.loading) {
-            return <Loader text="Loading upcoming payments..." />
+            return <Load text="Loading upcoming payments..." />
         }
 
         return (

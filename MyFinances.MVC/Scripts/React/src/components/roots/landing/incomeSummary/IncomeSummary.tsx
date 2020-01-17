@@ -3,7 +3,7 @@ import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DateFilter from './DateFilterISConnected'
 import { IIncomeSummary } from '../../../../models/IIncome';
-import { Loader } from '../../../base/Loader';
+import { Load } from '../../../base/Loader';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { ShowSecondCategoryIncomeSummaryAction } from 'src/state/contexts/landing/Actions';
 import { CategoryType } from 'src/enums/CategoryType';
@@ -29,11 +29,9 @@ export default class IncomeSummary extends React.Component<AllProps> {
 
     public render() {
         if (this.props.loading) {
-            return <Loader text="Loading income summary..." />
+            return <Load text="Loading income summary..." />
         }
 
-        {console.log(JSON.stringify(this.props.incomeSummary))}
-        
         return (
             <table className="table">
                 <thead className="thead-light">

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSync } from '@fortawesome/free-solid-svg-icons';
 import { ICNWPayment } from '../../models/ICNWPayment';
 import { weekSummaryUrl, priceFormatter } from './utils/Utils';
-import { Loader } from '../base/Loader';
+import { Load } from '../base/Loader';
 import Table from '../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
 
@@ -31,16 +31,9 @@ export default class WeekSummaries extends React.Component<IOwnProps, IOwnState>
         this.loadWeekSummaries();
     }
 
-        // public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
-    //   if (prevState.loading !== this.state.loading) {
-    //       this.loadWeekSummaries()
-    //   }
-    // }
-
-
     public render() {
       if (this.state.loading) {
-          return <Loader text="Loading week summaries..." />
+          return <Load text="Loading week summaries..." />
       }
 
       const columns: ITableProps[] = [{

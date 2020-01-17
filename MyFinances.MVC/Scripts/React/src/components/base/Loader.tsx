@@ -1,17 +1,17 @@
 import * as React from 'react';
 import './Loader.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import Loader from 'react-loader-spinner';
 
 interface IOwnProps {
     text?: string | null
     type?: string | null
 }
 
-export const Loader: React.SFC<IOwnProps> = (props) => {
+export const Load: React.FC<IOwnProps> = (props) => {
     return (
         <div className={props.type !== null ? props.type : "loader"}>
-            <FontAwesomeIcon icon={faSpinner} />
+            <Loader type="Puff" color="#000" height={50} width={50} timeout={20000} />
             {
                 props.text && props.text !== null ? 
                     <span className="text"><strong>{props.text}</strong></span> 

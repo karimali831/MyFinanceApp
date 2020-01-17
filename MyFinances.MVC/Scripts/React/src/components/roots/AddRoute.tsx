@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { commonApi } from '../../api/CommonApi'
 import { Redirect } from 'react-router-dom'
-import { Loader } from '../base/Loader';
+import { Load } from '../base/Loader';
 import { AddMenu } from '../base/Menu';
 import { ICategory } from '../../models/ICategory';
 import { CategoryType } from '../../enums/CategoryType';
@@ -54,7 +54,7 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
         }
 
         if (loading) {
-            return <Loader text="Loading..." />
+            return <Load text="Loading..." />
         }
 
         return (

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { api } from '../../api/Api';
-import { Loader } from '../base/Loader';
+import { Load } from '../base/Loader';
 import { priceFormatter, intToOrdinalNumberString, paymentStatus, cleanText, boolHighlight } from './utils/Utils';
 import { IFinance } from '../../models/IFinance';
 import Table from '../base/CommonTable';
@@ -40,7 +40,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
 
     public render() {
         if (this.state.loading) {
-            return <Loader text="Loading finances..." />
+            return <Load text="Loading finances..." />
         }
 
         const columns: ITableProps[] = [{

@@ -171,7 +171,8 @@ export interface ISpendingRequest
 export interface IIncomeRequest
 {
     sourceId?: number | null,
-    dateFilter?: IDateFilter
+    dateFilter?: IDateFilter,
+    isSecondCat?: boolean
 }
 
 export interface ISpendingResponse {

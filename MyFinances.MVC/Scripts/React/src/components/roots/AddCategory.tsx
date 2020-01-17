@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { commonApi } from '../../api/CommonApi'
 import { Redirect } from 'react-router-dom'
-import { Loader } from '../base/Loader';
+import { Load } from '../base/Loader';
 import { AddMenu } from '../base/Menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -47,7 +47,7 @@ export default class AddCategory extends React.Component<IOwnProps, IOwnState> {
         }
 
         if (loading) {
-            return <Loader text="Loading..."/>
+            return <Load text="Loading..."/>
         }
 
         return (

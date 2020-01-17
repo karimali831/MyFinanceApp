@@ -6,7 +6,7 @@ import { IFinance } from '../../../models/IFinance';
 import { commonApi } from '../../../api/CommonApi';
 import { CategoryType } from '../../../enums/CategoryType';
 import { api } from '../../../api/Api';
-import { Loader } from '../../base/Loader';
+import { Load } from '../../base/Loader';
 import { AddMenu } from '../../base/Menu';
 import { ISpendingDTO } from '../../../models/ISpending';
 
@@ -62,7 +62,7 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
         }
 
         if (loading) {
-            return <Loader text="Loading..." />
+            return <Load text="Loading..." />
         }
 
         return (

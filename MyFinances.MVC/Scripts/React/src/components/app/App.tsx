@@ -44,7 +44,7 @@ class App extends React.Component {
                 <Route path="/finance/" component={Finances} />
                 <Route path="/spending/" component={Spendings} />
                 <Route path="/income/" component={Incomes} />
-                <Route path={"/"+CategoryType[CategoryType.Incomes]+"/:catId?/:frequency?/:interval?/:fromDate?/:toDate?"} render={() => <Incomes />} />
+                <Route path={"/"+CategoryType[CategoryType.Incomes]+"/:catId?/:frequency?/:interval?/:isSecondCat?/:fromDate?/:toDate?"} render={() => <Incomes />} />
                 <Route path={"/"+CategoryType[CategoryType.Spendings]+"/:catId?/:frequency?/:interval?/:isFinance?/:isSecondCat?/:fromDate?/:toDate?"} render={() => <Spendings />} />
                 <Route path="/route/" component={Routes} />
                 <Route path="/summary/" component={WeekSummaries} />

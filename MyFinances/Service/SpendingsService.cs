@@ -78,28 +78,28 @@ namespace MyFinances.Service
                 .Where(x => x.Cat2 != null)
                 .GroupBy(
                     p => new { p.CatId, p.Cat1, p.IsFinance },
-                    p => new { p.SecondCatId, p.Cat2, p.TotalSpent },
+                    p => new { p.SecondCatId, p.Cat2, p.Total },
                     (key, g) =>
                         new SpendingSummaryDTO
                         {
                             Cat1 = key.Cat1,
                             CatId = key.CatId,
                             IsFinance = key.IsFinance,
-                            TotalSpent = spendingsSummary
+                            Total = spendingsSummary
                                 .Where(x => x.CatId == key.CatId && x.Cat1 == key.Cat1)
-                                .Sum(x => x.TotalSpent),
+                                .Sum(x => x.Total),
                                     SecondCats = g.Select(s => new SpendingSummaryDTO
                                     {
                                         SecondCatId = s.SecondCatId,
                                         Cat2 = s.Cat2,
-                                        TotalSpent = s.TotalSpent
+                                        Total = s.Total
                                     })
                         }
                  );
 
             var firstCats = spendingsSummary.Where(x => x.Cat2 == null);
 
-            return firstCats.Concat(secondCats).OrderByDescending(x => x.TotalSpent).ToArray();
+            return firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
         }
     }
 }

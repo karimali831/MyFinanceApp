@@ -68,16 +68,16 @@ namespace MyFinances.Website.Controllers.API
                 TotalAvgCost = finances
                     .Where(x => x.EndDate == null || DateTime.UtcNow.Date < x.EndDate)
                     .Sum(x => x.AvgMonthlyAmount),
-                SpentThisMonth = spentThisMonth.Where(x => x.IsFinance == true).Sum(x => x.TotalSpent),
-                SpentLastMonth = spentLastMonth.Where(x => x.IsFinance == true).Sum(x => x.TotalSpent)
+                SpentThisMonth = spentThisMonth.Where(x => x.IsFinance == true).Sum(x => x.Total),
+                SpentLastMonth = spentLastMonth.Where(x => x.IsFinance == true).Sum(x => x.Total)
             });
         }
 
-        [Route("incomes/{sourceId?}")]
+        [Route("incomes")]
         [HttpPost]
-        public async Task<HttpResponseMessage> GetIncomesAsync(DateFilter dateFilter, int? sourceId = null)
+        public async Task<HttpResponseMessage> GetIncomesAsync(IncomeRequestDTO request)
         {
-            var incomes = await financeService.GetAllIncomesAsync(dateFilter, sourceId);
+            var incomes = await financeService.GetAllIncomesAsync(request);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Incomes = 
@@ -101,7 +101,7 @@ namespace MyFinances.Website.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK, 
                 new {
                     IncomeSummary = incomeSummary,
-                    TotalIncome = incomeSummary.Sum(x => x.TotalIncome)
+                    TotalIncome = incomeSummary.Sum(x => x.Total)
                 }
             );
         }

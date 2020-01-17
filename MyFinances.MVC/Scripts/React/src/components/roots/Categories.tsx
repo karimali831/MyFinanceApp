@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader } from '../base/Loader';
-import { commonApi } from '../../Api/CommonApi';
+import { commonApi } from '../../api/CommonApi';
 import { ICategory } from '../../models/ICategory';
 import Table from '../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';

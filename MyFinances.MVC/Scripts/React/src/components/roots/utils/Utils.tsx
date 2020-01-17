@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { PaymentStatus } from 'src/models/IFinance';
+import { CategoryType } from 'src/enums/CategoryType';
+import { DateFrequency } from 'src/enums/DateFrequency';
 
 export const intToOrdinalNumberString = (cell: any, row: any) => {
 	cell = Math.round(cell);
@@ -60,5 +62,9 @@ export const paymentStatus = (status: number, daysUntilDue: number) => {
 
 // export const rootUrl: string = window.location.origin;
 export const rootUrl: string = "http://localhost:53822";
+export const appUrl: string = "http://localhost:3000";
 export const weekSummaryUrl = (weekNo: number) => `${rootUrl}/cnw/weeksummary/${weekNo}`;
 export const routeSummaryUrl = (id: string) => `${rootUrl}/cnw/routesummary/${id}`;
+
+export const SummaryFilteredList =
+	(categoryType: CategoryType, catId?: number, frequency?: DateFrequency, interval?: number, isFinance?: boolean, isSecondCat?: boolean, fromDate?: string | null, toDate?: string | null) => `${CategoryType[categoryType]}/${catId}/${frequency}/${interval}/${isFinance}/${isSecondCat}/${fromDate}/${toDate}`;

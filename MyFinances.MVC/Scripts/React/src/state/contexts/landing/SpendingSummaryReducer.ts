@@ -13,10 +13,20 @@ const SpendingSummaryReducer: Reducer<ISpendingSummaryState, LandingSummaryActio
                         spendingSummary: action.spendingSummary, 
                         fuelIn: action.fuelIn, 
                         totalSpent: action.totalSpent,
-                        loading: false,
-                        showSecondCatSummary: state.showSecondCatSummary
+                        loading: false
                     }
                 }
+
+            case LandingSummaryActionTypes.ShowSecondCategorySpendingSummary:
+                return {
+                    ...state, 
+                        ...{ 
+                            showSecondCatSummary: state.showSecondCatSummary === action.secondCat ? null : action.secondCat  
+                        }
+                }
+
+            case LandingSummaryActionTypes.SpendingSummaryDateFilterChange:
+                    return { ...state, ...{ dateFilter: action.filter } };
 
             default:
                 return state;

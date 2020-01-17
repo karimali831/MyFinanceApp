@@ -14,4 +14,10 @@ namespace MyFinances.DTOs
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
     }
+
+    public class IncomeRequestDTO
+    {
+        public int? SourceId { get; set; }
+        public DateFilter DateFilter { get; set; }
+    }
 }

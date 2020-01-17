@@ -1,12 +1,12 @@
 import IStoreState from '../../../state/IStoreState';
 import { IDateFilter } from '../../../models/IDateFilter';
 
-export const initialIncomeSummaryDateFilter = (state: IStoreState): IDateFilter => {
+export const incomeSummaryDateFilter = (state: IStoreState): IDateFilter => {
     return {
-        frequency: state.common.incomeSummaryDateFilter.frequency,
-        interval: state.common.incomeSummaryDateFilter.interval,
-        fromDateRange: state.common.incomeSummaryDateFilter.fromDateRange,
-        toDateRange: state.common.incomeSummaryDateFilter.toDateRange
+        frequency: state.incomeSummary.dateFilter.frequency,
+        interval: state.incomeSummary.dateFilter.interval,
+        fromDateRange: state.incomeSummary.dateFilter.fromDateRange,
+        toDateRange: state.incomeSummary.dateFilter.toDateRange
     };
 }
 
@@ -24,11 +24,11 @@ export const getSelectedDateFilter = (state: IStoreState): IDateFilter | null =>
     }
 }
 
-export const initialSpendingSummaryDateFilter = (state: IStoreState): IDateFilter => {
+export const spendingSummaryDateFilter = (state: IStoreState): IDateFilter => {
     return {
-        frequency: state.common.spendingSummaryDateFilter.frequency,
-        interval: state.common.spendingSummaryDateFilter.interval,
-        fromDateRange: state.common.spendingSummaryDateFilter.fromDateRange,
-        toDateRange: state.common.spendingSummaryDateFilter.toDateRange
+        frequency: state.spendingSummary.dateFilter.frequency,
+        interval: state.spendingSummary.dateFilter.interval,
+        fromDateRange: state.spendingSummary.dateFilter.fromDateRange,
+        toDateRange: state.spendingSummary.dateFilter.toDateRange
     };
 }

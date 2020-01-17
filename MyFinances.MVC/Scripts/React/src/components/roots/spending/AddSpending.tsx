@@ -1,11 +1,11 @@
 import * as React from 'react';
-// import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import * as moment from 'moment'
 import { ICategory } from '../../../models/ICategory';
 import { IFinance } from '../../../models/IFinance';
-import { commonApi } from '../../../Api/CommonApi';
+import { commonApi } from '../../../api/CommonApi';
 import { CategoryType } from '../../../enums/CategoryType';
-import { api } from '../../../Api/Api';
+import { api } from '../../../api/Api';
 import { Loader } from '../../base/Loader';
 import { AddMenu } from '../../base/Menu';
 import { ISpendingDTO } from '../../../models/ISpending';
@@ -55,11 +55,11 @@ export default class AddSpending extends React.Component<IOwnProps, IOwnState> {
 
     
     public render() {
-        const { loading } = this.state;
+        const { redirect, loading } = this.state;
 
-        // if (redirect) {
-        //     return <Redirect to='/spending'/>;
-        // }
+        if (redirect) {
+            return <Redirect to='/home'/>;
+        }
 
         if (loading) {
             return <Loader text="Loading..." />

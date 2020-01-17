@@ -10,6 +10,10 @@ export class LandingSummaryActionTypes {
     public static readonly LoadIncomeSummary = "@@landingsummary/loadincomesummary";
     public static readonly LoadIncomeSummarySuccess = "@@landingsummary/loadincomesummarysuccess";
     public static readonly LoadIncomeSummaryFailure = "@@landingsummary/loadincomesummaryfailure";
+    public static readonly ShowSecondCategorySpendingSummary = "@@landingsummary/showsecondcategoryspendingsummary";
+    public static readonly ShowSecondCategoryIncomeSummary = "@@landingsummary/showsecondcategoryincomesummary";
+    public static readonly SpendingSummaryDateFilterChange = "@@landingsummary/spendingsummarydatefilterchange"
+    public static readonly IncomeSummaryDateFilterChange = "@@landingsummary/incomesummarydatefilterchange"
 }
 
 // actions defined as classes with a creator as a static function
@@ -76,6 +80,46 @@ export class LoadIncomeSummaryFailureAction {
     ) { }
 }
 
+export class ShowSecondCategorySpendingSummaryAction {
+    public static readonly creator = (secondCat: string) => new ShowSecondCategorySpendingSummaryAction(secondCat);
+
+    public readonly type = LandingSummaryActionTypes.ShowSecondCategorySpendingSummary;
+
+    constructor(
+        public secondCat: string
+    ) { }
+}
+
+export class ShowSecondCategoryIncomeSummaryAction {
+    public static readonly creator = (secondCat: string) => new ShowSecondCategoryIncomeSummaryAction(secondCat);
+
+    public readonly type = LandingSummaryActionTypes.ShowSecondCategoryIncomeSummary;
+
+    constructor(
+        public secondCat: string
+    ) { }
+}
+
+export class SpendingSummaryDateFilterChangeAction {
+    public static readonly creator = (filter: IDateFilter) => new SpendingSummaryDateFilterChangeAction(filter);
+
+    public readonly type = LandingSummaryActionTypes.SpendingSummaryDateFilterChange
+
+    constructor(
+        public filter: IDateFilter 
+    ) { }
+}
+
+export class IncomeSummaryDateFilterChangeAction {
+    public static readonly creator = (filter: IDateFilter) => new IncomeSummaryDateFilterChangeAction(filter);
+
+    public readonly type = LandingSummaryActionTypes.IncomeSummaryDateFilterChange
+
+    constructor(
+        public filter: IDateFilter 
+    ) { }
+}
+
 // Create a discriminated union of all action types used to correctly type the
 // actions in the reducer switch statement
 export type LandingSummaryActions =
@@ -84,4 +128,8 @@ export type LandingSummaryActions =
     LoadSpendingSummaryFailureAction |
     LoadIncomeSummaryAction |
     LoadIncomeSummarySuccessAction |
-    LoadIncomeSummaryFailureAction
+    LoadIncomeSummaryFailureAction |
+    ShowSecondCategorySpendingSummaryAction |
+    ShowSecondCategoryIncomeSummaryAction |
+    SpendingSummaryDateFilterChangeAction |
+    IncomeSummaryDateFilterChangeAction

@@ -3,10 +3,8 @@ import { ISpending } from '../../../models/ISpending';
 import { priceFormatter } from '../utils/Utils';
 import Table from '../../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
+import { LoadSpendingsAction } from 'src/state/contexts/spending/Actions';
 
-
-interface IOwnProps {
-}
 
 export interface IPropsFromState {
     spendings: ISpending[],
@@ -14,59 +12,57 @@ export interface IPropsFromState {
 }
 
 export interface IPropsFromDispatch {
-
+    loadSpendings: typeof LoadSpendingsAction.creator
 }
 
-type AllProps = IOwnProps & IPropsFromState & IPropsFromDispatch;
-
+type AllProps = IPropsFromState & IPropsFromDispatch;
 
 const columns: ITableProps[] = [{
-  dataField: 'id',
-  text: '#',
-  hidden: true
+    dataField: 'id',
+    text: '#',
+    hidden: true
 }, {
-  dataField: 'name',
-  text: 'Item'
+    dataField: 'name',
+    text: 'Item'
 }, {
-  dataField: 'amount',
-  text: 'Amount',
-  formatter: priceFormatter
+    dataField: 'amount',
+    text: 'Amount',
+    formatter: priceFormatter
 }, {
-  dataField: 'date',
-  text: 'Date'
+    dataField: 'date',
+    text: 'Date'
 }, {
-  dataField: 'category',
-  text: 'Category',
-  headerClasses: "hidden-xs",
-  classes: "hidden-xs"
+    dataField: 'category',
+    text: 'Category',
+    headerClasses: "hidden-xs",
+    classes: "hidden-xs"
 }, {
-  dataField: 'secondCategory',
-  text: 'Second Cat',
-  headerClasses: "hidden-xs",
-  classes: "hidden-xs"
+    dataField: 'secondCategory',
+    text: 'Second Cat',
+    headerClasses: "hidden-xs",
+    classes: "hidden-xs"
 }, {
-  dataField: 'info',
-  text: 'Info',
-  headerClasses: "hidden-xs",
-  classes: "hidden-xs"
+    dataField: 'info',
+    text: 'Info',
+    headerClasses: "hidden-xs",
+    classes: "hidden-xs"
 }
 ];
 
 const options: ITableOptions = {
-  deleteRow: true,
-  pagination: true
+    deleteRow: true,
+    pagination: true
 }
 
 export const Spendings : React.SFC<AllProps> = (props) => (
     <>
         {
-
-                <Table 
-                    table="Spendings"
-                    data={props.spendings}
-                    columns={columns}
-                    options={options}
-                /> 
+          <Table 
+              table="Spendings"
+              data={props.spendings}
+              columns={columns}
+              options={options}
+          /> 
         }
     </>
 )

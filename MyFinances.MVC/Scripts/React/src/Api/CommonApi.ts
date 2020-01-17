@@ -1,9 +1,11 @@
-import { ICategoryResponse } from './Api';
+import { ICategoryResponse } from './api';
 import { CategoryType } from '../enums/CategoryType';
+import { rootUrl } from '../components/roots/utils/Utils';
+
 
 export class CommonFinanceApi {
 
-    public rootUrl: string = window.location.origin + "/api";
+    public rootUrl: string = `${rootUrl}/api`;
 
     public add = async (model: any, route: string, secondRoute = "") => {
         return fetch(`${this.rootUrl}/${route}/add/${secondRoute}`, {

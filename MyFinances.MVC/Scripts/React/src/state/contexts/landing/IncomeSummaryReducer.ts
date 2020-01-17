@@ -12,10 +12,20 @@ const IncomeSummaryReducer: Reducer<IIncomeSummaryState, LandingSummaryActions> 
                     ...{
                         incomeSummary: action.incomeSummary, 
                         totalIncome: action.totalIncome,
-                        loading: false,
-                        showSecondCatSummary: state.showSecondCatSummary
+                        loading: false
                     }
                 }
+                
+            case LandingSummaryActionTypes.ShowSecondCategoryIncomeSummary:
+                return {
+                    ...state, 
+                        ...{ 
+                            showSecondCatSummary: state.showSecondCatSummary === action.secondCat ? null : action.secondCat  
+                        }
+                }
+
+            case LandingSummaryActionTypes.IncomeSummaryDateFilterChange:
+                    return { ...state, ...{ dateFilter: action.filter } };
 
             default:
                 return state;

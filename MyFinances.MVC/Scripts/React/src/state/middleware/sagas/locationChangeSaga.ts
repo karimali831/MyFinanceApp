@@ -1,6 +1,19 @@
-import { takeLatest, call, select } from "redux-saga/effects";
-import { LOCATION_CHANGE, getHash, getLocation } from "connected-react-router";
+import { takeLatest, call, select, put } from "redux-saga/effects";
+import { LOCATION_CHANGE } from "connected-react-router";
 import * as Route from 'route-parser';
+import { LoadSpendingsAction } from 'src/state/contexts/spending/Actions';
+import { getLocation, getHash } from 'src/state/contexts/router/Selectors';
+import { rootUrl } from 'src/components/roots/utils/Utils';
+import { LoadIncomesAction } from 'src/state/contexts/income/Actions';
+import { loadSpendingSummary } from './loadSpendingSummaryApiSaga';
+import { spendingSummaryDateFilter, incomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
+import { loadIncomeSummary } from './loadIncomeSummaryApiSaga';
+import { loadSpendings } from './loadSpendingsApiSaga';
+import { ISpendingRequest, IIncomeRequest } from 'src/api/Api';
+import { IDateFilter } from 'src/models/IDateFilter';
+import { DateFrequency } from 'src/enums/DateFrequency';
+import { CategoryType } from 'src/enums/CategoryType';
+import { loadIncomes } from './loadIncomesApiSaga';
 
 interface IRoute {
     route: string,
@@ -16,15 +29,16 @@ interface IRoute {
 //     step: string
 // }
 
-// interface ISpendingParam {
-//     catId: number,
-//     frequency: number,
-//     interval: number,
-//     isFinance: boolean,
-//     isSecondCat: boolean,
-//     fromDate: string,
-//     toDate: string
-// }
+interface ISummaryListParam {
+    catid: number,
+    frequency: DateFrequency,
+    interval: number,
+    isfinance?: boolean,
+    issecondcat?: boolean,
+    fromdate?: string,
+    todate?: string,
+    categorytype: string
+}
 
 interface ISpendingSummaryParam {
     frequency: number,
@@ -38,45 +52,55 @@ const routes: IRoute[] = [
     {
         route: '/home',
         action: function* (params: ISpendingSummaryParam) {
-            // const dateFilter: IDateFilter = {
-            //     frequency: params.frequency,
-            //     interval: params.interval,
-            //     fromDateRange: params.fromDate,
-            //     toDateRange: params.toDate
-            // }
+            
+            yield call(loadSpendingSummary, yield select(spendingSummaryDateFilter))
+            yield call(loadIncomeSummary, yield select(incomeSummaryDateFilter))
+        }
+    },
+    {
+        route: '/:categorytype*/:catId*/:frequency*/:interval*/:isFinance*/:isSecondCat*/:fromDate*/:toDate*',
+        action: function* (params: ISummaryListParam) {
 
-            // const result: ISpendingSummaryResponse = yield call(api.summary, dateFilter);
+            const dateFilter: IDateFilter = {
+                frequency: params.frequency,
+                interval: params.interval,
+                fromDateRange: params.fromdate,
+                toDateRange: params.todate
+            }
 
-            // yield put(new LoadSpendingSummaryAction(dateFilter));
+            const spendingsRequest: ISpendingRequest = {
+                catId: params.catid,
+                dateFilter: dateFilter,
+                isFinance: params.isfinance,
+                isSecondCat: params.issecondcat
+            }
 
-            yield null
-        
+            const incomesRequest: IIncomeRequest = {
+                sourceId: params.catid,
+                dateFilter: dateFilter
+            }
+
+            if (params.categorytype === CategoryType[CategoryType.Spendings].toLowerCase()) {
+                yield call(loadSpendings, spendingsRequest)
+            } 
+            else if (CategoryType[params.categorytype] === CategoryType[CategoryType.Income].toLowerCase()) {
+                yield call(loadIncomes, incomesRequest)
+            }
+
+        }
+    },
+    {
+        route: '/spending/',
+        action: function* (params: ISummaryListParam) {
+            yield put(new LoadSpendingsAction());
+        }
+    },
+    {
+        route: '/income/',
+        action: function* (params: ISummaryListParam) {
+            yield put(new LoadIncomesAction());
         }
     }
-    // ,
-    // {
-    //     route: '/spending/:catId?/:frequency?/:interval?/:isFinance?/:isSecondCat?/:fromDate?/:toDate',
-    //     action: function* (params: ISpendingParam) {
-
-    //         const dateFilter: IDateFilter = {
-    //             frequency: params.frequency,
-    //             interval: params.interval,
-    //             fromDateRange: params.fromDate,
-    //             toDateRange: params.toDate
-    //         }
-
-    //         const spendingsRequest: ISpendingRequest = {
-    //             catId: params.catId,
-    //             dateFilter: dateFilter,
-    //             isFinance: params.isFinance,
-    //             isSecondCat: params.isSecondCat
-    //         }
-
-    //         const result: ISpendingResponse = yield call(api.spendings, spendingsRequest);
-
-    //         yield put(new LoadSpendingsAction());
-    //     }
-    // }
 ];
 
 function* locationChangeSaga() {
@@ -103,7 +127,10 @@ export function* doCall() {
     }
 
     for (const r in routes) {
-        const params = new Route(routes[r].route.toString().toLowerCase()).match(location.toString().toLowerCase());
+        const route = rootUrl + routes[r].route.toLowerCase();
+        const currentLocation = rootUrl + location.toLowerCase();
+        const params = new Route((route)).match(currentLocation);
+
         if (params !== false) {
             yield call(routes[r].action, params);
             return;

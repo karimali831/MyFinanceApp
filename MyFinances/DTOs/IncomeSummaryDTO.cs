@@ -9,10 +9,11 @@ namespace MyFinances.DTOs
 {
     public class IncomeSummaryDTO
     {
-        public string Source { get; set; }
-        public int SourceId { get; set; }
-        public string SecondSource { get; set; }
+        public string Cat1 { get; set; }
+        public int CatId { get; set; }
+        public int SecondCatId { get; set; }
+        public string Cat2 { get; set; }
         public IEnumerable<IncomeSummaryDTO> SecondCats { get; set; }
-        public decimal TotalIncome { get; set; }
+        public decimal Total { get; set; }
     }
 }

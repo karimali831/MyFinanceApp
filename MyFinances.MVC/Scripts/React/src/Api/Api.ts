@@ -11,7 +11,7 @@ export class FinanceApi {
 
     public rootUrl: string = `${rootUrl}/api`;
 
-    public spendings = async (request: ISpendingRequest): Promise<ISpendingResponse> => {
+    public spendings = async (request?: ISpendingRequest): Promise<ISpendingResponse> => {
         return fetch(`${this.rootUrl}/spendings`, {
             method: "POST",
             body: JSON.stringify(request),
@@ -86,10 +86,10 @@ export class FinanceApi {
         .then(data => data as IFinanceResponse);
     }
 
-    public incomes = async (dateFilter: IDateFilter, sourceId?: number): Promise<IIncomeResponse> => {
-        return fetch(`${this.rootUrl}/finances/incomes/${sourceId}`, {
+    public incomes = async (request?: IIncomeRequest): Promise<IIncomeResponse> => {
+        return fetch(`${this.rootUrl}/finances/incomes`, {
             method: "POST",
-            body: JSON.stringify(dateFilter),
+            body: JSON.stringify(request),
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
@@ -162,10 +162,16 @@ export const api = new FinanceApi();
 
 export interface ISpendingRequest
 {
-    catId: number,
-    dateFilter: IDateFilter,
-    isFinance: boolean,
-    isSecondCat: boolean
+    catId?: number | null,
+    dateFilter?: IDateFilter,
+    isFinance?: boolean,
+    isSecondCat?: boolean
+}
+
+export interface IIncomeRequest
+{
+    sourceId?: number | null,
+    dateFilter?: IDateFilter
 }
 
 export interface ISpendingResponse {

@@ -6,7 +6,8 @@ import { actionToPlainObject } from './middleware/actionToPlainObject';
 import { History } from 'history';
 import { routerMiddleware } from 'connected-react-router';
 import { LoadSpendingSummaryAction, LoadIncomeSummaryAction } from './contexts/landing/Actions';
-import { spendingSummaryDateFilter, incomeSummaryDateFilter } from './contexts/common/ICommonState';
+import { spendingSummaryDateFilter } from './contexts/landing/ISpendingSummaryState';
+import { incomeSummaryDateFilter } from './contexts/landing/IIncomeSummaryState';
 
 export default function initialiseStore(history: History<any>) {
 

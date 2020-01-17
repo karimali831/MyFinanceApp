@@ -1,7 +1,7 @@
 import IStoreState from '../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import SpendingSummary, { IPropsFromState, IPropsFromDispatch } from './SpendingSummary';
-import { LoadSpendingSummaryAction } from '../../../../state/contexts/landing/Actions';
+import { ShowSecondCategorySpendingSummaryAction } from '../../../../state/contexts/landing/Actions';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -9,7 +9,7 @@ import { LoadSpendingSummaryAction } from '../../../../state/contexts/landing/Ac
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
-        dateFilter: state.common.spendingSummaryDateFilter,
+        dateFilter: state.spendingSummary.dateFilter,
         spendingSummary: state.spendingSummary.spendingSummary,
         fuelIn: state.spendingSummary.fuelIn,
         totalSpent: state.spendingSummary.totalSpent,
@@ -22,7 +22,7 @@ const mapStateToProps =
 // Add required action creators for component
 const mapPropsFromDispatch: IPropsFromDispatch =
 {
-    loadSpendingSummary: LoadSpendingSummaryAction.creator
+    showSecondCategory: ShowSecondCategorySpendingSummaryAction.creator
 };
 
 

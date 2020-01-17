@@ -1,8 +1,8 @@
 import ICommonState, { CommonState } from './contexts/common/ICommonState';
 // import ICWTLState, { CWTLState } from './contexts/cwtl/ICWTLState';
 // import IFinanceState, { FinanceState } from './contexts/finance/IFinanceState';
-// import IIncomeState, { IncomeState } from './contexts/income/IIncomeState';
-// import ISpendingState, { SpendingState } from './contexts/spending/ISpendingState';
+import IIncomeState, { IncomeState } from './contexts/income/IIncomeState';
+import ISpendingState, { SpendingState } from './contexts/spending/ISpendingState';
 import ISpendingSummaryState, { SpendingSummaryState } from './contexts/landing/ISpendingSummaryState';
 // import IErrorState, { ErrorState } from './contexts/error/IErrorState';
 import { IRouteState, RouteState } from './contexts/router/IRouteState';
@@ -18,8 +18,8 @@ export default interface IStoreState {
     // cwtl: ICWTLState,
     // finance: IFinanceState
     // error: IErrorState,
-    // income: IIncomeState,
-    // spending: ISpendingState,
+    income: IIncomeState,
+    spending: ISpendingState,
     spendingSummary: ISpendingSummaryState,
     incomeSummary: IIncomeSummaryState
 }
@@ -31,8 +31,8 @@ export class StoreState {
         // cwtl: CWTLState.intialState,
         // finance: FinanceState.intialState,
         // error: ErrorState.intialState,
-        // income: IncomeState.intialState,
-        // spending: SpendingState.intialState,
+        income: IncomeState.intialState,
+        spending: SpendingState.intialState,
         spendingSummary: SpendingSummaryState.intialState,
         incomeSummary: IncomeSummaryState.intialState
     };

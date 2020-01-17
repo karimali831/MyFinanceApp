@@ -1,4 +1,5 @@
-﻿@{
+﻿@using MyFinances.Helpers
+@{
     ViewBag.Title = "Spendings";
 }
 
@@ -6,8 +7,8 @@
 
 @if (Session["myFinanceApp-Authentication"] != null && Session["myFinanceApp-Authentication"].ToString() == ViewBag.Pwd)
 {
-    <div id="root"></div>
-    @Scripts.Render("~/Scripts/React/build/static/js/main.6ea68ba5.js")
+    <div id="root" data-subsiteroot="/" data-contentroot="@Utils.ResolveServerUrl("~/").TrimEnd('/')"></div>
+    @Scripts.Render($"~/Scripts/React/build/static/js/{ViewBag.ReactBundleJS}")
 
     <a href='@Url.Action("Index", "Home")'>
         <img src='@Url.Content("~/Content/Images/refresh.png")' />

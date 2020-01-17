@@ -5,8 +5,15 @@ import { Reducer } from 'redux';
 const IncomeReducer: Reducer<IIncomeState, IncomeActions> =
     (state = IncomeState.intialState, action) => {
         switch (action.type) {
-            case IncomeActionTypes.Income:
-                return { ...state, ...{ Income: action.IncomeMessage } };
+            case IncomeActionTypes.LoadIncomesSuccess:
+                return { ...state, 
+                    ...{ 
+                        loading: false,
+                        incomes: action.incomes,
+                        sourceId: state.sourceId,
+                        dateFilter: state.dateFilter
+                    } 
+                };
 
             default:
                 return state;

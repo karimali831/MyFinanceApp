@@ -14,7 +14,7 @@ namespace MyFinances.Service
     public interface IFinanceService
     {
         Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates);
-        Task<IEnumerable<Income>> GetAllIncomesAsync(DateFilter dateFilter, int? sourceId = null);
+        Task<IEnumerable<Income>> GetAllIncomesAsync(IncomeRequestDTO request);
         Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(FinanceDTO dto);
         Task InsertIncomeAsync(IncomeDTO dto);
@@ -109,13 +109,13 @@ namespace MyFinances.Service
             return finances;
         }
 
-        public async Task<IEnumerable<Income>> GetAllIncomesAsync(DateFilter dateFilter, int? sourceId)
+        public async Task<IEnumerable<Income>> GetAllIncomesAsync(IncomeRequestDTO request)
         {
-            var incomes = (await incomeRepository.GetAllAsync(dateFilter));
+            var incomes = (await incomeRepository.GetAllAsync(request.DateFilter));
 
-            if (sourceId.HasValue)
+            if (request.SourceId.HasValue)
             {
-                incomes = incomes.Where(x => x.SourceId == sourceId.Value);
+                incomes = incomes.Where(x => x.SourceId == request.SourceId.Value);
             }
 
             return incomes.OrderByDescending(x => x.Date).ThenBy(x => x.Source);
@@ -126,29 +126,30 @@ namespace MyFinances.Service
             var incomeSummary = await incomeRepository.GetSummaryAsync(dateFilter);
 
             var secondCats = incomeSummary
-                .Where(x => x.SecondSource != null)
+                .Where(x => x.Cat2 != null)
                 .GroupBy(
-                    p => new { p.SourceId, p.Source },
-                    p => new { p.SecondSource, p.TotalIncome },
+                    p => new { p.CatId, p.Cat1 },
+                    p => new { p.SecondCatId, p.Cat2, p.Total },
                     (key, g) =>
                         new IncomeSummaryDTO
                         {
-                            Source = key.Source,
-                            SourceId = key.SourceId,
-                            TotalIncome = incomeSummary
-                                .Where(x => x.SourceId == key.SourceId && x.Source == key.Source)
-                                .Sum(x => x.TotalIncome),
+                            Cat1 = key.Cat1,
+                            CatId = key.CatId,
+                            Total = incomeSummary
+                                .Where(x => x.CatId == key.CatId && x.Cat1 == key.Cat1)
+                                .Sum(x => x.Total),
                                     SecondCats = g.Select(s => new IncomeSummaryDTO
                                     {
-                                        SecondSource = s.SecondSource,
-                                        TotalIncome = s.TotalIncome
+                                        SecondCatId = s.SecondCatId,
+                                        Cat2 = s.Cat2,
+                                        Total = s.Total
                                     })
                         }
                  );
 
-            var firstCats = incomeSummary.Where(x => x.SecondSource == null);
+            var firstCats = incomeSummary.Where(x => x.Cat2 == null);
 
-            return firstCats.Concat(secondCats).OrderByDescending(x => x.TotalIncome).ToArray();
+            return firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
         }
 
         public int? CalculateDays(DateTime? Date1, DateTime? Date2)

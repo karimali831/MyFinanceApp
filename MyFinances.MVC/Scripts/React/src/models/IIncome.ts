@@ -14,9 +14,21 @@ export interface IIncomeDTO {
 }
 
 export interface IIncomeSummary {
-    source: string,
-    sourceId: number,
-    secondSource: string,
+    cat1: string,
+    catId: number,
+    secondCatId: number,
+    isFinance: boolean, // remove this
+    cat2: string,
     secondCats: IIncomeSummary[],
-    totalIncome: number,
+    total: number,
+}
+
+export interface IBaseModel<T> {
+    cat1: string,
+    catId: number,
+    secondCatId: number,
+    isFinance: boolean,
+    cat2: string,
+    secondCats: T[],
+    total: number
 }

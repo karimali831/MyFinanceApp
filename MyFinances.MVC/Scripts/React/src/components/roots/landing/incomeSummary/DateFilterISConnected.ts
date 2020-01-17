@@ -2,7 +2,8 @@ import IStoreState from '../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import DateFilterForSummary, { IPropsFromState, IPropsFromDispatch } from '../DateFilterForSummary';
 import { DateFilterChangeAction } from '../../../../state/contexts/common/Actions';
-import { initialIncomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
+import { incomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
+import { DateFrequency } from 'src/enums/DateFrequency';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -10,9 +11,9 @@ import { initialIncomeSummaryDateFilter } from 'src/state/contexts/landing/Selec
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
-        dateFilter: initialIncomeSummaryDateFilter(state),
+        dateFilter: incomeSummaryDateFilter(state),
         categoryType: state.incomeSummary.categoryType,
-        selectedFrequency: state.common.incomeSummaryDateFilter.frequency
+        selectedFrequency: DateFrequency[state.incomeSummary.dateFilter.frequency]
     });
 
 // Add required action creators for component

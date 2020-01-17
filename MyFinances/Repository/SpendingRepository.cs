@@ -57,7 +57,7 @@ namespace MyFinances.Repository
                     ON f.Id = s.FinanceId
                 WHERE 
                     Display = 1
-                    {(dateFilter.Frequency.HasValue ? " AND " + Utils.FilterDateSql(dateFilter) : null)}";
+                    {(dateFilter != null && dateFilter.Frequency.HasValue ? " AND " + Utils.FilterDateSql(dateFilter) : null)}";
 
             using (var sql = dbConnectionFactory())
             {
@@ -73,7 +73,8 @@ namespace MyFinances.Repository
                     CASE WHEN s.SecondCatId IS NULL THEN s.FinanceId ELSE s.SecondCatId END AS SecondCatId,
                     CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Cat1,
                     CASE WHEN s.CatId IS NULL THEN 1 ELSE 0 END AS IsFinance,
-	                c2.Name AS Cat2, SUM(s.Amount) as TotalSpent
+	                c2.Name AS Cat2, 
+                    SUM(s.Amount) as Total
                 FROM 
 	                {TABLE} as s
 	            LEFT JOIN Categories c1 
@@ -88,7 +89,7 @@ namespace MyFinances.Repository
                 GROUP BY 
                     s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name
                 ORDER BY 
-                    TotalSpent DESC";
+                    Total DESC";
 
             using (var sql = dbConnectionFactory())
             {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { api } from '../../Api/Api';
+import { api } from '../../api/Api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSync } from '@fortawesome/free-solid-svg-icons';
 import { ICNWPayment } from '../../models/ICNWPayment';

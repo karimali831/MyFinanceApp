@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { commonApi } from '../../Api/CommonApi'
+import { commonApi } from '../../../api/CommonApi'
 import { Redirect } from 'react-router-dom'
-import { Loader } from '../base/Loader';
-import { AddMenu } from '../base/Menu';
-import { ICategory } from '../../models/ICategory';
-import { CategoryType } from '../../enums/CategoryType';
-import { IIncomeDTO } from '../../models/IIncome';
+import { Loader } from '../../base/Loader';
+import { AddMenu } from '../../base/Menu';
+import { ICategory } from '../../../models/ICategory';
+import { CategoryType } from '../../../enums/CategoryType';
+import { IIncomeDTO } from '../../../models/IIncome';
 
 interface IOwnProps {
 }

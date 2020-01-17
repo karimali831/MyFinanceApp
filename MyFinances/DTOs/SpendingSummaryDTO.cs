@@ -15,6 +15,6 @@ namespace MyFinances.DTOs
         public bool IsFinance { get; set; }
         public string Cat2 { get; set; }
         public IEnumerable<SpendingSummaryDTO> SecondCats { get; set; }
-        public decimal TotalSpent { get; set; }
+        public decimal Total { get; set; }
     }
 }

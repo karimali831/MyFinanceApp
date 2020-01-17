@@ -1,9 +1,18 @@
+import { IIncome } from "../../../models/IIncome";
+import { IDateFilter } from 'src/models/IDateFilter';
+
 export default interface IIncomeState {
-    error: string | null
+    incomes: IIncome[],
+    loading: boolean,
+    sourceId: number | null,
+    dateFilter?: IDateFilter
 }
 
 export class IncomeState {
     public static readonly intialState = {
-        error: null
+        loading: true,
+        incomes: [],
+        sourceId: null,
+        dateFilter: undefined
     }
 }

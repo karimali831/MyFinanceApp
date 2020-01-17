@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { commonApi } from '../../Api/CommonApi'
+import { commonApi } from '../../api/CommonApi'
 import { Redirect } from 'react-router-dom'
 import { Loader } from '../base/Loader';
 import { AddMenu } from '../base/Menu';

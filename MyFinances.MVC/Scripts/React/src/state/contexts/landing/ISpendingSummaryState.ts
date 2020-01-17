@@ -1,5 +1,7 @@
 import { ISpendingSummary } from "../../../models/ISpending";
 import { CategoryType } from 'src/enums/CategoryType';
+import { IDateFilter } from 'src/models/IDateFilter';
+import { DateFrequency } from 'src/enums/DateFrequency';
 
 export default interface ISpendingSummaryState {
     spendingSummary: ISpendingSummary[],
@@ -7,8 +9,17 @@ export default interface ISpendingSummaryState {
     totalSpent: number,
     loading: boolean,
     showSecondCatSummary: string | null,
-    categoryType: CategoryType
+    categoryType: CategoryType,
+    dateFilter: IDateFilter
 }
+
+export const spendingSummaryDateFilter: IDateFilter = {
+    frequency: DateFrequency.Today,
+    interval: 1,
+    fromDateRange: null,
+    toDateRange: null
+}
+
 export class SpendingSummaryState {
 
     public static readonly intialState = {
@@ -17,7 +28,8 @@ export class SpendingSummaryState {
         totalSpent: 0,
         loading: true,
         showSecondCatSummary: null,
-        categoryType: CategoryType.Spendings
+        categoryType: CategoryType.Spendings,
+        dateFilter: spendingSummaryDateFilter
     }
 }
 

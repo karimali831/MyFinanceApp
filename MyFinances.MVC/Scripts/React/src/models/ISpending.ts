@@ -25,5 +25,5 @@ export interface ISpendingSummary
     isFinance: boolean,
     cat2: string,
     secondCats: ISpendingSummary[],
-    totalSpent: number,
+    total: number,
 }

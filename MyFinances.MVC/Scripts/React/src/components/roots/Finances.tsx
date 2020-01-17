@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { api } from '../../Api/Api';
+import { api } from '../../api/Api';
 import { Loader } from '../base/Loader';
 import { priceFormatter, intToOrdinalNumberString, paymentStatus, cleanText, boolHighlight } from './utils/Utils';
 import { IFinance } from '../../models/IFinance';

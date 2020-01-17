@@ -6,28 +6,28 @@ import { CategoryType } from 'src/enums/CategoryType';
 
 export interface IOwnState {
     dateFilter: IDateFilter,
-    selectedFrequency: DateFrequency
+    selectedFrequency: string
 }
 
-interface IOwnProps<T> {
+interface IOwnProps {
     dateFilter?: IDateFilter,
-    selectedFrequency: DateFrequency,
+    selectedFrequency: string,
     categoryType: CategoryType,
     dateFilterChanged: (filter: IDateFilter, category: CategoryType) => void,
 }
 
-export default class DateFilter<T> extends React.Component<IOwnProps<T>, IOwnState> {
+export default class DateFilter extends React.Component<IOwnProps, IOwnState> {
 
-    constructor(props: IOwnProps<T>) {
+    constructor(props: IOwnProps) {
         super(props);
 
         this.state = {
             dateFilter: this.props.dateFilter !== undefined ? this.props.dateFilter : this.state.dateFilter,
-            selectedFrequency: this.props.dateFilter !== undefined ? this.props.dateFilter.frequency : this.props.selectedFrequency
+            selectedFrequency: this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : DateFrequency[this.props.selectedFrequency]
         };
     }
 
-    public componentDidUpdate(prevProps: IOwnProps<T>, prevState: IOwnState) {
+    public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
         if (this.state.dateFilter.frequency !== DateFrequency.DateRange && (
             prevState.dateFilter.frequency !== this.state.dateFilter.frequency || 
             prevState.dateFilter.interval !== this.state.dateFilter.interval)) {
@@ -48,14 +48,14 @@ export default class DateFilter<T> extends React.Component<IOwnProps<T>, IOwnSta
                 <select onChange={(e) => this.onChangeSelectedFrequency(e)} className="form-control">
                 {
                     Object.keys(DateFrequency).filter(o => !isNaN(o as any)).map(key => 
-                        <option key={key} value={key} selected={DateFrequency[this.state.selectedFrequency] === DateFrequency[key]}>
+                        <option key={key} value={DateFrequency[key]} selected={this.state.selectedFrequency === DateFrequency[key]}>
                             {cleanText(DateFrequency[key])}
                         </option>
                     )
                 }
                 </select>
                 {
-                    this.state.dateFilter.frequency && this.state.dateFilter.frequency.toString().includes("Last") ?
+                    DateFrequency[this.state.dateFilter.frequency].includes("Last") ?
                         <select onChange={(e) => this.onChangeSelectedInterval(e)} className="form-control">
                         {
                             Array.from(Array(30), (e, i) => {

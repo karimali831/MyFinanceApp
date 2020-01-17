@@ -49,7 +49,7 @@ namespace MyFinances.Repository
                         ON c1.Id = i.SourceId
                     LEFT JOIN Categories c2
                         ON c2.Id = i.SecondSourceId
-                    {(dateFilter.Frequency.HasValue ? " WHERE " + Utils.FilterDateSql(dateFilter) : null)}";;
+                    {(dateFilter != null && dateFilter.Frequency.HasValue ? " WHERE " + Utils.FilterDateSql(dateFilter) : null)}";;
 
                 return (await sql.QueryAsync<Income>(sqlTxt)).ToArray();
             }
@@ -61,12 +61,13 @@ namespace MyFinances.Repository
             {
                 string sqlTxt = $@"
                     SELECT 
-	                    i.SourceId,
-	                    c1.Name AS Source,
-                        c2.Name AS SecondSource,
-	                    SUM(i.Amount) as TotalIncome
+	                    i.SourceId AS CatId,
+						i.SecondSourceId AS SecondCatId,
+	                    c1.Name AS Cat1,
+                        c2.Name AS Cat2,
+	                    SUM(i.Amount) as Total
                     FROM 
-	                    Incomes as i
+	                    {TABLE} as i
                     LEFT JOIN Categories c1
 	                    ON c1.Id = i.SourceId
                     LEFT JOIN Categories c2
@@ -74,9 +75,9 @@ namespace MyFinances.Repository
                     WHERE 
                          {Utils.FilterDateSql(dateFilter)}
                     GROUP BY 
-	                    i.SourceId, c1.Name, c2.Name
+	                    i.SourceId, i.SecondSourceId, c1.Name, c2.Name
                     ORDER BY 
-	                    TotalIncome DESC";
+	                    Total DESC";
 
 
                     return (await sql.QueryAsync<IncomeSummaryDTO>(sqlTxt)).ToArray();

@@ -69,7 +69,7 @@ namespace MyFinances.Website.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK,
                 new {
                     SpendingSummary = spendings,
-                    TotalSpent = spendings.Sum(x => x.TotalSpent),
+                    TotalSpent = spendings.Sum(x => x.Total),
                     FuelIn = fuelIn
                 }
             );

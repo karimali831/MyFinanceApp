@@ -1,22 +1,22 @@
-import { api, IIncomeSummaryResponse } from '../../../Api/Api'
+import { api, IIncomeSummaryResponse } from '../../../api/Api'
 import { select, call, put, takeLatest } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../contexts/error/Actions';
 import { LandingSummaryActionTypes, LoadIncomeSummarySuccessAction, LoadIncomeSummaryFailureAction } from '../../contexts/landing/Actions';
 import { IDateFilter } from '../../../models/IDateFilter';
-import { getSelectedDateFilter, initialIncomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
+import { getSelectedDateFilter, incomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
 
 export default function* loadIncomeSummaryApiSaga() {
-    yield takeLatest(LandingSummaryActionTypes.LoadIncomeSummary, loadIncomeSummary);
+    yield takeLatest(LandingSummaryActionTypes.LoadIncomeSummary, loadIncomeSummaryRequest);
 }
 
-export function* loadIncomeSummary() {
+export function* loadIncomeSummaryRequest() {
+    const dateFilter = yield select(getSelectedDateFilter);
+    const request: IDateFilter = dateFilter !== null ? dateFilter : yield select(incomeSummaryDateFilter)
+    yield call(loadIncomeSummary, request);
+}
+
+export function* loadIncomeSummary(request: IDateFilter) {
     try {
-
-        // Create Request object
-        // selectors to access the state for call params
-        const dateFilter = yield select(getSelectedDateFilter);
-        const request: IDateFilter = dateFilter !== null ? dateFilter : yield select(initialIncomeSummaryDateFilter)
-
         // Start the API call asynchronously
         const result: IIncomeSummaryResponse = yield call(api.incomeSummary, request);
 

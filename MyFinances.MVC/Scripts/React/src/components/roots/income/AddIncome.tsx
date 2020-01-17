@@ -159,7 +159,7 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
         {
             const addModel: IIncomeDTO = {
                 sourceId: this.state.selectedCat,
-                secondCatId: this.state.selectedSecondCat,
+                secondSourceId: this.state.selectedSecondCat,
                 date: this.state.date,
                 amount: this.state.amount
             }

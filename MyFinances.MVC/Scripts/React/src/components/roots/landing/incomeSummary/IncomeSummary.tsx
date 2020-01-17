@@ -31,6 +31,8 @@ export default class IncomeSummary extends React.Component<AllProps> {
         if (this.props.loading) {
             return <Loader text="Loading income summary..." />
         }
+
+        {console.log(JSON.stringify(this.props.incomeSummary))}
         
         return (
             <table className="table">

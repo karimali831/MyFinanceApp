@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { IDateFilter } from 'src/models/IDateFilter';
-import { Loader } from 'src/components/base/Loader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
@@ -9,8 +8,6 @@ import { CategoryType } from 'src/enums/CategoryType';
 import { SummaryFilteredList } from '../utils/Utils';
 
 export interface IOwnState {
-    loading: boolean;
-    showResults: boolean;
 }
 
 export interface IOwnProps<T> {
@@ -22,21 +19,13 @@ export interface IOwnProps<T> {
 }
 
 export default class SummaryList<T extends IBaseModel<T>> extends React.Component<IOwnProps<T>, IOwnState> {
-    
+
     constructor(props: IOwnProps<T>) {
         super(props);
-
-        this.state = {
-            loading: false,
-            showResults: false
-        };
+        this.state = {};
     }
 
     public render() {
-        if (this.state.loading) {
-            return <Loader text="Loading income summary..." />
-        }
-
         return (
             this.props.filteredResults && this.props.filteredResults.map((s, key) => 
                 <tr key={key}>

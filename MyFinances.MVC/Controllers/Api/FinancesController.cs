@@ -96,6 +96,16 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> GetIncomesSummaryAsync(DateFilter dateFilter)
         {
+            if (DateTime.TryParseExact(dateFilter.FromDateRange.ToString(), "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime fromDateRange))
+            {
+                dateFilter.FromDateRange = fromDateRange;
+            }
+
+            if (DateTime.TryParseExact(dateFilter.ToDateRange.ToString(), "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime toDateRange))
+            {
+                dateFilter.ToDateRange = toDateRange;
+            }
+
             var incomeSummary = await financeService.GetIncomeSummaryAsync(dateFilter);
 
             return Request.CreateResponse(HttpStatusCode.OK, 

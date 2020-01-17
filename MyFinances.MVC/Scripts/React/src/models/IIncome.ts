@@ -8,7 +8,7 @@ export interface IIncome {
 
 export interface IIncomeDTO {
     sourceId: number,
-    secondCatId: number | undefined,
+    secondSourceId: number | undefined,
     date: string,
     amount: number
 }

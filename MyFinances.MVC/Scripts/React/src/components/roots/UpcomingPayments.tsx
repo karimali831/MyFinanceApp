@@ -47,7 +47,7 @@ export default class UpcomingPayments extends React.Component<IOwnProps, IOwnSta
                         <tr key={p.id}>
                             <th scope="row">
                                 <FontAwesomeIcon icon={p.manualPayment ? faExclamationCircle : faArrowDown} />  
-                                 {p.name} - £{p.totalAmount === null ? p.avgMonthlyAmount : p.totalAmount}
+                                 {p.name} - £{p.avgMonthlyAmount}
                             </th>
                             <td>
                                 {paymentStatus(p.paymentStatus, p.daysUntilDue)}

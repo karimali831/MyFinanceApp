@@ -32,7 +32,7 @@ namespace MyFinances.Website.Controllers.API
         [HttpGet]
         public async Task<HttpResponseMessage> GetFinancesAsync(bool resyncNextDueDates, bool upcomingPayments)
         {
-            var finances = await financeService.GetAllAsync(resyncNextDueDates);
+            var finances = await financeService.GetFinances(resyncNextDueDates);
 
             var currentMonth = Enum.TryParse(DateTime.UtcNow.Date.ToString("MMMM"), out DateFrequency thisMonth);
             var spentThisMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = thisMonth, Interval = 1 });
@@ -52,24 +52,40 @@ namespace MyFinances.Website.Controllers.API
                         x.Id,
                         x.Name,
                         x.AvgMonthlyAmount,
-                        EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
                         x.Remaining,
                         x.MonthlyDueDate,
                         x.OverrideNextDueDate,
                         x.ManualPayment,
-                        NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null,
-                        DaysUntilDue = financeService.CalculateDays(x.NextDueDate, DateTime.UtcNow),
-                        PaymentStatus = financeService.PaymentStatusAsync(x.Id, x.NextDueDate)
-                    })
-                    .OrderByDescending(x => x.PaymentStatus)
-                    .ThenByDescending(x => (x.PaymentStatus == PaymentStatus.Late ? x.DaysUntilDue : null))
-                    .ThenBy(x => (x.PaymentStatus == PaymentStatus.Upcoming ? x.DaysUntilDue : null))
-                    .ThenBy(x => x.Name),
+                        x.DaysUntilDue,
+                        x.PaymentStatus,
+                        EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
+                        NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null
+                    }),
                 TotalAvgCost = finances
                     .Where(x => x.EndDate == null || DateTime.UtcNow.Date < x.EndDate)
                     .Sum(x => x.AvgMonthlyAmount),
                 SpentThisMonth = spentThisMonth.Where(x => x.IsFinance == true).Sum(x => x.Total),
                 SpentLastMonth = spentLastMonth.Where(x => x.IsFinance == true).Sum(x => x.Total)
+            });
+        }
+
+        [Route("notifications")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetNotificationsAsync()
+        {
+            var notifications = await financeService.GetNotifications();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Notifications = new
+                {
+                    LatePaymentsCount = notifications.LatePayments.Count,
+                    LatePaymentsTotal = notifications.LatePayments.Total,
+                    UpcomingPaymentsCount = notifications.UpcomingPayments.Count,
+                    UpcomingPaymentsTotal = notifications.UpcomingPayments.Total,
+                    DueTodayPaymentsCount = notifications.DueTodayPayments.Count,
+                    DueTodayPaymentsTotal = notifications.DueTodayPayments.Total
+                }
             });
         }
 

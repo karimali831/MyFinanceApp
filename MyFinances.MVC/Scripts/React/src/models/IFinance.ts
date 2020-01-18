@@ -27,3 +27,12 @@ export interface IFinanceDTO {
     name: string,
     catId: number
 }
+
+export interface IFinanceNotification {
+    latePaymentsCount: number,
+    latePaymentsTotal: number,
+    upcomingPaymentsCount: number,
+    upcomingPaymentsTotal: number,
+    dueTodayPaymentsCount: number,
+    dueTodayPaymentsTotal: number
+}

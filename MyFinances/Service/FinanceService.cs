@@ -1,6 +1,7 @@
 ﻿using MyFinances.DTOs;
 using MyFinances.Enums;
 using MyFinances.Model;
+using MyFinances.ViewModels;
 using MyFinances.Repository;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace MyFinances.Service
     public interface IFinanceService
     {
         Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates);
+        Task<FinanceNotificationVM> GetNotifications();
+        Task<IEnumerable<FinanceVM>> GetFinances(bool resyncNextDueDates);
         Task<IEnumerable<Income>> GetAllIncomesAsync(IncomeRequestDTO request);
         Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(FinanceDTO dto);
@@ -31,7 +34,7 @@ namespace MyFinances.Service
         private readonly IBaseService baseService;
 
         public FinanceService(
-            IFinanceRepository financeRepository, 
+            IFinanceRepository financeRepository,
             IIncomeRepository incomeRepository,
             ISpendingService spendingService,
             IBaseService baseService)
@@ -52,6 +55,52 @@ namespace MyFinances.Service
             return date;
         }
 
+        public async Task<IEnumerable<FinanceVM>> GetFinances(bool resyncNextDueDates)
+        {
+            return (await GetAllAsync(resyncNextDueDates))
+                .Select(x => new FinanceVM
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    AvgMonthlyAmount = x.AvgMonthlyAmount,
+                    Remaining = x.Remaining,
+                    MonthlyDueDate = x.MonthlyDueDate,
+                    EndDate = x.EndDate,
+                    NextDueDate = x.NextDueDate,
+                    OverrideNextDueDate = x.OverrideNextDueDate,
+                    ManualPayment = x.ManualPayment,
+                    DaysUntilDue = CalculateDays(x.NextDueDate, DateTime.UtcNow),
+                    PaymentStatus = PaymentStatusAsync(x.Id, x.NextDueDate)
+                })
+                .OrderByDescending(x => x.PaymentStatus)
+                .ThenByDescending(x => (x.PaymentStatus == PaymentStatus.Late ? x.DaysUntilDue : null))
+                .ThenBy(x => (x.PaymentStatus == PaymentStatus.Upcoming ? x.DaysUntilDue : null))
+                .ThenBy(x => x.Name);
+        }
+
+        public async Task<FinanceNotificationVM> GetNotifications()
+        {
+            var finances = await GetFinances(resyncNextDueDates: false);
+
+            return new FinanceNotificationVM
+            {
+                LatePayments = (finances
+                    .Count(x => x.PaymentStatus == PaymentStatus.Late), finances
+                    .Where(x => x.PaymentStatus == PaymentStatus.Late)
+                    .Sum(x => x.AvgMonthlyAmount)),
+
+                UpcomingPayments = (finances
+                    .Count(x => x.PaymentStatus == PaymentStatus.Upcoming && (x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7) || x.ManualPayment)), finances
+                    .Where(x => x.PaymentStatus == PaymentStatus.Upcoming && (x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7) || x.ManualPayment))
+                    .Sum(x => x.AvgMonthlyAmount)),
+
+                DueTodayPayments = (finances
+                    .Count(x => x.PaymentStatus == PaymentStatus.DueToday), finances
+                    .Where(x => x.PaymentStatus == PaymentStatus.DueToday)
+                    .Sum(x => x.AvgMonthlyAmount))
+            };
+        }
+
         public async Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates)
         {
             var finances = await financeRepository.GetAllAsync();
@@ -61,6 +110,7 @@ namespace MyFinances.Service
                 foreach(var finance in finances)
                 {
                     var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(finance.Id);
+
 
                     // delete finance if one-off payment and is paid (i.e. ManualPayment = 1)
                     if (finance.ManualPayment && (!expenseLastPaidDate.HasValue || DateTime.UtcNow.Date >= expenseLastPaidDate.Value))

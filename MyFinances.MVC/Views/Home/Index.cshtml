@@ -3,12 +3,12 @@
     ViewBag.Title = "Spendings";
 }
 
-    <p style="color: red; font-weight: bold">@ViewBag.ErrorMessage</p>
+<p style="color: red; font-weight: bold">@ViewBag.ErrorMessage</p>
 
 @if (Session["myFinanceApp-Authentication"] != null && Session["myFinanceApp-Authentication"].ToString() == ViewBag.Pwd)
 {
     <div id="root" data-subsiteroot="/" data-contentroot="@Utils.ResolveServerUrl("~/").TrimEnd('/')"></div>
-    @Scripts.Render($"~/Scripts/React/build/static/js/{ViewBag.ReactBundleJS}")
+    @Scripts.Render($"~/Scripts/React/dist/bundle.js")
 
     <a href='@Url.Action("Index", "Home")'>
         <img src='@Url.Content("~/Content/Images/refresh.png")' />

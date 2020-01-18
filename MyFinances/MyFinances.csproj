@@ -148,6 +148,7 @@
     <Compile Include="Service\CNWService.cs" />
     <Compile Include="Service\SpendingsService.cs" />
     <Compile Include="Service\FinanceService.cs" />
+    <Compile Include="ViewModels\FinanceVM.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

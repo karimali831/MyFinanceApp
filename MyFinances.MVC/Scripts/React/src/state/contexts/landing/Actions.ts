@@ -1,6 +1,7 @@
 import { ISpendingSummary } from '../../../models/ISpending';
 import { IDateFilter } from "../../../models/IDateFilter";
 import { IIncomeSummary } from 'src/models/IIncome';
+import { IFinanceNotification } from 'src/models/IFinance';
 
 // action types
 export class LandingSummaryActionTypes {
@@ -14,6 +15,9 @@ export class LandingSummaryActionTypes {
     public static readonly ShowSecondCategoryIncomeSummary = "@@landingsummary/showsecondcategoryincomesummary";
     public static readonly SpendingSummaryDateFilterChange = "@@landingsummary/spendingsummarydatefilterchange"
     public static readonly IncomeSummaryDateFilterChange = "@@landingsummary/incomesummarydatefilterchange"
+    public static readonly LoadNotifications = "@@landingsummary/loadnotifications";
+    public static readonly LoadNotificationsSuccess = "@@landingsummary/loadnotificationssuccess";
+    public static readonly LoadNotificationsFailure = "@@landingsummary/loadnotificationsfailure";
 }
 
 // actions defined as classes with a creator as a static function
@@ -120,6 +124,32 @@ export class IncomeSummaryDateFilterChangeAction {
     ) { }
 }
 
+export class LoadNotificationsAction {
+    public static readonly creator = () => new LoadNotificationsAction();
+
+    public readonly type = LandingSummaryActionTypes.LoadNotifications
+}
+
+export class LoadNotificationsSuccessAction {
+    public static readonly creator = (notifications: IFinanceNotification) => new LoadNotificationsSuccessAction(notifications);
+
+    public readonly type = LandingSummaryActionTypes.LoadNotificationsSuccess;
+
+    constructor(
+        public notifications: IFinanceNotification
+    ) { }
+}
+
+export class LoadNotificationsFailureAction {
+    public static readonly creator = (errorMsg: string) => new LoadNotificationsFailureAction(errorMsg);
+
+    public readonly type = LandingSummaryActionTypes.LoadNotificationsFailure;
+
+    constructor(
+        public errorMsg: string
+    ) { }
+}
+
 // Create a discriminated union of all action types used to correctly type the
 // actions in the reducer switch statement
 export type LandingSummaryActions =
@@ -132,4 +162,7 @@ export type LandingSummaryActions =
     ShowSecondCategorySpendingSummaryAction |
     ShowSecondCategoryIncomeSummaryAction |
     SpendingSummaryDateFilterChangeAction |
-    IncomeSummaryDateFilterChangeAction
+    IncomeSummaryDateFilterChangeAction |
+    LoadNotificationsAction |
+    LoadNotificationsSuccessAction |
+    LoadNotificationsFailureAction

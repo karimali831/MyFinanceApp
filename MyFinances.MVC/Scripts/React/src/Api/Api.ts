@@ -1,6 +1,6 @@
 import { ICategory } from '../models/ICategory'
 import { ISpending, ISpendingSummary } from '../models/ISpending'
-import { IFinance } from '../models/IFinance'
+import { IFinance, IFinanceNotification } from '../models/IFinance'
 import { IRoute } from '../models/IRoute'
 import { IIncome, IIncomeSummary } from '../models/IIncome';
 import { ICNWPayment } from '../models/ICNWPayment';
@@ -66,6 +66,24 @@ export class FinanceApi {
             return response.json();
         })
         .then(data => data as IIncomeSummaryResponse);
+    }
+
+    public notifications = async (): Promise<INotificationResponse> => {
+        return fetch(`${this.rootUrl}/finances/notifications`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => data as INotificationResponse);
     }
 
     public finances = async (resyncNextDueDates = false, upcomingPayments = false): Promise<IFinanceResponse> => {
@@ -192,6 +210,10 @@ export interface ISpendingSummaryResponse {
 export interface IIncomeSummaryResponse {
     incomeSummary: IIncomeSummary[],
     totalIncome: number
+}
+
+export interface INotificationResponse {
+    notifications: IFinanceNotification
 }
 
 export interface IFinanceResponse {

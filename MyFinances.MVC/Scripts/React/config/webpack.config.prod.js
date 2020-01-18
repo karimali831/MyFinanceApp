@@ -31,8 +31,7 @@ module.exports = {
   entry: [require.resolve('./polyfills'), paths.appIndexJs],
   output: {
     path: paths.appBuild,
-    filename: 'static/js/[name].[chunkhash:8].js',
-    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
+    filename: '../dist/bundle.js',
     publicPath: publicPath,
     jsonpFunction: 'jsonpFunctionNavV2',
     devtoolModuleFilenameTemplate: info =>

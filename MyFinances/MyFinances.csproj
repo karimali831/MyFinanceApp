@@ -113,6 +113,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTOs\ReminderDTO.cs" />
     <Compile Include="DTOs\CNWPaymentDTO.cs" />
     <Compile Include="DTOs\CNWRouteDTO.cs" />
     <Compile Include="DTOs\CategoryDTO.cs" />
@@ -128,14 +129,16 @@
     <Compile Include="Enums\PaymentStatus.cs" />
     <Compile Include="Enums\CategoryType.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Model\Reminder.cs" />
     <Compile Include="Model\CNWRates.cs" />
     <Compile Include="Model\CNWPayment.cs" />
     <Compile Include="Model\CNWRoute.cs" />
     <Compile Include="Model\Category.cs" />
-    <Compile Include="Model\Incomes.cs" />
+    <Compile Include="Model\Income.cs" />
     <Compile Include="Model\Spending.cs" />
     <Compile Include="Model\Finance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\RemindersRepository.cs" />
     <Compile Include="Repository\BaseRepository.cs" />
     <Compile Include="Repository\CNWRatesRepository.cs" />
     <Compile Include="Repository\CNWPaymentsRepository.cs" />
@@ -144,6 +147,7 @@
     <Compile Include="Repository\IncomeRepository.cs" />
     <Compile Include="Repository\SpendingRepository.cs" />
     <Compile Include="Repository\FinanceRepository.cs" />
+    <Compile Include="Service\RemindersService.cs" />
     <Compile Include="Service\BaseService.cs" />
     <Compile Include="Service\CNWService.cs" />
     <Compile Include="Service\SpendingsService.cs" />

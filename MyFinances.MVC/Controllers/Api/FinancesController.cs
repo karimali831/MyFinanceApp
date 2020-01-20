@@ -84,7 +84,19 @@ namespace MyFinances.Website.Controllers.API
                     UpcomingPaymentsCount = notifications.UpcomingPayments.Count,
                     UpcomingPaymentsTotal = notifications.UpcomingPayments.Total,
                     DueTodayPaymentsCount = notifications.DueTodayPayments.Count,
-                    DueTodayPaymentsTotal = notifications.DueTodayPayments.Total
+                    DueTodayPaymentsTotal = notifications.DueTodayPayments.Total,
+                    UpcomingReminders = notifications.UpcomingReminders.Select(x => new
+                    {
+                        x.Id,
+                        x.Notes,
+                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss")
+                    }),
+                    DueTodayReminders = notifications.DueTodayReminders.Select(x => new
+                    {
+                        x.Id,
+                        x.Notes,
+                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss")
+                    })
                 }
             });
         }

@@ -19,6 +19,7 @@ import { createHashHistory, createBrowserHistory } from 'history';
 import Landing from '../roots/landing/Landing';
 import Spendings from '../roots/spending/SpendingConnected'
 import { CategoryType } from 'src/enums/CategoryType';
+import AddReminder from '../roots/AddReminder';
 
 const browserHistory = history.pushState ? createBrowserHistory() : createHashHistory();
 
@@ -41,6 +42,7 @@ class App extends React.Component {
                 <Route path="/addexpense/" component={AddExpense} />
                 <Route path="/addincome/" component={AddIncome} />
                 <Route path="/addcategory" component={AddCategory} />
+                <Route path="/addreminder/" component={AddReminder} />
                 <Route path="/finance/" component={Finances} />
                 <Route path="/spending/" component={Spendings} />
                 <Route path="/income/" component={Incomes} />

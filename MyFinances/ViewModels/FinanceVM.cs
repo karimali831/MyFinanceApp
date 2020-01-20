@@ -1,4 +1,5 @@
 ﻿using MyFinances.Enums;
+using MyFinances.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,8 @@ namespace MyFinances.ViewModels
 
     public class FinanceNotificationVM
     {
+        public IEnumerable<Reminder> DueTodayReminders { get; set; }
+        public IEnumerable<Reminder> UpcomingReminders { get; set; }
         public (int Count, decimal Total) LatePayments { get; set; }
         public (int Count, decimal Total) UpcomingPayments { get; set; }
         public (int Count, decimal Total) DueTodayPayments { get; set; }

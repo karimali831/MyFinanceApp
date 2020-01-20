@@ -31,17 +31,20 @@ namespace MyFinances.Service
         private readonly IFinanceRepository financeRepository;
         private readonly IIncomeRepository incomeRepository;
         private readonly ISpendingService spendingService;
+        private readonly IRemindersService remindersService;
         private readonly IBaseService baseService;
 
         public FinanceService(
             IFinanceRepository financeRepository,
             IIncomeRepository incomeRepository,
             ISpendingService spendingService,
+            IRemindersService remindersService,
             IBaseService baseService)
         {
             this.financeRepository = financeRepository ?? throw new ArgumentNullException(nameof(financeRepository));
             this.incomeRepository = incomeRepository ?? throw new ArgumentNullException(nameof(incomeRepository));
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
+            this.remindersService = remindersService ?? throw new ArgumentNullException(nameof(remindersService));
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
         }
 
@@ -81,6 +84,7 @@ namespace MyFinances.Service
         public async Task<FinanceNotificationVM> GetNotifications()
         {
             var finances = await GetFinances(resyncNextDueDates: false);
+            var reminders = await remindersService.GetAllAsync();
 
             return new FinanceNotificationVM
             {
@@ -97,7 +101,10 @@ namespace MyFinances.Service
                 DueTodayPayments = (finances
                     .Count(x => x.PaymentStatus == PaymentStatus.DueToday), finances
                     .Where(x => x.PaymentStatus == PaymentStatus.DueToday)
-                    .Sum(x => x.AvgMonthlyAmount))
+                    .Sum(x => x.AvgMonthlyAmount)),
+
+                DueTodayReminders = reminders.Where(x => x.DueDate.Date == DateTime.UtcNow.Date),
+                UpcomingReminders = reminders.Where(x => x.DueDate <= DateTime.UtcNow.Date.AddDays(7) && x.DueDate.Date != DateTime.UtcNow.Date)
             };
         }
 

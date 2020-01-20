@@ -13,6 +13,7 @@ import { ISpendingRequest, IIncomeRequest } from 'src/api/Api';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DateFrequency } from 'src/enums/DateFrequency';
 import { loadIncomes } from './loadIncomesApiSaga';
+import { loadNotifications } from './loadNotificationsApiSaga';
 
 interface IRoute {
     route: string,
@@ -54,6 +55,7 @@ const routes: IRoute[] = [
             
             yield call(loadSpendingSummary, yield select(spendingSummaryDateFilter))
             yield call(loadIncomeSummary, yield select(incomeSummaryDateFilter))
+            yield call(loadNotifications)
         }
     },
     {

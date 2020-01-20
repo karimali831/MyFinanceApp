@@ -1,3 +1,5 @@
+import { IReminder } from './IReminder';
+
 export interface IFinance {
     id: number,
     name: string,
@@ -34,5 +36,7 @@ export interface IFinanceNotification {
     upcomingPaymentsCount: number,
     upcomingPaymentsTotal: number,
     dueTodayPaymentsCount: number,
-    dueTodayPaymentsTotal: number
+    dueTodayPaymentsTotal: number,
+    upcomingReminders: IReminder[],
+    dueTodayReminders: IReminder[]
 }

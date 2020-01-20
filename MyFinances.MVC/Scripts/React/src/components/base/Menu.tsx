@@ -19,6 +19,7 @@ export const AddMenu = (active: string) =>
                 <li className={active === "income" ? "active" : undefined}><Link to="/addincome/">Add Income</Link></li>
                 <li className={active === "expense" ? "active" : undefined}><Link to="/addexpense/">Add Finance</Link></li>
                 <li className={active === "category" ? "active" : undefined}><Link to="/addcategory/">Add Category</Link></li>
+                <li className={active === "reminder" ? "active" : undefined}><Link to="/addreminder/">Add Reminder</Link></li>
             </ul>
         </div>
     </nav>

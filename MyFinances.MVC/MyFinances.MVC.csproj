@@ -101,6 +101,8 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Security.AccessControl, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.AccessControl.4.5.0\lib\net461\System.Security.AccessControl.dll</HintPath>
     </Reference>
@@ -232,13 +234,54 @@
     <Compile Include="Controllers\Api\SpendingsController.cs" />
     <Compile Include="Controllers\Api\FinancesController.cs" />
     <Compile Include="Controllers\CNWController.cs" />
+    <Compile Include="Controllers\FinancesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="GlobalExceptionHandler.cs" />
+    <Compile Include="Models\Category.cs">
+      <DependentUpon>Charts.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Charts.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Charts.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Charts.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Charts.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Charts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Charts.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CNWPayment.cs">
+      <DependentUpon>Charts.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CNWRate.cs">
+      <DependentUpon>Charts.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CNWRoute.cs">
+      <DependentUpon>Charts.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Finance.cs">
+      <DependentUpon>Charts.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Income.cs">
+      <DependentUpon>Charts.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Reminder.cs">
+      <DependentUpon>Charts.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Spending.cs">
+      <DependentUpon>Charts.tt</DependentUpon>
+    </Compile>
     <Compile Include="MVCModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\SpendingsSummaryChartVM.cs" />
     <Compile Include="ViewModels\WeekSummaryVM.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -246,18 +289,39 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Chart.css" />
+    <Content Include="Content\Chart.min.css" />
     <Content Include="Content\Images\refresh.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Models\Charts.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Charts.edmx</DependentUpon>
+      <LastGenOutput>Charts.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\Charts.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Charts.edmx</DependentUpon>
+      <LastGenOutput>Charts.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EntityDeploy Include="Models\Charts.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Charts.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Charts.edmx.diagram">
+      <DependentUpon>Charts.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -285,6 +349,9 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\CNW\WeekSummary.cshtml" />
     <Content Include="Views\CNW\RouteSummary.cshtml" />
+    <Content Include="Views\Finances\SpendingsSummaryChart.cshtml" />
+    <Content Include="Views\Finances\Reports.cshtml" />
+    <Content Include="Views\Finances\_SpendingsSummaryChart.cshtml" />
     <None Include="Web.Stage.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -294,7 +361,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>
@@ -318,6 +384,7 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

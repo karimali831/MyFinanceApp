@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="c1a9108345354e058f7952e37c459888" Name="Diagram1">
+        <EntityTypeShape EntityType="myfinancesModel.Category" Width="1.5" PointX="0.75" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="myfinancesModel.Finance" Width="1.5" PointX="3.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="myfinancesModel.CNWPayment" Width="1.5" PointX="8.75" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="myfinancesModel.CNWRate" Width="1.5" PointX="5.75" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="myfinancesModel.CNWRoute" Width="1.5" PointX="3" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="myfinancesModel.Income" Width="1.5" PointX="3" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="myfinancesModel.Reminder" Width="1.5" PointX="5.75" PointY="11.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="myfinancesModel.Spending" Width="1.5" PointX="6" PointY="7" IsExpanded="true" />
+        <AssociationConnector Association="myfinancesModel.FK__CNWRoutes__Route__74AE54BC" ManuallyRouted="false" />
+        <AssociationConnector Association="myfinancesModel.FK_SourceId" ManuallyRouted="false" />
+        <AssociationConnector Association="myfinancesModel.FK_Spendings_CatId" ManuallyRouted="false" />
+        <AssociationConnector Association="myfinancesModel.FK__Spendings__Finan__3864608B" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

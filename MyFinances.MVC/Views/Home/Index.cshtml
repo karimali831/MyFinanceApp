@@ -7,6 +7,10 @@
 
 @if (Session["myFinanceApp-Authentication"] != null && Session["myFinanceApp-Authentication"].ToString() == ViewBag.Pwd)
 {
+    <a href='@Url.Action("Reports", "Finances")'>
+        View Spending Summary Chart
+    </a>
+
     <div id="root" data-subsiteroot="/" data-contentroot="@Utils.ResolveServerUrl("~/").TrimEnd('/')"></div>
     @Scripts.Render($"~/Scripts/React/dist/bundle.js")
 

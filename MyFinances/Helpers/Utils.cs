@@ -85,6 +85,10 @@ namespace MyFinances.Helpers
                     return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), - {dateFilter.Interval})";
                 case DateFrequency.LastXMonths:
                     return $"[{dateFilter.DateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) - {dateFilter.Interval}, DAY(GETDATE()) - 1)";
+                case DateFrequency.CurrentYear:
+                    return $"YEAR([{dateFilter.DateField}]) = YEAR(GETDATE())";
+                case DateFrequency.PreviousYear:
+                    return $"YEAR([{dateFilter.DateField}]) = YEAR(DATEADD(YEAR, -1, GETDATE()))";
                 default:
                     return "";
             }

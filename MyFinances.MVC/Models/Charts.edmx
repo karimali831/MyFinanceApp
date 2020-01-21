@@ -1,0 +1,725 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="myfinancesModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Categories">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="TypeId" Type="int" Nullable="false" />
+          <Property Name="SecondTypeId" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'myfinances.dbo.CNWPayments' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="CNWPayments">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Routes" />
+            <PropertyRef Name="CalcMiles" />
+            <PropertyRef Name="CalcRoutePay" />
+            <PropertyRef Name="CalcMileagePay" />
+            <PropertyRef Name="CalcTotalPay" />
+            <PropertyRef Name="AverageMpg" />
+            <PropertyRef Name="AverageFuelCost" />
+            <PropertyRef Name="WeekDate" />
+            <PropertyRef Name="DeduVanRental" />
+            <PropertyRef Name="DeduAdminFee" />
+            <PropertyRef Name="DeduVanFines" />
+            <PropertyRef Name="DeduVanDamages" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvoiceNo" Type="int" />
+          <Property Name="Routes" Type="int" Nullable="false" />
+          <Property Name="CalcMiles" Type="decimal" Precision="18" Scale="1" Nullable="false" />
+          <Property Name="CalcSupportMiles" Type="decimal" Precision="18" Scale="1" />
+          <Property Name="CalcRoutePay" Type="money" Nullable="false" />
+          <Property Name="CalcMileagePay" Type="money" Nullable="false" />
+          <Property Name="CalcSupportPay" Type="money" />
+          <Property Name="CalcSupportDrops" Type="int" />
+          <Property Name="CalcSupportMileagePay" Type="money" />
+          <Property Name="CalcNetAmount" Type="money" StoreGeneratedPattern="Computed" />
+          <Property Name="CalcTotalPay" Type="money" Nullable="false" />
+          <Property Name="ActualMiles" Type="decimal" Precision="18" Scale="1" />
+          <Property Name="ActualRoutePay" Type="money" />
+          <Property Name="ActualSupportPay" Type="money" />
+          <Property Name="ActualTotalPay" Type="money" />
+          <Property Name="AverageMpg" Type="decimal" Precision="18" Scale="1" Nullable="false" />
+          <Property Name="AverageFuelCost" Type="money" Nullable="false" />
+          <Property Name="PayDate" Type="date" StoreGeneratedPattern="Computed" />
+          <Property Name="WeekNo" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="WeekDate" Type="date" Nullable="false" />
+          <Property Name="DeduVanRental" Type="money" Nullable="false" />
+          <Property Name="DeduAdminFee" Type="money" Nullable="false" />
+          <Property Name="DeduVanFines" Type="money" Nullable="false" />
+          <Property Name="DeduVanDamages" Type="money" Nullable="false" />
+          <Property Name="Byod" Type="money" />
+          <Property Name="Info" Type="varchar" MaxLength="500" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'myfinances.dbo.CNWRates' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="CNWRates">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="FullRoute" />
+            <PropertyRef Name="HalfRoute" />
+            <PropertyRef Name="MissortRoute" />
+            <PropertyRef Name="Mileage" />
+            <PropertyRef Name="CurrentPeriod" />
+            <PropertyRef Name="VATFlatRate" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FullRoute" Type="money" Nullable="false" />
+          <Property Name="HalfRoute" Type="money" Nullable="false" />
+          <Property Name="MissortRoute" Type="money" Nullable="false" />
+          <Property Name="Mileage" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="CurrentPeriod" Type="bit" Nullable="false" />
+          <Property Name="VATFlatRate" Type="money" Nullable="false" />
+          <Property Name="VATRate" Type="decimal" Precision="18" Scale="2" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'myfinances.dbo.CNWRoutes' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="CNWRoutes">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="RouteTypeId" />
+            <PropertyRef Name="RouteDate" />
+            <PropertyRef Name="FuelCost" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WeekNo" Type="int" StoreGeneratedPattern="Computed" />
+          <Property Name="RouteTypeId" Type="int" Nullable="false" />
+          <Property Name="RouteDate" Type="date" Nullable="false" />
+          <Property Name="Mileage" Type="decimal" Precision="18" Scale="1" />
+          <Property Name="Mpg" Type="decimal" Precision="18" Scale="1" />
+          <Property Name="ExtraDrops" Type="int" />
+          <Property Name="ExtraMileage" Type="decimal" Precision="18" Scale="1" />
+          <Property Name="Info" Type="varchar" MaxLength="150" />
+          <Property Name="FuelCost" Type="money" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Finances">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="AvgMonthlyAmount" Type="money" />
+          <Property Name="StartDate" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="Remaining" Type="money" />
+          <Property Name="TotalAmount" Type="money" />
+          <Property Name="TotalPaid" Type="money" />
+          <Property Name="MonthlyDueDate" Type="int" />
+          <Property Name="NextDueDate" Type="date" />
+          <Property Name="OverrideNextDueDate" Type="int" Nullable="false" />
+          <Property Name="CatId" Type="int" Nullable="false" />
+          <Property Name="ManualPayment" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'myfinances.dbo.Incomes' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Incomes">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="SourceId" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="Amount" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SourceId" Type="int" Nullable="false" />
+          <Property Name="SecondSourceId" Type="int" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="Amount" Type="money" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'myfinances.dbo.Reminders' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Reminders">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Notes" />
+            <PropertyRef Name="DueDate" />
+            <PropertyRef Name="AddedDate" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Notes" Type="text" Nullable="false" />
+          <Property Name="DueDate" Type="datetime" Nullable="false" />
+          <Property Name="AddedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'myfinances.dbo.Spendings' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Spendings">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="Amount" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="Display" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="Info" Type="varchar" MaxLength="200" />
+          <Property Name="CatId" Type="int" />
+          <Property Name="Display" Type="bit" Nullable="false" />
+          <Property Name="SecondCatId" Type="int" />
+          <Property Name="FinanceId" Type="int" />
+        </EntityType>
+        <Association Name="FK__CNWRoutes__Route__74AE54BC">
+          <End Role="Categories" Type="Self.Categories" Multiplicity="1" />
+          <End Role="CNWRoutes" Type="Self.CNWRoutes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CNWRoutes">
+              <PropertyRef Name="RouteTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Spendings__Finan__3864608B">
+          <End Role="Finances" Type="Self.Finances" Multiplicity="0..1" />
+          <End Role="Spendings" Type="Self.Spendings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Finances">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Spendings">
+              <PropertyRef Name="FinanceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SourceId">
+          <End Role="Categories" Type="Self.Categories" Multiplicity="1" />
+          <End Role="Incomes" Type="Self.Incomes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Incomes">
+              <PropertyRef Name="SourceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Spendings_CatId">
+          <End Role="Categories" Type="Self.Categories" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Spendings" Type="Self.Spendings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Spendings">
+              <PropertyRef Name="CatId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="myfinancesModelStoreContainer">
+          <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Finances" EntityType="Self.Finances" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CNWPayments" EntityType="Self.CNWPayments" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [CNWPayments].[Id] AS [Id], 
+    [CNWPayments].[InvoiceNo] AS [InvoiceNo], 
+    [CNWPayments].[Routes] AS [Routes], 
+    [CNWPayments].[CalcMiles] AS [CalcMiles], 
+    [CNWPayments].[CalcSupportMiles] AS [CalcSupportMiles], 
+    [CNWPayments].[CalcRoutePay] AS [CalcRoutePay], 
+    [CNWPayments].[CalcMileagePay] AS [CalcMileagePay], 
+    [CNWPayments].[CalcSupportPay] AS [CalcSupportPay], 
+    [CNWPayments].[CalcSupportDrops] AS [CalcSupportDrops], 
+    [CNWPayments].[CalcSupportMileagePay] AS [CalcSupportMileagePay], 
+    [CNWPayments].[CalcNetAmount] AS [CalcNetAmount], 
+    [CNWPayments].[CalcTotalPay] AS [CalcTotalPay], 
+    [CNWPayments].[ActualMiles] AS [ActualMiles], 
+    [CNWPayments].[ActualRoutePay] AS [ActualRoutePay], 
+    [CNWPayments].[ActualSupportPay] AS [ActualSupportPay], 
+    [CNWPayments].[ActualTotalPay] AS [ActualTotalPay], 
+    [CNWPayments].[AverageMpg] AS [AverageMpg], 
+    [CNWPayments].[AverageFuelCost] AS [AverageFuelCost], 
+    [CNWPayments].[PayDate] AS [PayDate], 
+    [CNWPayments].[WeekNo] AS [WeekNo], 
+    [CNWPayments].[WeekDate] AS [WeekDate], 
+    [CNWPayments].[DeduVanRental] AS [DeduVanRental], 
+    [CNWPayments].[DeduAdminFee] AS [DeduAdminFee], 
+    [CNWPayments].[DeduVanFines] AS [DeduVanFines], 
+    [CNWPayments].[DeduVanDamages] AS [DeduVanDamages], 
+    [CNWPayments].[Byod] AS [Byod], 
+    [CNWPayments].[Info] AS [Info]
+    FROM [dbo].[CNWPayments] AS [CNWPayments]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="CNWRates" EntityType="Self.CNWRates" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [CNWRates].[Id] AS [Id], 
+    [CNWRates].[FullRoute] AS [FullRoute], 
+    [CNWRates].[HalfRoute] AS [HalfRoute], 
+    [CNWRates].[MissortRoute] AS [MissortRoute], 
+    [CNWRates].[Mileage] AS [Mileage], 
+    [CNWRates].[CurrentPeriod] AS [CurrentPeriod], 
+    [CNWRates].[VATFlatRate] AS [VATFlatRate], 
+    [CNWRates].[VATRate] AS [VATRate]
+    FROM [dbo].[CNWRates] AS [CNWRates]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="CNWRoutes" EntityType="Self.CNWRoutes" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [CNWRoutes].[Id] AS [Id], 
+    [CNWRoutes].[WeekNo] AS [WeekNo], 
+    [CNWRoutes].[RouteTypeId] AS [RouteTypeId], 
+    [CNWRoutes].[RouteDate] AS [RouteDate], 
+    [CNWRoutes].[Mileage] AS [Mileage], 
+    [CNWRoutes].[Mpg] AS [Mpg], 
+    [CNWRoutes].[ExtraDrops] AS [ExtraDrops], 
+    [CNWRoutes].[ExtraMileage] AS [ExtraMileage], 
+    [CNWRoutes].[Info] AS [Info], 
+    [CNWRoutes].[FuelCost] AS [FuelCost]
+    FROM [dbo].[CNWRoutes] AS [CNWRoutes]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Incomes" EntityType="Self.Incomes" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Incomes].[Id] AS [Id], 
+    [Incomes].[SourceId] AS [SourceId], 
+    [Incomes].[SecondSourceId] AS [SecondSourceId], 
+    [Incomes].[Date] AS [Date], 
+    [Incomes].[Amount] AS [Amount]
+    FROM [dbo].[Incomes] AS [Incomes]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Reminders" EntityType="Self.Reminders" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Reminders].[Id] AS [Id], 
+    [Reminders].[Notes] AS [Notes], 
+    [Reminders].[DueDate] AS [DueDate], 
+    [Reminders].[AddedDate] AS [AddedDate]
+    FROM [dbo].[Reminders] AS [Reminders]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Spendings" EntityType="Self.Spendings" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Spendings].[Id] AS [Id], 
+    [Spendings].[Name] AS [Name], 
+    [Spendings].[Amount] AS [Amount], 
+    [Spendings].[Date] AS [Date], 
+    [Spendings].[Info] AS [Info], 
+    [Spendings].[CatId] AS [CatId], 
+    [Spendings].[Display] AS [Display], 
+    [Spendings].[SecondCatId] AS [SecondCatId], 
+    [Spendings].[FinanceId] AS [FinanceId]
+    FROM [dbo].[Spendings] AS [Spendings]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK__CNWRoutes__Route__74AE54BC" Association="Self.FK__CNWRoutes__Route__74AE54BC">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="CNWRoutes" EntitySet="CNWRoutes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Spendings__Finan__3864608B" Association="Self.FK__Spendings__Finan__3864608B">
+            <End Role="Finances" EntitySet="Finances" />
+            <End Role="Spendings" EntitySet="Spendings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SourceId" Association="Self.FK_SourceId">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Incomes" EntitySet="Incomes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Spendings_CatId" Association="Self.FK_Spendings_CatId">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Spendings" EntitySet="Spendings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="myfinancesModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TypeId" Type="Int32" Nullable="false" />
+          <Property Name="SecondTypeId" Type="Int32" />
+          <NavigationProperty Name="CNWRoutes" Relationship="Self.FK__CNWRoutes__Route__74AE54BC" FromRole="Categories" ToRole="CNWRoutes" />
+          <NavigationProperty Name="Incomes" Relationship="Self.FK_SourceId" FromRole="Categories" ToRole="Incomes" />
+          <NavigationProperty Name="Spendings" Relationship="Self.FK_Spendings_CatId" FromRole="Categories" ToRole="Spendings" />
+        </EntityType>
+        <EntityType Name="Finance">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AvgMonthlyAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="Remaining" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="TotalAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="TotalPaid" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="MonthlyDueDate" Type="Int32" />
+          <Property Name="NextDueDate" Type="DateTime" Precision="0" />
+          <Property Name="OverrideNextDueDate" Type="Int32" Nullable="false" />
+          <Property Name="CatId" Type="Int32" Nullable="false" />
+          <Property Name="ManualPayment" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Spendings" Relationship="Self.FK__Spendings__Finan__3864608B" FromRole="Finances" ToRole="Spendings" />
+        </EntityType>
+        <EntityType Name="CNWPayment">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Routes" />
+            <PropertyRef Name="CalcMiles" />
+            <PropertyRef Name="CalcRoutePay" />
+            <PropertyRef Name="CalcMileagePay" />
+            <PropertyRef Name="CalcTotalPay" />
+            <PropertyRef Name="AverageMpg" />
+            <PropertyRef Name="AverageFuelCost" />
+            <PropertyRef Name="WeekDate" />
+            <PropertyRef Name="DeduVanRental" />
+            <PropertyRef Name="DeduAdminFee" />
+            <PropertyRef Name="DeduVanFines" />
+            <PropertyRef Name="DeduVanDamages" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvoiceNo" Type="Int32" />
+          <Property Name="Routes" Type="Int32" Nullable="false" />
+          <Property Name="CalcMiles" Type="Decimal" Precision="18" Scale="1" Nullable="false" />
+          <Property Name="CalcSupportMiles" Type="Decimal" Precision="18" Scale="1" />
+          <Property Name="CalcRoutePay" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="CalcMileagePay" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="CalcSupportPay" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="CalcSupportDrops" Type="Int32" />
+          <Property Name="CalcSupportMileagePay" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="CalcNetAmount" Type="Decimal" Precision="19" Scale="4" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="CalcTotalPay" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="ActualMiles" Type="Decimal" Precision="18" Scale="1" />
+          <Property Name="ActualRoutePay" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ActualSupportPay" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ActualTotalPay" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="AverageMpg" Type="Decimal" Precision="18" Scale="1" Nullable="false" />
+          <Property Name="AverageFuelCost" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="PayDate" Type="DateTime" annotation:StoreGeneratedPattern="Computed" Precision="0" />
+          <Property Name="WeekNo" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="WeekDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="DeduVanRental" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="DeduAdminFee" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="DeduVanFines" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="DeduVanDamages" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Byod" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Info" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="CNWRate">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="FullRoute" />
+            <PropertyRef Name="HalfRoute" />
+            <PropertyRef Name="MissortRoute" />
+            <PropertyRef Name="Mileage" />
+            <PropertyRef Name="CurrentPeriod" />
+            <PropertyRef Name="VATFlatRate" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FullRoute" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="HalfRoute" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="MissortRoute" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Mileage" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="CurrentPeriod" Type="Boolean" Nullable="false" />
+          <Property Name="VATFlatRate" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="VATRate" Type="Decimal" Precision="18" Scale="2" />
+        </EntityType>
+        <EntityType Name="CNWRoute">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="RouteTypeId" />
+            <PropertyRef Name="RouteDate" />
+            <PropertyRef Name="FuelCost" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WeekNo" Type="Int32" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="RouteTypeId" Type="Int32" Nullable="false" />
+          <Property Name="RouteDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Mileage" Type="Decimal" Precision="18" Scale="1" />
+          <Property Name="Mpg" Type="Decimal" Precision="18" Scale="1" />
+          <Property Name="ExtraDrops" Type="Int32" />
+          <Property Name="ExtraMileage" Type="Decimal" Precision="18" Scale="1" />
+          <Property Name="Info" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="FuelCost" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <NavigationProperty Name="Category" Relationship="Self.FK__CNWRoutes__Route__74AE54BC" FromRole="CNWRoutes" ToRole="Categories" />
+        </EntityType>
+        <EntityType Name="Income">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="SourceId" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="Amount" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SourceId" Type="Int32" Nullable="false" />
+          <Property Name="SecondSourceId" Type="Int32" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <NavigationProperty Name="Category" Relationship="Self.FK_SourceId" FromRole="Incomes" ToRole="Categories" />
+        </EntityType>
+        <EntityType Name="Reminder">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Notes" />
+            <PropertyRef Name="DueDate" />
+            <PropertyRef Name="AddedDate" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DueDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="AddedDate" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="Spending">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="Amount" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="Display" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Info" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="CatId" Type="Int32" />
+          <Property Name="Display" Type="Boolean" Nullable="false" />
+          <Property Name="SecondCatId" Type="Int32" />
+          <Property Name="FinanceId" Type="Int32" />
+          <NavigationProperty Name="Category" Relationship="Self.FK_Spendings_CatId" FromRole="Spendings" ToRole="Categories" />
+          <NavigationProperty Name="Finance" Relationship="Self.FK__Spendings__Finan__3864608B" FromRole="Spendings" ToRole="Finances" />
+        </EntityType>
+        <Association Name="FK__CNWRoutes__Route__74AE54BC">
+          <End Role="Categories" Type="Self.Category" Multiplicity="1" />
+          <End Role="CNWRoutes" Type="Self.CNWRoute" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CNWRoutes">
+              <PropertyRef Name="RouteTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SourceId">
+          <End Role="Categories" Type="Self.Category" Multiplicity="1" />
+          <End Role="Incomes" Type="Self.Income" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Incomes">
+              <PropertyRef Name="SourceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Spendings_CatId">
+          <End Role="Categories" Type="Self.Category" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Spendings" Type="Self.Spending" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Spendings">
+              <PropertyRef Name="CatId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Spendings__Finan__3864608B">
+          <End Role="Finances" Type="Self.Finance" Multiplicity="0..1" />
+          <End Role="Spendings" Type="Self.Spending" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Finances">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Spendings">
+              <PropertyRef Name="FinanceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="myfinancesEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Categories" EntityType="Self.Category" />
+          <EntitySet Name="Finances" EntityType="Self.Finance" />
+          <EntitySet Name="CNWPayments" EntityType="Self.CNWPayment" />
+          <EntitySet Name="CNWRates" EntityType="Self.CNWRate" />
+          <EntitySet Name="CNWRoutes" EntityType="Self.CNWRoute" />
+          <EntitySet Name="Incomes" EntityType="Self.Income" />
+          <EntitySet Name="Reminders" EntityType="Self.Reminder" />
+          <EntitySet Name="Spendings" EntityType="Self.Spending" />
+          <AssociationSet Name="FK__CNWRoutes__Route__74AE54BC" Association="Self.FK__CNWRoutes__Route__74AE54BC">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="CNWRoutes" EntitySet="CNWRoutes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SourceId" Association="Self.FK_SourceId">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Incomes" EntitySet="Incomes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Spendings_CatId" Association="Self.FK_Spendings_CatId">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Spendings" EntitySet="Spendings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Spendings__Finan__3864608B" Association="Self.FK__Spendings__Finan__3864608B">
+            <End Role="Finances" EntitySet="Finances" />
+            <End Role="Spendings" EntitySet="Spendings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="myfinancesModelStoreContainer" CdmEntityContainer="myfinancesEntities">
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="myfinancesModel.Category">
+              <MappingFragment StoreEntitySet="Categories">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+                <ScalarProperty Name="SecondTypeId" ColumnName="SecondTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Finances">
+            <EntityTypeMapping TypeName="myfinancesModel.Finance">
+              <MappingFragment StoreEntitySet="Finances">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="AvgMonthlyAmount" ColumnName="AvgMonthlyAmount" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Remaining" ColumnName="Remaining" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="TotalPaid" ColumnName="TotalPaid" />
+                <ScalarProperty Name="MonthlyDueDate" ColumnName="MonthlyDueDate" />
+                <ScalarProperty Name="NextDueDate" ColumnName="NextDueDate" />
+                <ScalarProperty Name="OverrideNextDueDate" ColumnName="OverrideNextDueDate" />
+                <ScalarProperty Name="CatId" ColumnName="CatId" />
+                <ScalarProperty Name="ManualPayment" ColumnName="ManualPayment" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CNWPayments">
+            <EntityTypeMapping TypeName="myfinancesModel.CNWPayment">
+              <MappingFragment StoreEntitySet="CNWPayments">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
+                <ScalarProperty Name="Routes" ColumnName="Routes" />
+                <ScalarProperty Name="CalcMiles" ColumnName="CalcMiles" />
+                <ScalarProperty Name="CalcSupportMiles" ColumnName="CalcSupportMiles" />
+                <ScalarProperty Name="CalcRoutePay" ColumnName="CalcRoutePay" />
+                <ScalarProperty Name="CalcMileagePay" ColumnName="CalcMileagePay" />
+                <ScalarProperty Name="CalcSupportPay" ColumnName="CalcSupportPay" />
+                <ScalarProperty Name="CalcSupportDrops" ColumnName="CalcSupportDrops" />
+                <ScalarProperty Name="CalcSupportMileagePay" ColumnName="CalcSupportMileagePay" />
+                <ScalarProperty Name="CalcNetAmount" ColumnName="CalcNetAmount" />
+                <ScalarProperty Name="CalcTotalPay" ColumnName="CalcTotalPay" />
+                <ScalarProperty Name="ActualMiles" ColumnName="ActualMiles" />
+                <ScalarProperty Name="ActualRoutePay" ColumnName="ActualRoutePay" />
+                <ScalarProperty Name="ActualSupportPay" ColumnName="ActualSupportPay" />
+                <ScalarProperty Name="ActualTotalPay" ColumnName="ActualTotalPay" />
+                <ScalarProperty Name="AverageMpg" ColumnName="AverageMpg" />
+                <ScalarProperty Name="AverageFuelCost" ColumnName="AverageFuelCost" />
+                <ScalarProperty Name="PayDate" ColumnName="PayDate" />
+                <ScalarProperty Name="WeekNo" ColumnName="WeekNo" />
+                <ScalarProperty Name="WeekDate" ColumnName="WeekDate" />
+                <ScalarProperty Name="DeduVanRental" ColumnName="DeduVanRental" />
+                <ScalarProperty Name="DeduAdminFee" ColumnName="DeduAdminFee" />
+                <ScalarProperty Name="DeduVanFines" ColumnName="DeduVanFines" />
+                <ScalarProperty Name="DeduVanDamages" ColumnName="DeduVanDamages" />
+                <ScalarProperty Name="Byod" ColumnName="Byod" />
+                <ScalarProperty Name="Info" ColumnName="Info" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CNWRates">
+            <EntityTypeMapping TypeName="myfinancesModel.CNWRate">
+              <MappingFragment StoreEntitySet="CNWRates">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FullRoute" ColumnName="FullRoute" />
+                <ScalarProperty Name="HalfRoute" ColumnName="HalfRoute" />
+                <ScalarProperty Name="MissortRoute" ColumnName="MissortRoute" />
+                <ScalarProperty Name="Mileage" ColumnName="Mileage" />
+                <ScalarProperty Name="CurrentPeriod" ColumnName="CurrentPeriod" />
+                <ScalarProperty Name="VATFlatRate" ColumnName="VATFlatRate" />
+                <ScalarProperty Name="VATRate" ColumnName="VATRate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CNWRoutes">
+            <EntityTypeMapping TypeName="myfinancesModel.CNWRoute">
+              <MappingFragment StoreEntitySet="CNWRoutes">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="WeekNo" ColumnName="WeekNo" />
+                <ScalarProperty Name="RouteTypeId" ColumnName="RouteTypeId" />
+                <ScalarProperty Name="RouteDate" ColumnName="RouteDate" />
+                <ScalarProperty Name="Mileage" ColumnName="Mileage" />
+                <ScalarProperty Name="Mpg" ColumnName="Mpg" />
+                <ScalarProperty Name="ExtraDrops" ColumnName="ExtraDrops" />
+                <ScalarProperty Name="ExtraMileage" ColumnName="ExtraMileage" />
+                <ScalarProperty Name="Info" ColumnName="Info" />
+                <ScalarProperty Name="FuelCost" ColumnName="FuelCost" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Incomes">
+            <EntityTypeMapping TypeName="myfinancesModel.Income">
+              <MappingFragment StoreEntitySet="Incomes">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SourceId" ColumnName="SourceId" />
+                <ScalarProperty Name="SecondSourceId" ColumnName="SecondSourceId" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reminders">
+            <EntityTypeMapping TypeName="myfinancesModel.Reminder">
+              <MappingFragment StoreEntitySet="Reminders">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="AddedDate" ColumnName="AddedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Spendings">
+            <EntityTypeMapping TypeName="myfinancesModel.Spending">
+              <MappingFragment StoreEntitySet="Spendings">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Info" ColumnName="Info" />
+                <ScalarProperty Name="CatId" ColumnName="CatId" />
+                <ScalarProperty Name="Display" ColumnName="Display" />
+                <ScalarProperty Name="SecondCatId" ColumnName="SecondCatId" />
+                <ScalarProperty Name="FinanceId" ColumnName="FinanceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

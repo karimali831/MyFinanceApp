@@ -84,7 +84,7 @@ namespace MyFinances.Service
         public async Task<FinanceNotificationVM> GetNotifications()
         {
             var finances = await GetFinances(resyncNextDueDates: false);
-            var reminders = await remindersService.GetAllAsync();
+            var reminders = (await remindersService.GetAllAsync()).Where(x => x.Display == true);
 
             return new FinanceNotificationVM
             {

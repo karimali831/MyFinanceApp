@@ -21,7 +21,6 @@
     </style>
 </head>
 <body>
-    <h1>Top 10 spendings in @Model.Frequency</h1>
     <div id="spending-summary">
         <canvas id="pie-chart"></canvas>
     </div>
@@ -74,9 +73,41 @@
             },
 
             options: {
+                responsive: true,
+                title: {
+                  display: true,
+                  text: 'Top 10 expenses in @Model.Frequency'
+                },
+                animation: {
+                  animateScale: true,
+                  animateRotate: true
+                },
+                //tooltips: {
+                //  callbacks: {
+                //    label: function(tooltipItem, data) {
+        	       //     var dataset = data.datasets[tooltipItem.datasetIndex];
+                //      var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                //        return previousValue + currentValue;
+                //      });
+                //      var currentValue = dataset.data[tooltipItem.index];
+                //      var percentage = Math.floor(((currentValue/total) * 100)+0.5);         
+                //      return percentage + "%";
+                //    }
+                //  }
+                //},
+
                 maintainAspectRatio: false,
-                scales: { xAxles: [{ ticks: { beginAtZero: true } }] },
-                legend: {display:true}
+                scales: {
+                    xAxles: [
+                        {
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                },
+                legend: {
+                    display: true
+                }
             }
         });
 

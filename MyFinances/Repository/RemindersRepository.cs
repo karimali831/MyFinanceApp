@@ -15,6 +15,7 @@ namespace MyFinances.Repository
     {
         Task<IEnumerable<Reminder>> GetAllAsync();
         Task InsertAsync(ReminderDTO dto);
+        Task HideAsync(int Id);
     }
 
     public class RemindersRepository : IRemindersRepository
@@ -45,5 +46,12 @@ namespace MyFinances.Repository
             }
         }
 
+        public async Task HideAsync(int Id)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($"UPDATE {TABLE} SET Display = 0 WHERE Id = @Id", new { Id });
+            }
+        }
     }
 }

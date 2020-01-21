@@ -15,7 +15,7 @@ using System.Web.Http.Cors;
 
 namespace MyFinances.Website.Controllers.API
 {
-    [RoutePrefix("api")]
+    [RoutePrefix("api/reminders")]
     [EnableCors(origins: "http://localhost:3000", headers: "*", methods: "*")]
     [CamelCaseControllerConfig]
     public class RemindersCommonController : ApiController
@@ -28,11 +28,19 @@ namespace MyFinances.Website.Controllers.API
         }
 
 
-        [Route("reminders/add")]
+        [Route("add")]
         [HttpPost]
         public async Task<HttpResponseMessage> AddReminderAsync(ReminderDTO dto)
         {
             await remindersService.AddReminder(dto);
+            return Request.CreateResponse(HttpStatusCode.OK, true);
+        }
+
+        [Route("hide/{id}")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> HideReminderAsync(int id)
+        {
+            await remindersService.HideReminder(id);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
     }

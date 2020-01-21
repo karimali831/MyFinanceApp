@@ -174,6 +174,22 @@ export class FinanceApi {
             }
         })
     }
+
+    public hideReminder = async (id: number) => {
+        return fetch(`${this.rootUrl}/reminders/hide/${id}`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+        })
+    }
 }
 
 export const api = new FinanceApi();

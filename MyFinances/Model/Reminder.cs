@@ -10,6 +10,7 @@ namespace MyFinances.Model
         public string Notes { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime AddedDate { get; set; }
+        public bool Display { get; set; }
     }
 
     public class ReminderMap : EntityTypeConfiguration<Reminder>

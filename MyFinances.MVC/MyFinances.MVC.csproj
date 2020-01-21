@@ -350,8 +350,7 @@
     <Content Include="Views\CNW\WeekSummary.cshtml" />
     <Content Include="Views\CNW\RouteSummary.cshtml" />
     <Content Include="Views\Finances\SpendingsSummaryChart.cshtml" />
-    <Content Include="Views\Finances\Reports.cshtml" />
-    <Content Include="Views\Finances\_SpendingsSummaryChart.cshtml" />
+    <Content Include="Views\Finances\_Chart.cshtml" />
     <None Include="Web.Stage.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

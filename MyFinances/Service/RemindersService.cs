@@ -13,6 +13,7 @@ namespace MyFinances.Service
     {
         Task<IEnumerable<Reminder>> GetAllAsync();
         Task AddReminder(ReminderDTO dto);
+        Task HideReminder(int Id);
     }
 
     public class RemindersService : IRemindersService
@@ -33,6 +34,11 @@ namespace MyFinances.Service
         public async Task AddReminder(ReminderDTO dto)
         {
             await remindersRepository.InsertAsync(dto);
+        }
+
+        public async Task HideReminder(int Id)
+        {
+            await remindersRepository.HideAsync(Id);
         }
     }
 }

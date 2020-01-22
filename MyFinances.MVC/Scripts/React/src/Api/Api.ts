@@ -6,6 +6,7 @@ import { IIncome, IIncomeSummary } from '../models/IIncome';
 import { ICNWPayment } from '../models/ICNWPayment';
 import { IDateFilter } from '../models/IDateFilter';
 import { rootUrl } from '../components/roots/utils/Utils';
+import { IReminder } from 'src/models/IReminder';
 
 export class FinanceApi {
 
@@ -175,6 +176,24 @@ export class FinanceApi {
         })
     }
 
+    public reminders = async (): Promise<IReminderResponse> => {
+        return fetch(`${this.rootUrl}/reminders`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => data as IReminderResponse);
+    }
+
     public hideReminder = async (id: number) => {
         return fetch(`${this.rootUrl}/reminders/hide/${id}`, {
             method: "POST",
@@ -250,4 +269,8 @@ export interface ICNWResponse {
 
 export interface IWeekSummariesResponse {
     weekSummaries: ICNWPayment[]
+}
+
+export interface IReminderResponse {
+    reminders: IReminder[]
 }

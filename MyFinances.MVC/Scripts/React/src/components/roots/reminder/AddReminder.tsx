@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { commonApi } from '../../api/CommonApi'
+import { commonApi } from '../../../api/CommonApi'
 import { Redirect } from 'react-router-dom'
-import { Load } from '../base/Loader';
-import { AddMenu } from '../base/Menu';
-import { IReminderDTO } from '../../models/IReminder';
+import { Load } from '../../base/Loader';
+import { AddMenu } from '../../base/Menu';
+import { IReminderDTO } from '../../../models/IReminder';
 
 interface IOwnProps {
 }

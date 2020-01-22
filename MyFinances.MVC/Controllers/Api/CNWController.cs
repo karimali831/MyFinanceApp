@@ -38,7 +38,7 @@ namespace MyFinances.Website.Controllers.API
                     x.Id,
                     x.WeekNo,
                     x.RouteType,
-                    RouteDate = x.RouteDate.ToString("dd-MM-yy"),
+                    RouteDate = x.RouteDate.ToString("MM/dd/yyyy"),
                     x.Mileage,
                     x.Mpg,
                     x.FuelCost,
@@ -67,7 +67,7 @@ namespace MyFinances.Website.Controllers.API
                 {
                     x.Id,
                     x.WeekNo,
-                    PayDate = x.PayDate.ToString("dd-MM-yy"),
+                    PayDate = x.PayDate.ToString("MM/dd/yyyy"),
                     x.ActualMiles,
                     x.ActualRoutePay,
                     x.ActualTotalPay,

@@ -39,7 +39,7 @@ namespace MyFinances.Website.Controllers.API
                     x.Id,
                     x.Name,
                     x.Amount,
-                    Date = x.Date.ToString("dd-MM-yy"),
+                    Date = x.Date.ToString("MM/dd/yyyy"),
                     x.Info,
                     x.Category,
                     x.SecondCategory

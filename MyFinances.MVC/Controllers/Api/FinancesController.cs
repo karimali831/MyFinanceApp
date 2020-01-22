@@ -114,7 +114,7 @@ namespace MyFinances.Website.Controllers.API
                         x.Id,
                         x.Source,
                         x.SecondSource, 
-                        Date = x.Date.ToString("dd-MM-yy"),
+                        Date = x.Date.ToString("MM/dd/yyyy"),
                         x.Amount
                     })
             });

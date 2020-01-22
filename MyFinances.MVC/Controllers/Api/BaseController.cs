@@ -43,18 +43,19 @@ namespace MyFinances.Website.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
 
-        [Route("update/{table}/{field}/{id}/{value?}/")]
+        [Route("update")]
         [HttpPost]
-        public async Task<HttpResponseMessage> UpdateAsync(string table, string field, int id, string value = "")
+        public async Task<HttpResponseMessage> UpdateAsync(UpdateRequest model)
         {
-            string fieldToPascal = Utils.FirstCharToUpper(field);
-
-            object dbValue = value;
-            if (DateTime.TryParseExact(value, "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date)) {
+            string fieldToPascal = Utils.FirstCharToUpper(model.Field);
+            object dbValue = model.Value;
+    
+            if (DateTime.TryParse(model.Value, out DateTime date))
+            {
                 dbValue = date;
             }
 
-            await baseService.UpdateAsync(fieldToPascal, dbValue, id, table);
+            await baseService.UpdateAsync(fieldToPascal, dbValue, model.Id, model.Table);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
 
@@ -65,5 +66,13 @@ namespace MyFinances.Website.Controllers.API
             await baseService.DeleteAsync(id, table);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
+    }
+
+    public class UpdateRequest
+    {
+        public string Table { get; set; }
+        public string Field { get; set; }
+        public string Value { get; set; } = "";
+        public int Id { get; set; }
     }
 }

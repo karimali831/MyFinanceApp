@@ -24,9 +24,10 @@ export class CommonFinanceApi {
         })
     }
 
-    public update = async (table: string, field: string, value: any, id: number) => {
-        return fetch(`${this.rootUrl}/update/${table}/${field}/${id}/${value}/`, {
+    public update = async (model: IUpdateRequest) => {
+        return fetch(`${this.rootUrl}/update`, {
             method: "POST",
+            body: JSON.stringify(model),
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
@@ -73,6 +74,13 @@ export class CommonFinanceApi {
             })
             .then(data => data as ICategoryResponse);
     }
+}
+
+export interface IUpdateRequest {
+    table: string, 
+    field: string, 
+    value: any, 
+    id: number
 }
 
 export const commonApi = new CommonFinanceApi();

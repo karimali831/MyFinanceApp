@@ -25,7 +25,10 @@ const columns: ITableProps[] = [{
     text: 'Source'
   }, {
     dataField: 'date',
-    text: 'Paid Date'
+    text: 'Paid Date',
+    editor:  {
+        type: 'date'
+    }
   }, {
     dataField: 'amount',
     text: 'Amount',

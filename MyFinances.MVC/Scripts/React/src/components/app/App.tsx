@@ -19,7 +19,8 @@ import { createHashHistory, createBrowserHistory } from 'history';
 import Landing from '../roots/landing/Landing';
 import Spendings from '../roots/spending/SpendingConnected'
 import { CategoryType } from 'src/enums/CategoryType';
-import AddReminder from '../roots/AddReminder';
+import AddReminder from '../roots/reminder/AddReminder';
+import Reminders from '../roots/reminder/Reminders';
 
 const browserHistory = history.pushState ? createBrowserHistory() : createHashHistory();
 
@@ -51,6 +52,7 @@ class App extends React.Component {
                 <Route path="/route/" component={Routes} />
                 <Route path="/summary/" component={WeekSummaries} />
                 <Route path="/category/" component={Categories} />
+                <Route path="/reminder/" component={Reminders} />
             </Switch>
           </div>
         </ConnectedRouter>

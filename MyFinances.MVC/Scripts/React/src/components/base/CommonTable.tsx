@@ -2,7 +2,7 @@ import * as React from 'react';
 import BootstrapTable, { SelectRowOptions, ITableProps, ITableOptions } from 'react-bootstrap-table-next';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import { commonApi } from '../../api/CommonApi';
+import { commonApi, IUpdateRequest } from '../../api/CommonApi';
 
 export interface IOwnProps {
     table: string,
@@ -30,7 +30,7 @@ export default class Table extends React.Component<IOwnProps, IOwnState> {
             mode: 'click',
             // blurToSave: true,
             beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
-            afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell  
+            afterSaveCell: this.onAfterSaveCell,  // a hook for after saving cell  
         });
 
         const selectRow: SelectRowOptions = {
@@ -82,7 +82,15 @@ export default class Table extends React.Component<IOwnProps, IOwnState> {
 
     private update = (key: string, value: any, id: number) => {
         this.setState({ ...this.state, ...{ loading: true }}) 
-        commonApi.update(this.props.table, key, value, id);
+
+        const updateModel: IUpdateRequest = {
+            table: this.props.table, 
+            field: key, 
+            value: value, 
+            id: id
+        }
+
+        commonApi.update(updateModel);
     }
 
     private remove = () => {

@@ -30,7 +30,10 @@ const columns: ITableProps[] = [{
     formatter: priceFormatter
 }, {
     dataField: 'date',
-    text: 'Date'
+    text: 'Date',
+    editor:  {
+        type: 'date'
+    }
 }, {
     dataField: 'category',
     text: 'Category',

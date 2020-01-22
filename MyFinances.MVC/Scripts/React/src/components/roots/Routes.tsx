@@ -50,6 +50,9 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
         }, {
           dataField: 'routeDate',
           text: 'Date',
+          editor:  {
+              type: 'date'
+          }
         }, {
           dataField: 'fuelCost',
           text: 'Fuel Cost'

@@ -1,6 +1,6 @@
-﻿@model MyFinances.Website.ViewModels.SpendingsSummaryChartVM
+﻿@model MyFinances.Website.ViewModels.SummaryChartVM
 @{
-    ViewBag.Title = "Spending Summary Chart";
+    ViewBag.Title = "Summary Chart";
 }
 
 <html>
@@ -11,7 +11,7 @@
     <script src="~/Scripts/bootstrap.min.js"></script>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <style>
-        #spending-summary {
+        #summary-chart {
             width: 600px;
             height: 600px;
             border: 1px solid #ddd;
@@ -21,7 +21,7 @@
     </style>
 </head>
 <body>
-    <div id="spending-summary">
+    <div id="summary-chart">
         <canvas id="pie-chart"></canvas>
     </div>
     <script>
@@ -34,7 +34,7 @@
             data: {
                 labels: categories,
                 datasets: [{
-                    label: "Spending Summary",
+                    label: '@Model.Title',
                     data: total,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
@@ -76,7 +76,7 @@
                 responsive: true,
                 title: {
                   display: true,
-                  text: 'Top 10 expenses in @Model.Frequency'
+                  text: '@Model.Title'
                 },
                 animation: {
                   animateScale: true,

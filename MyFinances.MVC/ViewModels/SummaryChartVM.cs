@@ -7,8 +7,9 @@ using System.Web;
 
 namespace MyFinances.Website.ViewModels
 {
-    public class SpendingsSummaryChartVM
+    public class SummaryChartVM
     {
+        public string Title { get; set; }
         public DateFrequency Frequency { get; set; }
         public string[] Categories { get; set; }
         public decimal[] Total { get; set; }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DateFilter from './DateFilterISConnected'
 import { IIncomeSummary } from '../../../../models/IIncome';
@@ -8,6 +8,7 @@ import { IDateFilter } from 'src/models/IDateFilter';
 import { ShowSecondCategoryIncomeSummaryAction } from 'src/state/contexts/landing/Actions';
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
+import { incomeSummaryUrl } from '../../utils/Utils';
 
 export interface IPropsFromState {
     dateFilter?: IDateFilter | undefined,
@@ -37,6 +38,9 @@ export default class IncomeSummary extends React.Component<AllProps> {
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>
+                            <a href={incomeSummaryUrl}>
+                                <FontAwesomeIcon icon={faChartPie} />
+                            </a>
                             Income breakdown summary for
                             <DateFilter />
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { ISpendingSummary } from '../../../../models/ISpending';
 import { Load } from '../../../base/Loader';
 import { ShowSecondCategorySpendingSummaryAction } from '../../../../state/contexts/landing/Actions';
@@ -8,6 +8,7 @@ import DateFilter from './DateFilterSSConnected'
 import { IDateFilter } from 'src/models/IDateFilter';
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
+import { spendingSummaryUrl } from '../../utils/Utils';
 
 export interface IPropsFromState {
     dateFilter?: IDateFilter | undefined,
@@ -39,6 +40,9 @@ export default class SpendingSummary extends React.Component<AllProps> {
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
+                                <a href={spendingSummaryUrl}>
+                                    <FontAwesomeIcon icon={faChartPie} />
+                                </a>
                                 Spendings breakdown summary for
                                 <DateFilter />
                             </th>

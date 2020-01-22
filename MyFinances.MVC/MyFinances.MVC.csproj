@@ -281,7 +281,7 @@
     </Compile>
     <Compile Include="MVCModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\SpendingsSummaryChartVM.cs" />
+    <Compile Include="ViewModels\SummaryChartVM.cs" />
     <Compile Include="ViewModels\WeekSummaryVM.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -351,6 +351,7 @@
     <Content Include="Views\CNW\RouteSummary.cshtml" />
     <Content Include="Views\Finances\SpendingsSummaryChart.cshtml" />
     <Content Include="Views\Finances\_Chart.cshtml" />
+    <Content Include="Views\Finances\IncomesSummaryChart.cshtml" />
     <None Include="Web.Stage.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

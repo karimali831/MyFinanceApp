@@ -17,10 +17,12 @@ namespace MyFinances.Website.Controllers
     public class FinancesController : Controller
     {
         private readonly ISpendingService spendingService;
+        private readonly IFinanceService financeService;
 
-        public FinancesController(ISpendingService spendingService)
+        public FinancesController(ISpendingService spendingService, IFinanceService financeService)
         {
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
+            this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
         }
 
         // GET: Finances
@@ -29,28 +31,48 @@ namespace MyFinances.Website.Controllers
             return View();
         }
 
-        public ActionResult Reports()
+        public ActionResult SpendingSummary()
         {
             return RedirectToAction(nameof(SpendingsSummaryChart), new { frequency = DateFrequency.CurrentYear });
         }
 
-        private async Task<IEnumerable<SpendingSummaryDTO>> getSpendingsSummaryChart(DateFrequency frequency, int max = 10)
+        public ActionResult IncomeSummary()
         {
-            return (
-                await spendingService.GetSpendingSummary(new DateFilter
-                {
-                    Frequency = frequency,
-                    Interval = 1
-                }))
-                .Take(max);
+            return RedirectToAction(nameof(IncomesSummaryChart), new { frequency = DateFrequency.CurrentYear });
         }
 
         public async Task<ActionResult> SpendingsSummaryChart(DateFrequency frequency)
         {
-            var results = await getSpendingsSummaryChart(frequency);
-
-            return View(new SpendingsSummaryChartVM
+            var dateFilter = new DateFilter
             {
+                Frequency = frequency,
+                Interval = 1
+            };
+
+            var results = (await spendingService.GetSpendingSummary(dateFilter)).Take(10);
+
+            return View(new SummaryChartVM
+            {
+                Title = "Top 10 Spending Expenses",
+                Frequency = frequency,
+                Categories = results.Select(x => x.Cat1).ToArray(),
+                Total = results.Select(x => x.Total).ToArray()
+            });
+        }
+
+        public async Task<ActionResult> IncomesSummaryChart(DateFrequency frequency)
+        {
+            var dateFilter = new DateFilter
+            {
+                Frequency = frequency,
+                Interval = 1
+            };
+
+            var results = await financeService.GetIncomeSummaryAsync(dateFilter);
+
+            return View(new SummaryChartVM
+            {
+                Title = "Income Sources",
                 Frequency = frequency,
                 Categories = results.Select(x => x.Cat1).ToArray(),
                 Total = results.Select(x => x.Total).ToArray()

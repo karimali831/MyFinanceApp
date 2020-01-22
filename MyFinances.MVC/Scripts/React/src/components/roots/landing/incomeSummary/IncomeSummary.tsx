@@ -9,6 +9,7 @@ import { ShowSecondCategoryIncomeSummaryAction } from 'src/state/contexts/landin
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
 import { incomeSummaryUrl } from '../../utils/Utils';
+import { DateFrequency } from 'src/enums/DateFrequency';
 
 export interface IPropsFromState {
     dateFilter?: IDateFilter | undefined,
@@ -38,10 +39,10 @@ export default class IncomeSummary extends React.Component<AllProps> {
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>
-                            <a href={incomeSummaryUrl}>
+                            <a href={incomeSummaryUrl(this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : "")}>
                                 <FontAwesomeIcon icon={faChartPie} />
                             </a>
-                            Income breakdown summary for
+                             Income breakdown summary for
                             <DateFilter />
 
                         </th>

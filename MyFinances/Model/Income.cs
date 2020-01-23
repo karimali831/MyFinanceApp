@@ -14,6 +14,7 @@ namespace MyFinances.Model
         public int? SecondSourceId { get; set; }  
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
+        public int WeekNo { get; set; }
 
     }
 

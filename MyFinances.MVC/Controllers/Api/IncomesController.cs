@@ -39,7 +39,8 @@ namespace MyIncomes.Website.Controllers.API
                         x.Source,
                         x.SecondSource, 
                         Date = x.Date.ToString("MM/dd/yyyy"),
-                        x.Amount
+                        x.Amount,
+                        x.WeekNo
                     })
             });
         }

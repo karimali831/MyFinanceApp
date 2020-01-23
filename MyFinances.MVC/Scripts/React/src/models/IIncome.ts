@@ -3,7 +3,8 @@ export interface IIncome {
     source: string,
     secondSource: string,
     date: Date,
-    amount: number
+    amount: number,
+    weekNo: number
 }
 
 export interface IIncomeDTO {

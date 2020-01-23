@@ -119,7 +119,7 @@ namespace MyFinances.Service
                     var data = new MissedEntries()
                     {
                         Name = incomeStream.ToString(),
-                        Dates = entries.Select(x => ( x.Month + "/" + x.Year + " Week: " + x.Week)).ToArray()
+                        Dates = entries.Select(x => (x.Year + " Week: " + x.Week)).ToArray()
                     };
 
                     results.Add(data);

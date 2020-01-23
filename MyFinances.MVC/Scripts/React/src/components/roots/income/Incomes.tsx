@@ -21,6 +21,9 @@ const columns: ITableProps[] = [{
     text: '#',
     hidden: true
   }, {
+    dataField: 'weekNo',
+    text: 'WeekNo'
+  }, {
     dataField: 'source',
     text: 'Source'
   }, {

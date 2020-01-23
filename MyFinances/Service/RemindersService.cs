@@ -61,7 +61,7 @@ namespace MyFinances.Service
                         {
                             string dbNotes = string.Format("{0} {1}. ({2})", notes, entry.Name, missedDates);
 
-                            if (!await ReminderExists(notes))
+                            if (!await ReminderExists(dbNotes))
                             {
                                 await AddReminder(new ReminderDTO
                                 {

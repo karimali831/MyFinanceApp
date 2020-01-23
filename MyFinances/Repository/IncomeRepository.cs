@@ -17,7 +17,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<Income>> GetAllAsync(DateFilter filter);
         Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(IncomeDTO dto);
-        Task<IEnumerable<(int Year, int Month, int Week)>> MissedIncomeEntriesAsync(CategoryType type);
+        Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(CategoryType type);
     }
 
     public class IncomeRepository : IIncomeRepository
@@ -43,6 +43,7 @@ namespace MyFinances.Repository
                         i.Amount,
                         i.SourceId,
                         i.SecondSourceId,
+                        i.WeekNo,
                         c1.Name AS Source,
                         c2.Name AS SecondSource
                     FROM {TABLE} i
@@ -93,10 +94,10 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<(int Year, int Month, int Week)>> MissedIncomeEntriesAsync(CategoryType type)
+        public async Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(CategoryType type)
         {
             string sqlTxt = $@"
-                DECLARE @start DATE = '2019-08-01' -- since records began
+                DECLARE @start DATE = '2019-08-07' -- since records began
                 DECLARE @end DATE = DATEADD(WEEK, DATEDIFF(WEEK, -1, GETDATE())-1, -1) -- last week of previous month
 
                 ;WITH IntervalDates (date)
@@ -108,12 +109,12 @@ namespace MyFinances.Repository
                     FROM IntervalDates
                     WHERE DATEADD(WEEK, 1, date)<=@end
                 )
-                SELECT YEAR(date) AS Year, MONTH(date) AS Month, DATEPART(wk, date) AS Week
+                SELECT YEAR(date) AS Year, DATEPART(wk, date) AS Week
                 FROM IntervalDates
 
                 EXCEPT
 
-                SELECT DISTINCT YEAR(Date) AS yy, MONTH(Date) AS mm, DATEPART(wk, date) AS ww
+                SELECT DISTINCT YEAR(Date) AS yy, DATEPART(wk, date) AS ww
                 FROM {TABLE}
                 WHERE Date BETWEEN @start AND @end 
                 AND SourceId = @IncomeStream
@@ -121,7 +122,7 @@ namespace MyFinances.Repository
 
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<(int Year, int Month, int Week)>(sqlTxt, new { @IncomeStream = (int)type })).ToArray();
+                return (await sql.QueryAsync<(int Year, int Week)>(sqlTxt, new { @IncomeStream = (int)type })).ToArray();
 
             }
         }

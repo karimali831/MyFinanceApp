@@ -44,17 +44,38 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
         return (
             <div>
                 {
-                    notifications.latePaymentsCount !== 0 ? 
+                    notifications.latePaymentsCount !== 0 || notifications.overDueReminders.length > 0 ? 
                         <div className="alert alert-danger d-flex flex-row" role="alert">
                             <FontAwesomeIcon icon={faExclamationCircle} /> &nbsp;
-                            <span style={{fontWeight: 'bold'}}>You have {notifications.latePaymentsCount} late payments totalling £{notifications.latePaymentsTotal}</span>
-                        </div>
-                :    null    
+                            {
+                                notifications.latePaymentsCount !== 0 ? <>
+                                    <span style={{fontWeight: 'bold'}}>
+                                        You have {notifications.latePaymentsCount} late payments totalling £{notifications.latePaymentsTotal}
+                                    </span>
+                                </> : null
+                            }
+                            {
+                                notifications.overDueReminders.length > 0 ? 
+                                    <div style={{fontWeight: 'bold'}}>Overdue reminders: <br />
+                                        {notifications.overDueReminders.filter(r => r.id !== this.state.hiddenReminderId).map(r =>
+                                            <div key={r.id}>
+                                                <span>due: {r.dueDate}</span> -&nbsp;
+                                                <span>{r.notes}</span>&nbsp;
+                                                <span onClick={() => this.hideReminder(r.id)}>
+                                                    <FontAwesomeIcon icon={faEyeSlash} />
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                : null
+                            }
+                    </div>
+                : null    
                 }
                 {
                     notifications.dueTodayPaymentsCount !== 0 || notifications.dueTodayReminders.length > 0 ? 
-                    <div className="alert alert-danger d-flex flex-row notification-flash" role="alert">
-                        <FontAwesomeIcon icon={faExclamationCircle} /> &nbsp;
+                    <div className="alert alert-danger d-flex flex-row" role="alert">
+                        <FontAwesomeIcon icon={faExclamationCircle} className="notification-flash" /> &nbsp;
                             {
                                 notifications.dueTodayPaymentsCount !== 0 ? <>
                                     <span style={{fontWeight: 'bold'}}>

@@ -103,8 +103,9 @@ namespace MyFinances.Service
                     .Where(x => x.PaymentStatus == PaymentStatus.DueToday)
                     .Sum(x => x.AvgMonthlyAmount)),
 
+                OverDueReminders = reminders.Where(x => x.DueDate.Date < DateTime.UtcNow.Date),
                 DueTodayReminders = reminders.Where(x => x.DueDate.Date == DateTime.UtcNow.Date),
-                UpcomingReminders = reminders.Where(x => x.DueDate <= DateTime.UtcNow.Date.AddDays(7) && x.DueDate.Date != DateTime.UtcNow.Date)
+                UpcomingReminders = reminders.Where(x => x.DueDate <= DateTime.UtcNow.Date.AddDays(7) && x.DueDate.Date > DateTime.UtcNow.Date)
             };
         }
 

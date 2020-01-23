@@ -2,6 +2,7 @@
 using MyFinances.Enums;
 using MyFinances.Model;
 using MyFinances.Repository;
+using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace MyFinances.Service
     public interface ISpendingService
     {
         Task<IEnumerable<Spending>> GetAllAsync(SpendingRequestDTO request);
+        Task MissedCreditCardInterestEntriesAsync();
         Task<int?> GetIdFromFinanceAsync(int Id);
         Task MakeSpendingFinanceless(int id, int catId);
         Task InsertAsync(SpendingDTO dto);
@@ -23,13 +25,17 @@ namespace MyFinances.Service
     {
         private readonly ISpendingRepository spendingRepository;
         private readonly ICNWService cnwService;
+        private readonly IRemindersService reminderService;
 
         public SpendingService(
             ISpendingRepository spendingRepository,
-            ICNWService cnwService)
+            ICNWService cnwService,
+            IRemindersService reminderService
+            )
         {
             this.spendingRepository = spendingRepository ?? throw new ArgumentNullException(nameof(spendingRepository));
             this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
+            this.reminderService = reminderService ?? throw new ArgumentNullException(nameof(reminderService));
         }
 
         public async Task<IEnumerable<Spending>> GetAllAsync(SpendingRequestDTO request)
@@ -68,6 +74,49 @@ namespace MyFinances.Service
         public DateTime? ExpenseLastPaidDate(int financeId)
         {
             return spendingRepository.ExpenseLastPaidDate(financeId);
+        }
+
+        public async Task MissedCreditCardInterestEntriesAsync()
+        {
+            var creditCards = new List<string>()
+            {
+                "aqua",
+                "vanquis",
+                "barclaycard",
+                "luma",
+                "capital one"
+            };
+
+            var results = new List<MissedCCEntries>();
+
+            foreach (var card in creditCards)
+            {
+                var entries = (await spendingRepository.MissedCreditCardInterestEntriesAsync(card));
+
+                if (entries != null)
+                {
+                    var data = new MissedCCEntries()
+                    {
+                        Card = card,
+                        Month = entries.Select(x => x.Month).ToArray(),
+                        Year = entries.Select(x => x.Year).ToArray()
+                    };
+
+                    results.Add(data);
+                }
+            }
+
+            if (results.Any())
+            {
+                foreach (var entry in results)
+                {
+                    await reminderService.AddReminder(new ReminderDTO
+                    {
+                        DueDate = DateTime.UtcNow,
+                        Notes = string.Format("You have a missed credit card interest entry for {0}. ({1}/{2})", entry.Card, entry.Month, entry.Year)
+                    });
+                }
+            }
         }
 
         public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter)

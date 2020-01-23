@@ -13,6 +13,8 @@ namespace MyFinances.Enums
         CNWRouteType,
         Vehicles,
         Maintenance,
-        IncomeSources
+        IncomeSources,
+        InterestFeesCharges = 13,
+        CCInterest = 42
     }
 }

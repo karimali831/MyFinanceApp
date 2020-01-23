@@ -15,6 +15,7 @@ namespace MyFinances.Repository
     public interface ISpendingRepository
     {
         Task<IEnumerable<Spending>> GetAllAsync(DateFilter dateFilter);
+        Task<IEnumerable<(int Year, int Month)>> MissedCreditCardInterestEntriesAsync(string card);
         Task<int?> GetIdFromFinanceAsync(int Id);
         Task MakeSpendingFinanceless(int id, int catId);
         DateTime? ExpenseLastPaidDate(int financeId);
@@ -119,8 +120,6 @@ namespace MyFinances.Repository
 
         public DateTime? ExpenseLastPaidDate(int financeId)
         {
-            //AND Date >= DATEADD(mm, -1, CURRENT_TIMESTAMP) 
-
             using (var sql = dbConnectionFactory())
             {
                 return   
@@ -140,6 +139,41 @@ namespace MyFinances.Repository
             using (var sql = dbConnectionFactory())
             {
                 await sql.ExecuteAsync($@"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
+            }
+        }
+
+        public async Task<IEnumerable<(int Year, int Month)>> MissedCreditCardInterestEntriesAsync(string card)
+        {
+            string sqlTxt = $@"
+                DECLARE @start DATE = '2019-08-01' -- since records began
+                DECLARE @end DATE = DATEADD(MONTH, DATEDIFF(MONTH, -1, GETDATE())-1, -1) -- last Day of previous month
+
+                ;WITH IntervalDates (date)
+                AS
+                (
+                    SELECT @start
+                    UNION ALL
+                    SELECT DATEADD(MONTH, 1, date)
+                    FROM IntervalDates
+                    WHERE DATEADD(MONTH, 1, date)<=@end
+                )
+                SELECT YEAR(date) AS Year, MONTH(date) AS Month
+                FROM IntervalDates
+
+                EXCEPT
+
+                SELECT DISTINCT YEAR(Date) AS yy, MONTH(Date) AS mm
+                FROM Spendings
+                WHERE Date BETWEEN @start AND @end 
+                AND SecondCatId = {(int)CategoryType.CCInterest}
+                AND CatId = {(int)CategoryType.InterestFeesCharges}
+                AND Name like '%@Card%''
+                ";
+
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<(int Year, int Month)>(sqlTxt, new { Card = card })).ToArray();
+
             }
         }
     }

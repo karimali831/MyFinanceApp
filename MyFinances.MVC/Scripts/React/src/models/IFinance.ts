@@ -37,6 +37,7 @@ export interface IFinanceNotification {
     upcomingPaymentsTotal: number,
     dueTodayPaymentsCount: number,
     dueTodayPaymentsTotal: number,
+    overDueReminders: IReminder[],
     upcomingReminders: IReminder[],
     dueTodayReminders: IReminder[]
 }

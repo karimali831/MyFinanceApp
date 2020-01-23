@@ -26,6 +26,7 @@ namespace MyFinances.ViewModels
 
     public class FinanceNotificationVM
     {
+        public IEnumerable<Reminder> OverDueReminders { get; set; }
         public IEnumerable<Reminder> DueTodayReminders { get; set; }
         public IEnumerable<Reminder> UpcomingReminders { get; set; }
         public (int Count, decimal Total) LatePayments { get; set; }

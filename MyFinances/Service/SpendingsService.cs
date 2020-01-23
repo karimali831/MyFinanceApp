@@ -87,7 +87,7 @@ namespace MyFinances.Service
                 "capital one"
             };
 
-            var results = new List<MissedCCEntries>();
+            var results = new List<MissedEntries>();
 
             foreach (var card in creditCards)
             {
@@ -95,9 +95,9 @@ namespace MyFinances.Service
 
                 if (entries.Any())
                 {
-                    var data = new MissedCCEntries()
+                    var data = new MissedEntries()
                     {
-                        Card = card,
+                        Name = card,
                         Dates = entries.Select(x => (x.Month + "/" + x.Year)).ToArray()
                     };
 
@@ -105,28 +105,7 @@ namespace MyFinances.Service
                 }
             }
 
-            if (results.Any())
-            {
-                foreach (var entry in results)
-                {
-                    if (entry.Dates.Any())
-                    {
-                        foreach (var missedDates in entry.Dates)
-                        {
-                            string notes = string.Format("You have a missed credit card interest entry for {0}. ({1})", entry.Card, missedDates);
-
-                            if (!await reminderService.ReminderExists(notes))
-                            {
-                                await reminderService.AddReminder(new ReminderDTO
-                                {
-                                    DueDate = DateTime.UtcNow,
-                                    Notes = notes
-                                });
-                            }
-                        }
-                    }
-                }
-            }
+            await reminderService.MissedEntriesAsync(results, "You have a missed credit card interest entry for");
         }
 
         public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter)

@@ -17,10 +17,7 @@ namespace MyFinances.Service
         Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates);
         Task<FinanceNotificationVM> GetNotifications();
         Task<IEnumerable<FinanceVM>> GetFinances(bool resyncNextDueDates);
-        Task<IEnumerable<Income>> GetAllIncomesAsync(IncomeRequestDTO request);
-        Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(FinanceDTO dto);
-        Task InsertIncomeAsync(IncomeDTO dto);
         int? CalculateDays(DateTime? Date1, DateTime? Date2);
         int? DaysLastPaid(int Id);
         PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
@@ -29,23 +26,23 @@ namespace MyFinances.Service
     public class FinanceService : IFinanceService
     {
         private readonly IFinanceRepository financeRepository;
-        private readonly IIncomeRepository incomeRepository;
         private readonly ISpendingService spendingService;
         private readonly IRemindersService remindersService;
+        private readonly IIncomeService incomeService;
         private readonly IBaseService baseService;
 
         public FinanceService(
             IFinanceRepository financeRepository,
-            IIncomeRepository incomeRepository,
             ISpendingService spendingService,
             IRemindersService remindersService,
-            IBaseService baseService)
+            IBaseService baseService,
+            IIncomeService incomeService)
         {
             this.financeRepository = financeRepository ?? throw new ArgumentNullException(nameof(financeRepository));
-            this.incomeRepository = incomeRepository ?? throw new ArgumentNullException(nameof(incomeRepository));
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
             this.remindersService = remindersService ?? throw new ArgumentNullException(nameof(remindersService));
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
+            this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
         }
 
         public DateTime CalculateNextDueDate(DateTime date)
@@ -84,6 +81,7 @@ namespace MyFinances.Service
         public async Task<FinanceNotificationVM> GetNotifications()
         {
             await spendingService.MissedCreditCardInterestEntriesAsync();
+            await incomeService.MissedIncomeEntriesAsync();
 
             var finances = await GetFinances(resyncNextDueDates: false);
             var reminders = (await remindersService.GetAllAsync()).Where(x => x.Display == true);
@@ -169,49 +167,6 @@ namespace MyFinances.Service
             return finances;
         }
 
-        public async Task<IEnumerable<Income>> GetAllIncomesAsync(IncomeRequestDTO request)
-        {
-            var incomes = (await incomeRepository.GetAllAsync(request.DateFilter));
-
-            if (request.SourceId.HasValue)
-            {
-                incomes = incomes.Where(x => request.IsSecondCat ? x.SecondSourceId == request.SourceId.Value : x.SourceId == request.SourceId.Value);
-            }
-
-            return incomes.OrderByDescending(x => x.Date).ThenBy(x => x.Source);
-        }
-
-        public async Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFilter dateFilter)
-        {
-            var incomeSummary = await incomeRepository.GetSummaryAsync(dateFilter);
-
-            var secondCats = incomeSummary
-                .Where(x => x.Cat2 != null)
-                .GroupBy(
-                    p => new { p.CatId, p.Cat1 },
-                    p => new { p.SecondCatId, p.Cat2, p.Total },
-                    (key, g) =>
-                        new IncomeSummaryDTO
-                        {
-                            Cat1 = key.Cat1,
-                            CatId = key.CatId,
-                            Total = incomeSummary
-                                .Where(x => x.CatId == key.CatId && x.Cat1 == key.Cat1)
-                                .Sum(x => x.Total),
-                                    SecondCats = g.Select(s => new IncomeSummaryDTO
-                                    {
-                                        SecondCatId = s.SecondCatId,
-                                        Cat2 = s.Cat2,
-                                        Total = s.Total
-                                    })
-                        }
-                 );
-
-            var firstCats = incomeSummary.Where(x => x.Cat2 == null);
-
-            return firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
-        }
-
         public int? CalculateDays(DateTime? Date1, DateTime? Date2)
         {
             if (!Date1.HasValue || !Date2.HasValue)
@@ -268,11 +223,6 @@ namespace MyFinances.Service
         public async Task InsertAsync(FinanceDTO dto)
         {
             await financeRepository.InsertAsync(dto);
-        }
-
-        public async Task InsertIncomeAsync(IncomeDTO dto)
-        {
-            await incomeRepository.InsertAsync(dto);
         }
     }
 }

@@ -107,62 +107,11 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("incomes")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> GetIncomesAsync(IncomeRequestDTO request)
-        {
-            var incomes = await financeService.GetAllIncomesAsync(request);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new {
-                Incomes = 
-                    incomes.Select(x => new
-                    {
-                        x.Id,
-                        x.Source,
-                        x.SecondSource, 
-                        Date = x.Date.ToString("MM/dd/yyyy"),
-                        x.Amount
-                    })
-            });
-        }
-
-        [Route("summary/income")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> GetIncomesSummaryAsync(DateFilter dateFilter)
-        {
-            if (DateTime.TryParseExact(dateFilter.FromDateRange.ToString(), "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime fromDateRange))
-            {
-                dateFilter.FromDateRange = fromDateRange;
-            }
-
-            if (DateTime.TryParseExact(dateFilter.ToDateRange.ToString(), "dd-MM-yy", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime toDateRange))
-            {
-                dateFilter.ToDateRange = toDateRange;
-            }
-
-            var incomeSummary = await financeService.GetIncomeSummaryAsync(dateFilter);
-
-            return Request.CreateResponse(HttpStatusCode.OK, 
-                new {
-                    IncomeSummary = incomeSummary,
-                    TotalIncome = incomeSummary.Sum(x => x.Total)
-                }
-            );
-        }
-
         [Route("add")]
         [HttpPost]
         public async Task<HttpResponseMessage> InsertAsync(FinanceDTO model)
         {
             await financeService.InsertAsync(model);
-            return Request.CreateResponse(HttpStatusCode.OK, true);
-        }
-
-        [Route("add/income")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> InsertIncomeAsync(IncomeDTO model)
-        {
-            await financeService.InsertIncomeAsync(model);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
     }

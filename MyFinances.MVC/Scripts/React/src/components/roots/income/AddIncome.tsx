@@ -164,7 +164,7 @@ export default class AddExpense extends React.Component<IOwnProps, IOwnState> {
                 amount: this.state.amount
             }
 
-            commonApi.add(addModel, "finances", "income");
+            commonApi.add(addModel, "incomes");
             this.setState({ ...this.state, redirect: true })  
         }
         else{

@@ -17,11 +17,13 @@ namespace MyFinances.Website.Controllers
     public class FinancesController : Controller
     {
         private readonly ISpendingService spendingService;
+        private readonly IIncomeService incomeService;
         private readonly IFinanceService financeService;
 
-        public FinancesController(ISpendingService spendingService, IFinanceService financeService)
+        public FinancesController(ISpendingService spendingService, IIncomeService incomeService, IFinanceService financeService)
         {
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
+            this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
             this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
         }
 
@@ -68,7 +70,7 @@ namespace MyFinances.Website.Controllers
                 Interval = 1
             };
 
-            var results = await financeService.GetIncomeSummaryAsync(dateFilter);
+            var results = await incomeService.GetIncomeSummaryAsync(dateFilter);
 
             return View(new SummaryChartVM
             {

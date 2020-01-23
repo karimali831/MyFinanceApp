@@ -15,6 +15,8 @@ namespace MyFinances.Enums
         Maintenance,
         IncomeSources,
         InterestFeesCharges = 13,
+        CWTL = 33,
+        UberEats,
         CCInterest = 42
     }
 }

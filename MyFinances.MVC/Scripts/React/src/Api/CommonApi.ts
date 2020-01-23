@@ -7,8 +7,8 @@ export class CommonFinanceApi {
 
     public rootUrl: string = `${rootUrl}/api`;
 
-    public add = async (model: any, route: string, secondRoute = "") => {
-        return fetch(`${this.rootUrl}/${route}/add/${secondRoute}`, {
+    public add = async (model: any, route: string) => {
+        return fetch(`${this.rootUrl}/${route}/add`, {
             method: "POST",
             body: JSON.stringify(model),
             headers: {

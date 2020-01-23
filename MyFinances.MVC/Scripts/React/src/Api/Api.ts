@@ -51,7 +51,7 @@ export class FinanceApi {
     }
 
     public incomeSummary = async (dateFilter: IDateFilter): Promise<IIncomeSummaryResponse> => {
-        return fetch(`${this.rootUrl}/finances/summary/income`, {
+        return fetch(`${this.rootUrl}/incomes/summary`, {
             method: "POST",
             body: JSON.stringify(dateFilter),
             headers: {
@@ -106,7 +106,7 @@ export class FinanceApi {
     }
 
     public incomes = async (request?: IIncomeRequest): Promise<IIncomeResponse> => {
-        return fetch(`${this.rootUrl}/finances/incomes`, {
+        return fetch(`${this.rootUrl}/incomes`, {
             method: "POST",
             body: JSON.stringify(request),
             headers: {

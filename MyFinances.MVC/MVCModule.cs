@@ -14,6 +14,7 @@ namespace MyFinances.Ninject
             Bind<IBaseService>().To<BaseService>();
             Bind<ICNWService>().To<CNWService>();
             Bind<IRemindersService>().To<RemindersService>();
+            Bind<IIncomeService>().To<IncomeService>();
 
             // Repositories
             Bind<IFinanceRepository>().To<FinanceRepository>();

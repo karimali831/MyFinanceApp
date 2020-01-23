@@ -2,6 +2,7 @@
 using MyFinances.Enums;
 using MyFinances.Model;
 using MyFinances.Repository;
+using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace MyFinances.Service
         Task AddReminder(ReminderDTO dto);
         Task HideReminder(int Id);
         Task<bool> ReminderExists(string notes);
+        Task MissedEntriesAsync(IList<MissedEntries> entries, string notes);
     }
 
     public class RemindersService : IRemindersService
@@ -45,6 +47,32 @@ namespace MyFinances.Service
         public async Task<bool> ReminderExists(string notes)
         {
             return await remindersRepository.ReminderExists(notes);
+        }
+
+        public async Task MissedEntriesAsync(IList<MissedEntries> entries, string notes)
+        {
+            if (entries.Any())
+            {
+                foreach (var entry in entries)
+                {
+                    if (entry.Dates.Any())
+                    {
+                        foreach (var missedDates in entry.Dates)
+                        {
+                            string dbNotes = string.Format("{0} {1}. ({2})", notes, entry.Name, missedDates);
+
+                            if (!await ReminderExists(notes))
+                            {
+                                await AddReminder(new ReminderDTO
+                                {
+                                    DueDate = DateTime.UtcNow,
+                                    Notes = dbNotes
+                                });
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

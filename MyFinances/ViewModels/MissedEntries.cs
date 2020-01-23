@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MyFinances.ViewModels
 {
-    public class MissedCCEntries
+    public class MissedEntries
     {
-        public string Card { get; set; }
+        public string Name { get; set; }
         public string[] Dates { get; set; }
     }
 }

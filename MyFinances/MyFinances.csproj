@@ -147,13 +147,14 @@
     <Compile Include="Repository\IncomeRepository.cs" />
     <Compile Include="Repository\SpendingRepository.cs" />
     <Compile Include="Repository\FinanceRepository.cs" />
+    <Compile Include="Service\IncomeService.cs" />
     <Compile Include="Service\RemindersService.cs" />
     <Compile Include="Service\BaseService.cs" />
     <Compile Include="Service\CNWService.cs" />
     <Compile Include="Service\SpendingsService.cs" />
     <Compile Include="Service\FinanceService.cs" />
     <Compile Include="ViewModels\FinanceVM.cs" />
-    <Compile Include="ViewModels\MissedCCEntries.cs" />
+    <Compile Include="ViewModels\MissedEntries.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

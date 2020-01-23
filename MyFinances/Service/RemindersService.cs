@@ -14,6 +14,7 @@ namespace MyFinances.Service
         Task<IEnumerable<Reminder>> GetAllAsync();
         Task AddReminder(ReminderDTO dto);
         Task HideReminder(int Id);
+        Task<bool> ReminderExists(string notes);
     }
 
     public class RemindersService : IRemindersService
@@ -39,6 +40,11 @@ namespace MyFinances.Service
         public async Task HideReminder(int Id)
         {
             await remindersRepository.HideAsync(Id);
+        }
+
+        public async Task<bool> ReminderExists(string notes)
+        {
+            return await remindersRepository.ReminderExists(notes);
         }
     }
 }

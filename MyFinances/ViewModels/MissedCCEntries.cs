@@ -9,7 +9,6 @@ namespace MyFinances.ViewModels
     public class MissedCCEntries
     {
         public string Card { get; set; }
-        public int[] Year { get; set; }
-        public int[] Month { get; set; }
+        public string[] Dates { get; set; }
     }
 }

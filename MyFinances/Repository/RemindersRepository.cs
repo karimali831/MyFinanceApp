@@ -16,6 +16,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<Reminder>> GetAllAsync();
         Task InsertAsync(ReminderDTO dto);
         Task HideAsync(int Id);
+        Task<bool> ReminderExists(string notes);
     }
 
     public class RemindersRepository : IRemindersRepository
@@ -38,11 +39,20 @@ namespace MyFinances.Repository
             }
         }
 
+        public async Task<bool> ReminderExists(string notes)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                var exists = await sql.QueryAsync<bool>($"SELECT 1 WHERE EXISTS (SELECT 1 FROM {TABLE} WHERE PATINDEX(@Notes, [Notes]) <> 0)", new { Notes = notes });
+                return exists.Any();
+            }
+        }
+
         public async Task InsertAsync(ReminderDTO dto)
         {
             using (var sql = dbConnectionFactory())
             {
-                await sql.ExecuteAsync($@"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
+                await sql.ExecuteAsync($"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
             }
         }
 

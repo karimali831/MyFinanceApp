@@ -4,6 +4,7 @@ import { IFinanceNotification } from 'src/models/IFinance';
 import { faExclamationCircle, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { api } from 'src/api/Api';
+import { LoadNotificationsAction } from 'src/state/contexts/landing/Actions';
 
 export interface IPropsFromState {
     notifications?: IFinanceNotification,
@@ -11,7 +12,10 @@ export interface IPropsFromState {
     type: string
 }
 
-export interface IPropsFromDispatch {}
+export interface IPropsFromDispatch {
+    loadNotifications: () => LoadNotificationsAction
+}
+
 
 export interface IOwnState {
     hiddenReminderId?: number,
@@ -28,6 +32,12 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
             loading: this.props.loading,
             hiddenReminderId: undefined
         };
+    }
+
+    public componentDidUpdate(prevProps: AllProps, prevState: IOwnState) {
+        if (prevState.hiddenReminderId !== this.state.hiddenReminderId) {
+            this.props.loadNotifications()
+        }
     }
 
     public render() {
@@ -57,7 +67,7 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                             {
                                 notifications.overDueReminders.length > 0 ? 
                                     <div style={{fontWeight: 'bold'}}>Overdue reminders: <br />
-                                        {notifications.overDueReminders.filter(r => r.id !== this.state.hiddenReminderId).map(r =>
+                                        {notifications.overDueReminders.map(r =>
                                             <div key={r.id}>
                                                 <span>due: {r.dueDate}</span> -&nbsp;
                                                 <span>{r.notes}</span>&nbsp;
@@ -86,7 +96,7 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                             {
                                 notifications.dueTodayReminders.length > 0 ? 
                                     <div style={{fontWeight: 'bold'}}>Reminders due today: <br />
-                                        {notifications.dueTodayReminders.filter(r => r.id !== this.state.hiddenReminderId).map(r =>
+                                        {notifications.dueTodayReminders.map(r =>
                                             <div key={r.id}>
                                                 <span>due: {r.dueDate}</span> -&nbsp;
                                                 <span>{r.notes}</span>&nbsp;
@@ -115,7 +125,7 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                                 {
                                     notifications.upcomingReminders.length > 0 ? 
                                     <div style={{fontWeight: 'bold'}}>Upcoming reminders: <br />
-                                        {notifications.upcomingReminders.filter(r => r.id !== this.state.hiddenReminderId).map(r =>
+                                        {notifications.upcomingReminders.map(r =>
                                             <div key={r.id}>
                                                 <span>due: {r.dueDate}</span> -&nbsp;
                                                 <span>{r.notes}</span>&nbsp;

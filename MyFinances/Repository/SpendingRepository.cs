@@ -167,12 +167,12 @@ namespace MyFinances.Repository
                 WHERE Date BETWEEN @start AND @end 
                 AND SecondCatId = {(int)CategoryType.CCInterest}
                 AND CatId = {(int)CategoryType.InterestFeesCharges}
-                AND Name like '%@Card%''
+                AND Name like @Card
                 ";
 
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<(int Year, int Month)>(sqlTxt, new { Card = card })).ToArray();
+                return (await sql.QueryAsync<(int Year, int Month)>(sqlTxt, new { Card = $"%{card}%" })).ToArray();
 
             }
         }

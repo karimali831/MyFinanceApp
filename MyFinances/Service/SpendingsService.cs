@@ -93,13 +93,12 @@ namespace MyFinances.Service
             {
                 var entries = (await spendingRepository.MissedCreditCardInterestEntriesAsync(card));
 
-                if (entries != null)
+                if (entries.Any())
                 {
                     var data = new MissedCCEntries()
                     {
                         Card = card,
-                        Month = entries.Select(x => x.Month).ToArray(),
-                        Year = entries.Select(x => x.Year).ToArray()
+                        Dates = entries.Select(x => (x.Month + "/" + x.Year)).ToArray()
                     };
 
                     results.Add(data);
@@ -110,11 +109,22 @@ namespace MyFinances.Service
             {
                 foreach (var entry in results)
                 {
-                    await reminderService.AddReminder(new ReminderDTO
+                    if (entry.Dates.Any())
                     {
-                        DueDate = DateTime.UtcNow,
-                        Notes = string.Format("You have a missed credit card interest entry for {0}. ({1}/{2})", entry.Card, entry.Month, entry.Year)
-                    });
+                        foreach (var missedDates in entry.Dates)
+                        {
+                            string notes = string.Format("You have a missed credit card interest entry for {0}. ({1})", entry.Card, missedDates);
+
+                            if (!await reminderService.ReminderExists(notes))
+                            {
+                                await reminderService.AddReminder(new ReminderDTO
+                                {
+                                    DueDate = DateTime.UtcNow,
+                                    Notes = notes
+                                });
+                            }
+                        }
+                    }
                 }
             }
         }

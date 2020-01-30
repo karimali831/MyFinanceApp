@@ -12,7 +12,7 @@ import { incomeSummaryChartUrl, incomeExpenseChartUrl } from '../../utils/Utils'
 import { DateFrequency } from 'src/enums/DateFrequency';
 
 export interface IPropsFromState {
-    dateFilter?: IDateFilter | undefined,
+    dateFilter: IDateFilter,
     incomeSummary: IIncomeSummary[],
     totalIncome: number,
     loading: boolean,
@@ -39,11 +39,11 @@ export default class IncomeSummary extends React.Component<AllProps> {
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>
-                            <a href={incomeExpenseChartUrl(this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : "")}>
+                            <a href={incomeExpenseChartUrl(DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
                                 <FontAwesomeIcon icon={faChartLine} /> Income and expenses summary chart
                             </a>
                             <br />
-                            <a href={incomeSummaryChartUrl(this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : "")}>
+                            <a href={incomeSummaryChartUrl(DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
                                 <FontAwesomeIcon icon={faChartPie} /> Income breakdown summary for
                             </a>
                             <DateFilter />

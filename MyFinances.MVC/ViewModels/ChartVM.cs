@@ -1,4 +1,5 @@
-﻿using MyFinances.Enums;
+﻿using MyFinances.DTOs;
+using MyFinances.Enums;
 using MyFinances.Model;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace MyFinances.Website.ViewModels
         public string TitleDs2 { get; set; }
         public string Type { get; set; }
         public string Action { get; set; }
-        public DateFrequency Frequency { get; set; }
+        public DateFilter Filter { get; set; }
         public string[] xAxis { get; set; }
         public decimal[] yAxisDs1 { get; set; }
         public decimal[] yAxisDs2 { get; set; }

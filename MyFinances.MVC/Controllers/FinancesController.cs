@@ -34,12 +34,12 @@ namespace MyFinances.Website.Controllers
             return View();
         }
 
-        public async Task<ActionResult> IncomeExpenseChart(DateFrequency frequency)
+        public async Task<ActionResult> IncomeExpenseChart(DateFrequency frequency, int interval = 1)
         {
             var dateFilter = new DateFilter
             {
                 Frequency = frequency,
-                Interval = 1
+                Interval = interval
             };
 
             var results = await financeService.GetIncomeExpenseTotalsByMonth(dateFilter);
@@ -51,19 +51,18 @@ namespace MyFinances.Website.Controllers
                 TitleDs2 = "Spendings",
                 Type = "line",
                 Action = nameof(IncomeExpenseChart),
-                Frequency = frequency,
+                Filter = dateFilter,
                 xAxis = results.Select(x => x.MonthName).Distinct().ToArray(),
                 yAxisDs1 = results.Where(x => x.Type == CategoryType.Income).Select(x => x.Total).ToArray(),
                 yAxisDs2 = results.Where(x => x.Type == CategoryType.Spendings).Select(x => x.Total).ToArray()
             });
         }
 
-        public async Task<ActionResult> SpendingsSummaryChart(DateFrequency frequency)
+        public async Task<ActionResult> SpendingsSummaryChart(DateFrequency frequency, int interval = 1)
         {
-            var dateFilter = new DateFilter
-            {
+            var dateFilter = new DateFilter {
                 Frequency = frequency,
-                Interval = 1
+                Interval = interval
             };
 
             var results = (await spendingService.GetSpendingSummary(dateFilter)).Take(10);
@@ -73,18 +72,17 @@ namespace MyFinances.Website.Controllers
                 Title = "Top 10 Spending Expenses",
                 Type = "doughnut",
                 Action = nameof(SpendingsSummaryChart),
-                Frequency = frequency,
+                Filter = dateFilter,
                 xAxis = results.Select(x => x.Cat1).ToArray(),
                 yAxisDs1 = results.Select(x => x.Total).ToArray()
             });
         }
 
-        public async Task<ActionResult> IncomesSummaryChart(DateFrequency frequency)
+        public async Task<ActionResult> IncomesSummaryChart(DateFrequency frequency, int interval = 1)
         {
-            var dateFilter = new DateFilter
-            {
+            var dateFilter = new DateFilter {
                 Frequency = frequency,
-                Interval = 1
+                Interval = interval
             };
 
             var results = await incomeService.GetIncomeSummaryAsync(dateFilter);
@@ -94,7 +92,7 @@ namespace MyFinances.Website.Controllers
                 Title = "Income Sources",
                 Type = "doughnut",
                 Action = nameof(IncomesSummaryChart),
-                Frequency = frequency,
+                Filter = dateFilter,
                 xAxis = results.Select(x => x.Cat1).ToArray(),
                 yAxisDs1 = results.Select(x => x.Total).ToArray()
             });

@@ -12,7 +12,7 @@ import { spendingSummaryChartUrl } from '../../utils/Utils';
 import { DateFrequency } from 'src/enums/DateFrequency';
 
 export interface IPropsFromState {
-    dateFilter?: IDateFilter | undefined,
+    dateFilter: IDateFilter,
     spendingSummary: ISpendingSummary[],
     fuelIn: number,
     totalSpent: number,
@@ -41,7 +41,7 @@ export default class SpendingSummary extends React.Component<AllProps> {
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
-                                <a href={spendingSummaryChartUrl(this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : "")}>
+                                <a href={spendingSummaryChartUrl(DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
                                     <FontAwesomeIcon icon={faChartPie} /> Spendings breakdown summary for
                                 </a>
                                 <DateFilter />

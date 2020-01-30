@@ -26,7 +26,7 @@ export class SpendingSummaryState {
         spendingSummary: [],
         fuelIn: 0,
         totalSpent: 0,
-        loading: true,
+        loading: false,
         showSecondCatSummary: null,
         categoryType: CategoryType.Spendings,
         dateFilter: spendingSummaryDateFilter

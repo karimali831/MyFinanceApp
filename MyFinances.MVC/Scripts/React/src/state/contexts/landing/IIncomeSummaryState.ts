@@ -24,7 +24,7 @@ export class IncomeSummaryState {
     public static readonly intialState = {
         incomeSummary: [],
         totalIncome: 0,
-        loading: true,
+        loading: false,
         showSecondCatSummary: null,
         categoryType: CategoryType.Incomes,
         dateFilter: incomeSummaryDateFilter

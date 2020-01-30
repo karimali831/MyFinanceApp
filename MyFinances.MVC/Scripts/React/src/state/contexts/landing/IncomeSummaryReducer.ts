@@ -6,6 +6,9 @@ import { LandingSummaryActions, LandingSummaryActionTypes } from './Actions';
 const IncomeSummaryReducer: Reducer<IIncomeSummaryState, LandingSummaryActions> =
     (state = IncomeSummaryState.intialState, action) => {
         switch (action.type) {
+            case LandingSummaryActionTypes.LoadIncomeSummary:
+                return { ...state, ...{ loading: true } };
+
             case LandingSummaryActionTypes.LoadIncomeSummarySuccess:
                 return {
                     ...state,

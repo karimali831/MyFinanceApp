@@ -9,6 +9,7 @@ namespace MyFinances.Model
         public string Name { get; set; }
         public CategoryType TypeId { get; set; }
         public CategoryType? SecondTypeId { get; set; }
+        public bool Disabled { get; set; }
     }
 
     public class CategoryMap : EntityTypeConfiguration<Category>

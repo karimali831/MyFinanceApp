@@ -12,9 +12,9 @@ export interface ISpendingDTO {
     name: string,
     date: string,
     amount: number,
-    catId: number | undefined,
-    secondCatId: number | undefined,
-    financeId: number | undefined
+    catId?: number,
+    secondCatId?: number,
+    financeId?: number
 }
 
 export interface ISpendingSummary

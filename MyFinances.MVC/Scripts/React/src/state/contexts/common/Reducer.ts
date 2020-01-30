@@ -13,6 +13,37 @@ const CommonReducer: Reducer<ICommonState, CommonActions> =
                     } 
                 };
 
+            case CommonActionTypes.LoadCategoriesSuccess:
+                return { ...state, 
+                    ...{ 
+                        categories: action.categories,
+                        loadingCategories: false
+                    } 
+                };
+            case CommonActionTypes.LoadSecondCategoriesSuccess:
+                return { ...state, 
+                    ...{ 
+                        secondCategories: action.categories,
+                        loadingSecondCategories: false
+                    } 
+                };
+
+            case CommonActionTypes.OnChangeSelectedCategory:
+                    return { ...state, 
+                        ...{ 
+                            selectedCat: action.selectedCat,
+                            secondTypeId: action.secondTypeId
+                        } 
+                    };
+
+            case CommonActionTypes.OnChangeSelectedSecondCategory:
+                    return { ...state, 
+                        ...{ 
+                            selectedSecondCat: action.selectedSecondCat
+                        } 
+                    };
+
+
             default:
                 return state;
         }

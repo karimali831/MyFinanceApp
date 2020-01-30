@@ -55,6 +55,7 @@ export default class IncomeSummary extends React.Component<AllProps> {
                         categoryType={this.props.categoryType}
                         filteredResults={this.props.incomeSummary}
                         dateFilter={this.props.dateFilter}
+                        icon={faArrowUp}
                     />
                     <tr>
                         <th scope="row"><FontAwesomeIcon icon={faArrowUp} /> Total Income</th>

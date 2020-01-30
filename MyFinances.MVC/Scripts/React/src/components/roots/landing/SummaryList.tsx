@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { IDateFilter } from 'src/models/IDateFilter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDown, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { IBaseModel } from 'src/models/IIncome';
 import { CategoryType } from 'src/enums/CategoryType';
@@ -15,6 +15,7 @@ export interface IOwnProps<T> {
     showSecondCatSummary: string | null,
     categoryType: CategoryType,
     filteredResults: T[],
+    icon: IconDefinition,
     showSecondCategory: (secondCat: string) => void
 }
 
@@ -30,7 +31,7 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
             this.props.filteredResults && this.props.filteredResults.map((s, key) => 
                 <tr key={key}>
                     <th scope="row">
-                        <FontAwesomeIcon icon={faArrowDown} /> 
+                        <FontAwesomeIcon icon={this.props.icon} /> 
                         {
                             this.props.dateFilter !== undefined ?    
                                 <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link> 

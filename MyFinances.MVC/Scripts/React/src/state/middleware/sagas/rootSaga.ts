@@ -7,7 +7,7 @@ import { dateFilterWatchSaga } from './dateFilterSaga';
 import loadIncomeSummaryApiSaga from './loadIncomeSummaryApiSaga';
 import loadIncomesApiSaga from './loadIncomesApiSaga';
 import loadNotificationApiSaga from './loadNotificationsApiSaga';
-
+import loadCategoriesApiSaga from './loadCategoriesApiSaga';
 
 // We `fork()` these tasks so they execute in the background.
 export function* rootSaga() {
@@ -27,6 +27,7 @@ export function* rootSaga() {
     fork(loadIncomeSummaryApiSaga),
 
     // utils
-    fork(dateFilterWatchSaga)
+    fork(dateFilterWatchSaga),
+    fork(loadCategoriesApiSaga)
   ])
 }

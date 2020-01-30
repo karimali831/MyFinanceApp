@@ -2,7 +2,8 @@
 export interface ICategory {
     id: number,
     name: string,
-    secondTypeId: number
+    secondTypeId: number,
+    disabled: boolean
 }
 
 export interface ICategoryDTO {

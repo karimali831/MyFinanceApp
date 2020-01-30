@@ -11,7 +11,7 @@ export interface IPropsFromState {
 }
 
 export interface IPropsFromDispatch {
-    dateFilterChanged: (filter: IDateFilter, category: CategoryType) => DateFilterChangeAction,
+    dateFilterChanged: (filter: IDateFilter, category: CategoryType) => DateFilterChangeAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch

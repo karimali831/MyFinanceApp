@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { commonApi } from '../../api/CommonApi'
+import { commonApi } from '../../../api/CommonApi'
 import { Redirect } from 'react-router-dom'
-import { Load } from '../base/Loader';
-import { AddMenu } from '../base/Menu';
+import { Load } from '../../base/Loader';
+import { AddMenu } from '../../base/Menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { ICategory, ICategoryDTO } from '../../models/ICategory';
+import { ICategory, ICategoryDTO } from '../../../models/ICategory';
 
 interface IOwnProps {
 }

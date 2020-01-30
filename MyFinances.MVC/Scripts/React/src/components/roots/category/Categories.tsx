@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Load } from '../base/Loader';
-import { commonApi } from '../../api/CommonApi';
-import { ICategory } from '../../models/ICategory';
-import Table from '../base/CommonTable';
+import { Load } from '../../base/Loader';
+import { commonApi } from '../../../api/CommonApi';
+import { ICategory } from '../../../models/ICategory';
+import Table from '../../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
 
 interface IOwnProps {
@@ -47,6 +47,9 @@ export default class Categories extends React.Component<IOwnProps, IOwnState> {
           }, {
             dataField: 'secondTypeId',
             text: 'Second Type Id'
+          }, {
+            dataField: 'disabled',
+            text: 'Disabled'
           }
         ];
 

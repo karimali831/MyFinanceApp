@@ -66,6 +66,7 @@ export default class SpendingSummary extends React.Component<AllProps> {
                             categoryType={this.props.categoryType}
                             filteredResults={this.props.spendingSummary}
                             dateFilter={this.props.dateFilter}
+                            icon={faArrowDown}
                         />
                         <tr>
                             <th scope="row"><FontAwesomeIcon icon={faArrowDown} /> Total Spent</th>

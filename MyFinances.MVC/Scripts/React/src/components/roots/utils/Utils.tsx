@@ -64,8 +64,9 @@ export const rootUrl: string = process.env.NODE_ENV === "development" ? "http://
 export const appUrl: string = "http://localhost:3000";
 export const weekSummaryUrl = (weekNo: number) => `${rootUrl}/cnw/weeksummary/${weekNo}`;
 export const routeSummaryUrl = (id: string) => `${rootUrl}/cnw/routesummary/${id}`;
-export const spendingSummaryUrl = (frequency: string) => `${rootUrl}/finances/SpendingsSummaryChart?frequency=${frequency}`;
-export const incomeSummaryUrl = (frequency: string) => `${rootUrl}/finances/IncomesSummaryChart?frequency=${frequency}`;
+export const spendingSummaryChartUrl = (frequency: string) => `${rootUrl}/finances/SpendingsSummaryChart?frequency=${frequency}`;
+export const incomeSummaryChartUrl = (frequency: string) => `${rootUrl}/finances/IncomesSummaryChart?frequency=${frequency}`;
+export const incomeExpenseChartUrl = (frequency: string) => `${rootUrl}/finances/IncomeExpenseChart?frequency=${frequency}`;
 
 export const SummaryFilteredList =
 	(categoryType: CategoryType, catId?: number, frequency?: DateFrequency, interval?: number, isFinance?: boolean, isSecondCat?: boolean, fromDate?: string | null, toDate?: string | null) => `${CategoryType[categoryType]}/${catId}/${frequency}/${interval}/${categoryType === CategoryType.Spendings ? isFinance + "/" : ""}${isSecondCat}/${fromDate}/${toDate}`;

@@ -34,11 +34,11 @@ namespace MyFinances.Website.Controllers.API
         {
             var finances = await financeService.GetFinances(resyncNextDueDates);
 
-            var currentMonth = Enum.TryParse(DateTime.UtcNow.Date.ToString("MMMM"), out DateFrequency thisMonth);
-            var spentThisMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = thisMonth, Interval = 1 });
+            var currentMonth = (DateFrequency)Enum.Parse(typeof(DateFrequency), DateTime.UtcNow.Date.ToString("MMMM"), true);
+            var spentThisMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = currentMonth, Interval = 1 });
 
-            var lastMonth = Enum.TryParse(DateTime.UtcNow.Date.AddMonths(-1).ToString("MMMM"), out DateFrequency previousMonth);
-            var spentLastMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = previousMonth, Interval = 1 });
+            var lastMonth = (DateFrequency)Enum.Parse(typeof(DateFrequency), DateTime.UtcNow.Date.AddMonths(-1).ToString("MMMM"), true);
+            var spentLastMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = lastMonth, Interval = 1 });
 
             if (upcomingPayments)
             {

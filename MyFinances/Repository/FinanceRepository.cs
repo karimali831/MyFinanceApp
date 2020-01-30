@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using DFM.Utils;
 using MyFinances.DTOs;
+using MyFinances.Helpers;
 using MyFinances.Model;
+using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,6 +17,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<Finance>> GetAllAsync();
         Task InsertAsync(FinanceDTO dto);
         Task UpdateNextDueDateAsync(DateTime dueDate, int Id);
+        Task<IEnumerable<IncomeExpenseVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
     }
 
     public class FinanceRepository : IFinanceRepository
@@ -44,6 +47,39 @@ namespace MyFinances.Repository
                 await sql.ExecuteAsync($@"
                     UPDATE {TABLE} SET NextDueDate = @DueDate WHERE Id = @Id", new { DueDate = dueDate, Id }
                 );
+            }
+        }
+
+        public async Task<IEnumerable<IncomeExpenseVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter)
+        {
+            string sqlTxt = $@"
+                SELECT 
+	                CONVERT(CHAR(7), Date, 120) as YearMonth, 
+	                DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total', 
+	                'Spendings' as 'Type'
+                FROM 
+                    Spendings
+                WHERE 
+                    {Utils.FilterDateSql(filter)}
+                GROUP BY 
+                    CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date)
+                UNION
+                SELECT
+	                CONVERT(CHAR(7), Date, 120), 
+	                DATENAME(month, Date), 
+	                SUM(Amount), 'Income'
+                FROM 
+                    Incomes
+                WHERE 
+                    {Utils.FilterDateSql(filter)}
+                GROUP BY 
+                    CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date)
+                ORDER BY 
+                    YearMonth";
+
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<IncomeExpenseVM>(sqlTxt)).ToArray();
             }
         }
 

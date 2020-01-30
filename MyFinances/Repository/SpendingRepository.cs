@@ -85,7 +85,6 @@ namespace MyFinances.Repository
 	            LEFT JOIN Finances f 
                     ON f.Id = s.FinanceId
                 WHERE 
-                    Display = 1 AND 
                     {Utils.FilterDateSql(dateFilter)}
                 GROUP BY 
                     s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name

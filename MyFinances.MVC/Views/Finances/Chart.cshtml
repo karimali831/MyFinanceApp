@@ -1,7 +1,7 @@
 ﻿@using MyFinances.Enums
-@model MyFinances.Website.ViewModels.SummaryChartVM
+@model MyFinances.Website.ViewModels.ChartVM
 @{
-    ViewBag.Title = "Spending Summary Chart";
+    ViewBag.Title = Model.Title;
 }
 
 <script>
@@ -10,7 +10,7 @@
     }
 </script>
 
-<select onchange="doIt(this,'@Url.Action("SpendingsSummaryChart", "finances")')">
+<select onchange="doIt(this,'@Url.Action(Model.Action, "finances")')">
     @foreach (DateFrequency frequency in Enum.GetValues(typeof(DateFrequency)))
     {
         <option value="@frequency" selected="@(Model.Frequency == frequency ? true : false)">@frequency</option>

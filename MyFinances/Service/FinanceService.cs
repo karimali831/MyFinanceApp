@@ -21,6 +21,7 @@ namespace MyFinances.Service
         int? CalculateDays(DateTime? Date1, DateTime? Date2);
         int? DaysLastPaid(int Id);
         PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
+        Task<IEnumerable<IncomeExpenseVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
     }
 
     public class FinanceService : IFinanceService
@@ -218,6 +219,11 @@ namespace MyFinances.Service
             {
                 return PaymentStatus.Unknown;
             }
+        }
+
+        public async Task<IEnumerable<IncomeExpenseVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter)
+        {
+            return await financeRepository.GetIncomeExpenseTotalsByMonth(filter);
         }
 
         public async Task InsertAsync(FinanceDTO dto)

@@ -8,7 +8,7 @@ import DateFilter from './DateFilterSSConnected'
 import { IDateFilter } from 'src/models/IDateFilter';
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
-import { spendingSummaryUrl } from '../../utils/Utils';
+import { spendingSummaryChartUrl } from '../../utils/Utils';
 import { DateFrequency } from 'src/enums/DateFrequency';
 
 export interface IPropsFromState {
@@ -41,10 +41,9 @@ export default class SpendingSummary extends React.Component<AllProps> {
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
-                                <a href={spendingSummaryUrl(this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : "")}>
-                                    <FontAwesomeIcon icon={faChartPie} />
+                                <a href={spendingSummaryChartUrl(this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : "")}>
+                                    <FontAwesomeIcon icon={faChartPie} /> Spendings breakdown summary for
                                 </a>
-                                 Spendings breakdown summary for
                                 <DateFilter />
                             </th>
                         </tr>

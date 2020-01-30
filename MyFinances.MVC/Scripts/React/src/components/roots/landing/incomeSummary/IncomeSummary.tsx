@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { faArrowUp, faChartPie } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faChartPie, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DateFilter from './DateFilterISConnected'
 import { IIncomeSummary } from '../../../../models/IIncome';
@@ -8,7 +8,7 @@ import { IDateFilter } from 'src/models/IDateFilter';
 import { ShowSecondCategoryIncomeSummaryAction } from 'src/state/contexts/landing/Actions';
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
-import { incomeSummaryUrl } from '../../utils/Utils';
+import { incomeSummaryChartUrl, incomeExpenseChartUrl } from '../../utils/Utils';
 import { DateFrequency } from 'src/enums/DateFrequency';
 
 export interface IPropsFromState {
@@ -39,12 +39,14 @@ export default class IncomeSummary extends React.Component<AllProps> {
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>
-                            <a href={incomeSummaryUrl(this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : "")}>
-                                <FontAwesomeIcon icon={faChartPie} />
+                            <a href={incomeExpenseChartUrl(this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : "")}>
+                                <FontAwesomeIcon icon={faChartLine} /> Income and expenses summary chart
                             </a>
-                             Income breakdown summary for
+                            <br />
+                            <a href={incomeSummaryChartUrl(this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : "")}>
+                                <FontAwesomeIcon icon={faChartPie} /> Income breakdown summary for
+                            </a>
                             <DateFilter />
-
                         </th>
                     </tr>
                 </thead>

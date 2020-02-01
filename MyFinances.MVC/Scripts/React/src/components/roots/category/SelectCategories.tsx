@@ -15,7 +15,7 @@ export interface IPropsFromState {
 
 export interface IPropsFromDispatch {
     loadCategories: () => LoadCategoriesAction
-    onChangeSelectedCategory: (selectedCat: number, secondTypeId: number) => OnChangeSelectedCategoryAction,
+    onChangeSelectedCategory: (selectedCat: number, secondTypeId?: number) => OnChangeSelectedCategoryAction,
     onChangeSelectedSecondCategory: (selectedSecondCat: number) => OnChangeSelectedSecondCategoryAction
 }
 
@@ -44,7 +44,7 @@ export default class SelectCategories extends React.Component<AllProps, IOwnStat
     }
 
     public componentDidUpdate(prevProps: AllProps, prevState: IOwnState) {
-        if (this.state.secondTypeId !== undefined && this.state.selectedCat !== undefined) {
+        if (this.state.selectedCat !== undefined) {
             if (prevState.secondTypeId !== this.state.secondTypeId || prevState.selectedCat !== this.state.selectedCat) {
                 this.props.onChangeSelectedCategory(this.state.selectedCat, this.state.secondTypeId);
             }
@@ -101,6 +101,9 @@ export default class SelectCategories extends React.Component<AllProps, IOwnStat
     private onChangeSelectedCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         const ids = value.split("-", 2);
+
+        console.log("selected cat = " + Number(ids[0]))
+        console.log("secondTypeId = " +  ids[1] !== "null" && ids[1] !== "0" ? Number(ids[1]) : undefined)
 
         this.setState({ ...this.state, 
             ...{ 

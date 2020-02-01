@@ -152,7 +152,7 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
             }
             
             commonApi.add(addModel, "spendings");
-            this.setState({ ...this.state, redirect: true })  
+            this.setState({ ...this.state, redirect: true })
         }
         else{
             alert("Enter item and amount first");

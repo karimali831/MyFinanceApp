@@ -3,6 +3,7 @@ using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Model;
 using MyFinances.Repository;
+using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace MyFinances.Service
         Task<IEnumerable<CNWPayment>> GetWeekSummariesAsync();
         Task<decimal> GetFuelIn(DateFilter dateFilter);
         decimal EstimatedFuelCost(decimal miles, decimal averageMpg, decimal fuelCost);
+        Task MissedCNWPaymentEntriesAsync();
     }
 
     public class CNWService : ICNWService
@@ -27,15 +29,18 @@ namespace MyFinances.Service
         private readonly ICNWRoutesRepository cnwRoutesRepository;
         private readonly ICNWPaymentsRepository cnwPaymentsRepository;
         private readonly ICNWRatesRepository cnwRatesRepository;
+        private readonly IRemindersService remindersService;
 
         public CNWService(
             ICNWRoutesRepository cnwRoutesRepository, 
             ICNWPaymentsRepository cnwPaymentsRepository,
-            ICNWRatesRepository cnwRatesRepository)
+            ICNWRatesRepository cnwRatesRepository,
+            IRemindersService remindersService)
         {
             this.cnwRoutesRepository = cnwRoutesRepository ?? throw new ArgumentNullException(nameof(cnwRoutesRepository));
             this.cnwPaymentsRepository = cnwPaymentsRepository ?? throw new ArgumentNullException(nameof(cnwPaymentsRepository));
             this.cnwRatesRepository = cnwRatesRepository ?? throw new ArgumentNullException(nameof(cnwRatesRepository));
+            this.remindersService = remindersService ?? throw new ArgumentNullException(nameof(remindersService));
         }
 
         public async Task<CNWRoute> GetRouteSummaryAsync(int Id)
@@ -163,6 +168,33 @@ namespace MyFinances.Service
 
             return (await cnwPaymentsRepository.GetAllAsync(dateFilter))
                 .Sum(x => rates.Mileage * x.ActualMiles) ?? 0;
+        }
+
+        public async Task MissedCNWPaymentEntriesAsync()
+        {
+            var weekSummaries = (await GetWeekSummariesAsync()).Select(x => x.WeekNo.ToString()).ToList();
+
+            var currentWeek = Utils.GetWeek(DateTime.UtcNow);
+
+            var weeks = new List<string>();
+
+            for (int i = 1; i <= currentWeek; i++)
+            {
+                weeks.Add(i.ToString());
+            }
+
+            var results = weekSummaries.Except(weeks);
+            var missedEntries = new List<MissedEntries>();
+
+            var data = new MissedEntries()
+            {
+                Name = "CNW Week",
+                Dates = results.ToArray()
+            };
+
+            missedEntries.Add(data);
+
+            await remindersService.MissedEntriesAsync(missedEntries, "You have a missed CNW payment entry for");
         }
     }
 }

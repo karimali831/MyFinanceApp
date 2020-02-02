@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Load } from '../../../base/Loader';
 import { IFinanceNotification } from 'src/models/IFinance';
-import { faExclamationCircle, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle, faEyeSlash, faStickyNote } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { api } from 'src/api/Api';
 import { LoadNotificationsAction } from 'src/state/contexts/landing/Actions';
@@ -19,7 +19,8 @@ export interface IPropsFromDispatch {
 
 export interface IOwnState {
     hiddenReminderId?: number,
-    loading: boolean
+    loading: boolean,
+    showReminders: boolean
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
@@ -30,7 +31,8 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
         super(props);
         this.state = { 
             loading: this.props.loading,
-            hiddenReminderId: undefined
+            hiddenReminderId: undefined,
+            showReminders: false
         };
     }
 
@@ -53,6 +55,12 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
 
         return (
             <div>
+                <span onClick={() => this.showReminders()}>
+                    <FontAwesomeIcon icon={faStickyNote} /> Show/Hide Reminders
+                </span>
+
+                {this.state.showReminders ?
+                <>
                 {
                     notifications.latePaymentsCount !== 0 || notifications.overDueReminders.length > 0 ? 
                         <div className="alert alert-danger d-flex flex-row" role="alert">
@@ -140,8 +148,14 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                         </div>
                     : null    
                 }
+                </>
+                : null }
             </div>
         )
+    }
+
+    private showReminders = () => {
+        this.setState({ ...this.state, showReminders: !this.state.showReminders })
     }
 
     private hideReminder = (id: number) => {

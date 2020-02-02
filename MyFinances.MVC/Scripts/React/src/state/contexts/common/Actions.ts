@@ -36,9 +36,13 @@ export class DateFilterChangeSuccessAction {
 }
 
 export class LoadCategoriesAction {
-    public static readonly creator = () => new LoadCategoriesAction();
+    public static readonly creator = (categoryType: CategoryType) => new LoadCategoriesAction(categoryType);
 
     public readonly type = CommonActionTypes.LoadCategories;
+
+    constructor(
+        public categoryType: CategoryType
+    ) { }
 }
 
 export class LoadCategoriesSuccessAction {

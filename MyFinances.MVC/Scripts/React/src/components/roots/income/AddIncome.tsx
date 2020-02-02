@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { commonApi } from '../../../api/CommonApi'
 import { Redirect } from 'react-router-dom'
-import { Load } from '../../base/Loader';
 import { AddMenu } from '../../base/Menu';
 import { IIncomeDTO } from '../../../models/IIncome';
-import SelectCategories from '../category/SelectCategoriesConnected';
+import SelectionRefinementForIncomeSources from './SelectionRefinementForIncomeSourcesConnected';
 
 export interface IPropsFromState {
-    secondTypeId?: number,
     selectedCat?: number,
     selectedSecondCat?: number,
 }
@@ -16,12 +14,10 @@ export interface IPropsFromDispatch {
 }
 
 export interface IOwnState {
-    loading: boolean,
     date: string,
     amount?: number | undefined
     redirect: boolean
 }
-
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
 
@@ -29,7 +25,6 @@ export default class AddExpense extends React.Component<AllProps, IOwnState> {
     constructor(props: AllProps) {
         super(props);
         this.state = { 
-            loading: true,
             amount: undefined,
             date: "",
             redirect: false
@@ -37,20 +32,16 @@ export default class AddExpense extends React.Component<AllProps, IOwnState> {
     }
 
     public render() {
-        const { redirect, loading } = this.state;
+        const { redirect } = this.state;
 
         if (redirect) {
             return <Redirect to='/income/'/>;
         }
 
-        if (loading) {
-            return <Load text="Loading..."/>
-        }
-
         return (
             <div style={{margin: '0 auto', border: 1}}>
                 {AddMenu("income")}
-                <SelectCategories />
+                <SelectionRefinementForIncomeSources />
                 <div className="form-group">
                     <input className="form-control" type="date" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
                 </div>

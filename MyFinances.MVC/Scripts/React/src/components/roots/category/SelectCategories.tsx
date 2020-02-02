@@ -1,20 +1,16 @@
 import * as React from 'react';
-import { ICategory } from 'src/models/ICategory';
 import { Load } from 'src/components/base/Loader';
 import { OnChangeSelectedCategoryAction, OnChangeSelectedSecondCategoryAction, LoadCategoriesAction } from 'src/state/contexts/common/Actions';
+import { CategoryType } from 'src/enums/CategoryType';
+import { ICategory } from 'src/models/ICategory';
 
-export interface IPropsFromState {
+export interface IOwnProps {
     categories: ICategory[],
     secondCategories: ICategory[],
-    secondTypeId?: number,
-    selectedCat?: number,
-    selectedSecondCat?: number,
     loadingCategories: boolean,
-    loadingSecondCategories: boolean
-}
-
-export interface IPropsFromDispatch {
-    loadCategories: () => LoadCategoriesAction
+    loadingSecondCategories: boolean,
+    categoryType: CategoryType,
+    loadCategories: (categoryType: CategoryType) => LoadCategoriesAction
     onChangeSelectedCategory: (selectedCat: number, secondTypeId?: number) => OnChangeSelectedCategoryAction,
     onChangeSelectedSecondCategory: (selectedSecondCat: number) => OnChangeSelectedSecondCategoryAction
 }
@@ -25,11 +21,9 @@ export interface IOwnState{
     selectedSecondCat?: number  | undefined
 }
 
-type AllProps = IPropsFromState & IPropsFromDispatch & IOwnState;
+export default class SelectCategories extends React.Component<IOwnProps, IOwnState> {
 
-export default class SelectCategories extends React.Component<AllProps, IOwnState> {
-
-    constructor(props: AllProps) {
+    constructor(props: IOwnProps) {
         super(props);
 
         this.state = {
@@ -40,10 +34,12 @@ export default class SelectCategories extends React.Component<AllProps, IOwnStat
     }
 
     public componentDidMount(){
-        this.props.loadCategories();
+        if (this.props.categoryType !== undefined) {
+            this.props.loadCategories(this.props.categoryType);
+        }
     }
 
-    public componentDidUpdate(prevProps: AllProps, prevState: IOwnState) {
+    public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
         if (this.state.selectedCat !== undefined) {
             if (prevState.secondTypeId !== this.state.secondTypeId || prevState.selectedCat !== this.state.selectedCat) {
                 this.props.onChangeSelectedCategory(this.state.selectedCat, this.state.secondTypeId);

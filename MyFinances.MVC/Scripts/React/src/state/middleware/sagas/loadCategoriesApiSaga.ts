@@ -4,18 +4,20 @@ import { ReportErrorAction } from '../../contexts/error/Actions';
 import { CommonActionTypes, LoadCategoriesSuccessAction, LoadCategoriesFailureAction, LoadSecondCategoriesSuccessAction} from 'src/state/contexts/common/Actions';
 import { commonApi } from 'src/api/CommonApi';
 import { CategoryType } from 'src/enums/CategoryType';
-import { getSecondTypeId } from 'src/state/contexts/common/Selectors';
+import { getSecondTypeId, getCategoryType } from 'src/state/contexts/common/Selectors';
 
 export default function* loadCategoriesApiSaga() {
-    yield takeLatest(CommonActionTypes.LoadCategories, loadCategories, CategoryType.Spendings, false);
-    yield takeLatest(CommonActionTypes.OnChangeSelectedCategory, loadCategories, CategoryType.Spendings, true)
+    yield takeLatest(CommonActionTypes.LoadCategories, loadCategories, false);
+    yield takeLatest(CommonActionTypes.OnChangeSelectedCategory, loadCategories, true)
 }
 
-export function* loadCategories(typeId: number, subCategories: boolean) {
+export function* loadCategories(subCategories: boolean) {
     try {
 
         const secondTypeId: number = yield select(getSecondTypeId);
-        const categoryTypeId = (secondTypeId !== undefined && subCategories === true) ? secondTypeId : typeId;
+        const categoryType: CategoryType = yield select(getCategoryType);
+
+        const categoryTypeId = (secondTypeId !== undefined && subCategories === true) ? secondTypeId : categoryType;
 
         // Start the API call asynchronously
         const result: ICategoryResponse = yield call(commonApi.categories, categoryTypeId);

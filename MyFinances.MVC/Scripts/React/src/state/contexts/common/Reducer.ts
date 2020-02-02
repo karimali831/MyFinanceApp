@@ -14,7 +14,12 @@ const CommonReducer: Reducer<ICommonState, CommonActions> =
                 };
 
             case CommonActionTypes.LoadCategories:
-                    return { ...state, loadingCategories: true };
+                    return { ...state, 
+                        ...{
+                            loadingCategories: true, 
+                            categoryType: action.categoryType 
+                        }
+                    };
 
             case CommonActionTypes.LoadCategoriesSuccess:
                 return { ...state, 
@@ -37,7 +42,8 @@ const CommonReducer: Reducer<ICommonState, CommonActions> =
                         ...{ 
                             loadingSecondCategories: true,
                             selectedCat: action.selectedCat,
-                            secondTypeId: action.secondTypeId
+                            secondTypeId: action.secondTypeId,
+                            selectedSecondCat: undefined
                         } 
                     };
 

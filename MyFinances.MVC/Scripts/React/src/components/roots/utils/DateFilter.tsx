@@ -112,7 +112,7 @@ export default class DateFilter extends React.Component<IOwnProps, IOwnState> {
                     frequency: this.state.dateFilter.frequency, 
                     interval: this.state.dateFilter.interval,
                     fromDateRange: e.target.value, 
-                    toDateRange: this.state.dateFilter.toDateRange
+                    toDateRange: this.state.dateFilter.toDateRange === null ? e.target.value : this.state.dateFilter.toDateRange
                 }
             }
         })

@@ -7,10 +7,9 @@ import { api } from '../../../api/Api';
 import { Load } from '../../base/Loader';
 import { AddMenu } from '../../base/Menu';
 import { ISpendingDTO } from '../../../models/ISpending';
-import SelectCategoriesConnected from '../category/SelectCategoriesConnected';
+import SelectionRefinementForSpendingCategories from './SelectionRefinementForSpendingCategories';
 
 export interface IPropsFromState {
-    secondTypeId?: number,
     selectedCat?: number,
     selectedSecondCat?: number,
 }
@@ -79,7 +78,7 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
                     </select>
                 </div>
                 {this.state.selectedFinanceId === undefined || this.state.selectedFinanceId === 0 ? 
-                    <SelectCategoriesConnected />
+                    <SelectionRefinementForSpendingCategories />
                 : null}
                 <div className="form-group">
                     <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />

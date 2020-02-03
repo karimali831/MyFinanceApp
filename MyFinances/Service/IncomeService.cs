@@ -102,23 +102,29 @@ namespace MyFinances.Service
 
         public async Task MissedIncomeEntriesAsync()
         {
-            var incomeStreams = new List<CategoryType>()
+            var incomeStreams = new List<(string DateColumn, int WeekArrears, CategoryType CategoryType)>()
             {
-                CategoryType.CWTL,
-                CategoryType.UberEats
+                (nameof(Income.AmazonWeekCommencing), 3, CategoryType.CWTL),
+                (nameof(Income.Date), 1, CategoryType.UberEats)
             };
 
             var results = new List<MissedEntries>();
 
             foreach (var incomeStream in incomeStreams)
             {
-                var entries = (await incomeRepository.MissedIncomeEntriesAsync(incomeStream));
+                var entries = (
+                    await incomeRepository.MissedIncomeEntriesAsync(
+                        incomeStream.DateColumn, 
+                        incomeStream.WeekArrears, 
+                        incomeStream.CategoryType
+                    )
+                );
 
                 if (entries.Any())
                 {
                     var data = new MissedEntries()
                     {
-                        Name = incomeStream.ToString(),
+                        Name = incomeStream.CategoryType.ToString(),
                         Dates = entries.Select(x => (x.Year + " Week: " + x.Week)).ToArray()
                     };
 

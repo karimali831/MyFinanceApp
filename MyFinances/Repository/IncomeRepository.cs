@@ -17,7 +17,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<Income>> GetAllAsync(DateFilter filter);
         Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(IncomeDTO dto);
-        Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(CategoryType type);
+        Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, CategoryType type);
     }
 
     public class IncomeRepository : IIncomeRepository
@@ -94,11 +94,11 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(CategoryType type)
+        public async Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, CategoryType type)
         {
             string sqlTxt = $@"
                 DECLARE @start DATE = '2019-08-07' -- since records began
-                DECLARE @end DATE = DATEADD(WEEK, DATEDIFF(WEEK, -1, GETDATE())-1, -1) -- last week of previous month
+                DECLARE @end DATE = DATEADD(WEEK, DATEDIFF(WEEK, -1, GETDATE())-@WeekArrears, -1) 
 
                 ;WITH IntervalDates (date)
                 AS
@@ -114,15 +114,20 @@ namespace MyFinances.Repository
 
                 EXCEPT
 
-                SELECT DISTINCT YEAR(Date) AS yy, DATEPART(wk, date) AS ww
+                SELECT DISTINCT YEAR({dateColumn}) AS yy, DATEPART(wk, {dateColumn}) AS ww
                 FROM {TABLE}
-                WHERE Date BETWEEN @start AND @end 
-                AND SourceId = @IncomeStream
+                WHERE SourceId = @IncomeStream
             ";
 
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<(int Year, int Week)>(sqlTxt, new { @IncomeStream = (int)type })).ToArray();
+                return (await sql.QueryAsync<(int Year, int Week)>(sqlTxt, 
+                    new {
+                        @IncomeStream = (int)type,
+                        @DateColumn = dateColumn,
+                        @WeekArrears = weekArrears
+                    }
+                )).ToArray();
 
             }
         }

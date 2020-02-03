@@ -15,7 +15,8 @@ namespace MyFinances.Model
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public int WeekNo { get; set; }
-
+        public int AmazonWeekNo { get; set; }
+        public DateTime AmazonWeekCommencing { get; set; }
     }
 
     public class IncomeMap : EntityTypeConfiguration<Income>

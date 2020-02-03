@@ -12,8 +12,8 @@
             <thead>
                 <tr>
                     @{ 
-                        var previousWeek = Model.Payment.WeekNo - 1;
-                        var nextWeek = Model.Payment.WeekNo + 1;
+                        var previousWeek = Model.Payment.WeekNo == 1 ? 52 : Model.Payment.WeekNo - 1;
+                        var nextWeek = Model.Payment.WeekNo == 52 ? 1 : Model.Payment.WeekNo + 1;
                     }
                     <th colspan="2"><< @Html.ActionLink("Week " + previousWeek, "WeekSummary", new { Id = previousWeek }) || @Html.ActionLink("Next " + nextWeek, "WeekSummary", new { Id = nextWeek }) >></th>
                 </tr>
@@ -137,5 +137,5 @@
     }
     else
     {
-        <h2>Week not recorded yet</h2>
+        <h2>Week does not have any routes or week summary not recorded</h2>
     }

@@ -33,9 +33,23 @@ namespace MyFinances.Repository
 
         public async Task<IEnumerable<Reminder>> GetAllAsync()
         {
+            string sqlTxt = $@"
+                SELECT 
+                    r.Id,
+                    r.Notes,
+                    r.DueDate,
+                    r.AddedDate,
+                    r.Display,
+                    r.Priority as _priority,
+                    c.Name AS Category
+                FROM 
+	                {TABLE} as r
+	            LEFT JOIN Categories c
+                    ON c.Id = r.CatId";
+
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<Reminder>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
+                return (await sql.QueryAsync<Reminder>(sqlTxt)).ToArray();
             }
         }
 

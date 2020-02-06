@@ -8,6 +8,7 @@ namespace MyFinances.Enums
 {
     public enum DateFrequency
     {
+        AllTime,
         Today,
         Yesterday,
         LastXDays,

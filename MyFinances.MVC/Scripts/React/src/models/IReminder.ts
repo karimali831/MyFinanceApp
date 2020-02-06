@@ -3,10 +3,14 @@ export interface IReminder {
     notes: string,
     dueDate: Date,
     addedDate: Date,
-    display: boolean
+    display: boolean,
+    priority: number,
+    category: string
 }
 
 export interface IReminderDTO {
     notes: string,
     dueDate: string,
+    priority: number,
+    catId: number
 }

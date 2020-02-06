@@ -19,7 +19,7 @@ import { createHashHistory, createBrowserHistory } from 'history';
 import Landing from '../roots/landing/Landing';
 import Spendings from '../roots/spending/SpendingConnected'
 import { CategoryType } from 'src/enums/CategoryType';
-import AddReminder from '../roots/reminder/AddReminder';
+import AddReminder from '../roots/reminder/AddReminderConnected';
 import Reminders from '../roots/reminder/Reminders';
 
 const browserHistory = history.pushState ? createBrowserHistory() : createHashHistory();

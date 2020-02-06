@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MyFinances.Enums
 {
-    public enum Categories
+    public enum Priority
     {
-        Full = 21,
-        Half,
-        Missort,
+        Low,
+        Medium,
+        High
     }
 }

@@ -16,7 +16,7 @@ namespace MyFinances.Service
         Task AddReminder(ReminderDTO dto);
         Task HideReminder(int Id);
         Task<bool> ReminderExists(string notes);
-        Task MissedEntriesAsync(IList<MissedEntries> entries, string notes);
+        Task MissedEntriesAsync(IList<MissedEntries> entries, string notes, Priority priority = Priority.Low);
     }
 
     public class RemindersService : IRemindersService
@@ -49,7 +49,7 @@ namespace MyFinances.Service
             return await remindersRepository.ReminderExists(notes);
         }
 
-        public async Task MissedEntriesAsync(IList<MissedEntries> entries, string notes)
+        public async Task MissedEntriesAsync(IList<MissedEntries> entries, string notes, Priority priority = Priority.Low)
         {
             if (entries.Any())
             {
@@ -66,7 +66,9 @@ namespace MyFinances.Service
                                 await AddReminder(new ReminderDTO
                                 {
                                     DueDate = DateTime.UtcNow,
-                                    Notes = dbNotes
+                                    Notes = dbNotes,
+                                    Priority = priority,
+                                    CatId = CategoryType.MissedEntries
                                 });
                             }
                         }

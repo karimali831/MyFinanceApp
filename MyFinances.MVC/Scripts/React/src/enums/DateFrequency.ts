@@ -1,4 +1,5 @@
 export enum DateFrequency {
+    AllTime,
     Today,
     Yesterday,
     LastXDays,

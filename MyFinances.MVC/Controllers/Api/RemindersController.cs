@@ -32,18 +32,7 @@ namespace MyFinances.Website.Controllers.API
         public async Task<HttpResponseMessage> GetRemindersAsync()
         {
             var reminders = await remindersService.GetAllAsync();
-
-            return Request.CreateResponse(HttpStatusCode.OK, new 
-            {
-                Reminders = reminders.Select(x => new
-                {
-                    x.Id,
-                    x.Notes,
-                    x.DueDate,
-                    x.AddedDate,
-                    x.Display
-                })
-            });
+            return Request.CreateResponse(HttpStatusCode.OK, new { Reminders = reminders });
         }
 
         [Route("add")]

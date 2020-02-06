@@ -4,5 +4,6 @@ export enum CategoryType {
     CNWRouteType,
     Vehicles,
     Maintenance,
-    IncomeSources
+    IncomeSources,
+    ReminderTypes = 13
 }

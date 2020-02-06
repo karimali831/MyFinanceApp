@@ -1,4 +1,5 @@
-﻿using MyFinances.Enums;
+﻿using DFM.Utils;
+using MyFinances.Enums;
 using System;
 using System.Data.Entity.ModelConfiguration;
 
@@ -11,6 +12,14 @@ namespace MyFinances.Model
         public DateTime DueDate { get; set; }
         public DateTime AddedDate { get; set; }
         public bool Display { get; set; }
+        public Priority _priority { get; set; }
+        [DbIgnore]
+        public string Priority
+        {
+            get { return _priority.ToString(); }
+            set { Priority = value; }
+        }
+        public string Category { get; set; }
     }
 
     public class ReminderMap : EntityTypeConfiguration<Reminder>

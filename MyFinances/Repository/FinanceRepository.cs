@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DFM.Utils;
 using MyFinances.DTOs;
+using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Model;
 using MyFinances.ViewModels;
@@ -56,7 +57,7 @@ namespace MyFinances.Repository
                 SELECT 
 	                CONVERT(CHAR(7), Date, 120) as YearMonth, 
 	                DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total', 
-	                'Spendings' as 'Type'
+	                '{nameof(CategoryType.Spendings)}' as 'Type'
                 FROM 
                     Spendings
                 WHERE 
@@ -67,7 +68,7 @@ namespace MyFinances.Repository
                 SELECT
 	                CONVERT(CHAR(7), Date, 120), 
 	                DATENAME(month, Date), 
-	                SUM(Amount), 'Income'
+	                SUM(Amount), '{nameof(CategoryType.Income)}'
                 FROM 
                     Incomes
                 WHERE 

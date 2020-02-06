@@ -12,5 +12,7 @@ namespace MyFinances.DTOs
         public string Notes { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime AddedDate => DateTime.UtcNow;
+        public Priority Priority { get; set; }
+        public CategoryType CatId { get; set; }
     }
 }

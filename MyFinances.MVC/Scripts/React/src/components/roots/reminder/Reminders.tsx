@@ -53,6 +53,12 @@ export default class Reminders extends React.Component<IOwnProps, IOwnState> {
             text: 'Display',
             headerClasses: "hidden-xs",
             classes: "hidden-xs"
+        }, {
+            dataField: 'priority',
+            text: 'Priority'
+        }, {
+            dataField: 'category',
+            text: 'Category'
         }];
         
         const options: ITableOptions = {

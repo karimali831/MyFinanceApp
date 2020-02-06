@@ -89,6 +89,8 @@ namespace MyFinances.Helpers
                     return $"YEAR([{dateFilter.DateField}]) = YEAR(GETDATE())";
                 case DateFrequency.PreviousYear:
                     return $"YEAR([{dateFilter.DateField}]) = YEAR(DATEADD(YEAR, -1, GETDATE()))";
+                case DateFrequency.AllTime:
+                    return $"[{dateFilter.DateField}] <= GETDATE()";
                 default:
                     return "";
             }

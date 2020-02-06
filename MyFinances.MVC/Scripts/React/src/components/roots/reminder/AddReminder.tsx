@@ -4,25 +4,32 @@ import { Redirect } from 'react-router-dom'
 import { Load } from '../../base/Loader';
 import { AddMenu } from '../../base/Menu';
 import { IReminderDTO } from '../../../models/IReminder';
+import { Priority } from 'src/enums/Priority';
 
-interface IOwnProps {
+import SelectionRefinementForReminderCategories from './SelectionRefinementForReminderCategories';
+import { cleanText } from '../utils/Utils';
+
+export interface IPropsFromState {
+    selectedCat?: number
 }
 
 export interface IOwnState {
     loading: boolean,
     redirect: boolean,
     notes: string,
-    dueDate: string
+    dueDate: string,
+    priority: string
 }
 
-export default class AddReminder extends React.Component<IOwnProps, IOwnState> {
-    constructor(props: IOwnProps) {
+export default class AddReminder extends React.Component<IPropsFromState, IOwnState> {
+    constructor(props: IPropsFromState) {
         super(props);
         this.state = { 
             loading: false,
             redirect: false,
             notes: "",
-            dueDate: ""
+            dueDate: "",
+            priority: Priority[Priority.Low]
         };
     }
 
@@ -48,6 +55,19 @@ export default class AddReminder extends React.Component<IOwnProps, IOwnState> {
                     <span>Reminder</span> <br />
                     <textarea className="form-control" cols={40} rows={4} onChange={(e) => { this.onNotesInputChanged(e);}} >{this.state.notes}</textarea>
                 </div>
+                <SelectionRefinementForReminderCategories />
+                <div className="form-group">
+                    <span>Priority</span><br />
+                    <select onChange={(e) => this.onChangeSelectedPriority(e)} className="form-control">
+                    {
+                        Object.keys(Priority).filter(o => !isNaN(o as any)).map(key => 
+                            <option key={key} value={Priority[key]} selected={this.state.priority === Priority[key]}>
+                                {cleanText(Priority[key])}
+                            </option>
+                        )
+                    }
+                    </select>
+                </div>
                 <div className="form-group">
                     <input type="submit" value="Add" onClick={() =>this.addReminder() } />
                 </div>
@@ -55,6 +75,13 @@ export default class AddReminder extends React.Component<IOwnProps, IOwnState> {
         )
     }
 
+    private onChangeSelectedPriority = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        this.setState({ ...this.state,
+            ...{
+                priority: Priority[e.target.value]
+            }
+        })
+    }
 
     private onNotesInputChanged = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({ ...this.state, notes: e.target.value })
@@ -65,11 +92,13 @@ export default class AddReminder extends React.Component<IOwnProps, IOwnState> {
     }
 
     private addReminder = () => {
-        if (this.state.notes && this.state.notes.length > 2)
+        if (this.state.notes && this.state.notes.length > 2 && this.props.selectedCat && this.state.priority)
         {
             const addModel: IReminderDTO = {
                 notes: this.state.notes,
-                dueDate: this.state.dueDate
+                dueDate: this.state.dueDate,
+                priority: Priority[this.state.priority],
+                catId: this.props.selectedCat
             }
 
             commonApi.add(addModel, "reminders");

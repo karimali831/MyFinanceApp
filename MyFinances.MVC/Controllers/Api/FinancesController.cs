@@ -79,17 +79,12 @@ namespace MyFinances.Website.Controllers.API
             {
                 Notifications = new
                 {
-                    LatePaymentsCount = notifications.LatePayments.Count,
-                    LatePaymentsTotal = notifications.LatePayments.Total,
-                    UpcomingPaymentsCount = notifications.UpcomingPayments.Count,
-                    UpcomingPaymentsTotal = notifications.UpcomingPayments.Total,
-                    DueTodayPaymentsCount = notifications.DueTodayPayments.Count,
-                    DueTodayPaymentsTotal = notifications.DueTodayPayments.Total,
                     OverDueReminders = notifications.OverDueReminders.Select(x => new
                     {
                         x.Id,
                         x.Notes,
-                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss"),
+                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
+                        x.PaymentStatus,
                         x.Priority,
                         x.Category
                     }),
@@ -97,7 +92,8 @@ namespace MyFinances.Website.Controllers.API
                     {
                         x.Id,
                         x.Notes,
-                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss"),
+                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
+                        x.PaymentStatus,
                         x.Priority,
                         x.Category
                     }),
@@ -105,7 +101,8 @@ namespace MyFinances.Website.Controllers.API
                     {
                         x.Id,
                         x.Notes,
-                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss"),
+                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
+                        x.PaymentStatus,
                         x.Priority,
                         x.Category
                     })

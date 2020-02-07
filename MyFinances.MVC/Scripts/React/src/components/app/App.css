@@ -1,5 +1,5 @@
 .App {
-  padding: 20px;
+  padding: 6px;
   border-radius: 5px;
   background-image: url(https://www.designbolts.com/wp-content/uploads/2012/12/Grey-Jean-White-Seamless-Patterns-For-Website-Backgrounds.jpg);
 }
@@ -81,6 +81,9 @@ body {
     float: right;
     display: block;
   }
+  .notificationLabel {
+    font-size: 12px;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -95,4 +98,8 @@ body {
     display: block;
     text-align: left;
   }
+}
+
+@media only screen and (max-device-width: 480px) {
+
 }

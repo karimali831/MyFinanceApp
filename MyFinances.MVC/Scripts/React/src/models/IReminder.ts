@@ -1,9 +1,10 @@
+import { PaymentStatus } from 'src/enums/PaymentStatus';
+
 export interface IReminder {
     id: number,
     notes: string,
-    dueDate: Date,
-    addedDate: Date,
-    display: boolean,
+    dueDate?: Date,
+    paymentStatus: PaymentStatus
     priority: string,
     category: string
 }

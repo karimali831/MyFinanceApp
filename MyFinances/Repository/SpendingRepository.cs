@@ -164,8 +164,7 @@ namespace MyFinances.Repository
                 SELECT DISTINCT YEAR(Date) AS yy, MONTH(Date) AS mm
                 FROM Spendings
                 WHERE Date BETWEEN @start AND @end 
-                AND SecondCatId = {(int)CategoryType.CCInterest}
-                AND CatId = {(int)CategoryType.InterestFeesCharges}
+                AND SecondCatId = {(int)Categories.CCInterest}
                 AND Name like @Card
                 ";
 

@@ -17,7 +17,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<Income>> GetAllAsync(DateFilter filter);
         Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(IncomeDTO dto);
-        Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, CategoryType type);
+        Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category);
     }
 
     public class IncomeRepository : IIncomeRepository
@@ -94,7 +94,7 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, CategoryType type)
+        public async Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category)
         {
             string sqlTxt = $@"
                 DECLARE @start DATE = '2019-08-07' -- since records began
@@ -123,7 +123,7 @@ namespace MyFinances.Repository
             {
                 return (await sql.QueryAsync<(int Year, int Week)>(sqlTxt, 
                     new {
-                        @IncomeStream = (int)type,
+                        @IncomeStream = (int)category,
                         @DateColumn = dateColumn,
                         @WeekArrears = weekArrears
                     }

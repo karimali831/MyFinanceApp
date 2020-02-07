@@ -31,7 +31,28 @@ namespace MyFinances.Service
 
         public async Task<IEnumerable<Reminder>> GetAllAsync()
         {
-            return await remindersRepository.GetAllAsync();
+            var reminders = await remindersRepository.GetAllAsync();
+
+            if (reminders != null && reminders.Any())
+            {
+                foreach (var reminder in reminders)
+                {
+                    if (reminder.DueDate?.Date < DateTime.UtcNow.Date)
+                    {
+                        reminder.PaymentStatus = PaymentStatus.Late;
+                    }
+                    else if (reminder.DueDate?.Date == DateTime.UtcNow.Date)
+                    {
+                        reminder.PaymentStatus = PaymentStatus.DueToday;
+                    }
+                    else if (reminder.DueDate <= DateTime.UtcNow.Date.AddDays(7) && reminder.DueDate?.Date > DateTime.UtcNow.Date)
+                    {
+                        reminder.PaymentStatus = PaymentStatus.Upcoming;
+                    }
+                }
+            }
+
+            return reminders;
         }
 
         public async Task AddReminder(ReminderDTO dto)
@@ -68,7 +89,7 @@ namespace MyFinances.Service
                                     DueDate = DateTime.UtcNow,
                                     Notes = dbNotes,
                                     Priority = priority,
-                                    CatId = CategoryType.MissedEntries
+                                    CatId = Categories.MissedEntries
                                 });
                             }
                         }

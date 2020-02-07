@@ -15,13 +15,13 @@ namespace MyFinances.Enums
         Vehicles,
         Maintenance,
         IncomeSources,
-        InterestFeesCharges = 13,
-        Full = 21,
-        Half,
-        Missort,
-        CWTL = 33,
-        UberEats,
-        CCInterest = 42,
-        MissedEntries = 1140
+        Freelancing,
+        InterestFeesCharges,
+        Shopping,
+        FoodDrinks,
+        Travel,
+        Services,
+        Holiday,
+        ReminderTypes
     }
 }

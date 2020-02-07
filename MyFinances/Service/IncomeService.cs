@@ -102,10 +102,10 @@ namespace MyFinances.Service
 
         public async Task MissedIncomeEntriesAsync()
         {
-            var incomeStreams = new List<(string DateColumn, int WeekArrears, CategoryType CategoryType)>()
+            var incomeStreams = new List<(string DateColumn, int WeekArrears, Categories CategoryType)>()
             {
-                (nameof(Income.AmazonWeekCommencing), 3, CategoryType.CWTL),
-                (nameof(Income.Date), 1, CategoryType.UberEats)
+                (nameof(Income.AmazonWeekCommencing), 3, Categories.CWTL),
+                (nameof(Income.Date), 1, Categories.UberEats)
             };
 
             var results = new List<MissedEntries>();

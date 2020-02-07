@@ -64,13 +64,13 @@ export const paymentStatus = (status: number, daysUntilDue: number) => {
 export const priorityBadge = (priority: string, label: string = "") => {
 	switch (priority) {
 		case Priority[Priority.Low]:
-			return <span className="badge progress-bar-info">{label !== "" ? label : Priority[Priority.Low]}</span>
+			return <span className="label label-info">{label !== "" ? label : Priority[Priority.Low]}</span>
 		case Priority[Priority.Medium]:
-			return <span className="badge progress-bar-warning">{label !== "" ? label : Priority[Priority.Medium]}</span>
+			return <span className="label label-warning">{label !== "" ? label : Priority[Priority.Medium]}</span>
 		case Priority[Priority.High]:
-			return <span className="badge progress-bar-danger">{label !== "" ? label : Priority[Priority.High]}</span>
+			return <span className="label label-danger">{label !== "" ? label : Priority[Priority.High]}</span>
 		default:
-			return <span className="badge progress-bar-info">{label !== "" ? label : Priority[Priority.Low]}</span>
+			return <span className="label label-info">{label !== "" ? label : Priority[Priority.Low]}</span>
 	}
 }
 

@@ -130,9 +130,9 @@ namespace MyFinances.Service
 
                 if (routes != null && routes.Any())
                 {
-                    var fullRoutePay = rates.FullRoute * routes.Count(x => x.RouteTypeId == CategoryType.Full);
-                    var halfRoutePay = rates.HalfRoute * routes.Count(x => x.RouteTypeId == CategoryType.Half);
-                    var missortRoutePay = rates.MissortRoute * routes.Count(x => x.RouteTypeId == CategoryType.Missort);
+                    var fullRoutePay = rates.FullRoute * routes.Count(x => x.RouteTypeId == Categories.Full);
+                    var halfRoutePay = rates.HalfRoute * routes.Count(x => x.RouteTypeId == Categories.Half);
+                    var missortRoutePay = rates.MissortRoute * routes.Count(x => x.RouteTypeId == Categories.Missort);
                     var supportDrops = routes.Sum(x => x.ExtraDrops) ?? 0;
                     var firstWeekDate = routes.OrderBy(x => x.RouteDate).Select(x => x.RouteDate).FirstOrDefault();
 

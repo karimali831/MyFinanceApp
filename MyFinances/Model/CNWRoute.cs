@@ -11,7 +11,7 @@ namespace MyFinances.Model
         public int WeekNo { get; set; }
         [DbIgnore]
         public string RouteType { get; set; }
-        public CategoryType RouteTypeId { get; set; }
+        public Categories RouteTypeId { get; set; }
         public DateTime RouteDate { get; set; }
         public decimal Mileage { get; set; }
         public decimal Mpg { get; set; }

@@ -9,7 +9,9 @@ namespace MyFinances.Model
     {
         public int Id { get; set; }
         public string Notes { get; set; }
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
+        [DbIgnore]
+        public PaymentStatus PaymentStatus { get; set; }
         public DateTime AddedDate { get; set; }
         public bool Display { get; set; }
         public Priority _priority { get; set; }
@@ -20,6 +22,8 @@ namespace MyFinances.Model
             set { Priority = value; }
         }
         public string Category { get; set; }
+        [DbIgnore]
+        public int Sort { get; set; } = 1;
     }
 
     public class ReminderMap : EntityTypeConfiguration<Reminder>

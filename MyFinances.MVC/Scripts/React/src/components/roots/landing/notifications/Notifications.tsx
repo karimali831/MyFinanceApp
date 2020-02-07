@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Load } from '../../../base/Loader';
 import { IFinanceNotification } from 'src/models/IFinance';
-import { faExclamationCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LoadNotificationsAction } from 'src/state/contexts/landing/Actions';
 import { commonApi } from 'src/api/CommonApi';
@@ -17,7 +17,6 @@ export interface IPropsFromState {
 export interface IPropsFromDispatch {
     loadNotifications: () => LoadNotificationsAction
 }
-
 
 export interface IOwnState {
     deletedReminderId?: number,
@@ -68,34 +67,25 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
         return (
             <div>
                 <button type="button" className="btn btn-danger" onClick={() => this.showOverdueReminders()}>
-                    Overdue Reminders <span className="badge">{notifications.overDueReminders.length}</span>
+                    <span className="notificationLabel">Overdue</span> <span className="badge">{notifications.overDueReminders.length}</span>
                 </button>
                 <button type="button" className="btn btn-warning" onClick={() => this.showdueTodayReminders()}>
-                    Due Today Reminders <span className="badge">{notifications.dueTodayReminders.length}</span>
+                    <span className="notificationLabel">Due Today</span> <span className="badge">{notifications.dueTodayReminders.length}</span>
                 </button>
                 <button type="button" className="btn btn-info" onClick={() => this.showUpcomingReminders()}>
-                    Upcoming Reminders <span className="badge">{notifications.upcomingReminders.length}</span>
+                    <span className="notificationLabel">Upcoming</span> <span className="badge">{notifications.upcomingReminders.length}</span>
                 </button>
                 <>
                 {
-  
-                    this.state.showOverdueReminders && (notifications.latePaymentsCount !== 0 || notifications.overDueReminders.length > 0) ? 
+                    this.state.showOverdueReminders && notifications.overDueReminders.length > 0 ? 
                         <div className="alert alert-danger d-flex flex-row" role="alert">
-                            <FontAwesomeIcon icon={faExclamationCircle} /> &nbsp;
-                            {
-                                notifications.latePaymentsCount !== 0 ? <>
-                                    <span style={{fontWeight: 'bold'}}>
-                                        You have {notifications.latePaymentsCount} late payments totalling £{notifications.latePaymentsTotal}
-                                    </span><br />
-                                </> : null
-                            }
                             {
                                 notifications.overDueReminders.length > 0 ? 
-                                    <div style={{display: 'block'}}><br /> 
+                                    <div style={{display: 'block'}}>
                                     {
                                         notifications.overDueReminders.map(r =>
                                             this.notificationCard(r)
-                                            )
+                                        )
                                     }
                                     </div>
                                 : null
@@ -104,52 +94,36 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                     : null    
                 }
                 {
-                    this.state.showDueTodayReminders && (notifications.dueTodayPaymentsCount !== 0 || notifications.dueTodayReminders.length > 0) ? 
-                    <div className="alert alert-warning d-flex flex-row" role="alert">
-                        <FontAwesomeIcon icon={faExclamationCircle} className="notification-flash" /> &nbsp;
-                            {
-                                notifications.dueTodayPaymentsCount !== 0 ? <>
-                                    <span style={{fontWeight: 'bold'}}>
-                                        You have {notifications.dueTodayPaymentsCount} payments due today totalling £{notifications.dueTodayPaymentsTotal}
-                                    </span><br />
-                                </> : null
-                            }
+                    this.state.showDueTodayReminders && notifications.dueTodayReminders.length > 0 ? 
+                        <div className="alert alert-warning d-flex flex-row" role="alert">
                             {
                                 notifications.dueTodayReminders.length > 0  ? 
-                                    <div style={{display: 'block'}}><br /> 
+                                    <div style={{display: 'block'}}>
                                     {
                                         notifications.dueTodayReminders.map(r =>
-                                            this.notificationCard(r)
-                                            )
+                                            this.notificationCard(r, true)
+                                        )
                                     }
                                     </div>
                                 : null
                             }
-                    </div>
+                        </div>
                 : null    
                 }
                 {
-                    this.state.showUpcomingReminders && (notifications.upcomingPaymentsCount !== 0 || notifications.upcomingReminders.length > 0) ? 
+                    this.state.showUpcomingReminders && notifications.upcomingReminders.length > 0 ? 
                         <div className="alert alert-info d-flex flex-row" role="alert">
-                            <FontAwesomeIcon icon={faExclamationCircle} /> &nbsp;
-                                {
-                                    notifications.upcomingPaymentsCount !== 0 ? <>
-                                    <span style={{fontWeight: 'bold'}}>
-                                        You have {notifications.upcomingPaymentsCount} upcoming payments due in the next 7 days totalling £{notifications.upcomingPaymentsTotal}
-                                    </span><br />
-                                    </> : null
-                                }
-                                {
-                                    notifications.upcomingReminders.length > 0 ? 
-                                        <div style={{display: 'block'}}><br /> 
-                                        {
-                                            notifications.upcomingReminders.map(r =>
-                                                this.notificationCard(r)
-                                            )
-                                        }
-                                        </div>
-                                    : null
-                                }
+                            {
+                                notifications.upcomingReminders.length > 0 ? 
+                                    <div style={{display: 'block'}}>
+                                    {
+                                        notifications.upcomingReminders.map(r =>
+                                            this.notificationCard(r)
+                                        )
+                                    }
+                                    </div>
+                                : null
+                            }
                         </div>
                     : null    
                 }
@@ -158,14 +132,15 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
         )
     }
 
-    private notificationCard = (reminder: IReminder) => {
+    private notificationCard = (reminder: IReminder, dueToday: boolean = false) => {
         return (
             <div key={reminder.id}>
                 <span onClick={() => this.deleteReminder(reminder.id)}>
-                    <FontAwesomeIcon icon={faTrash} />
-                </span>
-                <span>{priorityBadge(reminder.priority, reminder.category)}</span>
-                <span>due: {reminder.dueDate}</span> -&nbsp;
+                    <FontAwesomeIcon icon={faTimes} />
+                </span> 
+                &nbsp;
+                {priorityBadge(reminder.priority, reminder.category)} &nbsp;
+                {(dueToday || reminder.dueDate === null) ? "" : <><span className="label label-default">due: {reminder.dueDate}</span>&nbsp;</>} 
                 <span>{reminder.notes}</span>&nbsp;
             </div>
         )

@@ -31,12 +31,6 @@ export interface IFinanceDTO {
 }
 
 export interface IFinanceNotification {
-    latePaymentsCount: number,
-    latePaymentsTotal: number,
-    upcomingPaymentsCount: number,
-    upcomingPaymentsTotal: number,
-    dueTodayPaymentsCount: number,
-    dueTodayPaymentsTotal: number,
     overDueReminders: IReminder[],
     upcomingReminders: IReminder[],
     dueTodayReminders: IReminder[]

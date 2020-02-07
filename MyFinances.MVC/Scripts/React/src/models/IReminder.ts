@@ -4,7 +4,7 @@ export interface IReminder {
     dueDate: Date,
     addedDate: Date,
     display: boolean,
-    priority: number,
+    priority: string,
     category: string
 }
 

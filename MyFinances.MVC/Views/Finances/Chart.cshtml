@@ -4,23 +4,23 @@
     ViewBag.Title = Model.Title;
     ViewBag.Frequency = ((DateFrequency)Model.Filter.Frequency);
 }
+    <div class="mvcView">
+        <select onchange='location.href = this.value'>
+            @foreach (DateFrequency frequency in Enum.GetValues(typeof(DateFrequency)))
+            {
+                <option value="@Url.Action(Model.Action, "Finances", new { frequency = frequency, interval = Model.Filter.Interval })" selected="@(Model.Filter.Frequency == frequency ? true : false)">@frequency</option>
+            }
+        </select>
 
-<select onchange='location.href = this.value'>
-    @foreach (DateFrequency frequency in Enum.GetValues(typeof(DateFrequency)))
-    {
-        <option value="@Url.Action(Model.Action, "Finances", new { frequency = frequency, interval = Model.Filter.Interval })" selected="@(Model.Filter.Frequency == frequency ? true : false)">@frequency</option>
-    }
-</select>
-
-@if (Model.Filter.Frequency.ToString().Contains("Last"))
-{
-    <select onchange='location.href = this.value'>
-        @for (int i = 1; i <= 30; i++)
+        @if (Model.Filter.Frequency.ToString().Contains("Last"))
         {
-            <option value="@Url.Action(Model.Action, "Finances", new { frequency = Model.Filter.Frequency, interval = i })" selected="@(Model.Filter.Interval == i ? true : false)">X = @i</option>
+            <select onchange='location.href = this.value'>
+                @for (int i = 1; i <= 30; i++)
+                {
+                    <option value="@Url.Action(Model.Action, "Finances", new { frequency = Model.Filter.Frequency, interval = i })" selected="@(Model.Filter.Interval == i ? true : false)">X = @i</option>
+                }
+            </select>
         }
-    </select>
-}
 
-@Html.Partial("_Chart", Model)
-
+        @Html.Partial("_Chart", Model)
+    </div>

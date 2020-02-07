@@ -2,6 +2,7 @@ import * as React from 'react';
 import { PaymentStatus } from 'src/models/IFinance';
 import { CategoryType } from 'src/enums/CategoryType';
 import { DateFrequency } from 'src/enums/DateFrequency';
+import { Priority } from 'src/enums/Priority';
 
 export const intToOrdinalNumberString = (cell: any, row: any) => {
 	cell = Math.round(cell);
@@ -59,6 +60,20 @@ export const paymentStatus = (status: number, daysUntilDue: number) => {
 			return ""
 	}
 }
+
+export const priorityBadge = (priority: string, label: string = "") => {
+	switch (priority) {
+		case Priority[Priority.Low]:
+			return <span className="badge progress-bar-info">{label !== "" ? label : Priority[Priority.Low]}</span>
+		case Priority[Priority.Medium]:
+			return <span className="badge progress-bar-warning">{label !== "" ? label : Priority[Priority.Medium]}</span>
+		case Priority[Priority.High]:
+			return <span className="badge progress-bar-danger">{label !== "" ? label : Priority[Priority.High]}</span>
+		default:
+			return <span className="badge progress-bar-info">{label !== "" ? label : Priority[Priority.Low]}</span>
+	}
+}
+
 
 export const rootUrl: string = process.env.NODE_ENV === "development" ? "http://localhost:53822" : window.location.origin;
 export const appUrl: string = "http://localhost:3000";

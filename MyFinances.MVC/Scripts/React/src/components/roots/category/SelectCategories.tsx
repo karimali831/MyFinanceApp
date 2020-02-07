@@ -54,39 +54,33 @@ export default class SelectCategories extends React.Component<IOwnProps, IOwnSta
     public render() {
         return (
             <div>
-                <div className="form-group">
-                    {
-                        this.props.loadingCategories ? <Load /> :
-                        <>
-                            <select onChange={e => this.onChangeSelectedCategory(e)} className="form-control">
-                                <option value={0}>-- select category --</option>
-                                {
-                                    this.props.categories.map(c =>
-                                        <option key={c.id} value={c.id + "-" + c.secondTypeId} disabled={c.disabled}>{c.name}</option>
-                                    )
-                                }
-                            </select>
-                        </>
-                    }
-                </div>
+                {
+                    this.props.loadingCategories ? <Load /> :
+                    <>
+                        <select id="categories" onChange={e => this.onChangeSelectedCategory(e)} className="form-control">
+                            <option value={0}>-- select category --</option>
+                            {
+                                this.props.categories.map(c =>
+                                    <option key={c.id} value={c.id + "-" + c.secondTypeId} disabled={c.disabled}>{c.name}</option>
+                                )
+                            }
+                        </select>
+                    </>
+                }
                 <>
                     {
                         this.state.secondTypeId !== undefined ?
-                            <div className="form-group">
-                            {
-                                this.props.loadingSecondCategories ? <Load /> :
-                                <>
-                                    <select onChange={e => this.onChangeSelectedSecondCategory(e)} className="form-control">
-                                        <option value={0}>-- category --</option>
-                                        {
-                                            this.props.secondCategories.map(c =>
-                                                <option key={c.id} value={c.id} disabled={c.disabled}>{c.name}</option>
-                                            )
-                                        }
-                                    </select>
-                                </>
-                            }
-                            </div>
+                            this.props.loadingSecondCategories ? <Load /> :
+                            <>
+                                <select id="categories" onChange={e => this.onChangeSelectedSecondCategory(e)} className="form-control">
+                                    <option value={0}>-- category --</option>
+                                    {
+                                        this.props.secondCategories.map(c =>
+                                            <option key={c.id} value={c.id} disabled={c.disabled}>{c.name}</option>
+                                        )
+                                    }
+                                </select>
+                            </>
                         : null
                     }
                 </>
@@ -97,9 +91,6 @@ export default class SelectCategories extends React.Component<IOwnProps, IOwnSta
     private onChangeSelectedCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         const ids = value.split("-", 2);
-
-        console.log("selected cat = " + Number(ids[0]))
-        console.log("secondTypeId = " +  ids[1] !== "null" && ids[1] !== "0" ? Number(ids[1]) : undefined)
 
         this.setState({ ...this.state, 
             ...{ 

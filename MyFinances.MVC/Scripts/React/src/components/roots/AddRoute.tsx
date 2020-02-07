@@ -58,42 +58,42 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
         }
 
         return (
-            <div style={{margin: '0 auto', border: 1}}>
+            <div>
                 {AddMenu("route")}
-                <div className="form-group">
-                    <input className="form-control" type="date" value={this.state.routeDate} placeholder="dd-MM-yy" onChange={(e) => { this.onRouteDateChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input className="form-control" type="number" value={this.state.mileage} placeholder="Enter route mileage" onChange={(e) => { this.onMileageChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input className="form-control" type="number" value={this.state.mpg} placeholder="Enter route mpg" onChange={(e) => { this.onMPGChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input className="form-control" type="number" value={this.state.fuelCost} placeholder="Enter fuel cost" onChange={(e) => { this.onFuelCostChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input className="form-control" type="text" value={this.state.extraDrops} placeholder="Drops adjustment" onChange={(e) => { this.onExtraDropsChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input className="form-control" type="number" value={this.state.extraMileage} placeholder="Enter extra mileage" onChange={(e) => { this.onExtraMileageChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input className="form-control" type="text" value={this.state.info} placeholder="Enter info" onChange={(e) => { this.onInfoChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <select onChange={e => this.onChangeSelectedRouteType(e)} className="form-control">
-                        <option value={0}>-- route type --</option>
-                        {
-                            this.state.routeTypes.map(c =>
-                                <option key={c.id} value={c.id}>{c.name}</option>
-                            )
-                        }
-                    </select>
-                </div>
-                <div className="form-group">
-                    <input type="submit" value="Add Item" onClick={() =>this.addRoute() } />
-                </div>
+                <form className="form-horizontal">
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="date" value={this.state.routeDate} placeholder="dd-MM-yy" onChange={(e) => { this.onRouteDateChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="number" value={this.state.mileage} placeholder="Enter route mileage" onChange={(e) => { this.onMileageChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="number" value={this.state.mpg} placeholder="Enter route mpg" onChange={(e) => { this.onMPGChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="number" value={this.state.fuelCost} placeholder="Enter fuel cost" onChange={(e) => { this.onFuelCostChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="text" value={this.state.extraDrops} placeholder="Drops adjustment" onChange={(e) => { this.onExtraDropsChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="number" value={this.state.extraMileage} placeholder="Enter extra mileage" onChange={(e) => { this.onExtraMileageChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="text" value={this.state.info} placeholder="Enter info" onChange={(e) => { this.onInfoChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <select onChange={e => this.onChangeSelectedRouteType(e)} className="form-control">
+                            <option value={0}>-- route type --</option>
+                            {
+                                this.state.routeTypes.map(c =>
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                )
+                            }
+                        </select>
+                    </div>
+                    <button className="btn btn-primary" onClick={() =>this.addRoute() }>Add Route</button>
+                </form>
             </div>
         )
     }

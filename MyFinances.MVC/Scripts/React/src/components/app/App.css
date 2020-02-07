@@ -1,7 +1,7 @@
 .App {
-  text-align: center;
-  /* background-image: url("https://previews.123rf.com/images/hywards/hywards1509/hywards150900017/45016398-financial-background.jpg"); */
-  
+  padding: 20px;
+  border-radius: 5px;
+  background-image: url(https://www.designbolts.com/wp-content/uploads/2012/12/Grey-Jean-White-Seamless-Patterns-For-Website-Backgrounds.jpg);
 }
 
 a {

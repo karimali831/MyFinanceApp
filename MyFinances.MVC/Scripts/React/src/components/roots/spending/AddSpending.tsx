@@ -59,33 +59,35 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
         }
 
         return (
-            <div style={{margin: '0 auto', border: 1}}>
-                {AddMenu("spending")}
-                <div className="form-group">
-                    <input className="form-control" type="text" value={this.state.name} placeholder="Enter item" onChange={(e) => { this.onSpendingChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input className="form-control" type="date" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <select onChange={e => this.onChangeSelectedFinance(e)} className="form-control">
-                        <option value={0}>-- of finance --</option>
-                        {
-                            this.state.finances.map(f =>
-                                <option key={f.id} value={f.id + "-" + f.name + "-" + f.avgMonthlyAmount}>{f.name}</option>
-                            )
-                        }
-                    </select>
-                </div>
-                {this.state.selectedFinanceId === undefined || this.state.selectedFinanceId === 0 ? 
-                    <SelectionRefinementForSpendingCategories />
-                : null}
-                <div className="form-group">
-                    <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input type="submit" value="Add Item" onClick={() => this.addSpending() } />
-                </div>
+            <div>
+                <form className="form-horizontal">
+                    {AddMenu("spending")}
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="text" value={this.state.name} placeholder="Enter item" onChange={(e) => { this.onSpendingChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="date" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <select onChange={e => this.onChangeSelectedFinance(e)} className="form-control">
+                            <option value={0}>-- of finance --</option>
+                            {
+                                this.state.finances.map(f =>
+                                    <option key={f.id} value={f.id + "-" + f.name + "-" + f.avgMonthlyAmount}>{f.name}</option>
+                                )
+                            }
+                        </select>
+                    </div>
+                    {this.state.selectedFinanceId === undefined || this.state.selectedFinanceId === 0 ? 
+                        <div className="form-group form-group-lg">
+                            <SelectionRefinementForSpendingCategories />
+                        </div>
+                    : null}
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />
+                    </div>
+                    <button className="btn btn-primary" onClick={() => this.addSpending() }>Add Spending</button>
+                </form>
             </div>
         )
     }

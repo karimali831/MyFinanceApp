@@ -4,6 +4,7 @@
     ViewBag.Title = "CNW Week Summary";
 }
 
+<div class="mvcView">
     <h2>CNW Week Summary</h2>
 
     @if (Model != null && Model.Payment != null && Model.Routes.Any())
@@ -11,7 +12,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    @{ 
+                    @{
                         var previousWeek = Model.Payment.WeekNo == 1 ? 52 : Model.Payment.WeekNo - 1;
                         var nextWeek = Model.Payment.WeekNo == 52 ? 1 : Model.Payment.WeekNo + 1;
                     }
@@ -100,12 +101,12 @@
                 </tr>
                 @if (Model.Payment.CalcSupportPay.HasValue)
                 {
-                <tr>
-                    <th scope="row">Support Pay</th>
-                    <td>£@Model.Payment.CalcSupportPay.Value.ToString("#.##") <small><i>(@Model.Payment.CalcSupportDrops.Value.ToString("#.##") drops + £@Model.Payment.CalcSupportMileagePay.Value.ToString("#.##") fuel)</i></small></td>
-                    <td>£@(Model.Payment.ActualSupportPay.HasValue ? Model.Payment.ActualSupportPay.Value.ToString("#.##") : null)</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualSupportPay, Model.Payment.CalcSupportPay))</td>
-                </tr>
+                    <tr>
+                        <th scope="row">Support Pay</th>
+                        <td>£@Model.Payment.CalcSupportPay.Value.ToString("#.##") <small><i>(@Model.Payment.CalcSupportDrops.Value.ToString("#.##") drops + £@Model.Payment.CalcSupportMileagePay.Value.ToString("#.##") fuel)</i></small></td>
+                        <td>£@(Model.Payment.ActualSupportPay.HasValue ? Model.Payment.ActualSupportPay.Value.ToString("#.##") : null)</td>
+                        <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualSupportPay, Model.Payment.CalcSupportPay))</td>
+                    </tr>
                 }
                 <tr>
                     <th scope="row">Route Pay</th>
@@ -121,11 +122,11 @@
                 </tr>
                 @*total amount for all additions minus deductions*@
                 @*<tr>
-                    <th scope="row">Net Amount</th>
-                    <td>£@Model.Payment.CalcNetAmount.Value.ToString("#.##")</td>
-                    <td>£@(Model.Payment.ActualNetAmount.HasValue ? Model.Payment.ActualNetAmount.Value.ToString("#.##") : null)</td>
-                    <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualNetAmount, Model.Payment.CalcNetAmount))</td>
-                </tr>*@
+                        <th scope="row">Net Amount</th>
+                        <td>£@Model.Payment.CalcNetAmount.Value.ToString("#.##")</td>
+                        <td>£@(Model.Payment.ActualNetAmount.HasValue ? Model.Payment.ActualNetAmount.Value.ToString("#.##") : null)</td>
+                        <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualNetAmount, Model.Payment.CalcNetAmount))</td>
+                    </tr>*@
                 <tr>
                     <th scope="row">Total Pay</th>
                     <td>£@(Model.Payment.CalcTotalPayToDriver.HasValue ? Model.Payment.CalcTotalPayToDriver.Value.ToString("#.##") : null)</td>
@@ -139,3 +140,4 @@
     {
         <h2>Week does not have any routes or week summary not recorded</h2>
     }
+</div>

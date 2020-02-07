@@ -85,7 +85,7 @@ namespace MyFinances.Service
             await incomeService.MissedIncomeEntriesAsync();
 
             var finances = await GetFinances(resyncNextDueDates: false);
-            var reminders = (await remindersService.GetAllAsync()).Where(x => x.Display == true);
+            var reminders = (await remindersService.GetAllAsync()).Where(x => x.Display == true).OrderByDescending(x => x.Priority);
 
             return new FinanceNotificationVM
             {

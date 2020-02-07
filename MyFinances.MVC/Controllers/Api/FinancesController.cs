@@ -89,19 +89,25 @@ namespace MyFinances.Website.Controllers.API
                     {
                         x.Id,
                         x.Notes,
-                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss")
+                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss"),
+                        x.Priority,
+                        x.Category
                     }),
                     UpcomingReminders = notifications.UpcomingReminders.Select(x => new
                     {
                         x.Id,
                         x.Notes,
-                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss")
+                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss"),
+                        x.Priority,
+                        x.Category
                     }),
                     DueTodayReminders = notifications.DueTodayReminders.Select(x => new
                     {
                         x.Id,
                         x.Notes,
-                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss")
+                        DueDate = x.DueDate.ToString("d/MM/yyyy HH:mm:ss"),
+                        x.Priority,
+                        x.Category
                     })
                 }
             });

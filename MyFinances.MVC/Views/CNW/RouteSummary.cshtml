@@ -5,8 +5,9 @@
     ViewBag.Title = "CNW Route Summary";
 }
 
-    <h2>CNW Route Summary</h2>
+<h2>CNW Route Summary</h2>
 
+<div class="mvcView">
     <table class="table">
         <tbody>
             <tr>
@@ -15,7 +16,7 @@
             <tr>
                 <th scope="row">Type</th>
                 <td>
-                    @{ var category = (Categories)Model.RouteTypeId; }
+                    @{ var category = (CategoryType)Model.RouteTypeId; }
                     @category.ToString()
                 </td>
             </tr>
@@ -49,3 +50,4 @@
             </tr>
         </tbody>
     </table>
+</div>

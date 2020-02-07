@@ -10,19 +10,14 @@ export interface IPropsFromState {
     selectedSecondCat?: number,
 }
 
-export interface IPropsFromDispatch {
-}
-
 export interface IOwnState {
     date: string,
     amount?: number | undefined
     redirect: boolean
 }
 
-type AllProps = IPropsFromState & IPropsFromDispatch;
-
-export default class AddExpense extends React.Component<AllProps, IOwnState> {
-    constructor(props: AllProps) {
+export default class AddExpense extends React.Component<IPropsFromState, IOwnState> {
+    constructor(props: IPropsFromState) {
         super(props);
         this.state = { 
             amount: undefined,
@@ -39,18 +34,20 @@ export default class AddExpense extends React.Component<AllProps, IOwnState> {
         }
 
         return (
-            <div style={{margin: '0 auto', border: 1}}>
+            <div>
                 {AddMenu("income")}
-                <SelectionRefinementForIncomeSources />
-                <div className="form-group">
-                    <input className="form-control" type="date" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <input type="submit" value="Add Item" onClick={() =>this.addExpense() } />
-                </div>
+                <form className="form-horizontal">
+                    <div className="form-group form-group-lg">
+                        <SelectionRefinementForIncomeSources />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="date" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />
+                    </div>
+                    <button className="btn btn-primary" onClick={() =>this.addExpense() }>Add Earning</button>
+                </form>
             </div>
         )
     }

@@ -45,32 +45,35 @@ export default class AddReminder extends React.Component<IPropsFromState, IOwnSt
         }
 
         return (
-            <div style={{margin: '0 auto', border: 1}}>
+            <div>
                 {AddMenu("reminder")}
-                <div className="form-group">
-                    <span>Due Date</span><br />
-                    <input className="form-control" type="datetime-local" value={this.state.dueDate}  onChange={(e) => { this.onDueDateInputChanged(e);}} />
-                </div>
-                <div className="form-group">
-                    <span>Reminder</span> <br />
-                    <textarea className="form-control" cols={40} rows={4} onChange={(e) => { this.onNotesInputChanged(e);}} >{this.state.notes}</textarea>
-                </div>
-                <SelectionRefinementForReminderCategories />
-                <div className="form-group">
-                    <span>Priority</span><br />
-                    <select onChange={(e) => this.onChangeSelectedPriority(e)} className="form-control">
-                    {
-                        Object.keys(Priority).filter(o => !isNaN(o as any)).map(key => 
-                            <option key={key} value={Priority[key]} selected={this.state.priority === Priority[key]}>
-                                {cleanText(Priority[key])}
-                            </option>
-                        )
-                    }
-                    </select>
-                </div>
-                <div className="form-group">
-                    <input type="submit" value="Add" onClick={() =>this.addReminder() } />
-                </div>
+                <form className="form-horizontal">
+                    <div className="form-group form-group-lg">
+                        <label htmlFor="dueDate" className="control-label">Due Date</label>
+                        <input id="dueDate" className="form-control" type="datetime-local" value={this.state.dueDate}  onChange={(e) => { this.onDueDateInputChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <label htmlFor="notes" className="control-label">Reminder</label>
+                        <textarea id="notes" className="form-control" cols={40} rows={4} onChange={(e) => { this.onNotesInputChanged(e);}} >{this.state.notes}</textarea>
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <label htmlFor="categories" className="control-label">Type</label>
+                        <SelectionRefinementForReminderCategories />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <label htmlFor="priority" className="control-label">Priority</label>
+                        <select id="priority" onChange={(e) => this.onChangeSelectedPriority(e)} className="form-control">
+                        {
+                            Object.keys(Priority).filter(o => !isNaN(o as any)).map(key => 
+                                <option key={key} value={Priority[key]} selected={this.state.priority === Priority[key]}>
+                                    {cleanText(Priority[key])}
+                                </option>
+                            )
+                        }
+                        </select>
+                    </div>
+                    <button className="btn btn-primary" onClick={() =>this.addReminder() }>Add Reminder</button>
+                </form>
             </div>
         )
     }

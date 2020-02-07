@@ -51,31 +51,33 @@ export default class AddCategory extends React.Component<IOwnProps, IOwnState> {
         }
 
         return (
-            <div style={{margin: '0 auto', border: 1}}>
+            <div>
                 {AddMenu("category")}
-                <FontAwesomeIcon icon={faArrowRight} /> <span onClick={() => this.addSubCat()}>Add {this.catTxt(this.state.addSubCat)}</span>
-                <div className="form-group">
-                    <input className="form-control" type="text" value={this.state.catName} placeholder={"Enter " + this.catTxt(!this.state.addSubCat)} onChange={(e) => { this.onCatInputChanged(e);}} />
-                </div>
-                {
-                    this.state.addSubCat ?
-                    <>
-                        <div className="form-group">
-                            <select onChange={e => this.onChangeSelectedCategory(e)} className="form-control">
-                                <option value={0}>-- select category --</option>
-                                {
-                                    this.state.catsWithSubs.map(c =>
-                                        <option key={c.id} value={c.secondTypeId}>{c.name}</option>
-                                    )
-                                }
-                            </select>
-                        </div>
-                    </> 
-                    : null
-                }
-                <div className="form-group">
-                    <input type="submit" value={"Add " + this.catTxt(!this.state.addSubCat)} onClick={() =>this.addCategory() } />
-                </div>
+                <button type="button" onClick={() => this.addSubCat()} className="btn btn-link">
+                    <FontAwesomeIcon icon={faArrowRight} /> Add {this.catTxt(this.state.addSubCat)}
+                </button>
+                <form className="form-horizontal">
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="text" value={this.state.catName} placeholder={"Enter " + this.catTxt(!this.state.addSubCat)} onChange={(e) => { this.onCatInputChanged(e);}} />
+                    </div>
+                    {
+                        this.state.addSubCat ?
+                        <>
+                            <div className="form-group form-group-lg">
+                                <select onChange={e => this.onChangeSelectedCategory(e)} className="form-control">
+                                    <option value={0}>-- select category --</option>
+                                    {
+                                        this.state.catsWithSubs.map(c =>
+                                            <option key={c.id} value={c.secondTypeId}>{c.name}</option>
+                                        )
+                                    }
+                                </select>
+                            </div>
+                        </> 
+                        : null
+                    }
+                    <button className="btn btn-primary" onClick={() =>this.addCategory() }>{"Add " + this.catTxt(!this.state.addSubCat)}</button>
+                </form>
             </div>
         )
     }

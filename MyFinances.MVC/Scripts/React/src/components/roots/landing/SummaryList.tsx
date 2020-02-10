@@ -8,6 +8,8 @@ import { CategoryType } from 'src/enums/CategoryType';
 import { SummaryFilteredList } from '../utils/Utils';
 
 export interface IOwnState {
+    showAllCats: boolean,
+    limitSummaryCats: number
 }
 
 export interface IOwnProps<T> {
@@ -23,50 +25,76 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
 
     constructor(props: IOwnProps<T>) {
         super(props);
-        this.state = {};
+        this.state = {
+            showAllCats: false,
+            limitSummaryCats: 5
+        };
     }
 
     public render() {
+        const results = this.state.showAllCats ? this.props.filteredResults : this.props.filteredResults.splice(0, this.state.limitSummaryCats);
+
         return (
-            this.props.filteredResults && this.props.filteredResults.map((s, key) => 
-                <tr key={key}>
-                    <th scope="row">
-                        <FontAwesomeIcon icon={this.props.icon} /> 
-                        {
-                            this.props.dateFilter !== undefined ?    
-                                <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link> 
-                            : null
-                        }
-                    </th>
-                    <td>
-                        {s.secondCats !== null ? 
-                            <div onClick={() => this.props.showSecondCategory(s.cat1)}>
-                                <FontAwesomeIcon icon={faSearch} /> £{s.total}
-                                {this.props.showSecondCatSummary === s.cat1 ? 
-                                <>
-                                    <br />
-                                    <small>
-                                        <i> 
-                                            {s.secondCats.map((c, key2) =>   
-                                                <div key={key2}>                            {
-                                                   this.props.dateFilter !== null && this.props.dateFilter !== undefined ?
-                                                        <> 
-                                                            <Link to={SummaryFilteredList(this.props.categoryType, c.secondCatId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, true, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {c.cat2}</Link> £{c.total}
-                                                        </>
-                                                    : null 
-                                                    }
-                                                </div>
-                                            )}
-                                        </i>
-                                    </small>
-                                </>
-                                : null}
-                            </div>
-                         : "£"+s.total}
-                    </td>
-                </tr>
-            )
+            <>
+                {results && results.map((s, key) => 
+                    <tr key={key}>
+                        <th scope="row">
+                            <FontAwesomeIcon icon={this.props.icon} /> 
+                            {
+                                this.props.dateFilter !== undefined ?    
+                                    <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link> 
+                                : null
+                            }
+                        </th>
+                        <td>
+                            {s.secondCats !== null ? 
+                                <div onClick={() => this.props.showSecondCategory(s.cat1)}>
+                                    <FontAwesomeIcon icon={faSearch} /> £{s.total}
+                                    {this.props.showSecondCatSummary === s.cat1 ? 
+                                    <>
+                                        <br />
+                                        <small>
+                                            <i> 
+                                                {s.secondCats.map((c, key2) =>   
+                                                    <div key={key2}>                            {
+                                                    this.props.dateFilter !== null && this.props.dateFilter !== undefined ?
+                                                            <> 
+                                                                <Link to={SummaryFilteredList(this.props.categoryType, c.secondCatId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, true, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {c.cat2}</Link> £{c.total}
+                                                            </>
+                                                        : null 
+                                                        }
+                                                    </div>
+                                                )}
+                                            </i>
+                                        </small>
+                                    </>
+                                    : null}
+                                </div>
+                            : "£"+s.total}
+                        </td>
+                    </tr>
+                )}
+                {
+                    this.props.filteredResults.length > this.state.limitSummaryCats ?
+                    <>
+                        <tr>
+                            <td colSpan={2} onClick={() => this.seeAllCats()}> 
+                                <a><small>&nbsp;... show {this.state.showAllCats ? "less" : "all"}</small></a>
+                            </td>
+                        </tr>
+                    </>
+                    : null
+                }
+            </>
         )
+    }
+
+    private seeAllCats = () => {
+        this.setState({ ...this.state,
+            ...{ 
+                showAllCats: !this.state.showAllCats
+            }
+        }) 
     }
 }
 

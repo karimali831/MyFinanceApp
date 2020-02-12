@@ -32,7 +32,7 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
     }
 
     public render() {
-        const results = this.state.showAllCats ? this.props.filteredResults : this.props.filteredResults.splice(0, this.state.limitSummaryCats);
+        const results = this.state.showAllCats ? this.props.filteredResults : this.props.filteredResults.slice(0, this.state.limitSummaryCats);
 
         return (
             <>

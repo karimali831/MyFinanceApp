@@ -23,11 +23,4 @@ namespace MyFinances.ViewModels
         public PaymentStatus PaymentStatus { get; set; }
 
     }
-
-    public class FinanceNotificationVM
-    {
-        public IEnumerable<Reminder> OverDueReminders { get; set; }
-        public IEnumerable<Reminder> DueTodayReminders { get; set; }
-        public IEnumerable<Reminder> UpcomingReminders { get; set; }
-    }
 }

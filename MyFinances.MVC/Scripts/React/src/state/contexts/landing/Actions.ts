@@ -1,7 +1,7 @@
 import { ISpendingSummary } from '../../../models/ISpending';
 import { IDateFilter } from "../../../models/IDateFilter";
 import { IIncomeSummary } from 'src/models/IIncome';
-import { IFinanceNotification } from 'src/models/IFinance';
+import { IReminderNotification } from 'src/models/IReminder';
 
 // action types
 export class LandingSummaryActionTypes {
@@ -131,12 +131,12 @@ export class LoadNotificationsAction {
 }
 
 export class LoadNotificationsSuccessAction {
-    public static readonly creator = (notifications: IFinanceNotification) => new LoadNotificationsSuccessAction(notifications);
+    public static readonly creator = (notifications: IReminderNotification) => new LoadNotificationsSuccessAction(notifications);
 
     public readonly type = LandingSummaryActionTypes.LoadNotificationsSuccess;
 
     constructor(
-        public notifications: IFinanceNotification
+        public notifications: IReminderNotification
     ) { }
 }
 

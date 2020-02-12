@@ -106,13 +106,23 @@ export default class DateFilter extends React.Component<IOwnProps, IOwnState> {
 
 
     private onFromDateChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        let toDate;
+
+        if (this.state.dateFilter.toDateRange === null) {
+            toDate = e.target.value;
+        } else if (this.state.dateFilter.toDateRange !== undefined && Date.parse(e.target.value) > Date.parse(this.state.dateFilter.toDateRange)) {
+            toDate = e.target.value
+        } else {
+            toDate = this.state.dateFilter.toDateRange
+        }
+
         this.setState({ ...this.state,
             ...{
                 dateFilter: {
                     frequency: this.state.dateFilter.frequency, 
                     interval: this.state.dateFilter.interval,
                     fromDateRange: e.target.value, 
-                    toDateRange: this.state.dateFilter.toDateRange === null ? e.target.value : this.state.dateFilter.toDateRange
+                    toDateRange: toDate
                 }
             }
         })

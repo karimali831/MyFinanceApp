@@ -21,10 +21,12 @@ namespace MyFinances.Website.Controllers.API
     public class RemindersCommonController : ApiController
     {
         private readonly IRemindersService remindersService;
+        private readonly IFinanceService financeService;
 
-        public RemindersCommonController(IRemindersService remindersService)
+        public RemindersCommonController(IRemindersService remindersService, IFinanceService financeService)
         {
             this.remindersService = remindersService ?? throw new ArgumentNullException(nameof(remindersService));
+            this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
         }
 
         [HttpGet]
@@ -49,6 +51,47 @@ namespace MyFinances.Website.Controllers.API
         {
             await remindersService.HideReminder(id);
             return Request.CreateResponse(HttpStatusCode.OK, true);
+        }
+
+        [Route("notifications")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetNotificationsAsync()
+        {
+            var notifications = await financeService.ReminderNotifications();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Notifications = new
+                {
+                    OverDueReminders = notifications.OverDueReminders.Select(x => new
+                    {
+                        x.Id,
+                        x.Notes,
+                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
+                        x.PaymentStatus,
+                        x.Priority,
+                        x.Category
+                    }),
+                    UpcomingReminders = notifications.UpcomingReminders.Select(x => new
+                    {
+                        x.Id,
+                        x.Notes,
+                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
+                        x.PaymentStatus,
+                        x.Priority,
+                        x.Category
+                    }),
+                    DueTodayReminders = notifications.DueTodayReminders.Select(x => new
+                    {
+                        x.Id,
+                        x.Notes,
+                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
+                        x.PaymentStatus,
+                        x.Priority,
+                        x.Category
+                    })
+                }
+            });
         }
     }
 }

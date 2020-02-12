@@ -69,47 +69,6 @@ namespace MyFinances.Website.Controllers.API
             });
         }
 
-        [Route("notifications")]
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetNotificationsAsync()
-        {
-            var notifications = await financeService.GetNotifications();
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Notifications = new
-                {
-                    OverDueReminders = notifications.OverDueReminders.Select(x => new
-                    {
-                        x.Id,
-                        x.Notes,
-                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
-                        x.PaymentStatus,
-                        x.Priority,
-                        x.Category
-                    }),
-                    UpcomingReminders = notifications.UpcomingReminders.Select(x => new
-                    {
-                        x.Id,
-                        x.Notes,
-                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
-                        x.PaymentStatus,
-                        x.Priority,
-                        x.Category
-                    }),
-                    DueTodayReminders = notifications.DueTodayReminders.Select(x => new
-                    {
-                        x.Id,
-                        x.Notes,
-                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
-                        x.PaymentStatus,
-                        x.Priority,
-                        x.Category
-                    })
-                }
-            });
-        }
-
         [Route("add")]
         [HttpPost]
         public async Task<HttpResponseMessage> InsertAsync(FinanceDTO model)

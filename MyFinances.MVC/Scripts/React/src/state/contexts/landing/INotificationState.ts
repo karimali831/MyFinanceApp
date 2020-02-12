@@ -1,7 +1,7 @@
-import { IFinanceNotification } from 'src/models/IFinance';
+import { IReminderNotification } from 'src/models/IReminder';
 
 export default interface INotificationState {
-    notifications?: IFinanceNotification,
+    notifications?: IReminderNotification,
     type: string,
     loading: boolean,
 }

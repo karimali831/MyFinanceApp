@@ -25,6 +25,8 @@ namespace MyFinances.Helpers
             return (value / 100) * 20;
         }
 
+        public static string ToCurrency(decimal amount) => amount.ToString("C", CultureInfo.CreateSpecificCulture("en-GB"));
+
         public static string AmountDifference(decimal? firstValue, decimal? secondValue, bool showCurrency = true, string appendText = "", bool highlight = true)
         {
             if (!firstValue.HasValue || !secondValue.HasValue)
@@ -52,7 +54,7 @@ namespace MyFinances.Helpers
                     break;
             }
 
-            string appendCurrency = showCurrency ? difference.ToString("C", CultureInfo.CreateSpecificCulture("en-GB")) : difference.ToString();
+            string appendCurrency = showCurrency ? ToCurrency(difference) : difference.ToString();
             string formatAmount = string.Format("{0}{1}", appendText, appendCurrency);
             return highlight == false ? formatAmount : $"<span class='label label-{label}'>{formatAmount}</span>";
         }

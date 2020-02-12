@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { Load } from '../../../base/Loader';
-import { IFinanceNotification } from 'src/models/IFinance';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LoadNotificationsAction } from 'src/state/contexts/landing/Actions';
 import { commonApi } from 'src/api/CommonApi';
 import { priorityBadge } from 'src/components/roots/utils/Utils';
-import { IReminder } from 'src/models/IReminder';
+import { IReminder, IReminderNotification } from 'src/models/IReminder';
 
 export interface IPropsFromState {
-    notifications?: IFinanceNotification,
+    notifications?: IReminderNotification,
     loading: boolean,
     type: string
 }

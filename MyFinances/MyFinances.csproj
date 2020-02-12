@@ -154,6 +154,7 @@
     <Compile Include="Service\CNWService.cs" />
     <Compile Include="Service\SpendingsService.cs" />
     <Compile Include="Service\FinanceService.cs" />
+    <Compile Include="ViewModels\RemindersVM.cs" />
     <Compile Include="ViewModels\FinanceVM.cs" />
     <Compile Include="ViewModels\IncomeExpenseVM.cs" />
     <Compile Include="ViewModels\MissedEntries.cs" />

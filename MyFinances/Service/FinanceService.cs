@@ -15,36 +15,35 @@ namespace MyFinances.Service
     public interface IFinanceService
     {
         Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates);
-        Task<FinanceNotificationVM> GetNotifications();
         Task<IEnumerable<FinanceVM>> GetFinances(bool resyncNextDueDates);
         Task InsertAsync(FinanceDTO dto);
         int? CalculateDays(DateTime? Date1, DateTime? Date2);
         int? DaysLastPaid(int Id);
         PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
         Task<IEnumerable<IncomeExpenseVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
-        Task<IEnumerable<Reminder>> UpcomingPaymentRemindersAsync();
+        Task<RemindersVM> ReminderNotifications();
     }
 
     public class FinanceService : IFinanceService
     {
         private readonly IFinanceRepository financeRepository;
         private readonly ISpendingService spendingService;
-        private readonly IRemindersService remindersService;
         private readonly IIncomeService incomeService;
+        private readonly IRemindersService remindersService;
         private readonly IBaseService baseService;
 
         public FinanceService(
             IFinanceRepository financeRepository,
             ISpendingService spendingService,
+            IIncomeService incomeService,
             IRemindersService remindersService,
-            IBaseService baseService,
-            IIncomeService incomeService)
+            IBaseService baseService)
         {
             this.financeRepository = financeRepository ?? throw new ArgumentNullException(nameof(financeRepository));
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
+            this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
             this.remindersService = remindersService ?? throw new ArgumentNullException(nameof(remindersService));
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
-            this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
         }
 
         public DateTime CalculateNextDueDate(DateTime date)
@@ -80,70 +79,13 @@ namespace MyFinances.Service
                 .ThenBy(x => x.Name);
         }
 
-        public async Task<IEnumerable<Reminder>> UpcomingPaymentRemindersAsync()
-        {
-            var finances = await GetFinances(resyncNextDueDates: false);
-
-            (int Count, decimal Total) latePayments = (finances
-                    .Count(x => x.PaymentStatus == PaymentStatus.Late), finances
-                    .Where(x => x.PaymentStatus == PaymentStatus.Late)
-                    .Sum(x => x.AvgMonthlyAmount));
-
-            (int Count, decimal Total) upcomingPayments = (finances
-                    .Count(x => x.PaymentStatus == PaymentStatus.Upcoming && (x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7) || x.ManualPayment)), finances
-                    .Where(x => x.PaymentStatus == PaymentStatus.Upcoming && (x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7) || x.ManualPayment))
-                    .Sum(x => x.AvgMonthlyAmount));
-
-            (int Count, decimal Total) dueTodayPayments = (finances
-                    .Count(x => x.PaymentStatus == PaymentStatus.DueToday), finances
-                    .Where(x => x.PaymentStatus == PaymentStatus.DueToday)
-                    .Sum(x => x.AvgMonthlyAmount));
-
-            var reminders = new List<(string Note, PaymentStatus PaymentStatus)>
-            {
-                ($"You have {latePayments.Count} late payments totalling £{latePayments.Total}", PaymentStatus.Late),
-                ($"You have {upcomingPayments.Count} upcoming payments totalling £{upcomingPayments.Total}", PaymentStatus.Upcoming),
-                ($"You have {dueTodayPayments.Count} payments due today totalling £{dueTodayPayments.Total}", PaymentStatus.DueToday)
-            };
-
-            var paymentReminders = new List<Reminder>();
- 
-            foreach (var reminder in reminders)
-            {
-                paymentReminders.Add(new Reminder
-                {
-                    Notes = reminder.Note,
-                    PaymentStatus = reminder.PaymentStatus,
-                    _priority = Priority.High,
-                    Category = Categories.Bills.ToString(),
-                    Display = true,
-                    Sort = 0
-                });
-            }
-
-            return paymentReminders;
-        }
-
-        public async Task<FinanceNotificationVM> GetNotifications()
+        public async Task<RemindersVM> ReminderNotifications()
         {
             await spendingService.MissedCreditCardInterestEntriesAsync();
             await incomeService.MissedIncomeEntriesAsync();
 
-            var upcomingPayments = await UpcomingPaymentRemindersAsync();
-            var getReminders = await remindersService.GetAllAsync();
-
-            var reminders = getReminders
-                .Concat(upcomingPayments)
-                .Where(x => x.Display == true)
-                .OrderBy(x => x.Sort)
-                .ThenByDescending(x => x._priority);
-
-            return new FinanceNotificationVM
-            {
-                OverDueReminders = reminders.Where(x => x.PaymentStatus == PaymentStatus.Late),
-                DueTodayReminders = reminders.Where(x => x.PaymentStatus == PaymentStatus.DueToday),
-                UpcomingReminders = reminders.Where(x => x.PaymentStatus == PaymentStatus.Upcoming)
-            };
+            var finances = await GetFinances(resyncNextDueDates: false);
+            return await remindersService.GetNotifications(finances);
         }
 
         public async Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates)

@@ -1,5 +1,3 @@
-import { IReminder } from './IReminder';
-
 export interface IFinance {
     id: number,
     name: string,
@@ -28,10 +26,4 @@ export enum PaymentStatus {
 export interface IFinanceDTO {
     name: string,
     catId: number
-}
-
-export interface IFinanceNotification {
-    overDueReminders: IReminder[],
-    upcomingReminders: IReminder[],
-    dueTodayReminders: IReminder[]
 }

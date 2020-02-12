@@ -15,3 +15,9 @@ export interface IReminderDTO {
     priority: number,
     catId: number
 }
+
+export interface IReminderNotification {
+    overDueReminders: IReminder[],
+    upcomingReminders: IReminder[],
+    dueTodayReminders: IReminder[]
+}

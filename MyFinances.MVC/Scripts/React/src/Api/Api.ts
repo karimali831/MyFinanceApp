@@ -1,12 +1,12 @@
 import { ICategory } from '../models/ICategory'
 import { ISpending, ISpendingSummary } from '../models/ISpending'
-import { IFinance, IFinanceNotification } from '../models/IFinance'
+import { IFinance } from '../models/IFinance'
 import { IRoute } from '../models/IRoute'
 import { IIncome, IIncomeSummary } from '../models/IIncome';
 import { ICNWPayment } from '../models/ICNWPayment';
 import { IDateFilter } from '../models/IDateFilter';
 import { rootUrl } from '../components/roots/utils/Utils';
-import { IReminder } from 'src/models/IReminder';
+import { IReminder, IReminderNotification } from 'src/models/IReminder';
 
 export class FinanceApi {
 
@@ -70,7 +70,7 @@ export class FinanceApi {
     }
 
     public notifications = async (): Promise<INotificationResponse> => {
-        return fetch(`${this.rootUrl}/finances/notifications`, {
+        return fetch(`${this.rootUrl}/reminders/notifications`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",
@@ -248,7 +248,7 @@ export interface IIncomeSummaryResponse {
 }
 
 export interface INotificationResponse {
-    notifications: IFinanceNotification
+    notifications: IReminderNotification
 }
 
 export interface IFinanceResponse {

@@ -9,7 +9,7 @@ namespace MyFinances.Ninject
         public override void Load()
         {
             // Services
-            Bind<IFinanceService>().To<FinanceService>();
+            Bind<IFinanceService>().To<FinanceService>().InSingletonScope();
             Bind<ISpendingService>().To<SpendingService>();
             Bind<IBaseService>().To<BaseService>();
             Bind<ICNWService>().To<CNWService>();

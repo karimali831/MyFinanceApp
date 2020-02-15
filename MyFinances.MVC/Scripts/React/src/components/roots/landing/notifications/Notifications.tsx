@@ -6,6 +6,7 @@ import { LoadNotificationsAction } from 'src/state/contexts/landing/Actions';
 import { commonApi } from 'src/api/CommonApi';
 import { priorityBadge } from 'src/components/roots/utils/Utils';
 import { IReminder, IReminderNotification } from 'src/models/IReminder';
+import { ReminderType } from 'src/enums/ReminderType';
 
 export interface IPropsFromState {
     notifications?: IReminderNotification,
@@ -21,9 +22,7 @@ export interface IOwnState {
     deletedReminderId?: number,
     loadingDeleted: boolean,
     loading: boolean,
-    showOverdueReminders: boolean,
-    showDueTodayReminders: boolean,
-    showUpcomingReminders: boolean
+    showReminders: ReminderType
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
@@ -36,9 +35,7 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
             loadingDeleted: false,
             loading: this.props.loading,
             deletedReminderId: undefined,
-            showOverdueReminders: false,
-            showDueTodayReminders: true,
-            showUpcomingReminders: false
+            showReminders: ReminderType.DueToday
         };
     }
 
@@ -65,18 +62,18 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
 
         return (
             <div>
-                <button type="button" className="btn btn-danger" onClick={() => this.showOverdueReminders()}>
+                <button type="button" className="btn btn-danger" onClick={() => this.showReminders(ReminderType.Overdue)}>
                     <span className="notificationLabel">Overdue</span> <span className="badge">{notifications.overDueReminders.length}</span>
                 </button>
-                <button type="button" className="btn btn-warning" onClick={() => this.showdueTodayReminders()}>
+                <button type="button" className="btn btn-warning" onClick={() => this.showReminders(ReminderType.DueToday)}>
                     <span className="notificationLabel">Due Today</span> <span className="badge">{notifications.dueTodayReminders.length}</span>
                 </button>
-                <button type="button" className="btn btn-info" onClick={() => this.showUpcomingReminders()}>
+                <button type="button" className="btn btn-info" onClick={() => this.showReminders(ReminderType.Upcoming)}>
                     <span className="notificationLabel">Upcoming</span> <span className="badge">{notifications.upcomingReminders.length}</span>
                 </button>
                 <>
                 {
-                    this.state.showOverdueReminders && notifications.overDueReminders.length > 0 ? 
+                    this.state.showReminders === ReminderType.Overdue && notifications.overDueReminders.length > 0 ? 
                         <div className="alert alert-danger d-flex flex-row" role="alert">
                             {
                                 notifications.overDueReminders.length > 0 ? 
@@ -93,7 +90,7 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                     : null    
                 }
                 {
-                    this.state.showDueTodayReminders && notifications.dueTodayReminders.length > 0 ? 
+                    this.state.showReminders === ReminderType.DueToday && notifications.dueTodayReminders.length > 0 ? 
                         <div className="alert alert-warning d-flex flex-row" role="alert">
                             {
                                 notifications.dueTodayReminders.length > 0  ? 
@@ -110,7 +107,7 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                 : null    
                 }
                 {
-                    this.state.showUpcomingReminders && notifications.upcomingReminders.length > 0 ? 
+                    this.state.showReminders === ReminderType.Upcoming && notifications.upcomingReminders.length > 0 ? 
                         <div className="alert alert-info d-flex flex-row" role="alert">
                             {
                                 notifications.upcomingReminders.length > 0 ? 
@@ -145,16 +142,8 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
         )
     }
 
-    private showOverdueReminders = () => {
-        this.setState({ ...this.state, showOverdueReminders: !this.state.showOverdueReminders })
-    }
-
-    private showdueTodayReminders = () => {
-        this.setState({ ...this.state, showDueTodayReminders: !this.state.showDueTodayReminders })
-    }
-
-    private showUpcomingReminders = () => {
-        this.setState({ ...this.state, showUpcomingReminders: !this.state.showUpcomingReminders})
+    private showReminders = (reminderType: ReminderType) => {
+        this.setState({ ...this.state,  showReminders: reminderType })
     }
 
     private deleteReminder = (id: number) => {

@@ -77,17 +77,17 @@ namespace MyFinances.Service
 
             if (latePayments.Count > 0)
             {
-                reminders.Add(($"You have {latePayments.Count} late payments totalling £{Utils.ToCurrency(latePayments.Total)}", PaymentStatus.Late));
+                reminders.Add(($"You have {latePayments.Count} late payments totalling {Utils.ToCurrency(latePayments.Total)}", PaymentStatus.Late));
             }
 
             if (upcomingPayments.Count > 0)
             {
-                reminders.Add(($"You have {upcomingPayments.Count} upcoming payments totalling £{Utils.ToCurrency(upcomingPayments.Total)}", PaymentStatus.Upcoming));
+                reminders.Add(($"You have {upcomingPayments.Count} upcoming payments totalling {Utils.ToCurrency(upcomingPayments.Total)}", PaymentStatus.Upcoming));
             }
 
             if (dueTodayPayments.Count > 0)
             {
-                reminders.Add(($"You have {dueTodayPayments.Count} payments due today totalling £{Utils.ToCurrency(dueTodayPayments.Total)}", PaymentStatus.DueToday));
+                reminders.Add(($"You have {dueTodayPayments.Count} payments due today totalling {Utils.ToCurrency(dueTodayPayments.Total)}", PaymentStatus.DueToday));
             }
 
             var paymentReminders = new List<Reminder>();

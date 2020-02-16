@@ -82,6 +82,8 @@ export const routeSummaryUrl = (id: string) => `${rootUrl}/cnw/routesummary/${id
 export const spendingSummaryChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/SpendingsSummaryChart?frequency=${frequency}&interval=${interval}`;
 export const incomeSummaryChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/IncomesSummaryChart?frequency=${frequency}&interval=${interval}`;
 export const incomeExpenseChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/IncomeExpenseChart?frequency=${frequency}&interval=${interval}`;
+export const spendingsByCategoryChartUrl = (catId: number, type: string, frequency: string, interval: number) => `${rootUrl}/finances/SpendingsByCategoryChart?catId=${catId}&type=${type}&frequency=${frequency}&interval=${interval}`;
+
 
 export const SummaryFilteredList =
 	(categoryType: CategoryType, catId?: number, frequency?: DateFrequency, interval?: number, isFinance?: boolean, isSecondCat?: boolean, fromDate?: string | null, toDate?: string | null) => `${CategoryType[categoryType]}/${catId}/${frequency}/${interval}/${categoryType === CategoryType.Spendings ? isFinance + "/" : ""}${isSecondCat}/${fromDate}/${toDate}`;

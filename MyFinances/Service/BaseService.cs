@@ -15,6 +15,7 @@ namespace MyFinances.Service
         Task DeleteAsync(int id, string table);
         Task<IEnumerable<Category>> GetAllCategories(CategoryType? typeId, bool catsWithSubs);
         Task AddCategory(CategoryDTO dto);
+        Task<string> GetCategoryName(int id);
     }
 
     public class BaseService : IBaseService
@@ -58,6 +59,11 @@ namespace MyFinances.Service
         public async Task AddCategory(CategoryDTO dto)
         {
             await categoryRepository.AddCategory(dto);
+        }
+
+        public async Task<string> GetCategoryName(int id)
+        {
+            return await categoryRepository.GetCategoryName(id);
         }
     }
 }

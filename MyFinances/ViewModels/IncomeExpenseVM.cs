@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace MyFinances.ViewModels
 {
-    public class IncomeExpenseVM
+    public class MonthComparisonChartVM
     {
         public string YearMonth { get; set; }
         public string MonthName { get; set; }
         public decimal Total { get; set; }
         public CategoryType Type { get; set; }
+        public string Category { get; set; }
+        public string SecondCategory { get; set; }
     }
 }

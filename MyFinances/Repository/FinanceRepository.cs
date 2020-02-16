@@ -18,7 +18,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<Finance>> GetAllAsync();
         Task InsertAsync(FinanceDTO dto);
         Task UpdateNextDueDateAsync(DateTime dueDate, int Id);
-        Task<IEnumerable<IncomeExpenseVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
+        Task<IEnumerable<MonthComparisonChartVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
     }
 
     public class FinanceRepository : IFinanceRepository
@@ -51,7 +51,7 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<IncomeExpenseVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter)
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter)
         {
             string sqlTxt = $@"
                 SELECT 
@@ -80,7 +80,7 @@ namespace MyFinances.Repository
 
             using (var sql = dbConnectionFactory())
             {
-                return (await sql.QueryAsync<IncomeExpenseVM>(sqlTxt)).ToArray();
+                return (await sql.QueryAsync<MonthComparisonChartVM>(sqlTxt)).ToArray();
             }
         }
 

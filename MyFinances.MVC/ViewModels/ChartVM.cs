@@ -19,5 +19,7 @@ namespace MyFinances.Website.ViewModels
         public string[] xAxis { get; set; }
         public decimal[] yAxisDs1 { get; set; }
         public decimal[] yAxisDs2 { get; set; }
+        public int Width { get; set; } = 600;
+        public int Height { get; set; } = 600;
     }
 }

@@ -19,6 +19,7 @@ namespace MyFinances.Service
         Task InsertAsync(SpendingDTO dto);
         DateTime? ExpenseLastPaidDate(int financeId);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter);
+        Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance);
     }
 
     public class SpendingService : ISpendingService
@@ -138,6 +139,11 @@ namespace MyFinances.Service
             var firstCats = spendingsSummary.Where(x => x.Cat2 == null);
 
             return firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
+        }
+
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance)
+        {
+            return await spendingRepository.GetSpendingsByCategoryAndMonthAsync(dateFilter, catId, isSecondCat, isFinance);
         }
     }
 }

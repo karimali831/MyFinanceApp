@@ -15,6 +15,7 @@ namespace MyFinances.Repository
     {
         Task<IEnumerable<Category>> GetAllAsync();
         Task AddCategory(CategoryDTO dto);
+        Task<string> GetCategoryName(int id);
     }
 
     public class CategoryRepository : ICategoryRepository
@@ -34,6 +35,14 @@ namespace MyFinances.Repository
             using (var sql = dbConnectionFactory())
             {
                 return (await sql.QueryAsync<Category>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
+            }
+        }
+
+        public async Task<string> GetCategoryName(int id)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<string>($"SELECT Name FROM Categories WHERE Id = @Id", new { Id = id })).FirstOrDefault();
             }
         }
 

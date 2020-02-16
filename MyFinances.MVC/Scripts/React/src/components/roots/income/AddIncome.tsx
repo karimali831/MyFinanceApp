@@ -61,7 +61,7 @@ export default class AddExpense extends React.Component<IPropsFromState, IOwnSta
     }
 
     private addExpense = () => {
-        if (this.state.date && this.state.amount && this.props.selectedCat)
+        if (this.state.date  && this.props.selectedCat && (this.state.amount || this.state.amount === 0))
         {
             const addModel: IIncomeDTO = {
                 sourceId: this.props.selectedCat,

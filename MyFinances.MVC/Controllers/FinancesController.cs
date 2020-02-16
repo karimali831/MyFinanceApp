@@ -56,7 +56,7 @@ namespace MyFinances.Website.Controllers
                 Filter = dateFilter,
                 xAxis = results.Select(x => x.MonthName.Substring(0, 3)).Distinct().ToArray(),
                 yAxisDs1 = results.Select(x => x.Total).ToArray(),
-                Width = 350
+                Width = 300
             });
         }
 
@@ -81,7 +81,7 @@ namespace MyFinances.Website.Controllers
                 xAxis = results.Select(x => x.MonthName.Substring(0, 3)).Distinct().ToArray(),
                 yAxisDs1 = results.Where(x => x.Type == CategoryType.Income).Select(x => x.Total).ToArray(),
                 yAxisDs2 = results.Where(x => x.Type == CategoryType.Spendings).Select(x => x.Total).ToArray(),
-                Width = 400
+                Width = 350
             });
         }
 

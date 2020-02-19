@@ -228,6 +228,7 @@
     <Compile Include="Controllers\Api\CNWController.cs" />
     <Compile Include="Controllers\Api\SpendingsController.cs" />
     <Compile Include="Controllers\Api\FinancesController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CNWController.cs" />
     <Compile Include="Controllers\FinancesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

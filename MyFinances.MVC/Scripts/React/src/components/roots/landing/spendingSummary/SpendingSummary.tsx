@@ -4,13 +4,13 @@ import { faArrowUp, faArrowDown, faChartPie } from '@fortawesome/free-solid-svg-
 import { ISpendingSummary } from '../../../../models/ISpending';
 import { Load } from '../../../base/Loader';
 import { ShowSecondCategorySpendingSummaryAction } from '../../../../state/contexts/landing/Actions';
-
 import { IDateFilter } from 'src/models/IDateFilter';
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
 import { spendingSummaryChartUrl, } from '../../utils/Utils';
 import { DateFrequency } from 'src/enums/DateFrequency';
 import DateFilter from './DateFilterSSConnected';
+import SelectionRefinementForSpendingSummary from './SelectionRefinementForSpendingSummaryConnected';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -20,7 +20,8 @@ export interface IPropsFromState {
     loading: boolean,
     showSecondCatSummary: string | null,
     location: string,
-    categoryType: CategoryType
+    categoryType: CategoryType,
+    categoryFilter?: string | null
 }
 
 export interface IOwnState {
@@ -57,19 +58,29 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
         }
 
         let results;
-        if (this.state.catId !== undefined && this.state.type !== undefined) {
-            if (this.state.type === "Subcategory") {
-                results = this.props.spendingSummary.filter(s => s.isFinance === false && s.secondCats !== null && s.secondCats.some((o) => o.secondCatId === this.state.catId))
-            } else if (this.state.type === "Category") {
-                results = this.props.spendingSummary.filter(s => s.isFinance === false && s.catId === this.state.catId)
-            } else if (this.state.type === "Finance") {
-                results = this.props.spendingSummary.filter(s => s.isFinance === true && s.catId === this.state.catId)
-            } else {
-                results = this.props.spendingSummary
-            }
+        if (this.props.categoryFilter !== null && this.props.categoryFilter !== "") {
+            results = this.props.spendingSummary
+                .filter(s => this.props.categoryFilter && 
+                    (s.cat1.toLowerCase().includes(this.props.categoryFilter.toLowerCase()) ||
+                    (s.secondCats !== null && s.secondCats.some((o) => this.props.categoryFilter && o.cat2.toLowerCase().includes(this.props.categoryFilter.toLowerCase())))));
         } else {
             results = this.props.spendingSummary;
         }
+
+        // let results;
+        // if (this.state.catId !== undefined && this.state.type !== undefined) {
+        //     if (this.state.type === "Subcategory") {
+        //         results = this.props.spendingSummary.filter(s => s.isFinance === false && s.secondCats !== null && s.secondCats.some((o) => o.secondCatId === this.state.catId))
+        //     } else if (this.state.type === "Category") {
+        //         results = this.props.spendingSummary.filter(s => s.isFinance === false && s.catId === this.state.catId)
+        //     } else if (this.state.type === "Finance") {
+        //         results = this.props.spendingSummary.filter(s => s.isFinance === true && s.catId === this.state.catId)
+        //     } else {
+        //         results = this.props.spendingSummary
+        //     }
+        // } else {
+        //     results = this.props.spendingSummary;
+        // }
 
         return (
             <div>
@@ -82,9 +93,11 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                                 </a>
                                 <DateFilter />
                                 {
-                                    this.props.spendingSummary.length === 0 ? null :
+                                    this.props.spendingSummary.length <= 5 ? null :
                                     <>
-                                        <select onChange={(e) => this.onChangeSelectedFrequency(e)}  id="categories" className="form-control">
+                                        {
+                                            <SelectionRefinementForSpendingSummary />
+                                        /* <select onChange={(e) => this.onChangeSelectedFrequency(e)}  id="categories" className="form-control">
                                             <option value={undefined}>-- select category --</option>
                                             {
                                                 this.props.spendingSummary.some(s => s.isFinance) ?
@@ -118,7 +131,8 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                                                     </optgroup>
                                                 : null
                                             }
-                                        </select>
+                                        </select> */
+                                        }
                                     </>
                                 }
                             </th>
@@ -162,15 +176,15 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
         })
     }
 
-    private onChangeSelectedFrequency = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.target.value;
-        const id = value.split("-", 2);
+    // private onChangeSelectedFrequency = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    //     const value = e.target.value;
+    //     const id = value.split("-", 2);
         
-        this.setState({ ...this.state,
-            ...{
-                catId: Number(id[1]),
-                type: id[0]
-            }
-        })
-    }
+    //     this.setState({ ...this.state,
+    //         ...{
+    //             catId: Number(id[1]),
+    //             type: id[0]
+    //         }
+    //     })
+    // }
 }

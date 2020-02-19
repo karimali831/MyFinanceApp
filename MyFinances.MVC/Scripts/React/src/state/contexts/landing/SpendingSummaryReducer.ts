@@ -31,6 +31,10 @@ const SpendingSummaryReducer: Reducer<ISpendingSummaryState, LandingSummaryActio
             case LandingSummaryActionTypes.SpendingSummaryDateFilterChange:
                     return { ...state, ...{ dateFilter: action.filter } };
 
+            case LandingSummaryActionTypes.FilterChanged:
+                return { ...state, ...{ categoryFilter: action.filter } }
+        
+
             default:
                 return state;
         }

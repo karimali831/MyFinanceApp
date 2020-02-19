@@ -10,7 +10,8 @@ export default interface ISpendingSummaryState {
     loading: boolean,
     showSecondCatSummary: string | null,
     categoryType: CategoryType,
-    dateFilter: IDateFilter
+    dateFilter: IDateFilter,
+    categoryFilter: string | null
 }
 
 export const spendingSummaryDateFilter: IDateFilter = {
@@ -29,7 +30,8 @@ export class SpendingSummaryState {
         loading: false,
         showSecondCatSummary: null,
         categoryType: CategoryType.Spendings,
-        dateFilter: spendingSummaryDateFilter
+        dateFilter: spendingSummaryDateFilter,
+        categoryFilter: null
     }
 }
 

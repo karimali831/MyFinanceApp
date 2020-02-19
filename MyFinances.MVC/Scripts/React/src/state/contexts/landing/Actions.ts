@@ -18,6 +18,8 @@ export class LandingSummaryActionTypes {
     public static readonly LoadNotifications = "@@landingsummary/loadnotifications";
     public static readonly LoadNotificationsSuccess = "@@landingsummary/loadnotificationssuccess";
     public static readonly LoadNotificationsFailure = "@@landingsummary/loadnotificationsfailure";
+    public static readonly FilterChanged = "@@landingsummary/filterchanged";
+    
 }
 
 // actions defined as classes with a creator as a static function
@@ -150,6 +152,16 @@ export class LoadNotificationsFailureAction {
     ) { }
 }
 
+export class FilterChangedAction {
+    public static readonly creator = (filter: string) => new FilterChangedAction(filter);
+
+    public readonly type = LandingSummaryActionTypes.FilterChanged;
+
+    constructor(
+        public filter: string,
+    ) { }
+
+}
 // Create a discriminated union of all action types used to correctly type the
 // actions in the reducer switch statement
 export type LandingSummaryActions =
@@ -165,4 +177,5 @@ export type LandingSummaryActions =
     IncomeSummaryDateFilterChangeAction |
     LoadNotificationsAction |
     LoadNotificationsSuccessAction |
-    LoadNotificationsFailureAction
+    LoadNotificationsFailureAction  |
+    FilterChangedAction 

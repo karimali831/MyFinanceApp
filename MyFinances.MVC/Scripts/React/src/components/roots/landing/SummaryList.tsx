@@ -3,10 +3,10 @@ import { IDateFilter } from 'src/models/IDateFilter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, IconDefinition, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import { IBaseModel } from 'src/models/IIncome';
 import { CategoryType } from 'src/enums/CategoryType';
 import { SummaryFilteredList, incomeExpenseByCategoryChartUrl } from '../utils/Utils';
 import { DateFrequency } from 'src/enums/DateFrequency';
+import { IBaseModel } from 'src/models/ISummaryBaseModel';
 
 export interface IOwnState {
     showAllCats: boolean,

@@ -16,6 +16,7 @@ const mapStateToProps =
         showSecondCatSummary: state.spendingSummary.showSecondCatSummary,
         loading: state.spendingSummary.loading,
         categoryType: state.spendingSummary.categoryType,
+        categoryFilter: state.spendingSummary.categoryFilter,
         location: state.router.location.pathname + '?' + state.router.location.search
     });
 

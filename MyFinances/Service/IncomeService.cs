@@ -18,6 +18,7 @@ namespace MyFinances.Service
         Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFilter dateFilter);
         Task InsertIncomeAsync(IncomeDTO dto);
         Task MissedIncomeEntriesAsync();
+        Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat);
     }
 
     public class IncomeService : IIncomeService
@@ -133,6 +134,11 @@ namespace MyFinances.Service
             }
 
             await reminderService.MissedEntriesAsync(results, "You have a missed income entry for");
+        }
+
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat)
+        {
+            return await incomeRepository.GetIncomesByCategoryAndMonthAsync(dateFilter, catId, isSecondCat);
         }
 
         public async Task InsertIncomeAsync(IncomeDTO dto)

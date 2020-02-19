@@ -80,7 +80,7 @@ namespace MyFinances.Repository
                         CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
                         c2.Name as SecondCategory
                     FROM 
-                        Spendings s
+                        {TABLE} s
 				    LEFT JOIN Categories c1 
                         ON c1.Id = s.CatId
                     LEFT JOIN Categories c2
@@ -107,11 +107,9 @@ namespace MyFinances.Repository
 	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
                         CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category
                     FROM 
-                        Spendings s
+                        {TABLE} s
 				    LEFT JOIN Categories c1 
                         ON c1.Id = s.CatId
-                    LEFT JOIN Categories c2
-                        ON c2.Id = s.SecondCatId
 				    LEFT JOIN Finances f 
                         ON f.Id = s.FinanceId
                     WHERE 

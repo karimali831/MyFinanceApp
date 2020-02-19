@@ -10,6 +10,7 @@ namespace MyFinances.Website.ViewModels
 {
     public class ChartVM
     {
+        public string HeaderTitle { get; set; }
         public string Title { get; set; }
         public string TitleDs1 { get; set; }
         public string TitleDs2 { get; set; }

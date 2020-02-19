@@ -2,6 +2,7 @@
 using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Service;
+using MyFinances.ViewModels;
 using MyFinances.Website.Models;
 using MyFinances.Website.ViewModels;
 using System;
@@ -35,7 +36,7 @@ namespace MyFinances.Website.Controllers
             return View();
         }
 
-        public async Task<ActionResult> SpendingsByCategoryChart(int catId, string type, DateFrequency frequency, int interval = 1)
+        public async Task<ActionResult> IncomeExpenseByCategoryChart(CategoryType categoryType, int catId, string type, DateFrequency frequency, int interval = 1)
         {
             var dateFilter = new DateFilter
             {
@@ -43,22 +44,38 @@ namespace MyFinances.Website.Controllers
                 Interval = interval
             };
 
+            var results = new List<MonthComparisonChartVM>();
             bool isSecondCat = type == "Subcategory" ? true : false;
-            bool isFinance = type == "Finance" ? true : false;
 
-            var results = await spendingService.GetSpendingsByCategoryAndMonthAsync(dateFilter, catId, isSecondCat, isFinance);
+            if (categoryType == CategoryType.Spendings)
+            {
+                bool isFinance = type == "Finance" ? true : false;
+                results = (await spendingService.GetSpendingsByCategoryAndMonthAsync(dateFilter, catId, isSecondCat, isFinance)).ToList();
+            }
+            else if(categoryType == CategoryType.Income)
+            {
+                results = (await incomeService.GetIncomesByCategoryAndMonthAsync(dateFilter, catId, isSecondCat)).ToList();
+            }
+
+            // exclude first month and last month records (because partial stored records)
+            var averagedResults = results.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM") && x.YearMonth != "2019-07");
+
+            string averagedMonthly = Utils.ToCurrency(averagedResults.Average(x => x.Total));
+            string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
 
             return View("Chart", new ChartVM
             {
-                Title = string.Format("Spendings Chart for {0} ({1})", results.First().Category, results.First().SecondCategory),
+                HeaderTitle = string.Format("Averaged monthly: {0}", averagedMonthly),
+                Title = string.Format("{0} Chart for {1} {2}", categoryType.ToString(), results.First().Category, secondCategory),
                 Type = "bar",
-                Action = nameof(SpendingsByCategoryChart),
+                Action = nameof(IncomeExpenseByCategoryChart),
                 Filter = dateFilter,
                 xAxis = results.Select(x => x.MonthName.Substring(0, 3)).Distinct().ToArray(),
                 yAxisDs1 = results.Select(x => x.Total).ToArray(),
                 Width = 300
             });
         }
+
 
         public async Task<ActionResult> IncomeExpenseChart(DateFrequency frequency, int interval = 1)
         {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { faArrowUp, faChartPie, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faChartLine, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DateFilter from './DateFilterISConnected'
 import { IIncomeSummary } from '../../../../models/IIncome';
@@ -44,7 +44,7 @@ export default class IncomeSummary extends React.Component<AllProps> {
                             </a>
                             <br />
                             <a href={incomeSummaryChartUrl(DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
-                                <FontAwesomeIcon icon={faChartPie} /> Income breakdown summary for
+                                <FontAwesomeIcon icon={faChartBar} /> Income breakdown summary for
                             </a>
                             <DateFilter />
                         </th>

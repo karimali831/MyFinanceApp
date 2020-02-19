@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faChartPie, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { ISpendingSummary } from '../../../../models/ISpending';
 import { Load } from '../../../base/Loader';
 import { ShowSecondCategorySpendingSummaryAction } from '../../../../state/contexts/landing/Actions';
@@ -8,7 +8,7 @@ import { ShowSecondCategorySpendingSummaryAction } from '../../../../state/conte
 import { IDateFilter } from 'src/models/IDateFilter';
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
-import { spendingSummaryChartUrl, spendingsByCategoryChartUrl } from '../../utils/Utils';
+import { spendingSummaryChartUrl, } from '../../utils/Utils';
 import { DateFrequency } from 'src/enums/DateFrequency';
 import DateFilter from './DateFilterSSConnected';
 
@@ -77,15 +77,6 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
-                                {
-                                    this.state.catId !== undefined && this.state.type !== undefined ?
-                                    <>
-                                        <a href={spendingsByCategoryChartUrl(this.state.catId, this.state.type, DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
-                                            <FontAwesomeIcon icon={faChartLine} /> Spendings breakdown by category
-                                        </a><br />
-                                    </>
-                                    : null
-                                }
                                 <a href={spendingSummaryChartUrl(DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
                                     <FontAwesomeIcon icon={faChartPie} /> Spendings breakdown summary for
                                 </a>

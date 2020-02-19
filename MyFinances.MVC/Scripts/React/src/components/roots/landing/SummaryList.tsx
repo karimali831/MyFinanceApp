@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { IDateFilter } from 'src/models/IDateFilter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, IconDefinition, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { IBaseModel } from 'src/models/IIncome';
 import { CategoryType } from 'src/enums/CategoryType';
-import { SummaryFilteredList } from '../utils/Utils';
+import { SummaryFilteredList, incomeExpenseByCategoryChartUrl } from '../utils/Utils';
+import { DateFrequency } from 'src/enums/DateFrequency';
 
 export interface IOwnState {
     showAllCats: boolean,
@@ -33,16 +34,20 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
 
     public render() {
         const results = this.state.showAllCats ? this.props.filteredResults : this.props.filteredResults.slice(0, this.state.limitSummaryCats);
-
+     
         return (
             <>
                 {results && results.map((s, key) => 
                     <tr key={key}>
                         <th scope="row">
-                            <FontAwesomeIcon icon={this.props.icon} /> 
                             {
-                                this.props.dateFilter !== undefined ?    
-                                    <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link> 
+                                this.props.dateFilter !== undefined ?  
+                                <>
+                                    <a href={incomeExpenseByCategoryChartUrl(this.props.categoryType, s.catId, (s.isFinance ?  "Finance" : "Category"),  DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
+                                        <FontAwesomeIcon icon={faChartBar} /> 
+                                    </a>
+                                    <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link>    
+                                </>
                                 : null
                             }
                         </th>
@@ -59,6 +64,9 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
                                                     <div key={key2}>                            {
                                                     this.props.dateFilter !== null && this.props.dateFilter !== undefined ?
                                                             <> 
+                                                                <a href={incomeExpenseByCategoryChartUrl(this.props.categoryType, c.secondCatId, "Subcategory", DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
+                                                                    <FontAwesomeIcon icon={faChartBar} /> 
+                                                                </a>
                                                                 <Link to={SummaryFilteredList(this.props.categoryType, c.secondCatId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, true, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {c.cat2}</Link> £{c.total}
                                                             </>
                                                         : null 

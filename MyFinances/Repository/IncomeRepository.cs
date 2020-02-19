@@ -4,6 +4,7 @@ using MyFinances.DTOs;
 using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Model;
+using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,6 +19,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(IncomeDTO dto);
         Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category);
+        Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat);
     }
 
     public class IncomeRepository : IIncomeRepository
@@ -83,6 +85,64 @@ namespace MyFinances.Repository
 
 
                     return (await sql.QueryAsync<IncomeSummaryDTO>(sqlTxt)).ToArray();
+            }
+        }
+
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat)
+        {
+            string sqlTxt = "";
+            if (isSecondCat)
+            {
+                sqlTxt = $@"
+                    SELECT 
+	                    CONVERT(CHAR(7), Date, 120) as YearMonth, 
+	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
+                        c1.Name as Category,
+                        c2.Name as SecondCategory
+                    FROM 
+                        Incomes i
+				    LEFT JOIN Categories c1 
+                        ON c1.Id = i.SourceId
+                    LEFT JOIN Categories c2
+                        ON c2.Id = i.SecondSourceId
+                    WHERE 
+                        {Utils.FilterDateSql(dateFilter)} 
+                    AND
+                        i.SecondSourceId = @CatId
+                    GROUP BY 
+                        CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
+                        c1.Name,  c2.Name
+                    ORDER BY 
+                        YearMonth";
+            }
+            else
+            {
+                sqlTxt = $@"
+                    SELECT 
+	                    CONVERT(CHAR(7), Date, 120) as YearMonth, 
+	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
+                        c1.Name as Category
+                    FROM 
+                        Incomes i
+				    LEFT JOIN Categories c1 
+                        ON c1.Id = i.SourceId
+                    LEFT JOIN Categories c2
+                        ON c2.Id = i.SecondSourceId
+                    WHERE 
+                        {Utils.FilterDateSql(dateFilter)} 
+                    AND
+                        i.SourceId = @CatId
+                    GROUP BY 
+                        CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
+                        c1.Name
+                    ORDER BY 
+                        YearMonth";
+            }
+
+
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<MonthComparisonChartVM>(sqlTxt, new { CatId = catId })).ToArray();
             }
         }
 

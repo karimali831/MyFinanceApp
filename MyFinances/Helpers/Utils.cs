@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Mvc;
 
 namespace MyFinances.Helpers
 {
@@ -153,6 +156,24 @@ namespace MyFinances.Helpers
         {
             var day = (int)CultureInfo.CurrentCulture.Calendar.GetDayOfWeek(date);
             return CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(date.AddDays(4 - (day == 0 ? 7 : day)), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        }
+
+        public static MvcHtmlString Nl2Br(this HtmlHelper htmlHelper, string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return MvcHtmlString.Create(text);
+            else
+            {
+                StringBuilder builder = new StringBuilder();
+                string[] lines = text.Split('\n');
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (i > 0)
+                        builder.Append("<br/>\n");
+                    builder.Append(HttpUtility.HtmlEncode(lines[i]));
+                }
+                return MvcHtmlString.Create(builder.ToString());
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LoadNotificationsAction } from 'src/state/contexts/landing/Actions';
 import { commonApi } from 'src/api/CommonApi';
-import { priorityBadge } from 'src/components/roots/utils/Utils';
+import { priorityBadge } from 'src/components/utils/Utils';
 import { IReminder, IReminderNotification } from 'src/models/IReminder';
 import { ReminderType } from 'src/enums/ReminderType';
 

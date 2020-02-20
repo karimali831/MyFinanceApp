@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { api } from '../../../api/Api';
 import { Load } from '../../base/Loader';
-import { priceFormatter, intToOrdinalNumberString, paymentStatus, cleanText, boolHighlight } from '../utils/Utils';
+import { priceFormatter, intToOrdinalNumberString, paymentStatus, cleanText, boolHighlight } from '../../utils/Utils';
 import { IFinance } from '../../../models/IFinance';
 import Table from '../../base/CommonTable';
 import { OverrideDueDate } from '../../../enums/OverrideDueDate';

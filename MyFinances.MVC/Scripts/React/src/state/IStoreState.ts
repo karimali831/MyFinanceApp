@@ -5,6 +5,7 @@ import ISpendingSummaryState, { SpendingSummaryState } from './contexts/landing/
 import { IRouteState, RouteState } from './contexts/router/IRouteState';
 import IIncomeSummaryState, { IncomeSummaryState } from './contexts/landing/IIncomeSummaryState';
 import INotificationState, { NotificationState } from './contexts/landing/INotificationState';
+import IChartState, { ChartState } from './contexts/chart/ChartState';
 
 // this represents the state of the 'entire' application
 // it should be composed of other state definitions which represent state 'contexts'
@@ -17,7 +18,8 @@ export default interface IStoreState {
     income: IIncomeState,
     spending: ISpendingState,
     spendingSummary: ISpendingSummaryState,
-    incomeSummary: IIncomeSummaryState
+    incomeSummary: IIncomeSummaryState,
+    chart: IChartState
 }
 
 export class StoreState {
@@ -28,7 +30,8 @@ export class StoreState {
         income: IncomeState.intialState,
         spending: SpendingState.intialState,
         spendingSummary: SpendingSummaryState.intialState,
-        incomeSummary: IncomeSummaryState.intialState
+        incomeSummary: IncomeSummaryState.intialState,
+        chart: ChartState.intialState
     };
 }
 

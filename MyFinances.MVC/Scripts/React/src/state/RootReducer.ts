@@ -8,6 +8,7 @@ import { connectRouter } from 'connected-react-router';
 import { History } from 'history';
 import IncomeSummaryReducer from './contexts/landing/IncomeSummaryReducer';
 import SpendingSummaryReducer from './contexts/landing/SpendingSummaryReducer';
+import chartReducer from './contexts/chart/Reducer'
 
 // Root reducer combining all other state reducers
 export default
@@ -19,5 +20,6 @@ export default
             incomeSummary: IncomeSummaryReducer,
             common: commonReducer,
             income: incomeReducer,
-            spending: spendingReducer
+            spending: spendingReducer,
+            chart: chartReducer
         }); 

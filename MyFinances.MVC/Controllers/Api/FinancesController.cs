@@ -76,5 +76,13 @@ namespace MyFinances.Website.Controllers.API
             await financeService.InsertAsync(model);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
+
+        [Route("chart/incomeexpense")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> IncomeExpenseComparisonChart(MonthComparisonChartRequestDTO request)
+        {
+            var incomeExpenseSummary = await financeService.GetIncomeExpenseTotalsByMonth(request.Filter);
+            return Request.CreateResponse(HttpStatusCode.OK, incomeExpenseSummary);
+        }
     }
 }

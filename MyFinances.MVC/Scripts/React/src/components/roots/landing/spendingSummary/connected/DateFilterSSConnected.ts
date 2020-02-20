@@ -1,8 +1,8 @@
-import IStoreState from '../../../../state/IStoreState';
+import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
-import DateFilterForSummary, { IPropsFromState, IPropsFromDispatch } from '../DateFilterForSummary';
-import { DateFilterChangeAction } from '../../../../state/contexts/common/Actions';
-import { incomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
+import DateFilterForSummary, { IPropsFromState, IPropsFromDispatch } from '../../../../dateFilter/DateFilterProps';
+import { DateFilterChangeAction } from '../../../../../state/contexts/common/Actions';
+import { spendingSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
 import { DateFrequency } from 'src/enums/DateFrequency';
 
 // REACT-REDUX
@@ -11,9 +11,9 @@ import { DateFrequency } from 'src/enums/DateFrequency';
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
-        dateFilter: incomeSummaryDateFilter(state),
-        categoryType: state.incomeSummary.categoryType,
-        selectedFrequency: DateFrequency[state.incomeSummary.dateFilter.frequency]
+        dateFilter: spendingSummaryDateFilter(state),
+        categoryType: state.spendingSummary.categoryType,
+        selectedFrequency: DateFrequency[state.spendingSummary.dateFilter.frequency]
     });
 
 // Add required action creators for component

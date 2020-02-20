@@ -7,7 +7,7 @@ import { IReminderDTO } from '../../../models/IReminder';
 import { Priority } from 'src/enums/Priority';
 
 import SelectionRefinementForReminderCategories from './SelectionRefinementForReminderCategories';
-import { cleanText } from '../utils/Utils';
+import { cleanText } from '../../utils/Utils';
 
 export interface IPropsFromState {
     selectedCat?: number

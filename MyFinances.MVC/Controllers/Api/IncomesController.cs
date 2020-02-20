@@ -76,5 +76,13 @@ namespace MyIncomes.Website.Controllers.API
             await incomeService.InsertIncomeAsync(model);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
+
+        [Route("chart")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> IncomesByCategoryChart(MonthComparisonChartRequestDTO request)
+        {
+            var incomeExpenseSummary = await incomeService.GetIncomesByCategoryAndMonthAsync(request.Filter, request.CatId, request.IsSecondCat);
+            return Request.CreateResponse(HttpStatusCode.OK, incomeExpenseSummary);
+        }
     }
 }

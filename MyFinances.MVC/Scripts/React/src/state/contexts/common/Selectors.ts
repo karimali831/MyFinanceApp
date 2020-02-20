@@ -7,4 +7,3 @@ export const getSecondTypeId = (state: IStoreState): number | undefined =>
 
 export const getCategoryType = (state: IStoreState): CategoryType | undefined =>
     state.common.categoryType
-

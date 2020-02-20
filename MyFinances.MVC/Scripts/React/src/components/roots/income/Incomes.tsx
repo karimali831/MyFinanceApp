@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IIncome } from '../../../models/IIncome';
-import { priceFormatter } from '../utils/Utils';
+import { priceFormatter } from '../../utils/Utils';
 import Table from '../../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
 import { LoadIncomesAction } from 'src/state/contexts/income/Actions';

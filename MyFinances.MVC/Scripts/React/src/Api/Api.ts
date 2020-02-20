@@ -5,8 +5,9 @@ import { IRoute } from '../models/IRoute'
 import { IIncome, IIncomeSummary } from '../models/IIncome';
 import { ICNWPayment } from '../models/ICNWPayment';
 import { IDateFilter } from '../models/IDateFilter';
-import { rootUrl } from '../components/roots/utils/Utils';
+import { rootUrl } from '../components/utils/Utils';
 import { IReminder, IReminderNotification } from 'src/models/IReminder';
+import { IMonthComparisonChart } from 'src/models/IMonthComparisonChart';
 
 export class FinanceApi {
 
@@ -85,6 +86,25 @@ export class FinanceApi {
             return response.json();
         })
         .then(data => data as INotificationResponse);
+    }
+
+    public monthlyComparison = async (request: IMonthComparisonChartRequest, subUrl: string): Promise<IMonthComparisonChart[]> => {
+        return fetch(`${this.rootUrl}/${subUrl}`, {
+            method: "POST",
+            body: JSON.stringify(request),
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: 'same-origin',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => data as IMonthComparisonChart[]);
     }
 
     public finances = async (resyncNextDueDates = false, upcomingPayments = false): Promise<IFinanceResponse> => {
@@ -226,6 +246,14 @@ export interface IIncomeRequest
     sourceId?: number | null,
     dateFilter?: IDateFilter,
     isSecondCat?: boolean
+}
+
+export interface IMonthComparisonChartRequest
+{
+    catId?: number | null,
+    filter?: IDateFilter,
+    isSecondCat?: boolean,
+    isFinance?: boolean
 }
 
 export interface ISpendingResponse {

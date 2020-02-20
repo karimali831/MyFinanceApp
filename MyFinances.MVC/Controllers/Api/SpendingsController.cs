@@ -95,5 +95,13 @@ namespace MyFinances.Website.Controllers.API
             await spendingService.InsertAsync(dto);
             return Request.CreateResponse(HttpStatusCode.OK, true);
         }
+
+        [Route("chart")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> SpendingsByCategoryChart(MonthComparisonChartRequestDTO request)
+        {
+            var incomeExpenseSummary = await spendingService.GetSpendingsByCategoryAndMonthAsync(request.Filter, request.CatId, request.IsSecondCat, request.IsFinance);
+            return Request.CreateResponse(HttpStatusCode.OK, incomeExpenseSummary);
+        }
     }
 }

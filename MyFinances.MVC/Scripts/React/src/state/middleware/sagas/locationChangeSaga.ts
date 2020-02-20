@@ -3,7 +3,7 @@ import { LOCATION_CHANGE } from "connected-react-router";
 import * as Route from 'route-parser';
 import { LoadSpendingsAction } from 'src/state/contexts/spending/Actions';
 import { getLocation, getHash } from 'src/state/contexts/router/Selectors';
-import { rootUrl } from 'src/components/roots/utils/Utils';
+import { rootUrl } from 'src/components/utils/Utils';
 import { LoadIncomesAction } from 'src/state/contexts/income/Actions';
 import { loadSpendingSummary } from './loadSpendingSummaryApiSaga';
 import { spendingSummaryDateFilter, incomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';

@@ -21,6 +21,9 @@ import Spendings from '../roots/spending/SpendingConnected'
 import { CategoryType } from 'src/enums/CategoryType';
 import AddReminder from '../roots/reminder/AddReminderConnected';
 import Reminders from '../roots/reminder/Reminders';
+import ChartForSpendingSummary from '../roots/landing/spendingSummary/connected/ChartForSpendingSummaryConnected';
+import ChartForIncomeSummary from '../roots/landing/incomeSummary/connected/ChartForIncomeSummaryConnected';
+import ChartForIncomeExpenseSummary from '../roots/landing/ChartForIncomeExpenseSummaryConnected';
 
 const browserHistory = history.pushState ? createBrowserHistory() : createHashHistory();
 
@@ -53,6 +56,9 @@ class App extends React.Component {
                   <Route path="/summary/" component={WeekSummaries} />
                   <Route path="/category/" component={Categories} />
                   <Route path="/reminder/" component={Reminders} />
+                  <Route path="/chart/spendingsummary/" component={ChartForSpendingSummary} />
+                  <Route path="/chart/incomesummary/" component={ChartForIncomeSummary} />
+                  <Route path="/chart/incomeexpense/" component={ChartForIncomeExpenseSummary} />
               </Switch>
             </div>
         </ConnectedRouter>

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SelectionRefinement } from 'src/components/SelectionRefinement/SelectionRefinement';
+import { SelectionRefinement } from 'src/components/selectionRefinement/SelectionRefinement';
 import { ISpendingSummary } from 'src/models/ISpending';
 import { FilterChangedAction } from 'src/state/contexts/landing/Actions';
 

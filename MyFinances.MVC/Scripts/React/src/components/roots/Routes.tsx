@@ -3,7 +3,7 @@ import { api } from '../../api/Api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfo } from '@fortawesome/free-solid-svg-icons'
 import { IRoute } from '../../models/IRoute';
-import { routeSummaryUrl } from './utils/Utils';
+import { routeSummaryUrl } from '../utils/Utils';
 import { Load } from '../base/Loader';
 import Table from '../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';

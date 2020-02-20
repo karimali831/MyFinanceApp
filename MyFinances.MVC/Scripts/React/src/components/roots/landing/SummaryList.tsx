@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, IconDefinition, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { CategoryType } from 'src/enums/CategoryType';
-import { SummaryFilteredList, incomeExpenseByCategoryChartUrl } from '../utils/Utils';
+import { SummaryFilteredList, incomeExpenseByCategoryChartUrl } from '../../utils/Utils';
 import { DateFrequency } from 'src/enums/DateFrequency';
 import { IBaseModel } from 'src/models/ISummaryBaseModel';
 
@@ -46,6 +46,9 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
                                     <a href={incomeExpenseByCategoryChartUrl(this.props.categoryType, s.catId, (s.isFinance ?  "Finance" : "Category"),  DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
                                         <FontAwesomeIcon icon={faChartBar} /> 
                                     </a>
+                                    <Link to={"/chart/incomeexpense"}>
+                                        <FontAwesomeIcon icon={faChartBar} /> 
+                                    </Link>
                                     <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link>    
                                 </>
                                 : null
@@ -67,6 +70,9 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
                                                                 <a href={incomeExpenseByCategoryChartUrl(this.props.categoryType, c.secondCatId, "Subcategory", DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
                                                                     <FontAwesomeIcon icon={faChartBar} /> 
                                                                 </a>
+                                                                <Link to={"/chart/incomeexpense"}>
+                                                                    <FontAwesomeIcon icon={faChartBar} /> 
+                                                                </Link>
                                                                 <Link to={SummaryFilteredList(this.props.categoryType, c.secondCatId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, true, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {c.cat2}</Link> £{c.total}
                                                             </>
                                                         : null 

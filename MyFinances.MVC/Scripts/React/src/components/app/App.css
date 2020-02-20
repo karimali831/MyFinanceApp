@@ -84,6 +84,14 @@ body {
   padding-left: 15px;
 }
 
+#summary-chart {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #ddd;
+  padding: 1px;
+  border-radius: 4px;
+}
+
 @media screen and (max-width: 600px) {
   .topnav a:not(:first-child) {display: none;}
   .topnav a.icon {

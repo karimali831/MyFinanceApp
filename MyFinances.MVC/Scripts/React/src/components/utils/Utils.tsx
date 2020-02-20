@@ -79,10 +79,12 @@ export const rootUrl: string = process.env.NODE_ENV === "development" ? "http://
 export const appUrl: string = "http://localhost:3000";
 export const weekSummaryUrl = (weekNo: number) => `${rootUrl}/cnw/weeksummary/${weekNo}`;
 export const routeSummaryUrl = (id: string) => `${rootUrl}/cnw/routesummary/${id}`;
+
 export const spendingSummaryChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/SpendingsSummaryChart?frequency=${frequency}&interval=${interval}`;
 export const incomeSummaryChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/IncomesSummaryChart?frequency=${frequency}&interval=${interval}`;
 export const incomeExpenseChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/IncomeExpenseChart?frequency=${frequency}&interval=${interval}`;
 export const incomeExpenseByCategoryChartUrl = (categoryType: CategoryType, catId: number, type: string, frequency: string, interval: number) => `${rootUrl}/finances/IncomeExpenseByCategoryChart?categoryType=${categoryType}&catId=${catId}&type=${type}&frequency=${frequency}&interval=${interval}`;
+
 
 
 export const SummaryFilteredList =

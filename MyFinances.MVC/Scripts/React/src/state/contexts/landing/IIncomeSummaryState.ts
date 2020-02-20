@@ -2,7 +2,7 @@ import { IIncomeSummary } from 'src/models/IIncome';
 import { CategoryType } from 'src/enums/CategoryType';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DateFrequency } from 'src/enums/DateFrequency';
-import { monthNames } from 'src/components/roots/utils/Utils';
+import { monthNames } from 'src/components/utils/Utils';
 
 export default interface IIncomeSummaryState {
     incomeSummary: IIncomeSummary[],

@@ -1,6 +1,6 @@
-import { ICategoryResponse } from './api';
+import { ICategoryResponse } from './Api';
 import { CategoryType } from '../enums/CategoryType';
-import { rootUrl } from '../components/roots/utils/Utils';
+import { rootUrl } from '../components/utils/Utils';
 
 
 export class CommonFinanceApi {

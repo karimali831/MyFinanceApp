@@ -1,7 +1,7 @@
-import IStoreState from '../../../../state/IStoreState';
+import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
-import SpendingSummary, { IPropsFromState, IPropsFromDispatch } from './SpendingSummary';
-import { ShowSecondCategorySpendingSummaryAction, FilterChangedAction } from '../../../../state/contexts/landing/Actions';
+import SpendingSummary, { IPropsFromState, IPropsFromDispatch } from '../SpendingSummary';
+import { ShowSecondCategorySpendingSummaryAction, FilterChangedAction } from '../../../../../state/contexts/landing/Actions';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component

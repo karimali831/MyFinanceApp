@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { faArrowUp, faChartLine, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faChartPie, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import DateFilter from './DateFilterISConnected'
+import DateFilter from './connected/DateFilterISConnected'
 import { IIncomeSummary } from '../../../../models/IIncome';
 import { Load } from '../../../base/Loader';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { ShowSecondCategoryIncomeSummaryAction } from 'src/state/contexts/landing/Actions';
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
-import { incomeSummaryChartUrl, incomeExpenseChartUrl } from '../../utils/Utils';
-import { DateFrequency } from 'src/enums/DateFrequency';
+import { Link } from 'react-router-dom';
+import { LoadIncomeExpenseAction } from 'src/state/contexts/chart/Actions';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -23,6 +23,7 @@ export interface IPropsFromState {
 
 export interface IPropsFromDispatch {
     showSecondCategory: (secondCat: string) => ShowSecondCategoryIncomeSummaryAction
+    loadIncomeExpense: (filter: IDateFilter) => LoadIncomeExpenseAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
@@ -39,13 +40,15 @@ export default class IncomeSummary extends React.Component<AllProps> {
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>
-                            <a href={incomeExpenseChartUrl(DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
-                                <FontAwesomeIcon icon={faChartLine} /> Income and expenses summary chart
-                            </a>
+                        
+                            <span onClick={() => this.props.loadIncomeExpense(this.props.dateFilter)}>
+                                <FontAwesomeIcon icon={faChartBar} /> Income and expenses summary chart
+                            </span>
+                           
                             <br />
-                            <a href={incomeSummaryChartUrl(DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
-                                <FontAwesomeIcon icon={faChartBar} /> Income breakdown summary for
-                            </a>
+                            <Link to={"/chart/incomesummary/"}> 
+                                <FontAwesomeIcon icon={faChartPie} /> Income breakdown summary for
+                            </Link>   
                             <DateFilter />
                         </th>
                     </tr>

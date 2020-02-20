@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ISpending } from '../../../models/ISpending';
-import { priceFormatter } from '../utils/Utils';
+import { priceFormatter } from '../../utils/Utils';
 import Table from '../../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
 import { LoadSpendingsAction } from 'src/state/contexts/spending/Actions';

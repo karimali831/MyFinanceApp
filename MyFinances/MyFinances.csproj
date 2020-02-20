@@ -134,6 +134,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTOs\MonthComparisonChartDTO.cs" />
     <Compile Include="DTOs\ReminderDTO.cs" />
     <Compile Include="DTOs\CNWPaymentDTO.cs" />
     <Compile Include="DTOs\CNWRouteDTO.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="DTOs\SpendingSummaryDTO.cs" />
     <Compile Include="DTOs\SpendingDTO.cs" />
     <Compile Include="Enums\Categories.cs" />
+    <Compile Include="Enums\ChartType.cs" />
     <Compile Include="Enums\Priority.cs" />
     <Compile Include="Enums\OverrideDueDate.cs" />
     <Compile Include="Enums\DateFrequency.cs" />
@@ -177,7 +179,7 @@
     <Compile Include="Service\FinanceService.cs" />
     <Compile Include="ViewModels\RemindersVM.cs" />
     <Compile Include="ViewModels\FinanceVM.cs" />
-    <Compile Include="ViewModels\IncomeExpenseVM.cs" />
+    <Compile Include="ViewModels\MonthComparisonChartVM.cs" />
     <Compile Include="ViewModels\MissedEntries.cs" />
   </ItemGroup>
   <ItemGroup />

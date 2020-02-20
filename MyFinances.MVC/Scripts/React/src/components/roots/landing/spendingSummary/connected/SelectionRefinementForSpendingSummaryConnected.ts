@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
-import IStoreState from "../../../../state/IStoreState";
+import IStoreState from "../../../../../state/IStoreState";
 import { FilterChangedAction } from 'src/state/contexts/landing/Actions';
-import SelectionRefinementForSpendingSummary, { IPropsFromState, IPropsFromDispatch } from './SelectionRefinementForSpendingSummary';
+import SelectionRefinementForSpendingSummary, { IPropsFromState, IPropsFromDispatch } from '../SelectionRefinementForSpendingSummary';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component

@@ -7,10 +7,9 @@ import { ShowSecondCategorySpendingSummaryAction, FilterChangedAction } from '..
 import { IDateFilter } from 'src/models/IDateFilter';
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
-import { spendingSummaryChartUrl, } from '../../utils/Utils';
-import { DateFrequency } from 'src/enums/DateFrequency';
-import DateFilter from './DateFilterSSConnected';
-import SelectionRefinementForSpendingSummary from './SelectionRefinementForSpendingSummaryConnected';
+import DateFilter from './connected/DateFilterSSConnected';
+import SelectionRefinementForSpendingSummary from './connected/SelectionRefinementForSpendingSummaryConnected';
+import { Link } from 'react-router-dom';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -69,9 +68,9 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
-                                <a href={spendingSummaryChartUrl(DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
+                                <Link to={"/chart/spendingsummary/"}> 
                                     <FontAwesomeIcon icon={faChartPie} /> Spendings breakdown summary for
-                                </a>
+                                </Link>    
                                 <DateFilter />
                                 {
                                     this.props.spendingSummary.length <= 5 

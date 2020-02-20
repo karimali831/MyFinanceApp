@@ -28,6 +28,7 @@ export function* rootSaga() {
 
     // utils
     fork(dateFilterWatchSaga),
-    fork(loadCategoriesApiSaga)
+    fork(loadCategoriesApiSaga),
+
   ])
 }

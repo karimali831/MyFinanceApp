@@ -8,17 +8,16 @@ interface IOwnState {
     showResults: boolean
 }
 
-interface IOwnProps<T> {
+interface IOwnProps {
     filter?: string,
-    filteredResults: T[],
     filterChanged: (filter: string) => void
 }
 
-export class SelectionRefinement<T extends IBaseModel<T>> extends React.Component<IOwnProps<T>, IOwnState> {
+export class SelectionRefinement<T extends IBaseModel<T>> extends React.Component<IOwnProps, IOwnState> {
 
     private inputRef = React.createRef<RefinementInput>();
 
-    constructor(props: IOwnProps<T>) {
+    constructor(props: IOwnProps) {
         super(props);
 
         this.state = {
@@ -31,7 +30,7 @@ export class SelectionRefinement<T extends IBaseModel<T>> extends React.Componen
     public render() {
         return (
             <div className="form-group form-group-lg">
-                <RefinementInput ref={this.inputRef} filter={this.state.filter} onChange={(e) => this.keywordsChanged(e)} placeholder="What are you looking for?" />
+                <RefinementInput ref={this.inputRef} filter={this.state.filter} onChange={(e) => this.keywordsChanged(e)} placeholder="Search by categories..." />
             </div>
         );
     }
@@ -40,16 +39,16 @@ export class SelectionRefinement<T extends IBaseModel<T>> extends React.Componen
         this.focusInput()
     }
 
-    public componentDidUpdate = (prevProps: IOwnProps<T>, prevState: IOwnState) => {
+    public componentDidUpdate = (prevProps: IOwnProps, prevState: IOwnState) => {
         if (prevState.filter !== this.state.filter) {
             this.props.filterChanged(this.state.filter);
         }
     }
 
     public focusInput = () => {
-        if (this.inputRef.current) {
-            this.inputRef.current.focus();
-        }
+        // if (this.inputRef.current) {
+        //     this.inputRef.current.focus();
+        // }
     }
 
     private keywordsChanged = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -9,7 +9,7 @@ import SelectionRefinementForSpendingSummary, { IPropsFromState, IPropsFromDispa
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
-        filteredResults: state.spendingSummary.spendingSummary,
+        filter: state.spendingSummary.categoryFilter,
     });
 
 // Add required action creators for component

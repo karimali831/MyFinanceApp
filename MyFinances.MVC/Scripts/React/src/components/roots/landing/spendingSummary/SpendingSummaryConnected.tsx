@@ -1,7 +1,7 @@
 import IStoreState from '../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import SpendingSummary, { IPropsFromState, IPropsFromDispatch } from './SpendingSummary';
-import { ShowSecondCategorySpendingSummaryAction } from '../../../../state/contexts/landing/Actions';
+import { ShowSecondCategorySpendingSummaryAction, FilterChangedAction } from '../../../../state/contexts/landing/Actions';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -23,7 +23,8 @@ const mapStateToProps =
 // Add required action creators for component
 const mapPropsFromDispatch: IPropsFromDispatch =
 {
-    showSecondCategory: ShowSecondCategorySpendingSummaryAction.creator
+    showSecondCategory: ShowSecondCategorySpendingSummaryAction.creator,
+    resetCategoryFilter: FilterChangedAction.creator
 };
 
 

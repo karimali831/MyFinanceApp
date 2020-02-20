@@ -160,8 +160,8 @@ export class FilterChangedAction {
     constructor(
         public filter: string,
     ) { }
-
 }
+
 // Create a discriminated union of all action types used to correctly type the
 // actions in the reducer switch statement
 export type LandingSummaryActions =

@@ -11,7 +11,7 @@ export default interface ISpendingSummaryState {
     showSecondCatSummary: string | null,
     categoryType: CategoryType,
     dateFilter: IDateFilter,
-    categoryFilter: string | null
+    categoryFilter: string | undefined
 }
 
 export const spendingSummaryDateFilter: IDateFilter = {
@@ -31,7 +31,7 @@ export class SpendingSummaryState {
         showSecondCatSummary: null,
         categoryType: CategoryType.Spendings,
         dateFilter: spendingSummaryDateFilter,
-        categoryFilter: null
+        categoryFilter: undefined
     }
 }
 

@@ -12,8 +12,8 @@ export interface ISpendingDTO {
     name: string,
     date: string,
     amount: number,
-    catId?: number,
-    secondCatId?: number,
+    catId?: number | null,
+    secondCatId?: number | null,
     financeId?: number
 }
 

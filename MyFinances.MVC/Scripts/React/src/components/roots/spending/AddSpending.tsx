@@ -70,7 +70,7 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
                     </div>
                     <div className="form-group form-group-lg">
                         <select onChange={e => this.onChangeSelectedFinance(e)} className="form-control">
-                            <option value={0}>-- of finance --</option>
+                            <option value={"undefined"}>-- of finance --</option>
                             {
                                 this.state.finances.map(f =>
                                     <option key={f.id} value={f.id + "-" + f.name + "-" + f.avgMonthlyAmount}>{f.name}</option>
@@ -133,7 +133,7 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
 
         this.setState({ ...this.state, 
             ...{ 
-                selectedFinanceId: Number(finance[0]),
+                selectedFinanceId: finance[0] === "undefined" ? undefined : Number(finance[0]),
                 amount: Number(finance[2]),
                 name: finance[1]
             }
@@ -145,8 +145,8 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
         {
             const addModel: ISpendingDTO = {
                 name: this.state.name,
-                catId: this.props.selectedCat,
-                secondCatId: this.props.selectedSecondCat,
+                catId: this.state.selectedFinanceId !== undefined ? null : this.props.selectedCat,
+                secondCatId: this.state.selectedFinanceId !== undefined ? null : this.props.selectedSecondCat,
                 amount: this.state.amount,
                 date: this.state.date,
                 financeId: this.state.selectedFinanceId

@@ -2,6 +2,7 @@ import * as React from 'react'
 import { IDateFilter } from 'src/models/IDateFilter';
 import { CategoryType } from 'src/enums/CategoryType';
 import { DateFilterChangeAction, } from 'src/state/contexts/common/Actions';
+import DateFilter from './DateFilter';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -15,7 +16,7 @@ export interface IPropsFromDispatch {
 
 type AllProps = IPropsFromState & IPropsFromDispatch
 
-const DateFilter: React.SFC<AllProps> = (props) =>
+const DateFilterProps: React.SFC<AllProps> = (props) =>
     <DateFilter
         categoryType={props.categoryType}
         selectedFrequency={props.selectedFrequency}
@@ -23,4 +24,4 @@ const DateFilter: React.SFC<AllProps> = (props) =>
         dateFilterChanged={props.dateFilterChanged}
     />
 
-export default DateFilter
+export default DateFilterProps

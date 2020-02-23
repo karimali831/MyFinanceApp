@@ -10,6 +10,8 @@ import SummaryList from '../SummaryList';
 import DateFilter from './connected/DateFilterSSConnected';
 import SelectionRefinementForSpendingSummary from './connected/SelectionRefinementForSpendingSummaryConnected';
 import { Link } from 'react-router-dom';
+import { IMonthComparisonChartRequest } from 'src/api/Api';
+import { LoadExpensesByCategoryAction } from 'src/state/contexts/chart/Actions';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -27,7 +29,8 @@ export interface IOwnState {}
 
 export interface IPropsFromDispatch {
     showSecondCategory: (secondCat: string ) => ShowSecondCategorySpendingSummaryAction,
-    resetCategoryFilter: (filter: string) => FilterChangedAction
+    resetCategoryFilter: (filter: string) => FilterChangedAction,
+    loadExpensesByCategory: (request: IMonthComparisonChartRequest) => LoadExpensesByCategoryAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
@@ -94,6 +97,7 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                         <SummaryList<ISpendingSummary>
                             showSecondCategory={this.props.showSecondCategory}
                             showSecondCatSummary={this.props.showSecondCatSummary}
+                            showChartByCategory={this.props.loadExpensesByCategory}
                             categoryType={this.props.categoryType}
                             filteredResults={results}
                             dateFilter={this.props.dateFilter}

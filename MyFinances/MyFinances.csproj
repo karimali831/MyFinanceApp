@@ -177,6 +177,7 @@
     <Compile Include="Service\CNWService.cs" />
     <Compile Include="Service\SpendingsService.cs" />
     <Compile Include="Service\FinanceService.cs" />
+    <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\RemindersVM.cs" />
     <Compile Include="ViewModels\FinanceVM.cs" />
     <Compile Include="ViewModels\MonthComparisonChartVM.cs" />

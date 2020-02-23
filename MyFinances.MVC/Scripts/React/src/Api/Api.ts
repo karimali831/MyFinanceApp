@@ -7,7 +7,7 @@ import { ICNWPayment } from '../models/ICNWPayment';
 import { IDateFilter } from '../models/IDateFilter';
 import { rootUrl } from '../components/utils/Utils';
 import { IReminder, IReminderNotification } from 'src/models/IReminder';
-import { IMonthComparisonChart } from 'src/models/IMonthComparisonChart';
+import { IMonthComparisonChart } from 'src/models/IChart';
 
 export class FinanceApi {
 
@@ -88,7 +88,7 @@ export class FinanceApi {
         .then(data => data as INotificationResponse);
     }
 
-    public monthlyComparison = async (request: IMonthComparisonChartRequest, subUrl: string): Promise<IMonthComparisonChart[]> => {
+    public monthlyComparison = async (request: IMonthComparisonChartRequest, subUrl: string): Promise<IMonthComparisonChartResponse> => {
         return fetch(`${this.rootUrl}/${subUrl}`, {
             method: "POST",
             body: JSON.stringify(request),
@@ -104,7 +104,7 @@ export class FinanceApi {
             }
             return response.json();
         })
-        .then(data => data as IMonthComparisonChart[]);
+        .then(data => data as IMonthComparisonChartResponse);
     }
 
     public finances = async (resyncNextDueDates = false, upcomingPayments = false): Promise<IFinanceResponse> => {
@@ -250,10 +250,17 @@ export interface IIncomeRequest
 
 export interface IMonthComparisonChartRequest
 {
+    dateFilter?: IDateFilter,
     catId?: number | null,
-    filter?: IDateFilter,
     isSecondCat?: boolean,
     isFinance?: boolean
+}
+
+export interface IMonthComparisonChartResponse
+{
+    headerTitle: string,
+    title: string,
+    data: IMonthComparisonChart[]
 }
 
 export interface ISpendingResponse {

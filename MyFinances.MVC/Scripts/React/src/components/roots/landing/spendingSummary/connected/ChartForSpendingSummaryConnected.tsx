@@ -2,9 +2,9 @@ import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import ChartForSummary, { IPropsFromState, IPropsFromDispatch } from '../../../../charts/ChartProps';
 import { DateFilterChangeAction } from 'src/state/contexts/common/Actions';
-import { chartSummaryData } from 'src/state/contexts/landing/Selectors';
 import { CategoryType } from 'src/enums/CategoryType';
 import { ChartType } from 'src/enums/ChartType';
+import { chartSummaryData } from 'src/state/contexts/chart/Selectors';
 
 
 // REACT-REDUX

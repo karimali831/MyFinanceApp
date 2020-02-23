@@ -89,3 +89,6 @@ export const incomeExpenseByCategoryChartUrl = (categoryType: CategoryType, catI
 
 export const SummaryFilteredList =
 	(categoryType: CategoryType, catId?: number, frequency?: DateFrequency, interval?: number, isFinance?: boolean, isSecondCat?: boolean, fromDate?: string | null, toDate?: string | null) => `${CategoryType[categoryType]}/${catId}/${frequency}/${interval}/${categoryType === CategoryType.Spendings ? isFinance + "/" : ""}${isSecondCat}/${fromDate}/${toDate}`;
+
+export const distinctValues = (value: string, index: number, self: any) =>
+	self.indexOf(value) === index;

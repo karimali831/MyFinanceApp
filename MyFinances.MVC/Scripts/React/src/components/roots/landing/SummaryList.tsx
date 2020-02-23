@@ -7,6 +7,7 @@ import { CategoryType } from 'src/enums/CategoryType';
 import { SummaryFilteredList, incomeExpenseByCategoryChartUrl } from '../../utils/Utils';
 import { DateFrequency } from 'src/enums/DateFrequency';
 import { IBaseModel } from 'src/models/ISummaryBaseModel';
+import { IMonthComparisonChartRequest } from 'src/api/Api';
 
 export interface IOwnState {
     showAllCats: boolean,
@@ -19,7 +20,8 @@ export interface IOwnProps<T> {
     categoryType: CategoryType,
     filteredResults: T[],
     icon: IconDefinition,
-    showSecondCategory: (secondCat: string) => void
+    showSecondCategory: (secondCat: string) => void,
+    showChartByCategory: (request: IMonthComparisonChartRequest) => void
 }
 
 export default class SummaryList<T extends IBaseModel<T>> extends React.Component<IOwnProps<T>, IOwnState> {
@@ -37,57 +39,74 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
      
         return (
             <>
-                {results && results.map((s, key) => 
-                    <tr key={key}>
-                        <th scope="row">
-                            {
-                                this.props.dateFilter !== undefined ?  
-                                <>
-                                    <a href={incomeExpenseByCategoryChartUrl(this.props.categoryType, s.catId, (s.isFinance ?  "Finance" : "Category"),  DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
-                                        <FontAwesomeIcon icon={faChartBar} /> 
-                                    </a>
-                                    <Link to={"/chart/incomeexpense"}>
-                                        <FontAwesomeIcon icon={faChartBar} /> 
-                                    </Link>
-                                    <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link>    
-                                </>
-                                : null
-                            }
-                        </th>
-                        <td>
-                            {s.secondCats !== null ? 
-                                <div onClick={() => this.props.showSecondCategory(s.cat1)}>
-                                    <FontAwesomeIcon icon={faSearch} /> £{s.total}
-                                    {this.props.showSecondCatSummary === s.cat1 ? 
+                {results && results.map((s, key) => {
+                    const chartByCategoryRequest: IMonthComparisonChartRequest = {
+                        catId: s.catId,
+                        dateFilter: this.props.dateFilter,
+                        isSecondCat: false,
+                        isFinance: s.isFinance
+                    }
+
+                    return (
+                        <tr key={key}>
+                            <th scope="row">
+                                {
+                                    this.props.dateFilter !== undefined ?  
                                     <>
-                                        <br />
-                                        <small>
-                                            <i> 
-                                                {s.secondCats.map((c, key2) =>   
-                                                    <div key={key2}>                            {
-                                                    this.props.dateFilter !== null && this.props.dateFilter !== undefined ?
-                                                            <> 
-                                                                <a href={incomeExpenseByCategoryChartUrl(this.props.categoryType, c.secondCatId, "Subcategory", DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
-                                                                    <FontAwesomeIcon icon={faChartBar} /> 
-                                                                </a>
-                                                                <Link to={"/chart/incomeexpense"}>
-                                                                    <FontAwesomeIcon icon={faChartBar} /> 
-                                                                </Link>
-                                                                <Link to={SummaryFilteredList(this.props.categoryType, c.secondCatId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, true, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {c.cat2}</Link> £{c.total}
-                                                            </>
-                                                        : null 
-                                                        }
-                                                    </div>
-                                                )}
-                                            </i>
-                                        </small>
+                                        <a href={incomeExpenseByCategoryChartUrl(this.props.categoryType, s.catId, (s.isFinance ?  "Finance" : "Category"),  DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
+                                            <FontAwesomeIcon icon={faChartBar} /> 
+                                        </a>
+                                        <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summarybycategory/"} onClick={() => this.props.showChartByCategory(chartByCategoryRequest)}>
+                                            <FontAwesomeIcon icon={faChartBar} /> 
+                                        </Link>
+                                        <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link>    
                                     </>
-                                    : null}
-                                </div>
-                            : "£"+s.total}
-                        </td>
-                    </tr>
-                )}
+                                    : null
+                                }
+                            </th>
+                            <td>
+                                {s.secondCats !== null ? 
+                                    <div onClick={() => this.props.showSecondCategory(s.cat1)}>
+                                        <FontAwesomeIcon icon={faSearch} /> £{s.total}
+                                        {this.props.showSecondCatSummary === s.cat1 ? 
+                                        <>
+                                            <br />
+                                            <small>
+                                                <i> 
+                                                    {s.secondCats.map((c, key2) => {
+                                                        const chartBySubcategoryRequest: IMonthComparisonChartRequest = {
+                                                            catId: c.secondCatId,
+                                                            dateFilter: this.props.dateFilter,
+                                                            isSecondCat: true,
+                                                            isFinance: false
+                                                        }
+                                                        return (
+                                                            <div key={key2}>                            {
+                                                            this.props.dateFilter !== null && this.props.dateFilter !== undefined ?
+                                                                    <> 
+                                                                        <a href={incomeExpenseByCategoryChartUrl(this.props.categoryType, c.secondCatId, "Subcategory", DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
+                                                                            <FontAwesomeIcon icon={faChartBar} /> 
+                                                                        </a>
+                                                                        <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summarybycategory/"} onClick={() => this.props.showChartByCategory(chartBySubcategoryRequest)}>
+                                                                            <FontAwesomeIcon icon={faChartBar} /> 
+                                                                        </Link>
+                                                                        <Link to={SummaryFilteredList(this.props.categoryType, c.secondCatId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, true, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {c.cat2}</Link> £{c.total}
+                                                                    </>
+                                                                : null 
+                                                                }
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </i>
+                                            </small>
+                                        </>
+                                        : null}
+                                    </div>
+                                : "£"+s.total}
+                            </td>
+                        </tr>
+                    )
+                })}
                 {
                     this.props.filteredResults.length > this.state.limitSummaryCats ?
                     <>

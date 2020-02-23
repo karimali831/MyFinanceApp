@@ -1,13 +1,11 @@
-import { IMonthComparisonChart } from 'src/models/IMonthComparisonChart';
-import { IMonthComparisonChartRequest } from 'src/api/Api';
-import { IDateFilter } from 'src/models/IDateFilter';
+import { IMonthComparisonChartRequest, IMonthComparisonChartResponse } from 'src/api/Api';
 
 // action types
 export class ChartActionTypes {
     public static readonly LoadIncomeExpenseSuccess = "@@chart/loadincomeexpensesuccess"
     public static readonly LoadIncomesByCategorySuccess = "@@chart/loadincomesbycategorysuccess"
     public static readonly LoadExpensesByCategorySuccess = "@@chart/loadexpensesbycategorysuccess"
-    public static readonly LoadIncomeExpense = "@@chart/loadincomeaction"
+    public static readonly LoadIncomeExpense = "@@chart/loadincomeexpenseaction"
     public static readonly LoadIncomesByCategory = "@@chart/loadincomesbycategory"
     public static readonly LoadExpensesByCategory = "@@chart/loadexpensesbycategory"
     public static readonly LoadIncomeExpenseFailure = "@@chart/loadincomeexpensefailure"
@@ -17,12 +15,12 @@ export class ChartActionTypes {
 
 // action defined as classes with a creator as a static function
 export class LoadIncomeExpenseAction {
-    public static readonly creator = (filter: IDateFilter) => new LoadIncomeExpenseAction(filter);
+    public static readonly creator = (request: IMonthComparisonChartRequest) => new LoadIncomeExpenseAction(request);
 
     public readonly type = ChartActionTypes.LoadIncomeExpense;
 
     constructor(
-        public filter: IDateFilter
+        public request: IMonthComparisonChartRequest
     ) { }
 }
 
@@ -47,32 +45,32 @@ export class LoadExpensesByCategoryAction {
 }
 
 export class LoadIncomeExpenseSuccessAction {
-    public static readonly creator = (chart: IMonthComparisonChart[]) => new LoadIncomeExpenseSuccessAction(chart);
+    public static readonly creator = (chart: IMonthComparisonChartResponse) => new LoadIncomeExpenseSuccessAction(chart);
 
     public readonly type = ChartActionTypes.LoadIncomeExpenseSuccess;
 
     constructor(
-        public chart: IMonthComparisonChart[]
+        public chart: IMonthComparisonChartResponse
     ) { }
 }
 
 export class LoadIncomesByCategorySuccessAction {
-    public static readonly creator = (chart: IMonthComparisonChart[]) => new LoadIncomesByCategorySuccessAction(chart);
+    public static readonly creator = (chart: IMonthComparisonChartResponse) => new LoadIncomesByCategorySuccessAction(chart);
 
     public readonly type = ChartActionTypes.LoadIncomesByCategorySuccess;
 
     constructor(
-        public chart: IMonthComparisonChart[]
+        public chart: IMonthComparisonChartResponse
     ) { }
 }
 
 export class LoadExpensesByCategorySuccessAction {
-    public static readonly creator = (chart: IMonthComparisonChart[]) => new LoadExpensesByCategorySuccessAction(chart);
+    public static readonly creator = (chart: IMonthComparisonChartResponse) => new LoadExpensesByCategorySuccessAction(chart);
 
     public readonly type = ChartActionTypes.LoadExpensesByCategorySuccess;
 
     constructor(
-        public chart: IMonthComparisonChart[]
+        public chart: IMonthComparisonChartResponse
     ) { }
 }
 

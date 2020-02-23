@@ -4,7 +4,6 @@ import { incomeExpenseChartData } from 'src/state/contexts/chart/Selectors';
 import Chart, { IPropsFromState, IPropsFromDispatch } from 'src/components/charts/ChartProps';
 import { connect } from 'react-redux';
 
-
 // REACT-REDUX
 // Wrap stateless component with redux connected component
 

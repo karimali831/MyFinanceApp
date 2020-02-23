@@ -9,7 +9,8 @@ import { ShowSecondCategoryIncomeSummaryAction } from 'src/state/contexts/landin
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
 import { Link } from 'react-router-dom';
-import { LoadIncomeExpenseAction } from 'src/state/contexts/chart/Actions';
+import { LoadIncomeExpenseAction, LoadIncomesByCategoryAction } from 'src/state/contexts/chart/Actions';
+import { IMonthComparisonChartRequest } from 'src/api/Api';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -23,7 +24,8 @@ export interface IPropsFromState {
 
 export interface IPropsFromDispatch {
     showSecondCategory: (secondCat: string) => ShowSecondCategoryIncomeSummaryAction
-    loadIncomeExpense: (filter: IDateFilter) => LoadIncomeExpenseAction
+    loadIncomeExpense: (request: IMonthComparisonChartRequest) => LoadIncomeExpenseAction,
+    loadIncomesByCategory: (request: IMonthComparisonChartRequest) =>  LoadIncomesByCategoryAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
@@ -35,16 +37,18 @@ export default class IncomeSummary extends React.Component<AllProps> {
             return <Load text="Loading income summary..." />
         }
 
+        const incomeExpenseChartRequest: IMonthComparisonChartRequest = {
+            dateFilter: this.props.dateFilter
+        }
+
         return (
             <table className="table">
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>
-                        
-                            <span onClick={() => this.props.loadIncomeExpense(this.props.dateFilter)}>
+                            <Link to={"/chart/incomeexpense/"} onClick={() => this.props.loadIncomeExpense(incomeExpenseChartRequest)}>
                                 <FontAwesomeIcon icon={faChartBar} /> Income and expenses summary chart
-                            </span>
-                           
+                            </Link>
                             <br />
                             <Link to={"/chart/incomesummary/"}> 
                                 <FontAwesomeIcon icon={faChartPie} /> Income breakdown summary for
@@ -57,6 +61,7 @@ export default class IncomeSummary extends React.Component<AllProps> {
                     <SummaryList<IIncomeSummary>
                         showSecondCategory={this.props.showSecondCategory}
                         showSecondCatSummary={this.props.showSecondCatSummary}
+                        showChartByCategory={this.props.loadIncomesByCategory}
                         categoryType={this.props.categoryType}
                         filteredResults={this.props.incomeSummary}
                         dateFilter={this.props.dateFilter}

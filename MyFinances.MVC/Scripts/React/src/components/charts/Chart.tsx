@@ -8,6 +8,7 @@ interface IOwnState {
 }
 
 interface IOwnProps {
+	headerTitle?: string
 	chartType: ChartType,
 	chart: IChartModel,
 	width: number,
@@ -19,6 +20,7 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
     public render() {
         return (
             <div id="summary-chart">
+				<h2>{this.props.headerTitle}</h2>
 				{this.chart()}
             </div>
         );

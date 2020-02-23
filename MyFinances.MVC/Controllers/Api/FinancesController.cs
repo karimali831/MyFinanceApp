@@ -2,6 +2,7 @@
 using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Service;
+using MyFinances.ViewModels;
 using MyFinances.Website.Controllers.Api;
 using System;
 using System.Globalization;
@@ -81,8 +82,13 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> IncomeExpenseComparisonChart(MonthComparisonChartRequestDTO request)
         {
-            var incomeExpenseSummary = await financeService.GetIncomeExpenseTotalsByMonth(request.Filter);
-            return Request.CreateResponse(HttpStatusCode.OK, incomeExpenseSummary);
+            var results = await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter);
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+                new ChartVM
+                {
+                    Data = results
+                });
         }
     }
 }

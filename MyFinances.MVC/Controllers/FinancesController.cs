@@ -63,7 +63,7 @@ namespace MyFinances.Website.Controllers
             string averagedMonthly = Utils.ToCurrency(averagedResults.Average(x => x.Total));
             string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
 
-            return View("Chart", new ChartVM
+            return View("Chart", new ViewModels.ChartVM
             {
                 HeaderTitle = string.Format("Averaged monthly: {0}", averagedMonthly),
                 Title = string.Format("{0} Chart for {1} {2}", categoryType.ToString(), results.First().Category, secondCategory),
@@ -87,7 +87,7 @@ namespace MyFinances.Website.Controllers
 
             var results = await financeService.GetIncomeExpenseTotalsByMonth(dateFilter);
 
-            return View("Chart", new ChartVM
+            return View("Chart", new ViewModels.ChartVM
             {
                 Title = "Income Expense Chart",
                 TitleDs1 = "Income",
@@ -111,7 +111,7 @@ namespace MyFinances.Website.Controllers
 
             var results = (await spendingService.GetSpendingSummary(dateFilter)).Take(10);
 
-            return View("Chart", new ChartVM
+            return View("Chart", new ViewModels.ChartVM
             {
                 Title = "Top 10 Spending Expenses",
                 Type = "doughnut",
@@ -131,7 +131,7 @@ namespace MyFinances.Website.Controllers
 
             var results = await incomeService.GetIncomeSummaryAsync(dateFilter);
 
-            return View("Chart", new ChartVM
+            return View("Chart", new ViewModels.ChartVM
             {
                 Title = "Income Sources",
                 Type = "doughnut",

@@ -2,6 +2,7 @@
 using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Service;
+using MyFinances.ViewModels;
 using MyFinances.Website.Controllers.Api;
 using System;
 using System.Globalization;
@@ -100,8 +101,21 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> SpendingsByCategoryChart(MonthComparisonChartRequestDTO request)
         {
-            var incomeExpenseSummary = await spendingService.GetSpendingsByCategoryAndMonthAsync(request.Filter, request.CatId, request.IsSecondCat, request.IsFinance);
-            return Request.CreateResponse(HttpStatusCode.OK, incomeExpenseSummary);
+            var results = await spendingService.GetSpendingsByCategoryAndMonthAsync(request.DateFilter, request.CatId, request.IsSecondCat, request.IsFinance);
+
+            // exclude first month and last month records (because partial stored records)
+            var averagedResults = results.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM") && x.YearMonth != "2019-07");
+
+            string averagedMonthly = Utils.ToCurrency(averagedResults.Average(x => x.Total));
+            string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
+
+            return Request.CreateResponse(HttpStatusCode.OK, 
+                new ChartVM
+                {
+                    HeaderTitle = string.Format("Averaged monthly: {0}", averagedMonthly),
+                    Title = string.Format("{0} Chart for {1} {2}", "Spendings", results.First().Category, secondCategory),
+                    Data = results
+                });
         }
     }
 }

@@ -8,6 +8,7 @@ import loadIncomeSummaryApiSaga from './loadIncomeSummaryApiSaga';
 import loadIncomesApiSaga from './loadIncomesApiSaga';
 import loadNotificationApiSaga from './loadNotificationsApiSaga';
 import loadCategoriesApiSaga from './loadCategoriesApiSaga';
+import loadMonthlyComparisonApiSaga from './loadMonthlyComparisonApiSaga';
 
 // We `fork()` these tasks so they execute in the background.
 export function* rootSaga() {
@@ -29,6 +30,9 @@ export function* rootSaga() {
     // utils
     fork(dateFilterWatchSaga),
     fork(loadCategoriesApiSaga),
+
+    // charts
+    fork(loadMonthlyComparisonApiSaga)
 
   ])
 }

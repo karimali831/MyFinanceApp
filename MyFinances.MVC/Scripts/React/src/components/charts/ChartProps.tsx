@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { ChartType } from 'src/enums/ChartType';
 import { IChartModel } from '../../models/IChart';
+import { Chart } from './Chart';
 
 export interface IPropsFromState {
+	headerTitle?: string | undefined,
 	chart: IChartModel,
 	chartType: ChartType,
 	width: number,
@@ -15,11 +17,12 @@ export interface IPropsFromDispatch {
 
 type AllProps = IPropsFromState & IPropsFromDispatch
 
-const Chart: React.SFC<AllProps> = (props) =>
+const ChartProps: React.SFC<AllProps> = (props) =>
 	<Chart
-		chartType={ChartType.Doughnut}
+		headerTitle={props.headerTitle}
+		chartType={props.chartType}
 		chart={props.chart}
 		width={props.width}
 		height={props.height} />
 
-export default Chart;
+export default ChartProps;

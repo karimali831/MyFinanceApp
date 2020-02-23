@@ -5,24 +5,46 @@ import { Reducer } from 'redux';
 const CWTLReducer: Reducer<IChartState, ChartActions> =
     (state = ChartState.intialState, action) => {
         switch (action.type) {
+
+            case ChartActionTypes.LoadIncomesByCategory:
+                return { ...state, 
+                    ...{ 
+                        request: action.request
+                    } 
+                };
+
+            case ChartActionTypes.LoadExpensesByCategory:
+                return { ...state, 
+                    ...{ 
+                        request: action.request
+                    } 
+                };   
+
+            case ChartActionTypes.LoadIncomeExpense:
+                return { ...state, 
+                    ...{ 
+                        request: action.request
+                    } 
+                };
+
             case ChartActionTypes.LoadIncomeExpenseSuccess:
                 return { ...state, 
                     ...{ 
-                        chart: action.chart
+                        incomeExpenseComparisonChart: action.chart
                     } 
                 };
 
             case ChartActionTypes.LoadIncomesByCategorySuccess:
                 return { ...state, 
                     ...{ 
-                        chart: action.chart
+                        incomeCategoryComparisonChart: action.chart
                     } 
                 };
 
             case ChartActionTypes.LoadExpensesByCategorySuccess:
                 return { ...state, 
                     ...{ 
-                        chart: action.chart
+                        expenseCategoryComparisonChart: action.chart
                     } 
                 };
 

@@ -1,15 +1,18 @@
-import { IMonthComparisonChart } from 'src/models/IMonthComparisonChart';
+
+import { IMonthComparisonChartRequest, IMonthComparisonChartResponse } from 'src/api/Api';
 
 export default interface IChartState {
-    incomeExpenseComparisonChart: IMonthComparisonChart[],
-    incomeCategoryComparisonChart: IMonthComparisonChart[],
-    expenseCategoryComparisonChart: IMonthComparisonChart[]
+    request?: IMonthComparisonChartRequest | undefined,
+    incomeExpenseComparisonChart?: IMonthComparisonChartResponse | undefined,
+    incomeCategoryComparisonChart?: IMonthComparisonChartResponse | undefined,
+    expenseCategoryComparisonChart?: IMonthComparisonChartResponse | undefined;
 }
 
 export class ChartState {
     public static readonly intialState = {
-        incomeExpenseComparisonChart: [],
-        incomeCategoryComparisonChart: [],
-        expenseCategoryComparisonChart: []
+        request: undefined,
+        incomeExpenseComparisonChart: undefined,
+        incomeCategoryComparisonChart: undefined,
+        expenseCategoryComparisonChart: undefined
     }
 }

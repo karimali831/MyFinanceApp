@@ -9,7 +9,7 @@ const CommonReducer: Reducer<ICommonState, CommonActions> =
                 return { ...state, 
                     ...{ 
                         dateFilter: action.filter,
-                        categoryType: action.categoryType
+                        dataType: action.dataType
                     } 
                 };
 

@@ -1,10 +1,10 @@
 import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import Chart, { IPropsFromState, IPropsFromDispatch } from '../../../../charts/ChartProps';
-import { CategoryType } from 'src/enums/CategoryType';
-import { ChartType } from 'src/enums/ChartType';
+import { ChartType, ChartDataType } from 'src/enums/ChartType';
 import { chartSummaryData } from 'src/state/contexts/chart/Selectors';
-
+import { DateFilterChangeAction } from 'src/state/contexts/common/Actions';
+import { DataType } from 'src/enums/DataType';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -12,16 +12,19 @@ import { chartSummaryData } from 'src/state/contexts/chart/Selectors';
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
-        chart: chartSummaryData(state, CategoryType.Incomes),
+        chart: chartSummaryData(state, DataType.IncomeSummary),
         chartType: ChartType.Doughnut,
         width: 1200,
-        height: 700
+        height: 700,
+        dateFilter: state.incomeSummary.dateFilter,
+        dataType: DataType.IncomeSummary,
+        chartDataType: ChartDataType.IncomeSummary
     });
 
 // Add required action creators for component
 const mapPropsFromDispatch: IPropsFromDispatch =
 {
-
+    dateFilterChanged: DateFilterChangeAction.creator
 };
 
 

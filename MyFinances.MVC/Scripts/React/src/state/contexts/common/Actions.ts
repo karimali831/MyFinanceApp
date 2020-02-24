@@ -1,6 +1,8 @@
 import { IDateFilter } from 'src/models/IDateFilter';
 import { CategoryType } from 'src/enums/CategoryType';
 import { ICategory } from 'src/models/ICategory';
+import { DataType } from 'src/enums/DataType';
+import { ChartDataType } from 'src/enums/ChartType';
 
 // action types
 export class CommonActionTypes {
@@ -18,13 +20,14 @@ export class CommonActionTypes {
 
 // action defined as classes with a creator as a static function
 export class DateFilterChangeAction {
-    public static readonly creator = (filter: IDateFilter, categoryType: CategoryType) => new DateFilterChangeAction(filter, categoryType);
+    public static readonly creator = (filter: IDateFilter, dataType: DataType, chartDataType?: ChartDataType) => new DateFilterChangeAction(filter, dataType, chartDataType);
 
     public readonly type = CommonActionTypes.DateFilterChange
 
     constructor(
         public filter: IDateFilter,
-        public categoryType: CategoryType 
+        public dataType: DataType,
+        public chartDataType?: ChartDataType
     ) { }
 }
 

@@ -11,7 +11,7 @@ import DateFilter from './connected/DateFilterSSConnected';
 import SelectionRefinementForSpendingSummary from './connected/SelectionRefinementForSpendingSummaryConnected';
 import { Link } from 'react-router-dom';
 import { IMonthComparisonChartRequest } from 'src/api/Api';
-import { LoadExpensesByCategoryAction } from 'src/state/contexts/chart/Actions';
+import { LoadExpensesByCategoryChartAction } from 'src/state/contexts/chart/Actions';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -30,7 +30,7 @@ export interface IOwnState {}
 export interface IPropsFromDispatch {
     showSecondCategory: (secondCat: string ) => ShowSecondCategorySpendingSummaryAction,
     resetCategoryFilter: (filter: string) => FilterChangedAction,
-    loadExpensesByCategory: (request: IMonthComparisonChartRequest) => LoadExpensesByCategoryAction
+    loadExpensesByCategory: (request: IMonthComparisonChartRequest) => LoadExpensesByCategoryChartAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;

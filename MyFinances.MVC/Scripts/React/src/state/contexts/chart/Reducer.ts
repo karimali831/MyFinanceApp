@@ -6,42 +6,42 @@ const CWTLReducer: Reducer<IChartState, ChartActions> =
     (state = ChartState.intialState, action) => {
         switch (action.type) {
 
-            case ChartActionTypes.LoadIncomesByCategory:
+            case ChartActionTypes.LoadIncomesByCategoryChart:
                 return { ...state, 
                     ...{ 
                         request: action.request
                     } 
                 };
 
-            case ChartActionTypes.LoadExpensesByCategory:
+            case ChartActionTypes.LoadExpensesByCategoryChart:
                 return { ...state, 
                     ...{ 
                         request: action.request
                     } 
                 };   
 
-            case ChartActionTypes.LoadIncomeExpense:
+            case ChartActionTypes.LoadIncomeExpenseChart:
                 return { ...state, 
                     ...{ 
                         request: action.request
                     } 
                 };
 
-            case ChartActionTypes.LoadIncomeExpenseSuccess:
+            case ChartActionTypes.LoadIncomeExpenseChartSuccess:
                 return { ...state, 
                     ...{ 
                         incomeExpenseComparisonChart: action.chart
                     } 
                 };
 
-            case ChartActionTypes.LoadIncomesByCategorySuccess:
+            case ChartActionTypes.LoadIncomesByCategoryChartSuccess:
                 return { ...state, 
                     ...{ 
                         incomeCategoryComparisonChart: action.chart
                     } 
                 };
 
-            case ChartActionTypes.LoadExpensesByCategorySuccess:
+            case ChartActionTypes.LoadExpensesByCategoryChartSuccess:
                 return { ...state, 
                     ...{ 
                         expenseCategoryComparisonChart: action.chart

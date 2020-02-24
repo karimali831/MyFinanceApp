@@ -9,8 +9,8 @@ import { ShowSecondCategoryIncomeSummaryAction } from 'src/state/contexts/landin
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
 import { Link } from 'react-router-dom';
-import { LoadIncomeExpenseAction, LoadIncomesByCategoryAction } from 'src/state/contexts/chart/Actions';
 import { IMonthComparisonChartRequest } from 'src/api/Api';
+import { LoadIncomeExpenseChartAction, LoadIncomesByCategoryChartAction } from 'src/state/contexts/chart/Actions';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -24,8 +24,8 @@ export interface IPropsFromState {
 
 export interface IPropsFromDispatch {
     showSecondCategory: (secondCat: string) => ShowSecondCategoryIncomeSummaryAction
-    loadIncomeExpense: (request: IMonthComparisonChartRequest) => LoadIncomeExpenseAction,
-    loadIncomesByCategory: (request: IMonthComparisonChartRequest) =>  LoadIncomesByCategoryAction
+    loadIncomeExpense: (request: IMonthComparisonChartRequest) => LoadIncomeExpenseChartAction,
+    loadIncomesByCategory: (request: IMonthComparisonChartRequest) =>  LoadIncomesByCategoryChartAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;

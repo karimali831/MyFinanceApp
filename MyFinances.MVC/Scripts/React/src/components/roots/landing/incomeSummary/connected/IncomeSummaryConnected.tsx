@@ -2,7 +2,7 @@ import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import IncomeSummary, { IPropsFromState, IPropsFromDispatch } from '../IncomeSummary';
 import { ShowSecondCategoryIncomeSummaryAction } from '../../../../../state/contexts/landing/Actions';
-import { LoadIncomeExpenseAction, LoadIncomesByCategoryAction } from 'src/state/contexts/chart/Actions';
+import { LoadIncomeExpenseChartAction, LoadIncomesByCategoryChartAction } from 'src/state/contexts/chart/Actions';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -23,8 +23,8 @@ const mapStateToProps =
 const mapPropsFromDispatch: IPropsFromDispatch =
 {
     showSecondCategory: ShowSecondCategoryIncomeSummaryAction.creator,
-    loadIncomeExpense: LoadIncomeExpenseAction.creator,
-    loadIncomesByCategory: LoadIncomesByCategoryAction.creator
+    loadIncomeExpense: LoadIncomeExpenseChartAction.creator,
+    loadIncomesByCategory: LoadIncomesByCategoryChartAction.creator
 };
 
 

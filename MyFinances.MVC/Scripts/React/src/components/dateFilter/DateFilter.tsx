@@ -2,7 +2,8 @@ import * as React from 'react';
 import { DateFrequency } from 'src/enums/DateFrequency';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { cleanText } from '../utils/Utils';
-import { CategoryType } from 'src/enums/CategoryType';
+import { DataType } from 'src/enums/DataType';
+import { ChartDataType } from 'src/enums/ChartType';
 
 export interface IOwnState {
     dateFilter: IDateFilter,
@@ -10,10 +11,10 @@ export interface IOwnState {
 }
 
 interface IOwnProps {
-    dateFilter?: IDateFilter,
-    selectedFrequency: string,
-    categoryType: CategoryType,
-    dateFilterChanged: (filter: IDateFilter, category: CategoryType) => void,
+    dateFilter: IDateFilter,
+    dataType: DataType,
+    chartDataType?: ChartDataType,
+    dateFilterChanged: (filter: IDateFilter, dataType: DataType, chartDataType?: ChartDataType) => void,
 }
 
 export default class DateFilter extends React.Component<IOwnProps, IOwnState> {
@@ -23,7 +24,7 @@ export default class DateFilter extends React.Component<IOwnProps, IOwnState> {
 
         this.state = {
             dateFilter: this.props.dateFilter !== undefined ? this.props.dateFilter : this.state.dateFilter,
-            selectedFrequency: this.props.dateFilter !== undefined ? DateFrequency[this.props.dateFilter.frequency] : DateFrequency[this.props.selectedFrequency]
+            selectedFrequency: DateFrequency[this.props.dateFilter.frequency]
         };
     }
 
@@ -31,13 +32,13 @@ export default class DateFilter extends React.Component<IOwnProps, IOwnState> {
         if (this.state.dateFilter.frequency !== DateFrequency.DateRange && (
             prevState.dateFilter.frequency !== this.state.dateFilter.frequency || 
             prevState.dateFilter.interval !== this.state.dateFilter.interval)) {
-                this.props.dateFilterChanged(this.state.dateFilter, this.props.categoryType); 
+                this.props.dateFilterChanged(this.state.dateFilter, this.props.dataType, this.props.chartDataType); 
         }
         else if ((
             this.state.dateFilter.fromDateRange != null && this.state.dateFilter.toDateRange != null) && 
             prevState.dateFilter.fromDateRange !== this.state.dateFilter.fromDateRange ||
             prevState.dateFilter.toDateRange !== this.state.dateFilter.toDateRange) {
-                this.props.dateFilterChanged(this.state.dateFilter, this.props.categoryType); 
+                this.props.dateFilterChanged(this.state.dateFilter, this.props.dataType, this.props.chartDataType); 
         }
     }
 

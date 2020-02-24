@@ -2,102 +2,102 @@ import { IMonthComparisonChartRequest, IMonthComparisonChartResponse } from 'src
 
 // action types
 export class ChartActionTypes {
-    public static readonly LoadIncomeExpenseSuccess = "@@chart/loadincomeexpensesuccess"
-    public static readonly LoadIncomesByCategorySuccess = "@@chart/loadincomesbycategorysuccess"
-    public static readonly LoadExpensesByCategorySuccess = "@@chart/loadexpensesbycategorysuccess"
-    public static readonly LoadIncomeExpense = "@@chart/loadincomeexpenseaction"
-    public static readonly LoadIncomesByCategory = "@@chart/loadincomesbycategory"
-    public static readonly LoadExpensesByCategory = "@@chart/loadexpensesbycategory"
-    public static readonly LoadIncomeExpenseFailure = "@@chart/loadincomeexpensefailure"
-    public static readonly LoadIncomesByCategoryFailure = "@@chart/loadincomesbycategoryfailure"
-    public static readonly LoadExpensesByCategoryFailure = "@@chart/loadexpensesbycategoryfailure"
+    public static readonly LoadIncomeExpenseChartSuccess = "@@chart/loadincomeexpensechartsuccess"
+    public static readonly LoadIncomesByCategoryChartSuccess = "@@chart/loadincomesbycategorychartsuccess"
+    public static readonly LoadExpensesByCategoryChartSuccess = "@@chart/loadexpensesbycategorychartsuccess"
+    public static readonly LoadIncomeExpenseChart = "@@chart/loadincomeexpenseactionchart"
+    public static readonly LoadIncomesByCategoryChart = "@@chart/loadincomesbycategorychart"
+    public static readonly LoadExpensesByCategoryChart = "@@chart/loadexpensesbycategorychart"
+    public static readonly LoadIncomeExpenseChartFailure = "@@chart/loadincomeexpensechartfailure"
+    public static readonly LoadIncomesByCategoryChartFailure = "@@chart/loadincomesbycategorychartfailure"
+    public static readonly LoadExpensesByCategoryChartFailure = "@@chart/loadexpensesbycategorychartfailure"
 }
 
 // action defined as classes with a creator as a static function
-export class LoadIncomeExpenseAction {
-    public static readonly creator = (request: IMonthComparisonChartRequest) => new LoadIncomeExpenseAction(request);
+export class LoadIncomeExpenseChartAction {
+    public static readonly creator = (request: IMonthComparisonChartRequest) => new LoadIncomeExpenseChartAction(request);
 
-    public readonly type = ChartActionTypes.LoadIncomeExpense;
-
-    constructor(
-        public request: IMonthComparisonChartRequest
-    ) { }
-}
-
-export class LoadIncomesByCategoryAction {
-    public static readonly creator = (request: IMonthComparisonChartRequest) => new LoadIncomesByCategoryAction(request);
-
-    public readonly type = ChartActionTypes.LoadIncomesByCategory;
+    public readonly type = ChartActionTypes.LoadIncomeExpenseChart;
 
     constructor(
         public request: IMonthComparisonChartRequest
     ) { }
 }
 
-export class LoadExpensesByCategoryAction {
-    public static readonly creator = (request: IMonthComparisonChartRequest) => new LoadExpensesByCategoryAction(request);
+export class LoadIncomesByCategoryChartAction {
+    public static readonly creator = (request: IMonthComparisonChartRequest) => new LoadIncomesByCategoryChartAction(request);
 
-    public readonly type = ChartActionTypes.LoadExpensesByCategory;
+    public readonly type = ChartActionTypes.LoadIncomesByCategoryChart;
 
     constructor(
         public request: IMonthComparisonChartRequest
     ) { }
 }
 
-export class LoadIncomeExpenseSuccessAction {
-    public static readonly creator = (chart: IMonthComparisonChartResponse) => new LoadIncomeExpenseSuccessAction(chart);
+export class LoadExpensesByCategoryChartAction {
+    public static readonly creator = (request: IMonthComparisonChartRequest) => new LoadExpensesByCategoryChartAction(request);
 
-    public readonly type = ChartActionTypes.LoadIncomeExpenseSuccess;
+    public readonly type = ChartActionTypes.LoadExpensesByCategoryChart;
+
+    constructor(
+        public request: IMonthComparisonChartRequest
+    ) { }
+}
+
+export class LoadIncomeExpenseChartSuccessAction {
+    public static readonly creator = (chart: IMonthComparisonChartResponse) => new LoadIncomeExpenseChartSuccessAction(chart);
+
+    public readonly type = ChartActionTypes.LoadIncomeExpenseChartSuccess;
 
     constructor(
         public chart: IMonthComparisonChartResponse
     ) { }
 }
 
-export class LoadIncomesByCategorySuccessAction {
-    public static readonly creator = (chart: IMonthComparisonChartResponse) => new LoadIncomesByCategorySuccessAction(chart);
+export class LoadIncomesByCategoryChartSuccessAction {
+    public static readonly creator = (chart: IMonthComparisonChartResponse) => new LoadIncomesByCategoryChartSuccessAction(chart);
 
-    public readonly type = ChartActionTypes.LoadIncomesByCategorySuccess;
-
-    constructor(
-        public chart: IMonthComparisonChartResponse
-    ) { }
-}
-
-export class LoadExpensesByCategorySuccessAction {
-    public static readonly creator = (chart: IMonthComparisonChartResponse) => new LoadExpensesByCategorySuccessAction(chart);
-
-    public readonly type = ChartActionTypes.LoadExpensesByCategorySuccess;
+    public readonly type = ChartActionTypes.LoadIncomesByCategoryChartSuccess;
 
     constructor(
         public chart: IMonthComparisonChartResponse
     ) { }
 }
 
-export class LoadIncomeExpenseFailureAction {
-    public static readonly creator = (errorMsg: string) => new LoadIncomeExpenseFailureAction(errorMsg);
+export class LoadExpensesByCategoryChartSuccessAction {
+    public static readonly creator = (chart: IMonthComparisonChartResponse) => new LoadExpensesByCategoryChartSuccessAction(chart);
 
-    public readonly type = ChartActionTypes.LoadIncomeExpenseFailure;
+    public readonly type = ChartActionTypes.LoadExpensesByCategoryChartSuccess;
+
+    constructor(
+        public chart: IMonthComparisonChartResponse
+    ) { }
+}
+
+export class LoadIncomeExpenseChartFailureAction {
+    public static readonly creator = (errorMsg: string) => new LoadIncomeExpenseChartFailureAction(errorMsg);
+
+    public readonly type = ChartActionTypes.LoadIncomeExpenseChartFailure;
 
     constructor(
         public errorMsg: string
     ) { }
 }
 
-export class LoadIncomesByCategoryFailureAction {
-    public static readonly creator = (errorMsg: string) => new LoadIncomesByCategoryFailureAction(errorMsg);
+export class LoadIncomesByCategoryChartFailureAction {
+    public static readonly creator = (errorMsg: string) => new LoadIncomesByCategoryChartFailureAction(errorMsg);
 
-    public readonly type = ChartActionTypes.LoadIncomesByCategoryFailure;
+    public readonly type = ChartActionTypes.LoadIncomesByCategoryChartFailure;
 
     constructor(
         public errorMsg: string
     ) { }
 }
 
-export class LoadExpensesByCategoryFailureAction {
-    public static readonly creator = (errorMsg: string) => new LoadExpensesByCategoryFailureAction(errorMsg);
+export class LoadExpensesByCategoryChartFailureAction {
+    public static readonly creator = (errorMsg: string) => new LoadExpensesByCategoryChartFailureAction(errorMsg);
 
-    public readonly type = ChartActionTypes.LoadExpensesByCategoryFailure;
+    public readonly type = ChartActionTypes.LoadExpensesByCategoryChartFailure;
 
     constructor(
         public errorMsg: string
@@ -107,12 +107,12 @@ export class LoadExpensesByCategoryFailureAction {
 // Create a discriminated union of all action typed used to correctly type the
 // actions in the reducer switch statement
 export type ChartActions =
-LoadIncomeExpenseSuccessAction |
-LoadIncomesByCategorySuccessAction |
-LoadExpensesByCategorySuccessAction |
-LoadIncomeExpenseAction |
-LoadIncomesByCategoryAction |
-LoadExpensesByCategoryAction |
-LoadIncomeExpenseFailureAction |
-LoadIncomesByCategoryFailureAction |
-LoadExpensesByCategoryFailureAction 
+LoadIncomeExpenseChartSuccessAction |
+LoadIncomesByCategoryChartSuccessAction |
+LoadExpensesByCategoryChartSuccessAction |
+LoadIncomeExpenseChartAction |
+LoadIncomesByCategoryChartAction |
+LoadExpensesByCategoryChartAction |
+LoadIncomeExpenseChartFailureAction |
+LoadIncomesByCategoryChartFailureAction |
+LoadExpensesByCategoryChartFailureAction 

@@ -5,6 +5,7 @@ import { CategoryType } from 'src/enums/CategoryType';
 import { distinctValues } from 'src/components/utils/Utils';
 import { IMonthComparisonChartRequest } from 'src/api/Api';
 import { IDateFilter } from 'src/models/IDateFilter';
+import { DataType } from 'src/enums/DataType';
 
 export const getMonthComparisonChartRequest = (state: IStoreState, dateFilter: IDateFilter): IMonthComparisonChartRequest | null => {
     if (state.chart.request !== undefined) {
@@ -19,11 +20,11 @@ export const getMonthComparisonChartRequest = (state: IStoreState, dateFilter: I
     }
 }
 
-export const incomeExpenseByCategoryData = (state: IStoreState, type: CategoryType): IChartModel => {
+export const incomeExpenseByCategoryData = (state: IStoreState, dataType: DataType): IChartModel => {
     let results;
-    if (CategoryType.Spendings === type) {
+    if (DataType.SpendingSummary === dataType) {
         results = state.chart.expenseCategoryComparisonChart
-    } else if (CategoryType.Incomes === type) {
+    } else if (DataType.IncomeSummary === dataType) {
         results = state.chart.incomeCategoryComparisonChart;
     }
 
@@ -86,11 +87,11 @@ export const incomeExpenseChartData = (state: IStoreState): IChartModel => {
     return chartModel;
 }
 
-export const chartSummaryData = (state: IStoreState, type: CategoryType): IChartModel => {
+export const chartSummaryData = (state: IStoreState, dataType: DataType): IChartModel => {
     let results;
-    if (CategoryType.Spendings === type) {
+    if (DataType.SpendingSummary === dataType) {
         results = state.spendingSummary.spendingSummary.slice(0, 10);
-    } else if (CategoryType.Incomes === type) {
+    } else if (DataType.IncomeSummary === dataType) {
         results = state.incomeSummary.incomeSummary;
     }
 
@@ -117,11 +118,11 @@ export const chartSummaryData = (state: IStoreState, type: CategoryType): IChart
     return chartModel;
 }
 
-export const chartSummaryDataByCategory = (state: IStoreState, type: CategoryType): IChartModel => {
+export const chartSummaryDataByCategory = (state: IStoreState, dataType: DataType): IChartModel => {
     let results;
-    if (CategoryType.Spendings === type) {
+    if (DataType.SpendingSummary === dataType) {
         results = state.chart.expenseCategoryComparisonChart;
-    } else if (CategoryType.Incomes === type) {
+    } else if (DataType.IncomeSummary === dataType) {
         results = state.chart.incomeCategoryComparisonChart;
     }
 

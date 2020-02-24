@@ -1,9 +1,11 @@
 import { IDateFilter } from 'src/models/IDateFilter';
-import { CategoryType } from 'src/enums/CategoryType';
 import { ICategory } from 'src/models/ICategory';
+import { CategoryType } from 'src/enums/CategoryType';
+import { DataType } from 'src/enums/DataType';
 
 export default interface ICommonState {
     dateFilter?: IDateFilter,
+    dataType?: DataType,
     categoryType?: CategoryType,
     categories: ICategory[],
     secondCategories: ICategory[],
@@ -11,12 +13,13 @@ export default interface ICommonState {
     selectedCat?: number,
     selectedSecondCat?: number,
     loadingCategories: boolean,
-    loadingSecondCategories: boolean
+    loadingSecondCategories: boolean,
 }
 
 export class CommonState {
     public static readonly intialState = {
         dateFilter: undefined,
+        dataType: undefined,
         categoryType: undefined,
         categories: [],
         secondCategories: [],

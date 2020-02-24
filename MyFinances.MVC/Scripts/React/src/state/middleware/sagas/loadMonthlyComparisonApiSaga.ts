@@ -1,15 +1,15 @@
 import { api, IMonthComparisonChartResponse } from '../../../api/Api'
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../contexts/error/Actions';
-import { ChartDataType } from 'src/enums/ChartType';
-import { ChartActionTypes, LoadExpensesByCategorySuccessAction, LoadIncomesByCategorySuccessAction, LoadIncomeExpenseSuccessAction, LoadExpensesByCategoryFailureAction, LoadIncomeExpenseFailureAction, LoadIncomesByCategoryFailureAction } from 'src/state/contexts/chart/Actions';
 import { spendingSummaryDateFilter, incomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
 import { getMonthComparisonChartRequest } from 'src/state/contexts/chart/Selectors';
+import { ChartActionTypes, LoadExpensesByCategoryChartSuccessAction, LoadIncomeExpenseChartSuccessAction, LoadIncomesByCategoryChartSuccessAction, LoadExpensesByCategoryChartFailureAction, LoadIncomeExpenseChartFailureAction, LoadIncomesByCategoryChartFailureAction } from 'src/state/contexts/chart/Actions';
+import { ChartDataType } from 'src/enums/ChartType';
 
 export default function* loadMonthlyComparisonApiSaga() {
-    yield takeLatest(ChartActionTypes.LoadIncomeExpense, loadMonthlyComparisonChart, ChartDataType.IncomeExpenseSummary);
-    yield takeLatest(ChartActionTypes.LoadIncomesByCategory, loadMonthlyComparisonChart, ChartDataType.IncomeSummaryByCategory);
-    yield takeLatest(ChartActionTypes.LoadExpensesByCategory, loadMonthlyComparisonChart, ChartDataType.SpendingSummaryByCategory);
+    yield takeLatest(ChartActionTypes.LoadIncomeExpenseChart, loadMonthlyComparisonChart, ChartDataType.IncomeExpenseSummary);
+    yield takeLatest(ChartActionTypes.LoadIncomesByCategoryChart, loadMonthlyComparisonChart, ChartDataType.IncomeSummaryByCategory);
+    yield takeLatest(ChartActionTypes.LoadExpensesByCategoryChart, loadMonthlyComparisonChart, ChartDataType.SpendingSummaryByCategory);
 }
 
 export function* loadMonthlyComparisonChart(type: ChartDataType) {
@@ -43,13 +43,13 @@ export function* loadMonthlyComparisonChart(type: ChartDataType) {
         // Create an action to dispatch on success with the returned entity from API & Dispatch the new action with Redux
         switch (type) {
             case ChartDataType.SpendingSummaryByCategory:
-                yield put(new LoadExpensesByCategorySuccessAction(result))
+                yield put(new LoadExpensesByCategoryChartSuccessAction(result))
                 break;
             case ChartDataType.IncomeExpenseSummary:
-                yield put(new LoadIncomeExpenseSuccessAction(result))
+                yield put(new LoadIncomeExpenseChartSuccessAction(result))
                 break;
             case ChartDataType.IncomeSummaryByCategory:
-                yield put(new LoadIncomesByCategorySuccessAction(result))
+                yield put(new LoadIncomesByCategoryChartSuccessAction(result))
                 break;
 
         }
@@ -59,13 +59,13 @@ export function* loadMonthlyComparisonChart(type: ChartDataType) {
         // Dispatch a failure action to Redux
         switch (type) {
             case ChartDataType.SpendingSummaryByCategory:
-                yield put(new LoadExpensesByCategoryFailureAction(e.message));
+                yield put(new LoadExpensesByCategoryChartFailureAction(e.message));
                 break;
             case ChartDataType.IncomeExpenseSummary:
-                yield put(new LoadIncomeExpenseFailureAction(e.message));
+                yield put(new LoadIncomeExpenseChartFailureAction(e.message));
                 break;
             case ChartDataType.IncomeSummaryByCategory:
-                yield put(new LoadIncomesByCategoryFailureAction(e.message));
+                yield put(new LoadIncomesByCategoryChartFailureAction(e.message));
                 break;
         }
 

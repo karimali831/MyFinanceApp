@@ -61,8 +61,8 @@ class App extends React.Component {
                   <Route path="/chart/spendingsummary/" component={ChartForSpendingSummary} />
                   <Route path="/chart/incomesummary/" component={ChartForIncomeSummary} />
                   <Route path="/chart/incomeexpense/" component={ChartForIncomeExpenseSummary} />
-                  <Route path={"/chart/"+CategoryType[CategoryType.Spendings]+"/summarybycategory/"} component={ChartForSpendingSummaryByCat} />
-                  <Route path={"/chart/"+CategoryType[CategoryType.Incomes]+"/summarybycategory/"} component={ChartForIncomeSummaryByCat} />
+                  <Route path={"/chart/"+CategoryType[CategoryType.Spendings]+"/summary/:catId/:isSecondCat"} render={() => <ChartForSpendingSummaryByCat />} />
+                  <Route path={"/chart/"+CategoryType[CategoryType.Incomes]+"/summary/:catId/:isSecondCat"} render={() => <ChartForIncomeSummaryByCat />} />
               </Switch>
             </div>
         </ConnectedRouter>

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Nager.Date;
 using Nager.Date.Extensions;
+using System.Globalization;
 
 namespace MyFinances.Service
 {
@@ -131,7 +132,7 @@ namespace MyFinances.Service
                                     finance.MonthlyDueDate = lastDayInNextMonth;
                                 }
 
-                                var nextDueDate = $"{nextDueMonth}-{finance.MonthlyDueDate}-{DateTime.UtcNow.ToString("yyyy")}";
+                                var nextDueDate = $"{nextDueMonth}-{finance.MonthlyDueDate}-{DateTime.UtcNow.ToString("yyyy", CultureInfo.InvariantCulture)}";
 
                                 var date = DateTime.Parse(nextDueDate);
                                 var calcDate = finance.OverrideNextDueDate == OverrideDueDate.WorkingDays ? CalculateNextDueDate(date) : date;

@@ -86,7 +86,7 @@ namespace MyIncomes.Website.Controllers.API
             var results = await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, request.CatId, request.IsSecondCat);
       
             // exclude first month and last month records (because partial stored records)
-            var averagedResults = results.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM") && x.YearMonth != "2019-07");
+            var averagedResults = results.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM", CultureInfo.InvariantCulture) && x.YearMonth != "2019-07");
 
             string averagedMonthly = Utils.ToCurrency(averagedResults.Average(x => x.Total));
             string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";

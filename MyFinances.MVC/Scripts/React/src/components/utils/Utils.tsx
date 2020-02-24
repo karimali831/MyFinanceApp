@@ -38,6 +38,10 @@ export const cleanText = (text: string) => {
 	return text.toString().replace(/([A-Z])/g, ' $1').trim()
 }
 
+export const cleanText2 = (text: string) => {
+	return text.replace(/[^A-Z0-9]/ig, "").toLowerCase();
+}
+
 export const boolHighlight = (bool: boolean) => {
 	return <span className={"label label-" + (bool ? "success" : "danger")}>{bool ? "Yes" : "No"}</span>
 }

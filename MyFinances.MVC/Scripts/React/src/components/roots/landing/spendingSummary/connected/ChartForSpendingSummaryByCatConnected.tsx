@@ -1,6 +1,6 @@
 import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
-import Chart, { IPropsFromState, IPropsFromDispatch } from '../../../../charts/ChartProps';
+import ChartProps, { IPropsFromState, IPropsFromDispatch } from '../../../../charts/ChartProps';
 import { CategoryType } from 'src/enums/CategoryType';
 import { ChartType } from 'src/enums/ChartType';
 import { chartSummaryDataByCategory } from 'src/state/contexts/chart/Selectors';
@@ -26,4 +26,4 @@ const mapPropsFromDispatch: IPropsFromDispatch =
 
 // This does the magic of subscwribing to state changes and ensuring the wrapped
 // stateless component gets all the properties it needs from the Redux state
-export default connect(mapStateToProps, mapPropsFromDispatch)(Chart);
+export default connect(mapStateToProps, mapPropsFromDispatch)(ChartProps);

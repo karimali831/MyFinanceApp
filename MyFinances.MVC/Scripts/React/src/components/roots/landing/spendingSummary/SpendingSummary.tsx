@@ -22,7 +22,7 @@ export interface IPropsFromState {
     showSecondCatSummary: string | null,
     location: string,
     categoryType: CategoryType,
-    categoryFilter?: string | null
+    categoryFilter?: string | undefined
 }
 
 export interface IOwnState {}
@@ -56,7 +56,7 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
         }
 
         let results;
-        if (this.props.categoryFilter !== null && this.props.categoryFilter !== "") {
+        if (this.props.categoryFilter !== undefined && this.props.categoryFilter !== "") {
             results = this.props.spendingSummary
                 .filter(s => this.props.categoryFilter && 
                     (s.cat1.toLowerCase().includes(this.props.categoryFilter.toLowerCase()) ||
@@ -71,6 +71,8 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
+                            <span>{this.props.categoryFilter}</span>
+
                                 <Link to={"/chart/spendingsummary/"}> 
                                     <FontAwesomeIcon icon={faChartPie} /> Spendings breakdown summary for
                                 </Link>    

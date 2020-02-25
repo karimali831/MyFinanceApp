@@ -11,8 +11,8 @@ export const getMonthComparisonChartRequest = (state: IStoreState, dateFilter: I
     if (state.chart.request !== undefined) {
         return {
             catId: state.chart.request.catId,
+            secondCatId: state.chart.request.secondCatId,
             dateFilter: dateFilter,
-            isSecondCat: state.chart.request.isSecondCat,
             isFinance: state.chart.request.isFinance
         };
     } else {

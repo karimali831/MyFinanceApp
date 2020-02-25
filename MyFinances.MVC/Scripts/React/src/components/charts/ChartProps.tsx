@@ -1,9 +1,11 @@
 import * as React from 'react'
-import { ChartType, ChartDataType } from 'src/enums/ChartType';
+import { ChartType } from 'src/enums/ChartType';
 import { IChartModel } from '../../models/IChart';
 import { Chart } from './Chart';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DataType } from 'src/enums/DataType';
+import { IMonthComparisonChartRequest } from 'src/api/Api';
+import { CategoryType } from 'src/enums/CategoryType';
 
 export interface IPropsFromState {
 	headerTitle?: string | undefined,
@@ -11,13 +13,18 @@ export interface IPropsFromState {
 	chartType: ChartType,
 	width: number,
 	height: number,
-	dateFilter: IDateFilter
+	dateFilter: IDateFilter,
+	categoryType?: CategoryType,
 	dataType: DataType,
-	chartDataType: ChartDataType
+	secondTypeId?: number,
+	selectedCat?: number,
+	selectedSecondCat?: number,
+	request?: IMonthComparisonChartRequest
 }
 
 export interface IPropsFromDispatch {
-	dateFilterChanged: (filter: IDateFilter, dataType: DataType) => void
+	dateFilterChanged: (filter: IDateFilter, dataType: DataType,) => void,
+	chartChanged?: (request: IMonthComparisonChartRequest) => void
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch
@@ -30,8 +37,13 @@ const ChartProps: React.SFC<AllProps> = (props) =>
 		width={props.width}
 		height={props.height} 
 		dateFilter={props.dateFilter}
+		categoryType={props.categoryType}
 		dataType={props.dataType}
-		chartDataType={props.chartDataType}
-		dateFilterChanged={props.dateFilterChanged} />
+		secondTypeId={props.secondTypeId}
+		selectedCat={props.selectedCat}
+		selectedSecondCat={props.selectedSecondCat}
+		chartChanged={props.chartChanged}
+		dateFilterChanged={props.dateFilterChanged}
+		request={props.request} />
 
 export default ChartProps;

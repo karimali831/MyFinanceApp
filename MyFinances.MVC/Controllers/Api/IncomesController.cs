@@ -83,18 +83,26 @@ namespace MyIncomes.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> IncomesByCategoryChart(MonthComparisonChartRequestDTO request)
         {
-            var results = await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, request.CatId, request.IsSecondCat);
+            var isSecondCat = request.SecondCatId.HasValue && request.SecondCatId != 0 ? true : false;
+            var catId = isSecondCat ? request.SecondCatId.Value : request.CatId;
+
+            var results = await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat);
+
+            if (!results.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No results");
+            }
       
             // exclude first month and last month records (because partial stored records)
             var averagedResults = results.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM", CultureInfo.InvariantCulture) && x.YearMonth != "2019-07");
 
-            string averagedMonthly = Utils.ToCurrency(averagedResults.Average(x => x.Total));
+            string averagedMonthly = averagedResults.Any() ? Utils.ToCurrency(averagedResults.Average(x => x.Total)) : "";
             string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
-
+        
             return Request.CreateResponse(HttpStatusCode.OK,
                 new ChartVM
                 {
-                    HeaderTitle = string.Format("Averaged monthly: {0}", averagedMonthly),
+                    HeaderTitle = averagedMonthly != "" ? string.Format("Averaged monthly: {0}", averagedMonthly) : "",
                     Title = string.Format("{0} Chart for {1} {2}", "Incomes", results.First().Category, secondCategory),
                     Data = results
                 });

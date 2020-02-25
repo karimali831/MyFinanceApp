@@ -8,6 +8,7 @@ import { IDateFilter } from '../models/IDateFilter';
 import { rootUrl } from '../components/utils/Utils';
 import { IReminder, IReminderNotification } from 'src/models/IReminder';
 import { IMonthComparisonChart } from 'src/models/IChart';
+import { CategoryType } from 'src/enums/CategoryType';
 
 export class FinanceApi {
 
@@ -251,9 +252,10 @@ export interface IIncomeRequest
 export interface IMonthComparisonChartRequest
 {
     dateFilter?: IDateFilter,
-    catId?: number | null,
-    isSecondCat?: boolean,
-    isFinance?: boolean
+    catId?: number,
+    secondCatId?: number,
+    isFinance?: boolean,
+    categoryType?: CategoryType
 }
 
 export interface IMonthComparisonChartResponse

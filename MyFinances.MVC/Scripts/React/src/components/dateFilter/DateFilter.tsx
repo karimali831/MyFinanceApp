@@ -3,7 +3,6 @@ import { DateFrequency } from 'src/enums/DateFrequency';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { cleanText } from '../utils/Utils';
 import { DataType } from 'src/enums/DataType';
-import { ChartDataType } from 'src/enums/ChartType';
 
 export interface IOwnState {
     dateFilter: IDateFilter,
@@ -13,8 +12,7 @@ export interface IOwnState {
 interface IOwnProps {
     dateFilter: IDateFilter,
     dataType: DataType,
-    chartDataType?: ChartDataType,
-    dateFilterChanged: (filter: IDateFilter, dataType: DataType, chartDataType?: ChartDataType) => void,
+    dateFilterChanged: (filter: IDateFilter, dataType: DataType) => void,
 }
 
 export default class DateFilter extends React.Component<IOwnProps, IOwnState> {
@@ -32,13 +30,13 @@ export default class DateFilter extends React.Component<IOwnProps, IOwnState> {
         if (this.state.dateFilter.frequency !== DateFrequency.DateRange && (
             prevState.dateFilter.frequency !== this.state.dateFilter.frequency || 
             prevState.dateFilter.interval !== this.state.dateFilter.interval)) {
-                this.props.dateFilterChanged(this.state.dateFilter, this.props.dataType, this.props.chartDataType); 
+                this.props.dateFilterChanged(this.state.dateFilter, this.props.dataType); 
         }
         else if ((
             this.state.dateFilter.fromDateRange != null && this.state.dateFilter.toDateRange != null) && 
             prevState.dateFilter.fromDateRange !== this.state.dateFilter.fromDateRange ||
             prevState.dateFilter.toDateRange !== this.state.dateFilter.toDateRange) {
-                this.props.dateFilterChanged(this.state.dateFilter, this.props.dataType, this.props.chartDataType); 
+                this.props.dateFilterChanged(this.state.dateFilter, this.props.dataType); 
         }
     }
 

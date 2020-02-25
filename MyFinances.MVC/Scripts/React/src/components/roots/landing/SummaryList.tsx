@@ -4,8 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, IconDefinition, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { CategoryType } from 'src/enums/CategoryType';
-import { SummaryFilteredList, incomeExpenseByCategoryChartUrl } from '../../utils/Utils';
-import { DateFrequency } from 'src/enums/DateFrequency';
+import { SummaryFilteredList } from '../../utils/Utils';
 import { IBaseModel } from 'src/models/ISummaryBaseModel';
 import { IMonthComparisonChartRequest } from 'src/api/Api';
 
@@ -45,7 +44,7 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
                             {
                                 this.props.dateFilter !== undefined ?  
                                 <>
-                                    <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + s.catId + "/" + false} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, false, s.isFinance, this.props.dateFilter))}>
+                                    <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + s.catId + "/" + false} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, s.isFinance, this.props.dateFilter))}>
                                         <FontAwesomeIcon icon={faChartBar} /> 
                                     </Link>
                                     <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link>    
@@ -66,10 +65,7 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
                                                     <div key={key2}>                            {
                                                     this.props.dateFilter !== null && this.props.dateFilter !== undefined ?
                                                             <> 
-                                                                <a href={incomeExpenseByCategoryChartUrl(this.props.categoryType, c.secondCatId, "Subcategory", DateFrequency[this.props.dateFilter.frequency], this.props.dateFilter.interval)}>
-                                                                    <FontAwesomeIcon icon={faChartBar} /> 
-                                                                </a>
-                                                                <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + c.secondCatId + "/" + true} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(c.secondCatId, true, false, this.props.dateFilter))}>
+                                                                <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + c.secondCatId + "/" + true} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, false, this.props.dateFilter, c.secondCatId))}>
                                                                     <FontAwesomeIcon icon={faChartBar} /> 
                                                                 </Link>
                                                                 <Link to={SummaryFilteredList(this.props.categoryType, c.secondCatId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, true, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {c.cat2}</Link> £{c.total}
@@ -103,12 +99,13 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
         )
     }
 
-    private chartByCategoryRequest = (catId: number, isSecondCat: boolean, isFinance: boolean, dateFilter?: IDateFilter) : IMonthComparisonChartRequest => {
+    private chartByCategoryRequest = (catId: number, isFinance: boolean, dateFilter?: IDateFilter, secondCatId?: number) : IMonthComparisonChartRequest => {
         const request: IMonthComparisonChartRequest = {
             catId: catId,
+            secondCatId: secondCatId,
             dateFilter: dateFilter,
-            isSecondCat: isSecondCat,
-            isFinance: isFinance
+            isFinance: isFinance,
+            categoryType: this.props.categoryType === CategoryType.Incomes ? CategoryType.IncomeSources : CategoryType.Spendings
         }
 
         return request;

@@ -10,7 +10,7 @@ namespace MyFinances.DTOs
     {
         public DateFilter DateFilter { get; set; }
         public int CatId { get; set; }
-        public bool IsSecondCat { get; set; }
+        public int? SecondCatId { get; set; }
         public bool IsFinance { get; set; } 
     }
 }

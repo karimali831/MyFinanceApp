@@ -5,7 +5,7 @@ import { ICategory } from 'src/models/ICategory';
 import SelectCategories from './SelectCategories';
 
 export interface IPropsFromState {
-    categoryType: CategoryType,
+    categoryType?: CategoryType,
     categories: ICategory[],
     secondCategories: ICategory[],
     secondTypeId?: number,
@@ -27,12 +27,15 @@ const SelectCategoriesForSummary: React.SFC<AllProps> = (props) =>
     <SelectCategories
         categories={props.categories}
         secondCategories={props.secondCategories}
+        secondTypeId={props.secondTypeId}
         loadingCategories={props.loadingCategories}
         loadingSecondCategories={props.loadingSecondCategories}
         categoryType={props.categoryType}
         loadCategories={props.loadCategories}
         onChangeSelectedCategory={props.onChangeSelectedCategory}
         onChangeSelectedSecondCategory={props.onChangeSelectedSecondCategory}
+        selectedCat={props.selectedCat}
+        selectedSecondCat={props.selectedSecondCat}
     />
 
 export default SelectCategoriesForSummary;

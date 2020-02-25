@@ -5,6 +5,7 @@ import { spendingSummaryDateFilter, incomeSummaryDateFilter } from 'src/state/co
 import { getMonthComparisonChartRequest } from 'src/state/contexts/chart/Selectors';
 import { ChartActionTypes, LoadExpensesByCategoryChartSuccessAction, LoadIncomeExpenseChartSuccessAction, LoadIncomesByCategoryChartSuccessAction, LoadExpensesByCategoryChartFailureAction, LoadIncomeExpenseChartFailureAction, LoadIncomesByCategoryChartFailureAction } from 'src/state/contexts/chart/Actions';
 import { ChartDataType } from 'src/enums/ChartType';
+import { LoadIncomeSummaryAction, LoadSpendingSummaryAction } from 'src/state/contexts/landing/Actions';
 
 export default function* loadMonthlyComparisonApiSaga() {
     yield takeLatest(ChartActionTypes.LoadIncomeExpenseChart, loadMonthlyComparisonChart, ChartDataType.IncomeExpenseSummary);
@@ -14,10 +15,23 @@ export default function* loadMonthlyComparisonApiSaga() {
 
 export function* loadMonthlyComparisonChart(type: ChartDataType) {
     try {
-        let apiSubUrl;
         let dateFilter;
-
+        let apiSubUrl : string = "";
+        let monthlyComparisonChart : boolean = true;
+        
         switch (type) {
+            case ChartDataType.IncomeSummary:
+                monthlyComparisonChart = false;
+                dateFilter = yield select(incomeSummaryDateFilter);
+                yield put(new LoadIncomeSummaryAction(dateFilter))
+                break;
+    
+            case ChartDataType.SpendingSummary:
+                monthlyComparisonChart = false;
+                dateFilter = yield select(spendingSummaryDateFilter);
+                yield put(new LoadSpendingSummaryAction(dateFilter))
+                break;
+
             case ChartDataType.SpendingSummaryByCategory:
                 apiSubUrl = "spendings/chart"
                 dateFilter = yield select(spendingSummaryDateFilter);
@@ -35,23 +49,24 @@ export function* loadMonthlyComparisonChart(type: ChartDataType) {
                 break;
         }
 
-        const request = yield select(getMonthComparisonChartRequest, dateFilter);
+        if (monthlyComparisonChart === true) {
+            const request = yield select(getMonthComparisonChartRequest, dateFilter);
 
-        // Start the API call asynchronously
-        const result: IMonthComparisonChartResponse = yield call(api.monthlyComparison, request, apiSubUrl);
+            // Start the API call asynchronously
+            const result: IMonthComparisonChartResponse = yield call(api.monthlyComparison, request, apiSubUrl);
 
-        // Create an action to dispatch on success with the returned entity from API & Dispatch the new action with Redux
-        switch (type) {
-            case ChartDataType.SpendingSummaryByCategory:
-                yield put(new LoadExpensesByCategoryChartSuccessAction(result))
-                break;
-            case ChartDataType.IncomeExpenseSummary:
-                yield put(new LoadIncomeExpenseChartSuccessAction(result))
-                break;
-            case ChartDataType.IncomeSummaryByCategory:
-                yield put(new LoadIncomesByCategoryChartSuccessAction(result))
-                break;
-
+            // Create an action to dispatch on success with the returned entity from API & Dispatch the new action with Redux
+            switch (type) {
+                case ChartDataType.SpendingSummaryByCategory:
+                    yield put(new LoadExpensesByCategoryChartSuccessAction(result))
+                    break;
+                case ChartDataType.IncomeExpenseSummary:
+                    yield put(new LoadIncomeExpenseChartSuccessAction(result))
+                    break;
+                case ChartDataType.IncomeSummaryByCategory:
+                    yield put(new LoadIncomesByCategoryChartSuccessAction(result))
+                    break;
+            }
         }
         
     } catch (e) {

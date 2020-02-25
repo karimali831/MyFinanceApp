@@ -9,7 +9,10 @@ export interface IOwnProps {
     secondCategories: ICategory[],
     loadingCategories: boolean,
     loadingSecondCategories: boolean,
-    categoryType: CategoryType,
+    categoryType?: CategoryType,
+    secondTypeId?: number | undefined,
+    selectedCat?: number | undefined,
+    selectedSecondCat?: number  | undefined
     loadCategories: (categoryType: CategoryType) => LoadCategoriesAction
     onChangeSelectedCategory: (selectedCat: number, secondTypeId?: number) => OnChangeSelectedCategoryAction,
     onChangeSelectedSecondCategory: (selectedSecondCat: number) => OnChangeSelectedSecondCategoryAction
@@ -27,9 +30,9 @@ export default class SelectCategories extends React.Component<IOwnProps, IOwnSta
         super(props);
 
         this.state = {
-            selectedCat: undefined,
-            secondTypeId: undefined,
-            selectedSecondCat: undefined
+            selectedCat: this.props.selectedCat,
+            secondTypeId: this.props.secondTypeId,
+            selectedSecondCat: this.props.selectedSecondCat
         };
     }
 
@@ -61,7 +64,7 @@ export default class SelectCategories extends React.Component<IOwnProps, IOwnSta
                             <option value={0}>-- select category --</option>
                             {
                                 this.props.categories.map(c =>
-                                    <option key={c.id} value={c.id + "-" + c.secondTypeId} disabled={c.disabled}>{c.name}</option>
+                                    <option key={c.id} value={c.id + "-" + c.secondTypeId} disabled={c.disabled} selected={this.state.selectedCat === c.id}>{c.name}</option>
                                 )
                             }
                         </select>
@@ -73,10 +76,10 @@ export default class SelectCategories extends React.Component<IOwnProps, IOwnSta
                             this.props.loadingSecondCategories ? <Load /> :
                             <>
                                 <select id="categories" onChange={e => this.onChangeSelectedSecondCategory(e)} className="form-control">
-                                    <option value={0}>-- category --</option>
+                                    <option value={0}>-- select subcategory --</option>
                                     {
                                         this.props.secondCategories.map(c =>
-                                            <option key={c.id} value={c.id} disabled={c.disabled}>{c.name}</option>
+                                            <option key={c.id} value={c.id} disabled={c.disabled} selected={this.state.selectedSecondCat === c.secondTypeId}>{c.name}</option>
                                         )
                                     }
                                 </select>
@@ -95,15 +98,17 @@ export default class SelectCategories extends React.Component<IOwnProps, IOwnSta
         this.setState({ ...this.state, 
             ...{ 
                 selectedCat: Number(ids[0]),
-                secondTypeId: ids[1] !== "null" && ids[1] !== "0" ? Number(ids[1]) : undefined
+                secondTypeId: ids[1] !== "null" && ids[0] !== "0" && ids[1] !== "0" ? Number(ids[1]) : undefined
             }
         })  
     }
 
     private onChangeSelectedSecondCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const cat = e.target.value;
+
         this.setState({ ...this.state, 
             ...{ 
-                selectedSecondCat: Number(e.target.value)
+                selectedSecondCat: Number(cat)
             }
         })  
     }

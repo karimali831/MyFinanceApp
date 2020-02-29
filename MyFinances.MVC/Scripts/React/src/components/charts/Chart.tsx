@@ -6,11 +6,11 @@ import { ChartOptions } from 'chart.js';
 import DateFilter from '../dateFilter/DateFilter';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DataType } from 'src/enums/DataType';
-import { api, IMonthComparisonChartRequest } from 'src/api/Api';
+import { IMonthComparisonChartRequest } from 'src/api/Api';
 import { ICategory } from 'src/models/ICategory';
 import { IFinance } from 'src/models/IFinance';
-import SelectionRefinementForChartCategories from './SelectionRefinementForChartCategories';
 import { CategoryType } from 'src/enums/CategoryType';
+import { ChartFilter } from './ChartFilter';
 
 interface IOwnState {
 	loading: boolean,
@@ -48,10 +48,6 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
         };
     }
 
-	public componentDidMount() {
-		this.loadFinances();
-	}
-
 	public componentDidUpdate(prevProps: IOwnProps, prevState: IOwnState) {
 		if (this.props.chartChanged) {
 
@@ -88,60 +84,38 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
         return (
             <div id="summary-chart">
 				<h3>{this.props.headerTitle}</h3>
-				<DateFilter 
-					dateFilter={this.props.dateFilter} 
-					dataType={this.props.dataType}
-					dateFilterChanged={this.props.dateFilterChanged} />
-					{
-						this.props.chartChanged ?
-							<>
-							{this.props.categoryType === CategoryType.Spendings	?			
-								<div className="form-group form-group-lg">
-									<select onChange={(e) => this.onChangeSelectedFinance(e)}  id="finances" className="form-control">
-										<option value={"undefined"}>-- select finance --</option>
-										{
-											this.state.finances.map(f => 
-												<option key={f.id} value={f.id} selected={f.id === this.state.catId}>{f.name}</option>      
-											)
-										}
-									</select>
-								</div>
-							: null }
-							
-							{(this.state.catId === undefined || this.state.catId === 0) && this.props.categoryType !== undefined ? 
-								<div className="form-group form-group-lg">
-									<SelectionRefinementForChartCategories />
-								</div>
-							: null}
-						</>
-					: null}
+				<div className="container">	
+					<div className="row">
+						<div className="col-sm-4">
+							<DateFilter 
+								dateFilter={this.props.dateFilter} 
+								dataType={this.props.dataType}
+								dateFilterChanged={this.props.dateFilterChanged} />
+						</div>
+						<div className="col-sm-4">	
+							<span className="label label-default">Select DS1</span>
+							{
+								this.props.chartChanged ?
+									<ChartFilter 
+										categoryType={this.props.categoryType} 
+										request={this.props.request} />
+								: null
+							}
+						</div>
+						<div className="col-sm-4">	
+							<span className="label label-default">Concatenate DS1</span>
+							{
+								this.props.chartChanged ?
+									<ChartFilter categoryType={this.props.categoryType} request={this.props.request} />
+								: null
+							}
+						</div>
+					</div>
+				</div>
 				{this.chart()}
             </div>
         );
 	}
-
-	private loadFinances = () => {
-        api.finances()
-            .then(response => this.loadFinancesSuccess(response.finances));
-	}
-	
-	private loadFinancesSuccess = (finances: IFinance[]) => {
-        this.setState({ ...this.state,
-            ...{ 
-                loading: false, 
-                finances: finances.filter(x => x.manualPayment === false)
-            }
-        }) 
-	}
-	
-	private onChangeSelectedFinance = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const financeId = e.target.value;
-        this.setState({ ...this.state,
-            ...{
-                catId: financeId === "undefined" ? undefined : Number(e.target.value)
-            }
-        })
-    }
 
 	private chartByCategoryRequest = (dateFilter: IDateFilter, catId?: number, secondCatId?: number, isFinance?: boolean) : IMonthComparisonChartRequest => {
         const request: IMonthComparisonChartRequest = {

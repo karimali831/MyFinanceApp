@@ -71,8 +71,6 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
-                            <span>{this.props.categoryFilter}</span>
-
                                 <Link to={"/chart/spendingsummary/"}> 
                                     <FontAwesomeIcon icon={faChartPie} /> Spendings breakdown summary for
                                 </Link>    

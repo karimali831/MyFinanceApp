@@ -20,7 +20,8 @@ namespace MyFinances.Controllers
             var culture = "en-GB";
             var ci = new CultureInfo(culture);
             Thread.CurrentThread.CurrentUICulture = ci;
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(ci.Name);
+            //Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(ci.Name);
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             return base.GetHttpHandler(requestContext);
 
      

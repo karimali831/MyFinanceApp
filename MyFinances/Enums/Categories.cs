@@ -8,7 +8,6 @@ namespace MyFinances.Enums
 {
     public enum Categories
     {
-        Bills = 5,
         Full = 21,
         Half,
         Missort,
@@ -16,5 +15,6 @@ namespace MyFinances.Enums
         UberEats,
         CCInterest = 42,
         MissedEntries = 1140,
+        Bills = 1144
     }
 }

@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -98,11 +99,20 @@ namespace MyIncomes.Website.Controllers.API
 
             string averagedMonthly = averagedResults.Any() ? Utils.ToCurrency(averagedResults.Average(x => x.Total)) : "";
             string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
-        
+
+            StringBuilder headerTitle = new StringBuilder();
+            if (averagedMonthly != "")
+            {
+                headerTitle.Append($"Averaged monthly: {averagedMonthly}");
+                headerTitle.Append(Environment.NewLine);
+            }
+
+            headerTitle.Append($"Total spent: {Utils.ToCurrency(results.Sum(x => x.Total))}");
+
             return Request.CreateResponse(HttpStatusCode.OK,
                 new ChartVM
                 {
-                    HeaderTitle = averagedMonthly != "" ? string.Format("Averaged monthly: {0}", averagedMonthly) : "",
+                    HeaderTitle = headerTitle.ToString(),
                     Title = string.Format("{0} Chart for {1} {2}", "Incomes", results.First().Category, secondCategory),
                     Data = results
                 });

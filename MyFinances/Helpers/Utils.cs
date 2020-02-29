@@ -79,13 +79,11 @@ namespace MyFinances.Helpers
             switch (dateFilter.Frequency)
             {
                 case DateFrequency.Today:
-                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0) AND " +
-                           $"[{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
+                    return $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
                 case DateFrequency.Yesterday:
-                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0) AND " +
-                           $"[{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                    return $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
                 case DateFrequency.Upcoming:
-                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                    return $"[{dateFilter.DateField}] > DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
                 case DateFrequency.LastXDays:
                     return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), - {dateFilter.Interval})";
                 case DateFrequency.LastXMonths:

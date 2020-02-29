@@ -158,7 +158,7 @@ namespace MyFinances.Repository
         {
             string sqlTxt = $@"
                 DECLARE @start DATE = '2019-08-07' -- since records began
-                DECLARE @end DATE = DATEADD(WEEK, DATEDIFF(WEEK, -1, GETDATE())-@WeekArrears, -1) 
+                DECLARE @end DATE = DATEADD(WEEK, DATEDIFF(WEEK, -1, GETUTCDATE())-@WeekArrears, -1) 
 
                 ;WITH IntervalDates (date)
                 AS

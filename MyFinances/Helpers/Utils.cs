@@ -73,27 +73,27 @@ namespace MyFinances.Helpers
             {
                 var year = DateTime.UtcNow.Date >= freq.Date ? DateTime.UtcNow.Year : DateTime.UtcNow.Year - 1;
                 return $"MONTH({dateFilter.DateField}) = {freq.Month} AND YEAR({dateFilter.DateField}) = {year} " +
-                       $"AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
+                       $"AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()) + 1, 0)";
             }
 
             switch (dateFilter.Frequency)
             {
                 case DateFrequency.Today:
-                    return $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()) + 1, 0)";
+                    return $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)";
                 case DateFrequency.Yesterday:
-                    return $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                    return $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0)";
                 case DateFrequency.Upcoming:
-                    return $"[{dateFilter.DateField}] > DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)";
+                    return $"[{dateFilter.DateField}] > DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)";
                 case DateFrequency.LastXDays:
-                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), - {dateFilter.Interval})";
+                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), - {dateFilter.Interval})";
                 case DateFrequency.LastXMonths:
-                    return $"[{dateFilter.DateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) - {dateFilter.Interval}, DAY(GETDATE()) - 1)";
+                    return $"[{dateFilter.DateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETUTCDATE()) - {dateFilter.Interval}, DAY(GETUTCDATE())) - 1)";
                 case DateFrequency.CurrentYear:
-                    return $"YEAR([{dateFilter.DateField}]) = YEAR(GETDATE())";
+                    return $"YEAR([{dateFilter.DateField}]) = YEAR(GETUTCDATE())";
                 case DateFrequency.PreviousYear:
-                    return $"YEAR([{dateFilter.DateField}]) = YEAR(DATEADD(YEAR, -1, GETDATE()))";
+                    return $"YEAR([{dateFilter.DateField}]) = YEAR(DATEADD(YEAR, -1, GETUTCDATE()))";
                 case DateFrequency.AllTime:
-                    return $"[{dateFilter.DateField}] <= GETDATE()";
+                    return $"[{dateFilter.DateField}] <= GETUTCDATE()";
                 default:
                     return "";
             }

@@ -209,7 +209,7 @@ namespace MyFinances.Repository
         {
             string sqlTxt = $@"
                 DECLARE @start DATE = '2019-08-01' -- since records began
-                DECLARE @end DATE = DATEADD(MONTH, DATEDIFF(MONTH, -1, GETDATE())-1, -1) -- last Day of previous month
+                DECLARE @end DATE = DATEADD(MONTH, DATEDIFF(MONTH, -1, GETUTCDATE())-1, -1) -- last Day of previous month
 
                 ;WITH IntervalDates (date)
                 AS

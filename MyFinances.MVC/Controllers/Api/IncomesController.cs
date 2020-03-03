@@ -94,25 +94,12 @@ namespace MyIncomes.Website.Controllers.API
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No results");
             }
       
-            // exclude first month and last month records (because partial stored records)
-            var averagedResults = results.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM", CultureInfo.InvariantCulture) && x.YearMonth != "2019-07");
-
-            string averagedMonthly = averagedResults.Any() ? Utils.ToCurrency(averagedResults.Average(x => x.Total)) : "";
             string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
-
-            StringBuilder headerTitle = new StringBuilder();
-            if (averagedMonthly != "")
-            {
-                headerTitle.Append($"Averaged monthly: {averagedMonthly}");
-                headerTitle.Append(Environment.NewLine);
-            }
-
-            headerTitle.Append($"Total spent: {Utils.ToCurrency(results.Sum(x => x.Total))}");
 
             return Request.CreateResponse(HttpStatusCode.OK,
                 new ChartVM
                 {
-                    HeaderTitle = headerTitle.ToString(),
+                    HeaderTitle = Utils.ChartsHeaderTitle(results, true),
                     Title = string.Format("{0} Chart for {1} {2}", "Incomes", results.First().Category, secondCategory),
                     Data = results
                 });

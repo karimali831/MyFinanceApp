@@ -84,9 +84,12 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> FinancesChartAsync(MonthComparisonChartRequestDTO request)
         {
+            var results = await financeService.GetFinanceTotalsByMonth(request);
+ 
             return Request.CreateResponse(HttpStatusCode.OK, new ChartVM
             {
-                Data = await financeService.GetFinanceTotalsByMonth(request)
+                HeaderTitle = Utils.ChartsHeaderTitle(results),
+                Data = results
             });
         }
     }

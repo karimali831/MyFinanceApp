@@ -6,47 +6,25 @@ const CWTLReducer: Reducer<IChartState, ChartActions> =
     (state = ChartState.intialState, action) => {
         switch (action.type) {
 
-            case ChartActionTypes.LoadIncomesByCategoryChart:
+            case ChartActionTypes.LoadChart:
                 return { ...state, 
                     ...{ 
-                        request: action.request
+                        request: action.request,
+                        type: action.chartDataType
                     } 
                 };
-
-            case ChartActionTypes.LoadExpensesByCategoryChart:
-                return { ...state, 
-                    ...{ 
-                        request: action.request
-                    } 
-                };   
-
-            case ChartActionTypes.LoadIncomeExpenseChart:
-                return { ...state, 
-                    ...{ 
-                        request: action.request
-                    } 
-                };
-
+     
             case ChartActionTypes.LoadIncomeExpenseChartSuccess:
-                return { ...state, 
-                    ...{ 
-                        incomeExpenseComparisonChart: action.chart
-                    } 
-                };
+                return { ...state, incomeExpenseComparisonChart: action.chart };
 
             case ChartActionTypes.LoadIncomesByCategoryChartSuccess:
-                return { ...state, 
-                    ...{ 
-                        incomeCategoryComparisonChart: action.chart
-                    } 
-                };
+                return { ...state, incomeCategoryComparisonChart: action.chart };
 
             case ChartActionTypes.LoadExpensesByCategoryChartSuccess:
-                return { ...state, 
-                    ...{ 
-                        expenseCategoryComparisonChart: action.chart
-                    } 
-                };
+                return { ...state, expenseCategoryComparisonChart: action.chart };
+
+            case ChartActionTypes.LoadFinancesChartSuccess:
+                return { ...state, financesComparisonChart: action.chart };
 
             default:
                 return state;

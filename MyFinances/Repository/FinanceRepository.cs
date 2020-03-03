@@ -19,6 +19,7 @@ namespace MyFinances.Repository
         Task InsertAsync(FinanceDTO dto);
         Task UpdateNextDueDateAsync(DateTime dueDate, int Id);
         Task<IEnumerable<MonthComparisonChartVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
+        Task<IEnumerable<MonthComparisonChartVM>> GetFinanceTotalsByMonth(MonthComparisonChartRequestDTO request);
     }
 
     public class FinanceRepository : IFinanceRepository
@@ -73,6 +74,31 @@ namespace MyFinances.Repository
                     Incomes
                 WHERE 
                     {Utils.FilterDateSql(filter)}
+                GROUP BY 
+                    CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date)
+                ORDER BY 
+                    YearMonth";
+
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<MonthComparisonChartVM>(sqlTxt)).ToArray();
+            }
+        }
+
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetFinanceTotalsByMonth(MonthComparisonChartRequestDTO request)
+        {
+            string sqlTxt = $@"
+                SELECT 
+	                CONVERT(CHAR(7), Date, 120) as YearMonth, 
+	                DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total'
+                FROM 
+                    Spendings s
+                INNER JOIN 
+                    {TABLE} f 
+                ON 
+                    f.Id = s.FinanceId
+                WHERE 
+                    {Utils.FilterDateSql(request.DateFilter)}
                 GROUP BY 
                     CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date)
                 ORDER BY 

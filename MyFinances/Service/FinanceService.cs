@@ -23,6 +23,7 @@ namespace MyFinances.Service
         PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
         Task<IEnumerable<MonthComparisonChartVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
         Task<RemindersVM> ReminderNotifications();
+        Task<IEnumerable<MonthComparisonChartVM>> GetFinanceTotalsByMonth(MonthComparisonChartRequestDTO request);
     }
 
     public class FinanceService : IFinanceService
@@ -202,6 +203,11 @@ namespace MyFinances.Service
         public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter)
         {
             return await financeRepository.GetIncomeExpenseTotalsByMonth(filter);
+        }
+
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetFinanceTotalsByMonth(MonthComparisonChartRequestDTO request)
+        {
+            return await financeRepository.GetFinanceTotalsByMonth(request);
         }
 
         public async Task InsertAsync(FinanceDTO dto)

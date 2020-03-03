@@ -12,9 +12,6 @@ interface IOwnProps {
 
 export interface IOwnState {
     finances: IFinance[],
-    totalAvgCost: number | undefined,
-    spentThisMonth: number | undefined,
-    spentLastMonth: number | undefined,
     loading: boolean,
     showEdit: number | undefined
 }
@@ -27,9 +24,6 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         this.state = { 
             loading: true,
             finances: [],
-            totalAvgCost: undefined,
-            spentThisMonth: undefined,
-            spentLastMonth: undefined,
             showEdit: undefined
         };
     }
@@ -93,10 +87,7 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
                     columns={columns}
                     options={options}
                 /> 
-                <a onClick={() => this.loadFinances(true)}>Re-sync next due dates</a><br />
-                <label>Total average monthly cost: £{this.state.totalAvgCost}</label><br />
-                <label>Spent last month: £{this.state.spentLastMonth}</label><br />
-                <label>Spent this month: £{this.state.spentThisMonth}</label>
+                <a onClick={() => this.loadFinances(true)}>Re-sync next due dates</a>
             </div>
         )
     }

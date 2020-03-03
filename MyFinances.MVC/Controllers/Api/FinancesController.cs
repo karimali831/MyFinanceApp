@@ -35,12 +35,6 @@ namespace MyFinances.Website.Controllers.API
         {
             var finances = await financeService.GetFinances(resyncNextDueDates);
 
-            var currentMonth = Enum.TryParse(DateTime.UtcNow.Date.ToString("MMMM", CultureInfo.InvariantCulture), out DateFrequency thisMonth);
-            var spentThisMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = thisMonth, Interval = 1 });
-
-            var lastMonth = Enum.TryParse(DateTime.UtcNow.Date.AddMonths(-1).ToString("MMMM", CultureInfo.InvariantCulture), out DateFrequency previousMonth);
-            var spentLastMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = previousMonth, Interval = 1 });
-
             if (upcomingPayments)
             {
                 finances = finances.Where(x => x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7) || x.ManualPayment);
@@ -61,12 +55,7 @@ namespace MyFinances.Website.Controllers.API
                         x.PaymentStatus,
                         EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
                         NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null
-                    }),
-                TotalAvgCost = finances
-                    .Where(x => x.EndDate == null || DateTime.UtcNow.Date < x.EndDate)
-                    .Sum(x => x.AvgMonthlyAmount),
-                SpentThisMonth = spentThisMonth.Where(x => x.IsFinance == true).Sum(x => x.Total),
-                SpentLastMonth = spentLastMonth.Where(x => x.IsFinance == true).Sum(x => x.Total)
+                    })
             });
         }
 
@@ -89,6 +78,16 @@ namespace MyFinances.Website.Controllers.API
                 {
                     Data = results
                 });
+        }
+
+        [Route("chart")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> FinancesChartAsync(MonthComparisonChartRequestDTO request)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, new ChartVM
+            {
+                Data = await financeService.GetFinanceTotalsByMonth(request)
+            });
         }
     }
 }

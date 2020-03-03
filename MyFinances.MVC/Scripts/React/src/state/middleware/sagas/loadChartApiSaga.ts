@@ -2,23 +2,28 @@ import { api, IMonthComparisonChartResponse } from '../../../api/Api'
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../contexts/error/Actions';
 import { spendingSummaryDateFilter, incomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
-import { getMonthComparisonChartRequest } from 'src/state/contexts/chart/Selectors';
-import { ChartActionTypes, LoadExpensesByCategoryChartSuccessAction, LoadIncomeExpenseChartSuccessAction, LoadIncomesByCategoryChartSuccessAction, LoadExpensesByCategoryChartFailureAction, LoadIncomeExpenseChartFailureAction, LoadIncomesByCategoryChartFailureAction } from 'src/state/contexts/chart/Actions';
+import { getMonthComparisonChartRequest, getChartDataType } from 'src/state/contexts/chart/Selectors';
+import { ChartActionTypes, LoadExpensesByCategoryChartSuccessAction, LoadIncomeExpenseChartSuccessAction, LoadIncomesByCategoryChartSuccessAction, LoadChartFailureAction, LoadFinancesChartSuccessAction } from 'src/state/contexts/chart/Actions';
 import { ChartDataType } from 'src/enums/ChartType';
 import { LoadIncomeSummaryAction, LoadSpendingSummaryAction } from 'src/state/contexts/landing/Actions';
 
-export default function* loadMonthlyComparisonApiSaga() {
-    yield takeLatest(ChartActionTypes.LoadIncomeExpenseChart, loadMonthlyComparisonChart, ChartDataType.IncomeExpenseSummary);
-    yield takeLatest(ChartActionTypes.LoadIncomesByCategoryChart, loadMonthlyComparisonChart, ChartDataType.IncomeSummaryByCategory);
-    yield takeLatest(ChartActionTypes.LoadExpensesByCategoryChart, loadMonthlyComparisonChart, ChartDataType.SpendingSummaryByCategory);
+export default function* loadChartApiSaga() {
+    yield takeLatest(ChartActionTypes.LoadChart, loadChart)
 }
 
-export function* loadMonthlyComparisonChart(type: ChartDataType) {
+export function* loadChart() {
     try {
         let dateFilter;
         let apiSubUrl : string = "";
         let monthlyComparisonChart : boolean = true;
         
+        const type = yield select(getChartDataType);
+
+        if (!type) {
+            yield put(new LoadChartFailureAction("Chart datatype not yielded"));
+            return;
+        }
+     
         switch (type) {
             case ChartDataType.IncomeSummary:
                 monthlyComparisonChart = false;
@@ -40,6 +45,12 @@ export function* loadMonthlyComparisonChart(type: ChartDataType) {
                 apiSubUrl = "finances/chart/incomeexpense"
                 dateFilter = yield select(incomeSummaryDateFilter);
                 break;
+
+            case ChartDataType.Finances:
+                apiSubUrl = "finances/chart"
+                dateFilter = yield select(spendingSummaryDateFilter);
+                break;
+                
             case ChartDataType.IncomeSummaryByCategory:
                 apiSubUrl = "incomes/chart"
                 dateFilter = yield select(incomeSummaryDateFilter);
@@ -66,24 +77,17 @@ export function* loadMonthlyComparisonChart(type: ChartDataType) {
                 case ChartDataType.IncomeSummaryByCategory:
                     yield put(new LoadIncomesByCategoryChartSuccessAction(result))
                     break;
+                case ChartDataType.Finances:
+                    yield put(new LoadFinancesChartSuccessAction(result))
+                    break;
             }
         }
         
     } catch (e) {
 
         // Dispatch a failure action to Redux
-        switch (type) {
-            case ChartDataType.SpendingSummaryByCategory:
-                yield put(new LoadExpensesByCategoryChartFailureAction(e.message));
-                break;
-            case ChartDataType.IncomeExpenseSummary:
-                yield put(new LoadIncomeExpenseChartFailureAction(e.message));
-                break;
-            case ChartDataType.IncomeSummaryByCategory:
-                yield put(new LoadIncomesByCategoryChartFailureAction(e.message));
-                break;
-        }
-
+        const type = yield select(getChartDataType);
+        yield put(new LoadChartFailureAction(e.message + " - " + ChartDataType[type]));
         yield put(new ReportErrorAction(e.message));
         return;
     }

@@ -1,7 +1,7 @@
 import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import Chart, { IPropsFromState, IPropsFromDispatch } from '../../../../charts/ChartProps';
-import { ChartType } from 'src/enums/ChartType';
+import { ChartType, ChartDataType } from 'src/enums/ChartType';
 import { chartSummaryData } from 'src/state/contexts/chart/Selectors';
 import { DateFilterChangeAction } from 'src/state/contexts/common/Actions';
 import { DataType } from 'src/enums/DataType';
@@ -22,7 +22,8 @@ const mapStateToProps =
         secondTypeId: state.common.secondTypeId,
         selectedCat: state.common.selectedCat,
         selectedSecondCat: state.common.selectedSecondCat,
-        categoryType: CategoryType.Incomes
+        categoryType: CategoryType.Incomes,
+        chartDataType: ChartDataType.IncomeSummary
     });
 
 // Add required action creators for component

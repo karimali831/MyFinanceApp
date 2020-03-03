@@ -10,7 +10,8 @@ import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
 import { Link } from 'react-router-dom';
 import { IMonthComparisonChartRequest } from 'src/api/Api';
-import { LoadIncomeExpenseChartAction, LoadIncomesByCategoryChartAction } from 'src/state/contexts/chart/Actions';
+import { LoadChartAction } from 'src/state/contexts/chart/Actions';
+import { ChartDataType } from 'src/enums/ChartType';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -24,8 +25,8 @@ export interface IPropsFromState {
 
 export interface IPropsFromDispatch {
     showSecondCategory: (secondCat: string) => ShowSecondCategoryIncomeSummaryAction
-    loadIncomeExpense: (request: IMonthComparisonChartRequest) => LoadIncomeExpenseChartAction,
-    loadIncomesByCategory: (request: IMonthComparisonChartRequest) =>  LoadIncomesByCategoryChartAction
+    loadIncomeExpense: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => LoadChartAction,
+    loadIncomesByCategory: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) =>  LoadChartAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
@@ -46,7 +47,7 @@ export default class IncomeSummary extends React.Component<AllProps> {
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>
-                            <Link to={"/chart/incomeexpense/"} onClick={() => this.props.loadIncomeExpense(incomeExpenseChartRequest)}>
+                            <Link to={"/chart/incomeexpense/"} onClick={() => this.props.loadIncomeExpense(incomeExpenseChartRequest, ChartDataType.IncomeSummary)}>
                                 <FontAwesomeIcon icon={faChartBar} /> Income and expenses summary chart
                             </Link>
                             <br />
@@ -65,6 +66,7 @@ export default class IncomeSummary extends React.Component<AllProps> {
                         categoryType={this.props.categoryType}
                         filteredResults={this.props.incomeSummary}
                         dateFilter={this.props.dateFilter}
+                        chartDataType={ChartDataType.IncomeSummaryByCategory}
                         icon={faArrowUp}
                     />
                     <tr>

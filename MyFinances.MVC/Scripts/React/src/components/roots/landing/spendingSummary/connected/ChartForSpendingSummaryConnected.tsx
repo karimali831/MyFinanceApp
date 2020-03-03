@@ -2,7 +2,7 @@ import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import ChartForSummary, { IPropsFromState, IPropsFromDispatch } from '../../../../charts/ChartProps';
 import { DateFilterChangeAction } from 'src/state/contexts/common/Actions';
-import { ChartType } from 'src/enums/ChartType';
+import { ChartType, ChartDataType } from 'src/enums/ChartType';
 import { chartSummaryData } from 'src/state/contexts/chart/Selectors';
 import { DataType } from 'src/enums/DataType';
 import { CategoryType } from 'src/enums/CategoryType';
@@ -19,7 +19,8 @@ const mapStateToProps =
         height: 200,
         dateFilter: state.spendingSummary.dateFilter,
         dataType: DataType.SpendingSummary,
-        categoryType: CategoryType.Spendings
+        categoryType: CategoryType.Spendings,
+        chartDataType: ChartDataType.SpendingSummary
     });
 
 // Add required action creators for component

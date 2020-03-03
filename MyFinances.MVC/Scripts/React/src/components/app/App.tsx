@@ -26,6 +26,7 @@ import ChartForIncomeSummary from '../roots/landing/incomeSummary/connected/Char
 import ChartForIncomeExpenseSummary from '../roots/landing/ChartForIncomeExpenseSummaryConnected';
 import ChartForSpendingSummaryByCat from '../roots/landing/spendingSummary/connected/ChartForSpendingSummaryByCatConnected';
 import ChartForIncomeSummaryByCat from '../roots/landing/incomeSummary/connected/ChartForIncomeSummaryByCatConnected';
+import ChartForFinancesSummaryConnected from '../roots/landing/ChartForFinancesSummaryConnected';
 
 const browserHistory = history.pushState ? createBrowserHistory() : createHashHistory();
 
@@ -63,6 +64,7 @@ class App extends React.Component {
                   <Route path="/chart/incomeexpense/" component={ChartForIncomeExpenseSummary} />
                   <Route path={"/chart/"+CategoryType[CategoryType.Spendings]+"/summary/:catId/:isSecondCat"} render={() => <ChartForSpendingSummaryByCat />} />
                   <Route path={"/chart/"+CategoryType[CategoryType.Incomes]+"/summary/:catId/:isSecondCat"} render={() => <ChartForIncomeSummaryByCat />} />
+                  <Route path="/chart/finances/" component={ChartForFinancesSummaryConnected} />
               </Switch>
             </div>
         </ConnectedRouter>

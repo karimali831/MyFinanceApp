@@ -1,6 +1,7 @@
 export enum ChartType {
     Doughnut,
-    Bar
+    Bar,
+    Line
 }
 
 export enum ChartDataType {
@@ -8,5 +9,6 @@ export enum ChartDataType {
     IncomeSummary,
     IncomeExpenseSummary,
     SpendingSummaryByCategory,
-    IncomeSummaryByCategory
+    IncomeSummaryByCategory,
+    Finances
 }

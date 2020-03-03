@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faChartPie } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faChartPie, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { ISpendingSummary } from '../../../../models/ISpending';
 import { Load } from '../../../base/Loader';
 import { ShowSecondCategorySpendingSummaryAction, FilterChangedAction } from '../../../../state/contexts/landing/Actions';
@@ -11,7 +11,8 @@ import DateFilter from './connected/DateFilterSSConnected';
 import SelectionRefinementForSpendingSummary from './connected/SelectionRefinementForSpendingSummaryConnected';
 import { Link } from 'react-router-dom';
 import { IMonthComparisonChartRequest } from 'src/api/Api';
-import { LoadExpensesByCategoryChartAction } from 'src/state/contexts/chart/Actions';
+import { ChartDataType } from 'src/enums/ChartType';
+import { LoadChartAction } from 'src/state/contexts/chart/Actions';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -30,7 +31,7 @@ export interface IOwnState {}
 export interface IPropsFromDispatch {
     showSecondCategory: (secondCat: string ) => ShowSecondCategorySpendingSummaryAction,
     resetCategoryFilter: (filter: string) => FilterChangedAction,
-    loadExpensesByCategory: (request: IMonthComparisonChartRequest) => LoadExpensesByCategoryChartAction
+    loadChart: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => LoadChartAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
@@ -55,6 +56,10 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
             return <Load text="Loading spending summary..." />
         }
 
+        const chartRequest: IMonthComparisonChartRequest = {
+            dateFilter: this.props.dateFilter
+        }
+
         let results;
         if (this.props.categoryFilter !== undefined && this.props.categoryFilter !== "") {
             results = this.props.spendingSummary
@@ -71,6 +76,10 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                     <thead className="thead-light">
                         <tr>
                             <th scope="col" colSpan={2}>
+                                <Link to={"/chart/finances/"} onClick={() => this.props.loadChart(chartRequest, ChartDataType.Finances)}>
+                                    <FontAwesomeIcon icon={faChartBar} /> Finances breakdown chart
+                                </Link>
+                                <br />
                                 <Link to={"/chart/spendingsummary/"}> 
                                     <FontAwesomeIcon icon={faChartPie} /> Spendings breakdown summary for
                                 </Link>    
@@ -97,10 +106,11 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                         <SummaryList<ISpendingSummary>
                             showSecondCategory={this.props.showSecondCategory}
                             showSecondCatSummary={this.props.showSecondCatSummary}
-                            showChartByCategory={this.props.loadExpensesByCategory}
+                            showChartByCategory={this.props.loadChart}
                             categoryType={this.props.categoryType}
                             filteredResults={results}
                             dateFilter={this.props.dateFilter}
+                            chartDataType={ChartDataType.SpendingSummaryByCategory}
                             icon={faArrowDown}
                         />
                         <tr>

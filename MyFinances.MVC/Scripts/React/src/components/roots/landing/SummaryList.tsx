@@ -7,6 +7,7 @@ import { CategoryType } from 'src/enums/CategoryType';
 import { SummaryFilteredList } from '../../utils/Utils';
 import { IBaseModel } from 'src/models/ISummaryBaseModel';
 import { IMonthComparisonChartRequest } from 'src/api/Api';
+import { ChartDataType } from 'src/enums/ChartType';
 
 export interface IOwnState {
     showAllCats: boolean,
@@ -19,8 +20,9 @@ export interface IOwnProps<T> {
     categoryType: CategoryType,
     filteredResults: T[],
     icon: IconDefinition,
+    chartDataType: ChartDataType,
     showSecondCategory: (secondCat: string) => void,
-    showChartByCategory: (request: IMonthComparisonChartRequest) => void
+    showChartByCategory: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => void
 }
 
 export default class SummaryList<T extends IBaseModel<T>> extends React.Component<IOwnProps<T>, IOwnState> {
@@ -44,7 +46,7 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
                             {
                                 this.props.dateFilter !== undefined ?  
                                 <>
-                                    <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + s.catId + "/" + false} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, s.isFinance, this.props.dateFilter))}>
+                                    <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + s.catId + "/" + false} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, s.isFinance, this.props.dateFilter), this.props.chartDataType)}>
                                         <FontAwesomeIcon icon={faChartBar} /> 
                                     </Link>
                                     <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link>    
@@ -65,7 +67,7 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
                                                     <div key={key2}>                            {
                                                     this.props.dateFilter !== null && this.props.dateFilter !== undefined ?
                                                             <> 
-                                                                <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + c.secondCatId + "/" + true} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, false, this.props.dateFilter, c.secondCatId))}>
+                                                                <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + c.secondCatId + "/" + true} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, false, this.props.dateFilter, c.secondCatId), this.props.chartDataType)}>
                                                                     <FontAwesomeIcon icon={faChartBar} /> 
                                                                 </Link>
                                                                 <Link to={SummaryFilteredList(this.props.categoryType, c.secondCatId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, true, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {c.cat2}</Link> £{c.total}

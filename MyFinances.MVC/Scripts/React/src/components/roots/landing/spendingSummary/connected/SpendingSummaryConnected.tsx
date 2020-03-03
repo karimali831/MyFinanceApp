@@ -2,7 +2,7 @@ import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import SpendingSummary, { IPropsFromState, IPropsFromDispatch } from '../SpendingSummary';
 import { ShowSecondCategorySpendingSummaryAction, FilterChangedAction } from '../../../../../state/contexts/landing/Actions';
-import { LoadExpensesByCategoryChartAction } from 'src/state/contexts/chart/Actions';
+import { LoadChartAction } from 'src/state/contexts/chart/Actions';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -26,7 +26,7 @@ const mapPropsFromDispatch: IPropsFromDispatch =
 {
     showSecondCategory: ShowSecondCategorySpendingSummaryAction.creator,
     resetCategoryFilter: FilterChangedAction.creator,
-    loadExpensesByCategory: LoadExpensesByCategoryChartAction.creator
+    loadChart: LoadChartAction.creator
 };
 
 

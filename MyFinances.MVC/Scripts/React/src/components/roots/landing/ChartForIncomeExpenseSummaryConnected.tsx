@@ -1,11 +1,11 @@
-import { ChartType } from 'src/enums/ChartType';
+import { ChartType, ChartDataType } from 'src/enums/ChartType';
 import IStoreState from 'src/state/IStoreState';
 import { incomeExpenseChartData } from 'src/state/contexts/chart/Selectors';
 import Chart, { IPropsFromState, IPropsFromDispatch } from 'src/components/charts/ChartProps';
 import { connect } from 'react-redux';
 import { DateFilterChangeAction } from 'src/state/contexts/common/Actions';
 import { DataType } from 'src/enums/DataType';
-import { LoadIncomeExpenseChartAction } from 'src/state/contexts/chart/Actions';
+import { LoadChartAction} from 'src/state/contexts/chart/Actions';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -14,7 +14,7 @@ import { LoadIncomeExpenseChartAction } from 'src/state/contexts/chart/Actions';
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
         chart: incomeExpenseChartData(state),
-        chartType: ChartType.Bar,
+        chartType: ChartType.Line,
         width: 200,
         height: 200,
         dateFilter: state.incomeSummary.dateFilter,
@@ -22,14 +22,15 @@ const mapStateToProps =
         secondTypeId: state.common.secondTypeId,
         selectedCat: state.common.selectedCat,
         selectedSecondCat: state.common.selectedSecondCat,
-        request: state.chart.request
+        request: state.chart.request,
+        chartDataType: ChartDataType.IncomeExpenseSummary
     });
 
 // Add required action creators for component
 const mapPropsFromDispatch: IPropsFromDispatch =
 {
     dateFilterChanged: DateFilterChangeAction.creator,
-    chartChanged: LoadIncomeExpenseChartAction.creator
+    chartChanged: LoadChartAction.creator
 };
 
 // This does the magic of subscwribing to state changes and ensuring the wrapped

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Doughnut, Bar } from 'react-chartjs-2';
-import { ChartType } from 'src/enums/ChartType';
+import { Doughnut, Bar, Line } from 'react-chartjs-2';
+import { ChartType, ChartDataType } from 'src/enums/ChartType';
 import { IChartModel } from '../../models/IChart';
 import { ChartOptions } from 'chart.js';
 import DateFilter from '../dateFilter/DateFilter';
@@ -28,11 +28,12 @@ interface IOwnProps {
 	dateFilter: IDateFilter,
 	categoryType?: CategoryType,
 	dataType: DataType,
+	chartDataType: ChartDataType,
 	secondTypeId?: number,
 	selectedCat?: number,
 	selectedSecondCat?: number,
 	request?: IMonthComparisonChartRequest,
-	chartChanged?: (request: IMonthComparisonChartRequest) => void
+	chartChanged?: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => void
 	dateFilterChanged: (filter: IDateFilter, dataType: DataType) => void
 }
 
@@ -58,27 +59,27 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 			if (JSON.stringify(this.props.dateFilter) !== JSON.stringify(prevProps.dateFilter) && this.props.request) {
 				if (this.props.request.catId) {
 					if (this.props.request.isFinance) {
-						this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.props.request.catId, undefined, true))
+						this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.props.request.catId, undefined, true), this.props.chartDataType)
 					} else {
-						this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.props.request.catId, this.props.request.secondCatId, false))
+						this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.props.request.catId, this.props.request.secondCatId, false), this.props.chartDataType)
 					} 
 				} else {
-					this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter))
+					this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter), this.props.chartDataType)
 				}
 			
 			} else {
 				if (prevState.catId !== this.state.catId && this.state.catId) {
-					this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.state.catId, undefined, true))
+					this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.state.catId, undefined, true), this.props.chartDataType)
 				}
 	
 				if (prevProps.secondTypeId !== this.props.secondTypeId || prevProps.selectedCat !== this.props.selectedCat) {
 					if (this.props.selectedCat) {
-						this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.props.selectedCat, undefined, false))
+						this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.props.selectedCat, undefined, false), this.props.chartDataType)
 					}
 				}
 	
 				if (prevProps.selectedSecondCat !== this.props.selectedSecondCat) {
-					this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.props.selectedCat, this.props.selectedSecondCat, false));
+					this.props.chartChanged(this.chartByCategoryRequest(this.props.dateFilter, this.props.selectedCat, this.props.selectedSecondCat, false), this.props.chartDataType);
 				}
 			}
 		}
@@ -176,6 +177,8 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 				return <Doughnut data={this.props.chart} width={this.props.width} height={this.props.height} options={this.chartOptions()} />;
 			case ChartType.Bar: 
 				return <Bar data={this.props.chart} width={this.props.width} height={this.props.height} options={this.chartOptions()} />;
+			case ChartType.Line: 
+				return <Line data={this.props.chart} width={this.props.width} height={this.props.height} options={this.chartOptions()} />;
 			default:
 				return "";
 		}

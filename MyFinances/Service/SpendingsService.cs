@@ -17,7 +17,7 @@ namespace MyFinances.Service
         Task<int?> GetIdFromFinanceAsync(int Id);
         Task MakeSpendingFinanceless(int id, int catId);
         Task InsertAsync(SpendingDTO dto);
-        DateTime? ExpenseLastPaidDate(int financeId);
+        (DateTime? Date, decimal Amount) ExpenseLastPaid(int financeId);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter);
         Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance);
     }
@@ -72,9 +72,9 @@ namespace MyFinances.Service
             await spendingRepository.InsertAsync(dto);
         }
 
-        public DateTime? ExpenseLastPaidDate(int financeId)
+        public (DateTime? Date, decimal Amount) ExpenseLastPaid(int financeId)
         {
-            return spendingRepository.ExpenseLastPaidDate(financeId);
+            return spendingRepository.ExpenseLastPaid(financeId);
         }
 
         public async Task MissedCreditCardInterestEntriesAsync()

@@ -122,10 +122,16 @@ namespace MyFinances.Service
             {
                 foreach(var finance in finances)
                 {
-                    var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(finance.Id);
+                    var expenseLastPaid = spendingService.ExpenseLastPaid(finance.Id);
+
+                    // if average monthly amount varies get the amount from last paid amount
+                    if (finance.AvgMonthlyAmount == 0 && expenseLastPaid.Date.HasValue)
+                    {
+                        finance.AvgMonthlyAmount = expenseLastPaid.Amount;
+                    }
 
                     // delete finance if one-off payment and is paid (i.e. ManualPayment = 1)
-                    if (finance.ManualPayment && (!expenseLastPaidDate.HasValue || DateTime.UtcNow.Date >= expenseLastPaidDate.Value))
+                    if (finance.ManualPayment && (!expenseLastPaid.Date.HasValue || DateTime.UtcNow.Date >= expenseLastPaid.Date.Value))
                     {
                         int? financePaidId = await spendingService.GetIdFromFinanceAsync(finance.Id);
 
@@ -142,11 +148,11 @@ namespace MyFinances.Service
                         if (finance.NextDueDate == null || DateTime.UtcNow.Date >= finance.NextDueDate || resyncNextDueDates)
                         {
                             // don't set next due date if previous month not paid !
-                            if (finance.NextDueDate == null || !expenseLastPaidDate.HasValue || DateTime.UtcNow.Date >= expenseLastPaidDate.Value)
+                            if (finance.NextDueDate == null || !expenseLastPaid.Date.HasValue || DateTime.UtcNow.Date >= expenseLastPaid.Date.Value)
                             {
                                 int monthElapsed = finance.MonthlyDueDate >= DateTime.UtcNow.Day ? 0 : 1;
-                                var previousDueDate = expenseLastPaidDate.HasValue ? expenseLastPaidDate.Value.Date : DateTime.UtcNow;
-                                var nextDueMonth = expenseLastPaidDate.HasValue ? previousDueDate.AddMonths(1).Month : previousDueDate.AddMonths(monthElapsed).Month;
+                                var previousDueDate = expenseLastPaid.Date.HasValue ? expenseLastPaid.Date.Value.Date : DateTime.UtcNow;
+                                var nextDueMonth = expenseLastPaid.Date.HasValue ? previousDueDate.AddMonths(1).Month : previousDueDate.AddMonths(monthElapsed).Month;
                 
                                 // i.e. 31/10/2019 cannot set next due date to 31/11/2019 so check last day of the month
                                 var lastDayInPreviousMonth = DateTime.DaysInMonth(DateTime.UtcNow.Year, previousDueDate.Month);
@@ -183,8 +189,8 @@ namespace MyFinances.Service
 
         public int? DaysLastPaid(int Id)
         {
-            var expenseLastPaidDate = spendingService.ExpenseLastPaidDate(Id);
-            return CalculateDays(DateTime.UtcNow, expenseLastPaidDate);
+            var expenseLastPaidDate = spendingService.ExpenseLastPaid(Id);
+            return CalculateDays(DateTime.UtcNow, expenseLastPaidDate.Date);
         }
 
         public PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate)

@@ -19,7 +19,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<(int Year, int Month)>> MissedCreditCardInterestEntriesAsync(string card);
         Task<int?> GetIdFromFinanceAsync(int Id);
         Task MakeSpendingFinanceless(int id, int catId);
-        DateTime? ExpenseLastPaidDate(int financeId);
+        (DateTime? Date, decimal Amount) ExpenseLastPaid(int financeId);
         Task InsertAsync(SpendingDTO dto);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFilter dateFilter);
         Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance);
@@ -181,13 +181,13 @@ namespace MyFinances.Repository
             }
         }
 
-        public DateTime? ExpenseLastPaidDate(int financeId)
+        public (DateTime? Date, decimal Amount) ExpenseLastPaid(int financeId)
         {
             using (var sql = dbConnectionFactory())
             {
                 return   
-                    (sql.Query<DateTime?>($@"
-                            SELECT Date
+                    (sql.Query<(DateTime?, decimal)>($@"
+                            SELECT Date, Amount
                             FROM Spendings
                             WHERE FinanceId = @FinanceId 
                             ORDER BY Date DESC",

@@ -52,15 +52,13 @@ export default class AddReminder extends React.Component<IPropsFromState, IOwnSt
             <div>
                 {AddMenu("reminder")}
                 <form className="form-horizontal">
-                    <div className="form-check form-check-lg" style={{display:'inline'}}>
-
+                    <div className="form-check form-check-lg" style={{display:'inline',padding: '5px', marginRight: '2px'}}>
                         <input id="reminder" type="radio" name="type" className="form-check-input" checked={this.state.reminder} onChange={(e) => { this.onTypeChanged(e);}} />
                         <label className="form-check-label" htmlFor="reminder">
                             Reminder
                         </label>
-
                     </div>
-                    <div className="form-check form-check-lg" style={{display:'inline'}}>>
+                    <div className="form-check form-check-lg" style={{display:'inline',padding: '5px', marginRight: '2px'}}>
                         <input id="alert" type="radio" name="type" className="form-check-input" checked={this.state.alert} onChange={(e) => { this.onTypeChanged(e);}} />
                         <label className="form-check-label" htmlFor="alert">
                             Alert

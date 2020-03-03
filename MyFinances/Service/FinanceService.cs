@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Nager.Date;
 using Nager.Date.Extensions;
 using System.Globalization;
+using MyFinances.Helpers;
 
 namespace MyFinances.Service
 {
@@ -22,7 +23,7 @@ namespace MyFinances.Service
         int? DaysLastPaid(int Id);
         PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
         Task<IEnumerable<MonthComparisonChartVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
-        Task<RemindersVM> ReminderNotifications();
+        Task<RemindersVM> GetNotifications();
         Task<IEnumerable<MonthComparisonChartVM>> GetFinanceTotalsByMonth(MonthComparisonChartRequestDTO request);
     }
 
@@ -60,34 +61,57 @@ namespace MyFinances.Service
 
         public async Task<IEnumerable<FinanceVM>> GetFinances(bool resyncNextDueDates)
         {
-            return (await GetAllAsync(resyncNextDueDates))
-                .Select(x => new FinanceVM
+            var finances = await GetAllAsync(resyncNextDueDates);
+            var viewModel = new List<FinanceVM>();
+
+            if (finances.Any())
+            {
+ 
+                foreach (var x in finances)
                 {
-                    Id = x.Id,
-                    Name = x.Name,
-                    AvgMonthlyAmount = x.AvgMonthlyAmount,
-                    Remaining = x.Remaining,
-                    MonthlyDueDate = x.MonthlyDueDate,
-                    EndDate = x.EndDate,
-                    NextDueDate = x.NextDueDate,
-                    OverrideNextDueDate = x.OverrideNextDueDate,
-                    ManualPayment = x.ManualPayment,
-                    DaysUntilDue = CalculateDays(x.NextDueDate, DateTime.UtcNow),
-                    PaymentStatus = PaymentStatusAsync(x.Id, x.NextDueDate)
-                })
+                    viewModel.Add(new FinanceVM
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        AvgMonthlyAmount = x.AvgMonthlyAmount,
+                        Remaining = x.Remaining,
+                        MonthlyDueDate = x.MonthlyDueDate,
+                        EndDate = x.EndDate,
+                        NextDueDate = x.NextDueDate,
+                        OverrideNextDueDate = x.OverrideNextDueDate,
+                        ManualPayment = x.ManualPayment,
+                        DaysUntilDue = CalculateDays(x.NextDueDate, DateTime.UtcNow),
+                        PaymentStatus = PaymentStatusAsync(x.Id, x.NextDueDate)
+                    });
+                }
+            }
+
+            return viewModel
                 .OrderByDescending(x => x.PaymentStatus)
                 .ThenByDescending(x => (x.PaymentStatus == PaymentStatus.Late ? x.DaysUntilDue : null))
                 .ThenBy(x => (x.PaymentStatus == PaymentStatus.Upcoming ? x.DaysUntilDue : null))
                 .ThenBy(x => x.Name);
         }
 
-        public async Task<RemindersVM> ReminderNotifications()
+        public async Task<RemindersVM> GetNotifications()
         {
-            await spendingService.MissedCreditCardInterestEntriesAsync();
-            await incomeService.MissedIncomeEntriesAsync();
-
             var finances = await GetFinances(resyncNextDueDates: false);
-            return await remindersService.GetNotifications(finances);
+            var upcomingPayments = upcomingPaymentRemindersAsync(finances);
+            var getReminders = await remindersService.GetAllAsync();
+
+            var reminders = getReminders
+                .Concat(upcomingPayments)
+                .Where(x => x.Display == true)
+                .OrderBy(x => x.Sort)
+                .ThenByDescending(x => x._priority);
+
+            return new RemindersVM
+            {
+                OverDueReminders = reminders.Where(x => x.PaymentStatus == PaymentStatus.Late),
+                DueTodayReminders = reminders.Where(x => x.PaymentStatus == PaymentStatus.DueToday),
+                UpcomingReminders = reminders.Where(x => x.PaymentStatus == PaymentStatus.Upcoming),
+                Alerts = reminders.Where(x => x.PaymentStatus == PaymentStatus.Unknown)
+            };
         }
 
         public async Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates)
@@ -213,6 +237,58 @@ namespace MyFinances.Service
         public async Task InsertAsync(FinanceDTO dto)
         {
             await financeRepository.InsertAsync(dto);
+        }
+
+        private IEnumerable<Reminder> upcomingPaymentRemindersAsync(IEnumerable<FinanceVM> finances)
+        {
+            (int Count, decimal Total) latePayments = (finances
+                    .Count(x => x.PaymentStatus == PaymentStatus.Late), finances
+                    .Where(x => x.PaymentStatus == PaymentStatus.Late)
+                    .Sum(x => x.AvgMonthlyAmount));
+
+            (int Count, decimal Total) upcomingPayments = (finances
+                    .Count(x => x.PaymentStatus == PaymentStatus.Upcoming && (x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7) || x.ManualPayment)), finances
+                    .Where(x => x.PaymentStatus == PaymentStatus.Upcoming && (x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7) || x.ManualPayment))
+                    .Sum(x => x.AvgMonthlyAmount));
+
+            (int Count, decimal Total) dueTodayPayments = (finances
+                    .Count(x => x.PaymentStatus == PaymentStatus.DueToday), finances
+                    .Where(x => x.PaymentStatus == PaymentStatus.DueToday)
+                    .Sum(x => x.AvgMonthlyAmount));
+
+            var reminders = new List<(string Note, PaymentStatus PaymentStatus)>();
+
+            if (latePayments.Count > 0)
+            {
+                reminders.Add(($"You have {latePayments.Count} late payments totalling {Utils.ToCurrency(latePayments.Total)}", PaymentStatus.Late));
+            }
+
+            if (upcomingPayments.Count > 0)
+            {
+                reminders.Add(($"You have {upcomingPayments.Count} upcoming payments totalling {Utils.ToCurrency(upcomingPayments.Total)}", PaymentStatus.Upcoming));
+            }
+
+            if (dueTodayPayments.Count > 0)
+            {
+                reminders.Add(($"You have {dueTodayPayments.Count} payments due today totalling {Utils.ToCurrency(dueTodayPayments.Total)}", PaymentStatus.DueToday));
+            }
+
+            var paymentReminders = new List<Reminder>();
+
+            foreach (var reminder in reminders)
+            {
+                paymentReminders.Add(new Reminder
+                {
+                    Notes = reminder.Note,
+                    PaymentStatus = reminder.PaymentStatus,
+                    _priority = Priority.High,
+                    Category = Categories.Bills.ToString(),
+                    Display = true,
+                    Sort = 0
+                });
+            }
+
+            return paymentReminders;
         }
     }
 }

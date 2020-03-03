@@ -71,6 +71,9 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                 <button type="button" className="btn btn-info" onClick={() => this.showReminders(ReminderType.Upcoming)}>
                     <span className="notificationLabel">Upcoming</span> <span className="badge">{notifications.upcomingReminders.length}</span>
                 </button>
+                <button type="button" className="btn btn-dark" onClick={() => this.showReminders(ReminderType.Alert)}>
+                    <span className="notificationLabel">Alerts</span> <span className="badge">{notifications.alerts.length}</span>
+                </button>
                 <>
                 {
                     this.state.showReminders === ReminderType.Overdue && notifications.overDueReminders.length > 0 ? 
@@ -114,6 +117,23 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                                     <div style={{display: 'block'}}>
                                     {
                                         notifications.upcomingReminders.map(r =>
+                                            this.notificationCard(r)
+                                        )
+                                    }
+                                    </div>
+                                : null
+                            }
+                        </div>
+                    : null    
+                }
+                {
+                    this.state.showReminders === ReminderType.Alert && notifications.alerts.length > 0 ? 
+                        <div className="alert alert-dark d-flex flex-row" role="alert">
+                            {
+                                notifications.alerts.length > 0 ? 
+                                    <div style={{display: 'block'}}>
+                                    {
+                                        notifications.alerts.map(r =>
                                             this.notificationCard(r)
                                         )
                                     }

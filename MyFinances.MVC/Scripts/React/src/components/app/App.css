@@ -99,7 +99,10 @@ body {
     display: block;
   }
   .notificationLabel {
-    font-size: 12px;
+    font-size: 9px;
+  }
+  .badge {
+    padding: 2px 5px;
   }
 }
 

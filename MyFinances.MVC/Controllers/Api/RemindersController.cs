@@ -57,7 +57,7 @@ namespace MyFinances.Website.Controllers.API
         [HttpGet]
         public async Task<HttpResponseMessage> GetNotificationsAsync()
         {
-            var notifications = await financeService.ReminderNotifications();
+            var notifications = await financeService.GetNotifications();
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -89,7 +89,8 @@ namespace MyFinances.Website.Controllers.API
                         x.PaymentStatus,
                         x.Priority,
                         x.Category
-                    })
+                    }),
+                    notifications.Alerts
                 }
             });
         }

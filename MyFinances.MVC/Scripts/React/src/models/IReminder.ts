@@ -19,5 +19,6 @@ export interface IReminderDTO {
 export interface IReminderNotification {
     overDueReminders: IReminder[],
     upcomingReminders: IReminder[],
-    dueTodayReminders: IReminder[]
+    dueTodayReminders: IReminder[],
+    alerts: IReminder[]
 }

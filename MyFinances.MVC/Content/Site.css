@@ -63,6 +63,18 @@ textarea {
     margin-left: 0px !important;
 }
 
+.btn-dark {
+    color: #fff;
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+.alert-dark {
+    color: #1b1e21;
+    background-color: #d6d8d9;
+    border-color: #c6c8ca;
+}
+
 .mvcView {
   padding: 15px;
   margin-bottom: 15px;

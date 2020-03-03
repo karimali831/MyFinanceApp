@@ -1,5 +1,6 @@
 export enum ReminderType {
     DueToday,
     Overdue,
-    Upcoming
+    Upcoming,
+    Alert
 }

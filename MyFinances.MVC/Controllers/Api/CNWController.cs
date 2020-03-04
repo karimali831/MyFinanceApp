@@ -72,7 +72,8 @@ namespace MyFinances.Website.Controllers.API
                     x.ActualRoutePay,
                     x.ActualTotalPay,
                     x.ActualSupportPay,
-                    x.Byod
+                    x.Byod,
+                    x.DeduVanDamages
                 })
             });
         }

@@ -8,5 +8,6 @@ export interface ICNWPayment
     actualTotalPay?: number,
     actualSupportPay?: number,
     byod?: number,
-    info: string
+    info: string,
+    deduVanDamages: number
 }

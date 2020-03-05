@@ -17,10 +17,8 @@ export interface IOwnState {
     loading: boolean,
     redirect: boolean,
     notes: string,
-    dueDate: string,
-    priority: string,
-    alert: boolean,
-    reminder: boolean
+    dueDate?: string | null,
+    priority: string
 }
 
 export default class AddReminder extends React.Component<IPropsFromState, IOwnState> {
@@ -30,10 +28,8 @@ export default class AddReminder extends React.Component<IPropsFromState, IOwnSt
             loading: false,
             redirect: false,
             notes: "",
-            dueDate: "",
-            priority: Priority[Priority.Low],
-            alert: false,
-            reminder: true
+            dueDate: null,
+            priority: Priority[Priority.Low]
         };
     }
 
@@ -52,27 +48,10 @@ export default class AddReminder extends React.Component<IPropsFromState, IOwnSt
             <div>
                 {AddMenu("reminder")}
                 <form className="form-horizontal">
-                    <div className="form-check form-check-lg" style={{display:'inline',padding: '5px', marginRight: '2px'}}>
-                        <input id="reminder" type="radio" name="type" className="form-check-input" checked={this.state.reminder} onChange={(e) => { this.onTypeChanged(e);}} />
-                        <label className="form-check-label" htmlFor="reminder">
-                            Reminder
-                        </label>
+                    <div className="form-group form-group-lg">
+                        <label htmlFor="dueDate" className="control-label">Due Date</label>
+                        <input id="dueDate" className="form-control" type="datetime-local" value={this.state.dueDate!}  onChange={(e) => { this.onDueDateInputChanged(e);}} />
                     </div>
-                    <div className="form-check form-check-lg" style={{display:'inline',padding: '5px', marginRight: '2px'}}>
-                        <input id="alert" type="radio" name="type" className="form-check-input" checked={this.state.alert} onChange={(e) => { this.onTypeChanged(e);}} />
-                        <label className="form-check-label" htmlFor="alert">
-                            Alert
-                        </label>
-                    </div>
-                    {this.state.reminder ?
-                        <>
-                            <div className="form-group form-group-lg">
-                                <label htmlFor="dueDate" className="control-label">Due Date</label>
-                                <input id="dueDate" className="form-control" type="datetime-local" value={this.state.dueDate}  onChange={(e) => { this.onDueDateInputChanged(e);}} />
-                            </div>
-                        </>
-                    : null 
-                    }
                     <div className="form-group form-group-lg">
                         <label htmlFor="notes" className="control-label">Notes</label>
                         <textarea id="notes" className="form-control" cols={40} rows={4} onChange={(e) => { this.onNotesInputChanged(e);}} >{this.state.notes}</textarea>
@@ -111,12 +90,9 @@ export default class AddReminder extends React.Component<IPropsFromState, IOwnSt
         this.setState({ ...this.state, notes: e.target.value })
     }
 
-    private onTypeChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ ...this.state, alert: !this.state.alert, reminder: !this.state.reminder })
-    }
-
     private onDueDateInputChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ ...this.state, dueDate: e.target.value })
+        const value = e.target.value;
+        this.setState({ ...this.state, dueDate: value === "" ? null : value })
     }
 
     private addReminder = () => {

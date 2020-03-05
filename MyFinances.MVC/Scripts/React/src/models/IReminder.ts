@@ -11,7 +11,7 @@ export interface IReminder {
 
 export interface IReminderDTO {
     notes: string,
-    dueDate: string,
+    dueDate?: string | null,
     priority: number,
     catId: number
 }

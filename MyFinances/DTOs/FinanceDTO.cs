@@ -11,5 +11,6 @@ namespace MyFinances.DTOs
     {
         public string Name { get; set; }
         public int CatId { get; set; }
+        public int? SecondCatId { get; set; }
     }
 }

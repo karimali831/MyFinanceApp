@@ -18,7 +18,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<Spending>> GetAllAsync(DateFilter dateFilter);
         Task<IEnumerable<(int Year, int Month)>> MissedCreditCardInterestEntriesAsync(string card);
         Task<int?> GetIdFromFinanceAsync(int Id);
-        Task MakeSpendingFinanceless(int id, int catId);
+        Task MakeSpendingFinanceless(int id, int catId, int? secondCatId);
         (DateTime? Date, decimal Amount) ExpenseLastPaid(int financeId);
         Task InsertAsync(SpendingDTO dto);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFilter dateFilter);
@@ -171,12 +171,17 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task MakeSpendingFinanceless(int id, int catId)
+        public async Task MakeSpendingFinanceless(int id, int catId, int? secondCatId = null)
         {
             using (var sql = dbConnectionFactory())
             {
                 await sql.ExecuteAsync($@"
-                    UPDATE {TABLE} SET CatId = @CatId, FinanceId = null WHERE Id = @Id", new { CatId = catId, Id = id }
+                    UPDATE {TABLE} SET CatId = @CatId, SecondCatId = @SecondCatId, FinanceId = null WHERE Id = @Id", 
+                    new { 
+                        CatId = catId,
+                        SecondCatId = secondCatId,
+                        Id = id
+                    }
                 );
             }
         }

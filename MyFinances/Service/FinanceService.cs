@@ -137,7 +137,7 @@ namespace MyFinances.Service
 
                         if (financePaidId.HasValue)
                         {
-                            await spendingService.MakeSpendingFinanceless(financePaidId.Value, finance.CatId);
+                            await spendingService.MakeSpendingFinanceless(financePaidId.Value, finance.CatId, finance.SecondCatId);
                             await baseService.DeleteAsync(finance.Id, "Finances");
                         }
                     }
@@ -165,9 +165,11 @@ namespace MyFinances.Service
 
                                 var nextDueDate = $"{nextDueMonth}-{finance.MonthlyDueDate}-{DateTime.UtcNow.ToString("yyyy", CultureInfo.InvariantCulture)}";
 
-                                var date = DateTime.Parse(nextDueDate);
-                                var calcDate = finance.OverrideNextDueDate == OverrideDueDate.WorkingDays ? CalculateNextDueDate(date) : date;
-                                await financeRepository.UpdateNextDueDateAsync(calcDate, finance.Id);
+                                if (DateTime.TryParseExact(nextDueDate, "M-d-yyyy", CultureInfo.CurrentUICulture, DateTimeStyles.None, out DateTime date))
+                                { 
+                                    var calcDate = finance.OverrideNextDueDate == OverrideDueDate.WorkingDays ? CalculateNextDueDate(date) : date;
+                                    await financeRepository.UpdateNextDueDateAsync(calcDate, finance.Id);
+                                }
                             }
                         }
                     }

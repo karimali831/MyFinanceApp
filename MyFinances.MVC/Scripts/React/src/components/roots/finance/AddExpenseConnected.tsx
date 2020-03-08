@@ -8,7 +8,8 @@ import AddExpense, { IPropsFromState } from './AddExpense';
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
-        selectedCat: state.common.selectedCat
+        selectedCat: state.common.selectedCat,
+        selectedSecondCat: state.common.selectedSecondCat
     });
 
 // This does the magic of subscribing to state changes and ensuring the wrapped

@@ -25,5 +25,6 @@ export enum PaymentStatus {
 
 export interface IFinanceDTO {
     name: string,
-    catId: number
+    catId: number,
+    secondCatId?: number
 }

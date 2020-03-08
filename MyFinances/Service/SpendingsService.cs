@@ -15,7 +15,7 @@ namespace MyFinances.Service
         Task<IEnumerable<Spending>> GetAllAsync(SpendingRequestDTO request);
         Task MissedCreditCardInterestEntriesAsync();
         Task<int?> GetIdFromFinanceAsync(int Id);
-        Task MakeSpendingFinanceless(int id, int catId);
+        Task MakeSpendingFinanceless(int id, int catId, int? secondCatId);
         Task InsertAsync(SpendingDTO dto);
         (DateTime? Date, decimal Amount) ExpenseLastPaid(int financeId);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter);
@@ -62,9 +62,9 @@ namespace MyFinances.Service
         // if finance is a one-off payment, we need to delete the finance once its paid
         // but not delete the item from spendings table. so we need to set catId accordingly
         // getting the value from the finance table and then set financeId to null
-        public async Task MakeSpendingFinanceless(int id, int catId)
+        public async Task MakeSpendingFinanceless(int id, int catId, int? secondCatId)
         {
-            await spendingRepository.MakeSpendingFinanceless(id, catId);
+            await spendingRepository.MakeSpendingFinanceless(id, catId, secondCatId);
         }
 
         public async Task InsertAsync(SpendingDTO dto) 

@@ -6,7 +6,8 @@ import { IFinanceDTO } from '../../../models/IFinance';
 import SelectionRefinementForSpendingCategories from '../spending/SelectionRefinementForSpendingCategories';
 
 export interface IPropsFromState {
-    selectedCat?: number
+    selectedCat?: number,
+    selectedSecondCat?: number
 }
 
 export interface IOwnState {
@@ -56,7 +57,8 @@ export default class AddExpense extends React.Component<IPropsFromState, IOwnSta
         {
             const addModel: IFinanceDTO = {
                 name: this.state.name,
-                catId: this.props.selectedCat
+                catId: this.props.selectedCat,
+                secondCatId: this.props.selectedSecondCat
             }
 
             commonApi.add(addModel, "finances");

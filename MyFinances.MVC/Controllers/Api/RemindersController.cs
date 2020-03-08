@@ -68,6 +68,7 @@ namespace MyFinances.Website.Controllers.API
                         x.Id,
                         x.Notes,
                         DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
+                        x.DaysUntilDue,
                         x.PaymentStatus,
                         x.Priority,
                         x.Category
@@ -77,6 +78,7 @@ namespace MyFinances.Website.Controllers.API
                         x.Id,
                         x.Notes,
                         DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
+                        x.DaysUntilDue,
                         x.PaymentStatus,
                         x.Priority,
                         x.Category
@@ -85,7 +87,6 @@ namespace MyFinances.Website.Controllers.API
                     {
                         x.Id,
                         x.Notes,
-                        DueDate = x.DueDate.HasValue ? x.DueDate.Value.ToString("d/MM/yyyy HH:mm:ss") : null,
                         x.PaymentStatus,
                         x.Priority,
                         x.Category

@@ -12,6 +12,8 @@ namespace MyFinances.Model
         public DateTime? DueDate { get; set; }
         [DbIgnore]
         public PaymentStatus PaymentStatus { get; set; }
+        [DbIgnore]
+        public int? DaysUntilDue { get; set; }
         public DateTime AddedDate { get; set; }
         public bool Display { get; set; }
         public Priority _priority { get; set; }

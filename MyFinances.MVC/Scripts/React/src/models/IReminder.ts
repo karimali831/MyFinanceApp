@@ -3,7 +3,8 @@ import { PaymentStatus } from 'src/enums/PaymentStatus';
 export interface IReminder {
     id: number,
     notes: string,
-    dueDate?: Date,
+    dueDate?: Date
+    daysUntilDue?: number,
     paymentStatus: PaymentStatus
     priority: string,
     category: string

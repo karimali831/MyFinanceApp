@@ -66,7 +66,6 @@ namespace MyFinances.Service
 
             if (finances.Any())
             {
- 
                 foreach (var x in finances)
                 {
                     viewModel.Add(new FinanceVM
@@ -99,10 +98,19 @@ namespace MyFinances.Service
             var upcomingPayments = upcomingPaymentRemindersAsync(finances);
             var getReminders = await remindersService.GetAllAsync();
 
+            if (getReminders.Any())
+            {
+                foreach (var reminder in getReminders)
+                {
+                    reminder.DaysUntilDue = CalculateDays(reminder.DueDate, DateTime.UtcNow);
+                }
+            }
+
             var reminders = getReminders
                 .Concat(upcomingPayments)
                 .Where(x => x.Display == true)
                 .OrderBy(x => x.Sort)
+                .ThenBy(x => x.DueDate)
                 .ThenByDescending(x => x._priority);
 
             return new RemindersVM

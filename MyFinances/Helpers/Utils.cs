@@ -79,7 +79,7 @@ namespace MyFinances.Helpers
                         return $"Averaged daily: {ToCurrency(averagedResults.Average(x => x.Total) / 28)}";
 
                     case ChartHeaderTitleType.Total:
-                        return $"Total spent: {ToCurrency(data.Sum(x => x.Total))}";
+                        return $"Total: {ToCurrency(data.Sum(x => x.Total))}";
                 }
             }
             return "";

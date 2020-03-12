@@ -61,6 +61,10 @@ export default class WeekSummaries extends React.Component<IOwnProps, IOwnState>
           text: 'Invoice Total Pay',
           formatter: priceFormatter
         }, {
+          dataField: 'deduFuel',
+          text: 'Co-Fuel',
+          formatter: priceFormatter
+        }, {
           dataField: 'deduVanDamages',
           text: 'Van Damage',
           formatter: priceFormatter

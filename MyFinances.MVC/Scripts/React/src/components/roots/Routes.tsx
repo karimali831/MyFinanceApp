@@ -60,6 +60,11 @@ export default class Routes extends React.Component<IOwnProps, IOwnState> {
           dataField: 'extraDrops',
           text: 'Extra Stops'
         }, {
+          dataField: 'coFuel',
+          text: 'Co-Fuel',
+          headerClasses: "hidden-xs",
+          classes: "hidden-xs"
+        }, {
           dataField: 'mileage',
           text: 'Route Mileage',
           headerClasses: "hidden-xs",

@@ -19,6 +19,7 @@ namespace MyFinances.Model
         public decimal? ExtraMileage { get; set; }
         public string Info { get; set; }
         public decimal FuelCost { get; set; }
+        public decimal? CoFuel { get; set; }
         [DbIgnore]
         public decimal EstimatedFuelCost { get; set; }
     }

@@ -146,6 +146,7 @@
     <Compile Include="DTOs\SpendingSummaryDTO.cs" />
     <Compile Include="DTOs\SpendingDTO.cs" />
     <Compile Include="Enums\Categories.cs" />
+    <Compile Include="Enums\ChartHeaderTitleType.cs" />
     <Compile Include="Enums\ChartType.cs" />
     <Compile Include="Enums\Priority.cs" />
     <Compile Include="Enums\OverrideDueDate.cs" />

@@ -1,4 +1,5 @@
 ﻿using MyFinances.DTOs;
+using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Service;
 using MyFinances.ViewModels;
@@ -96,10 +97,17 @@ namespace MyIncomes.Website.Controllers.API
       
             string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
 
+            var summary = new ChartSummaryVM
+            {
+                AveragedDailyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Daily),
+                AveragedMonthlyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Monthly),
+                TotalSpentDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Total),
+            };
+
             return Request.CreateResponse(HttpStatusCode.OK,
                 new ChartVM
                 {
-                    HeaderTitle = Utils.ChartsHeaderTitle(results, true),
+                    Summary = summary,
                     Title = string.Format("{0} Chart for {1} {2}", "Incomes", results.First().Category, secondCategory),
                     Data = results
                 });

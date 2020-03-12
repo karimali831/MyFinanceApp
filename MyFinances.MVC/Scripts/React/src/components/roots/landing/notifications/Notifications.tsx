@@ -107,7 +107,7 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                                     <div style={{display: 'block'}}>
                                     {
                                         notifications.overDueReminders.map(r =>
-                                            this.notificationCard(r)
+                                            this.notificationCard(r, "overdue by " + r.daysUntilDue + " day" + (r.daysUntilDue === -1 ? "" : "s"))
                                         )
                                     }
                                     </div>
@@ -124,7 +124,7 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                                     <div style={{display: 'block'}}>
                                     {
                                         notifications.dueTodayReminders.map(r =>
-                                            this.notificationCard(r, true)
+                                            this.notificationCard(r)
                                         )
                                     }
                                     </div>
@@ -141,7 +141,7 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                                     <div style={{display: 'block'}}>
                                     {
                                         notifications.upcomingReminders.map(r =>
-                                            this.notificationCard(r)
+                                            this.notificationCard(r, "due in " + r.daysUntilDue + " day" + (r.daysUntilDue === 1 ? "" : "s"))
                                         )
                                     }
                                     </div>
@@ -172,15 +172,20 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
         )
     }
 
-    private notificationCard = (reminder: IReminder, dueToday: boolean = false) => {
+    private notificationCard = (reminder: IReminder, text: string = "") => {
+        let badgeLabel = reminder.category;
+
+        if (text !== "" && reminder.sort !== 0) {
+            badgeLabel = `${badgeLabel} ${text}`;
+        }
+
         return (
             <div key={reminder.id}>
                 <span onClick={() => this.deleteReminder(reminder.id)}>
                     <FontAwesomeIcon icon={faTimes} />
                 </span> 
                 &nbsp;
-                {priorityBadge(reminder.priority, reminder.category)} &nbsp;
-                {(dueToday || reminder.dueDate === null) ? "" : <><span className="label label-default">due in {reminder.daysUntilDue} days</span>&nbsp;</>} 
+                {priorityBadge(reminder.priority, badgeLabel)} &nbsp;
                 <span>{reminder.notes}</span>&nbsp;
             </div>
         )

@@ -17,6 +17,7 @@ export class ChartState {
         ChartDataType: undefined,
         incomeExpenseComparisonChart: undefined,
         incomeCategoryComparisonChart: undefined,
-        expenseCategoryComparisonChart: undefined
+        expenseCategoryComparisonChart: undefined,
+        financesComparisonChart: undefined
     }
 }

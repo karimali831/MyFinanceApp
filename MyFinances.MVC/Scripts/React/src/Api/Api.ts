@@ -7,7 +7,7 @@ import { ICNWPayment } from '../models/ICNWPayment';
 import { IDateFilter } from '../models/IDateFilter';
 import { rootUrl } from '../components/utils/Utils';
 import { IReminder, IReminderNotification } from 'src/models/IReminder';
-import { IMonthComparisonChart } from 'src/models/IChart';
+import { IMonthComparisonChart, IChartSummary } from 'src/models/IChart';
 import { CategoryType } from 'src/enums/CategoryType';
 
 export class FinanceApi {
@@ -260,7 +260,7 @@ export interface IMonthComparisonChartRequest
 
 export interface IMonthComparisonChartResponse
 {
-    headerTitle: string,
+    summary: IChartSummary,
     title: string,
     data: IMonthComparisonChart[]
 }

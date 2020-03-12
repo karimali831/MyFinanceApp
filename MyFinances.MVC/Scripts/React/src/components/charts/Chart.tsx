@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
 import { ChartType, ChartDataType } from 'src/enums/ChartType';
-import { IChartModel } from '../../models/IChart';
+import { IChartModel, IChartSummary } from '../../models/IChart';
 import { ChartOptions } from 'chart.js';
 import DateFilter from '../dateFilter/DateFilter';
 import { IDateFilter } from 'src/models/IDateFilter';
@@ -20,7 +20,7 @@ interface IOwnState {
 }
  
 interface IOwnProps {
-	headerTitle?: string
+	chartSummary?: IChartSummary | null,
 	chartType: ChartType,
 	chart: IChartModel,
 	width: number,
@@ -86,9 +86,42 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 	}
 
     public render() {
+		const summary = this.props.chartSummary;
         return (
             <div id="summary-chart">
-				<h3>{this.props.headerTitle}</h3>
+				{summary ? 
+				<>
+					<div className="card-group">
+						<div className="card">
+							<div className="card-body">
+							<h5 className="card-title">{summary.titleDs1}</h5>
+								<p className="card-text">
+									{summary.averagedDailyDs1} <br />
+									{summary.averagedMonthlyDs1}
+								</p>
+							</div>
+							<div className="card-footer">
+							<small className="text-muted">{summary.totalSpentDs1}</small>
+							</div>
+						</div>
+						{summary.titleDs2 ? 
+						<>
+							<div className="card">
+								<div className="card-body">
+								<h5 className="card-title">{summary.titleDs2}</h5>
+									<p className="card-text">
+										{summary.averagedDailyDs2} <br />
+										{summary.averagedMonthlyDs2}
+									</p>
+								</div>
+								<div className="card-footer">
+								<small className="text-muted">{summary.totalSpentDs2}</small>
+								</div>
+							</div>
+						</>
+						: null }
+					</div>
+				</> : null}
 				<DateFilter 
 					dateFilter={this.props.dateFilter} 
 					dataType={this.props.dataType}
@@ -116,7 +149,9 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 							: null}
 						</>
 					: null}
-				{this.chart()}
+				<div style={{width: "100%", height: this.props.height}}>
+					{this.chart()}
+				</div>
             </div>
         );
 	}
@@ -158,7 +193,8 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 	
 	private chartOptions = () => {
 		const options: ChartOptions = {
-			maintainAspectRatio: false,
+			responsive: true,
+    		maintainAspectRatio: false,
 			scales: {
 				yAxes: [{
 				  ticks: {
@@ -174,11 +210,11 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 	private chart = () => {
 		switch (this.props.chartType) {
 			case ChartType.Doughnut: 
-				return <Doughnut data={this.props.chart} width={this.props.width} height={this.props.height} options={this.chartOptions()} />;
+				return <Doughnut data={this.props.chart} options={this.chartOptions()} />;
 			case ChartType.Bar: 
-				return <Bar data={this.props.chart} width={this.props.width} height={this.props.height} options={this.chartOptions()} />;
+				return <Bar data={this.props.chart} options={this.chartOptions()} />;
 			case ChartType.Line: 
-				return <Line data={this.props.chart} width={this.props.width} height={this.props.height} options={this.chartOptions()} />;
+				return <Line data={this.props.chart} options={this.chartOptions()} />;
 			default:
 				return "";
 		}

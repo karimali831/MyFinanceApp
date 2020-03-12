@@ -8,7 +8,8 @@ export interface IRoute {
     mpg: number,
     extraDrops: number,
     info: string,
-    fuelCost: number
+    fuelCost: number,
+    coFuel: number
 }
 
 export interface IRouteDTO {
@@ -19,5 +20,6 @@ export interface IRouteDTO {
     mpg: number | undefined,
     extraDrops: number | undefined,
     info: string,
-    fuelCost: number | undefined
+    fuelCost: number | undefined,
+    coFuel: number | undefined
 }

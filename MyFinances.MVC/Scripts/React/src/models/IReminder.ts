@@ -7,7 +7,8 @@ export interface IReminder {
     daysUntilDue?: number,
     paymentStatus: PaymentStatus
     priority: string,
-    category: string
+    category: string,
+    sort: number
 }
 
 export interface IReminderDTO {

@@ -44,22 +44,21 @@ namespace MyFinances.Repository
                     r.ExtraDrops,
                     r.Info,
                     r.RouteTypeId,
-                    c.Name AS RouteType
+                    c.Name AS RouteType,
+                    r.CoFuel
                 FROM {TABLE} r 
                 INNER JOIN Categories c 
                     ON c.Id = r.RouteTypeId";
 
-            using (var sql = dbConnectionFactory())
+            using var sql = dbConnectionFactory();
+            var routes = (await sql.QueryAsync<CNWRoute>(sqlText));
+
+            if (weekNo != null)
             {
-                var routes =  (await sql.QueryAsync<CNWRoute>(sqlText));
-
-                if (weekNo != null)
-                {
-                    routes = routes.Where(x => x.WeekNo == weekNo);
-                }
-
-                return routes.ToArray();
+                routes = routes.Where(x => x.WeekNo == weekNo);
             }
+
+            return routes.ToArray();
         }
 
         public async Task<CNWRoute> GetAsync(int Id)

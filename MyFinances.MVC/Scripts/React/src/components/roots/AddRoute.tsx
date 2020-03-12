@@ -21,7 +21,8 @@ export interface IOwnState {
     mpg?: number | undefined,
     fuelCost?: number | undefined,
     extraDrops?: number | undefined,
-    info: string
+    info: string,
+    coFuel?: number | undefined
 }
 
 export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
@@ -38,7 +39,8 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
             mpg: undefined,
             fuelCost: undefined,
             extraDrops: undefined,
-            info: ""
+            info: "",
+            coFuel: undefined
         };
     }
 
@@ -81,6 +83,9 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                     </div>
                     <div className="form-group form-group-lg">
                         <input className="form-control" type="text" value={this.state.info} placeholder="Enter info" onChange={(e) => { this.onInfoChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="text" value={this.state.coFuel} placeholder="Enter co-fuel" onChange={(e) => { this.onCoFuelChanged(e);}} />
                     </div>
                     <div className="form-group form-group-lg">
                         <select onChange={e => this.onChangeSelectedRouteType(e)} className="form-control">
@@ -144,6 +149,10 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
         this.setState({ ...this.state, info: e.target.value })  
     }
 
+    private onCoFuelChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, coFuel: Number(e.target.value) })  
+    }
+
     private addRoute = () => {
         if (this.state.routeDate && this.state.selectedRouteType)
         {
@@ -155,7 +164,8 @@ export default class AddRoute extends React.Component<IOwnProps, IOwnState> {
                 mpg: this.state.mpg,
                 fuelCost: this.state.fuelCost,
                 extraDrops: this.state.extraDrops,
-                info: this.state.info
+                info: this.state.info,
+                coFuel: this.state.coFuel
             }
 
             commonApi.add(addModel, "cnw");

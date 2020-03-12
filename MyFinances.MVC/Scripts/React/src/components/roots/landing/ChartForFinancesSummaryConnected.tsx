@@ -13,11 +13,11 @@ import { LoadChartAction} from 'src/state/contexts/chart/Actions';
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
-        headerTitle: state.chart.financesComparisonChart === undefined ? "" : state.chart.financesComparisonChart.headerTitle,
+        chartSummary: state.chart.financesComparisonChart !== undefined ? state.chart.financesComparisonChart.summary : null,
         chart: chartFinanceSummary(state),
         chartType: ChartType.Line,
-        width: 200,
-        height: 200,
+        width: 1200,
+        height: 500,
         dateFilter: state.spendingSummary.dateFilter,
         dataType: DataType.SpendingSummary,
         secondTypeId: state.common.secondTypeId,

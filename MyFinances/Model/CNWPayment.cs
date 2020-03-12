@@ -38,6 +38,7 @@ namespace MyFinances.Model
         public decimal DeduAdminFee { get; set; }
         public decimal DeduVanFines { get; set; }
         public decimal DeduVanDamages { get; set; }
+        public decimal DeduFuel { get; set; }
         public decimal? Byod { get; set; }
         public string Info { get; set; }
         [DbIgnore]

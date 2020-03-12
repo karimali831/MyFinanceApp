@@ -19,6 +19,7 @@ namespace MyFinances.DTOs
         public decimal CalcMileagePay { get; set; }
         public decimal CalcTotalPay { get; set; }
         public decimal AverageMpg { get; set; }
+        public decimal DeduFuel { get; set; }
         public DateTime WeekDate { get; set; }
     }
 }

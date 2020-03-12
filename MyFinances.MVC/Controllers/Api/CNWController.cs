@@ -44,7 +44,8 @@ namespace MyFinances.Website.Controllers.API
                     x.FuelCost,
                     x.ExtraDrops,
                     x.ExtraMileage,
-                    x.Info
+                    x.Info,
+                    x.CoFuel
                 })
             });
         }
@@ -73,7 +74,8 @@ namespace MyFinances.Website.Controllers.API
                     x.ActualTotalPay,
                     x.ActualSupportPay,
                     x.Byod,
-                    x.DeduVanDamages
+                    x.DeduVanDamages,
+                    x.DeduFuel
                 })
             });
         }

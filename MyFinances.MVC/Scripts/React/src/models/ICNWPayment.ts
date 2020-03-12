@@ -9,5 +9,6 @@ export interface ICNWPayment
     actualSupportPay?: number,
     byod?: number,
     info: string,
-    deduVanDamages: number
+    deduVanDamages: number,
+    deduFuel: number
 }

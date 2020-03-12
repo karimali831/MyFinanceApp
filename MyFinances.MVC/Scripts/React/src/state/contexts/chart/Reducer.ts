@@ -5,7 +5,6 @@ import { Reducer } from 'redux';
 const CWTLReducer: Reducer<IChartState, ChartActions> =
     (state = ChartState.intialState, action) => {
         switch (action.type) {
-
             case ChartActionTypes.LoadChart:
                 return { ...state, 
                     ...{ 

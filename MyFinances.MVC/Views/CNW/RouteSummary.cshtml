@@ -41,9 +41,16 @@
                 <td>@Model.ExtraDrops</td>
             </tr>
             <tr>
-                <th scope="row">Spport Mileage</th>
+                <th scope="row">Support Mileage</th>
                 <td>@Model.ExtraMileage</td>
             </tr>
+            @if (Model.CoFuel.HasValue)
+            {
+            <tr>
+                <th scope="row">Co-Fuel</th>
+                <td>@Model.CoFuel.Value.ToString("#.##")</td>
+            </tr>
+            }
             <tr>
                 <th scope="row">Info</th>
                 <td>@Model.Info</td>

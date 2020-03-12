@@ -14,11 +14,11 @@ import { CategoryType } from 'src/enums/CategoryType';
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
-        headerTitle: state.chart.expenseCategoryComparisonChart === undefined ? "" : state.chart.expenseCategoryComparisonChart.headerTitle,
+        chartSummary: state.chart.expenseCategoryComparisonChart !== undefined ? state.chart.expenseCategoryComparisonChart.summary : null,
         chart: chartSummaryDataByCategory(state, DataType.SpendingSummary),
         chartType: ChartType.Bar,
         width: 200,
-        height: 200,
+        height: 400,
         dateFilter: state.spendingSummary.dateFilter,
         categoryType: CategoryType.Spendings,
         dataType: DataType.SpendingSummary,

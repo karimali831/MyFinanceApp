@@ -16,7 +16,7 @@ const mapStateToProps =
         chart: chartSummaryData(state, DataType.IncomeSummary),
         chartType: ChartType.Doughnut,
         width: 200,
-        height: 200,
+        height: 500,
         dateFilter: state.incomeSummary.dateFilter,
         dataType: DataType.IncomeSummary,
         secondTypeId: state.common.secondTypeId,

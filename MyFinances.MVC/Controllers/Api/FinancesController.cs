@@ -5,6 +5,7 @@ using MyFinances.Service;
 using MyFinances.ViewModels;
 using MyFinances.Website.Controllers.Api;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -72,10 +73,23 @@ namespace MyFinances.Website.Controllers.API
         public async Task<HttpResponseMessage> IncomeExpenseComparisonChart(MonthComparisonChartRequestDTO request)
         {
             var results = await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter);
+  
+            var summary = new ChartSummaryVM
+            {
+                TitleDs1 = "Spendings Summary",
+                TitleDs2 = "Income Summary",
+                AveragedDailyDs1 = Utils.ChartsHeaderTitle(results.Where(x => x.Type == CategoryType.Spendings), ChartHeaderTitleType.Daily),
+                AveragedDailyDs2 = Utils.ChartsHeaderTitle(results.Where(x => x.Type == CategoryType.Income), ChartHeaderTitleType.Daily),
+                AveragedMonthlyDs1 = Utils.ChartsHeaderTitle(results.Where(x => x.Type == CategoryType.Spendings), ChartHeaderTitleType.Monthly),
+                AveragedMonthlyDs2 = Utils.ChartsHeaderTitle(results.Where(x => x.Type == CategoryType.Income), ChartHeaderTitleType.Monthly),
+                TotalSpentDs1 = Utils.ChartsHeaderTitle(results.Where(x => x.Type == CategoryType.Spendings), ChartHeaderTitleType.Total),
+                TotalSpentDs2 = Utils.ChartsHeaderTitle(results.Where(x => x.Type == CategoryType.Income), ChartHeaderTitleType.Total)
+            };
 
             return Request.CreateResponse(HttpStatusCode.OK,
                 new ChartVM
                 {
+                    Summary = summary,
                     Data = results
                 });
         }
@@ -85,10 +99,17 @@ namespace MyFinances.Website.Controllers.API
         public async Task<HttpResponseMessage> FinancesChartAsync(MonthComparisonChartRequestDTO request)
         {
             var results = await financeService.GetFinanceTotalsByMonth(request);
+
+            var summary = new ChartSummaryVM
+            {
+                AveragedDailyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Daily),
+                AveragedMonthlyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Monthly),
+                TotalSpentDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Total),
+            };
  
             return Request.CreateResponse(HttpStatusCode.OK, new ChartVM
             {
-                HeaderTitle = Utils.ChartsHeaderTitle(results),
+                Summary = summary,
                 Data = results
             });
         }

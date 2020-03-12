@@ -144,7 +144,8 @@ namespace MyFinances.Service
                         CalcSupportDrops = supportDrops,
                         CalcRoutePay = fullRoutePay + halfRoutePay + missortRoutePay,
                         AverageMpg = routes.Average(x => x.Mpg),
-                        WeekDate = firstWeekDate
+                        WeekDate = firstWeekDate,
+                        DeduFuel = routes.Sum(x => x.CoFuel) ?? 0
                     };
 
                     model.CalcMileagePay = rates.Mileage * (model.CalcMiles + model.CalcSupportMiles);

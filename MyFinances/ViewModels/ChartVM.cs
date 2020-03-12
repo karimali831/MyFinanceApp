@@ -8,8 +8,22 @@ namespace MyFinances.ViewModels
 {
     public class ChartVM
     {
-        public string HeaderTitle { get; set; }
+        public ChartSummaryVM Summary { get; set; }
         public string Title { get; set; }
         public IEnumerable<MonthComparisonChartVM> Data { get; set; }
+    }
+
+    public class ChartSummaryVM
+    {
+        public string TitleDs1 { get; set; } = "Summary";
+        public string TitleDs2 { get; set; } = "";
+        public string AveragedDailyDs1 { get; set; }
+        public string AveragedDailyDs2 { get; set; }
+        public string AveragedMonthlyDs1 { get; set; }
+        public string AveragedMonthlyDs2 { get; set; } 
+        public string TotalSpentDs1 { get; set; } 
+        public string TotalSpentDs2 { get; set; } 
+
+
     }
 }

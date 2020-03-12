@@ -43,9 +43,19 @@
                     <th scope="row">Deductions</th>
                     <td>
                         <span class="label label-danger">Admin fee: £@Model.Payment.DeduAdminFee.ToString("#.##")</span> <br />
-                        <span class="label label-danger">Van rental: £@Model.Payment.DeduVanRental.ToString("#.##")</span> <br />
-                        <span class="label label-danger">Van fines: £@Model.Payment.DeduVanFines.ToString("#.##")</span> <br />
-                        <span class="label label-danger">Van damges: £@Model.Payment.DeduVanDamages.ToString("#.##")</span>
+                        <span class="label label-danger">Van rental: £@Model.Payment.DeduVanRental.ToString("#.##")</span> 
+                        @if (Model.Payment.DeduVanFines > 0)
+                        {
+                            <br /><span class="label label-danger">Van fines: £@Model.Payment.DeduVanFines.ToString("#.##")</span> 
+                        }
+                        @if (Model.Payment.DeduVanDamages > 0)
+                        {
+                            <br /><span class="label label-danger">Van damges: £@Model.Payment.DeduVanDamages.ToString("#.##")</span>
+                        }
+                        @if (Model.Payment.DeduFuel > 0)
+                        {
+                            <br /><span class="label label-danger">Co Fuel: £@Model.Payment.DeduFuel.ToString("#.##")</span>
+                        }
                     </td>
                 </tr>
                 <tr>

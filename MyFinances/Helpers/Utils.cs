@@ -63,28 +63,26 @@ namespace MyFinances.Helpers
             return highlight == false ? formatAmount : $"<span class='label label-{label}'>{formatAmount}</span>";
         }
 
-        public static string ChartsHeaderTitle(IEnumerable<MonthComparisonChartVM> results, bool showTotal = false)
+        public static string ChartsHeaderTitle(IEnumerable<MonthComparisonChartVM> data, ChartHeaderTitleType type)
         {
             // exclude first month and last month records (because partial stored records)
-            var averagedResults = results.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM", CultureInfo.InvariantCulture) && x.YearMonth != "2019-07");
+            var averagedResults = data.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM", CultureInfo.InvariantCulture) && x.YearMonth != "2019-07");
 
-            string averagedMonthly = averagedResults.Any() ? ToCurrency(averagedResults.Average(x => x.Total)) : "";
- 
-            StringBuilder headerTitle = new StringBuilder();
-            if (averagedMonthly != "")
+            if (averagedResults.Any())
             {
-                headerTitle.Append($"Averaged monthly: {averagedMonthly}");
-                headerTitle.Append(Environment.NewLine);
-                headerTitle.Append($"Averaged daily: {ToCurrency(averagedResults.Average(x => x.Total) / 28)}");
-                headerTitle.Append(Environment.NewLine);
-            }
+                switch (type)
+                {
+                    case ChartHeaderTitleType.Monthly:
+                        return $"Averaged monthly: {ToCurrency(averagedResults.Average(x => x.Total))}";
 
-            if (showTotal)
-            {
-                headerTitle.Append($"Total spent: {ToCurrency(results.Sum(x => x.Total))}");
-            }
+                    case ChartHeaderTitleType.Daily:
+                        return $"Averaged daily: {ToCurrency(averagedResults.Average(x => x.Total) / 28)}";
 
-            return headerTitle.ToString();
+                    case ChartHeaderTitleType.Total:
+                        return $"Total spent: {ToCurrency(data.Sum(x => x.Total))}";
+                }
+            }
+            return "";
         }
 
         public static string FilterDateSql(DateFilter dateFilter)

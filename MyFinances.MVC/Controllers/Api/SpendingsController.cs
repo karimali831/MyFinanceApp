@@ -114,10 +114,17 @@ namespace MyFinances.Website.Controllers.API
 
             string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
 
+            var summary = new ChartSummaryVM
+            {
+                AveragedDailyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Daily),
+                AveragedMonthlyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Monthly),
+                TotalSpentDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Total),
+            };
+
             return Request.CreateResponse(HttpStatusCode.OK, 
                 new ChartVM
                 {
-                    HeaderTitle = Utils.ChartsHeaderTitle(results, true),
+                    Summary = summary,
                     Title = string.Format("{0} Chart for {1} {2}", "Spendings", results.First().Category, secondCategory),
                     Data = results
                 });

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ChartType, ChartDataType } from 'src/enums/ChartType';
-import { IChartModel } from '../../models/IChart';
+import { IChartModel, IChartSummary } from '../../models/IChart';
 import { Chart } from './Chart';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DataType } from 'src/enums/DataType';
@@ -8,7 +8,7 @@ import { IMonthComparisonChartRequest } from 'src/api/Api';
 import { CategoryType } from 'src/enums/CategoryType';
 
 export interface IPropsFromState {
-	headerTitle?: string | undefined,
+	chartSummary?: IChartSummary | null,
 	chart: IChartModel,
 	chartType: ChartType,
 	width: number,
@@ -32,7 +32,7 @@ type AllProps = IPropsFromState & IPropsFromDispatch
 
 const ChartProps: React.SFC<AllProps> = (props) =>
 	<Chart
-		headerTitle={props.headerTitle}
+		chartSummary={props.chartSummary}
 		chartType={props.chartType}
 		chart={props.chart}
 		width={props.width}

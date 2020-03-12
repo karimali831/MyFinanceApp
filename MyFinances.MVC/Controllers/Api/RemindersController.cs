@@ -71,7 +71,8 @@ namespace MyFinances.Website.Controllers.API
                         x.DaysUntilDue,
                         x.PaymentStatus,
                         x.Priority,
-                        x.Category
+                        x.Category,
+                        x.Sort
                     }),
                     UpcomingReminders = notifications.UpcomingReminders.Select(x => new
                     {
@@ -81,7 +82,8 @@ namespace MyFinances.Website.Controllers.API
                         x.DaysUntilDue,
                         x.PaymentStatus,
                         x.Priority,
-                        x.Category
+                        x.Category,
+                        x.Sort
                     }),
                     DueTodayReminders = notifications.DueTodayReminders.Select(x => new
                     {
@@ -89,7 +91,8 @@ namespace MyFinances.Website.Controllers.API
                         x.Notes,
                         x.PaymentStatus,
                         x.Priority,
-                        x.Category
+                        x.Category,
+                        x.Sort
                     }),
                     notifications.Alerts
                 }

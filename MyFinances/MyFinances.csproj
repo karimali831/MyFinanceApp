@@ -154,6 +154,7 @@
     <Compile Include="Enums\PaymentStatus.cs" />
     <Compile Include="Enums\CategoryType.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Model\Settings.cs" />
     <Compile Include="Model\Reminder.cs" />
     <Compile Include="Model\CNWRates.cs" />
     <Compile Include="Model\CNWPayment.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Model\Spending.cs" />
     <Compile Include="Model\Finance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\SettingRepository.cs" />
     <Compile Include="Repository\RemindersRepository.cs" />
     <Compile Include="Repository\BaseRepository.cs" />
     <Compile Include="Repository\CNWRatesRepository.cs" />
@@ -178,6 +180,7 @@
     <Compile Include="Service\CNWService.cs" />
     <Compile Include="Service\SpendingsService.cs" />
     <Compile Include="Service\FinanceService.cs" />
+    <Compile Include="ViewModels\Summary.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\RemindersVM.cs" />
     <Compile Include="ViewModels\FinanceVM.cs" />

@@ -22,12 +22,10 @@ namespace MyFinances.Website.Controllers.API
     public class FinancesController : ApiController
     {
         private readonly IFinanceService financeService;
-        private readonly ISpendingService spendingService;
 
-        public FinancesController(IFinanceService financeService, ISpendingService spendingService)
+        public FinancesController( IFinanceService financeService)
         {
             this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
-            this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
         }
 
         [Route("{resyncNextDueDates}/{upcomingPayments}")]

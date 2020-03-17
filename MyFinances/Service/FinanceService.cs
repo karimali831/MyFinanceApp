@@ -25,6 +25,7 @@ namespace MyFinances.Service
         Task<IEnumerable<MonthComparisonChartVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
         Task<RemindersVM> GetNotifications();
         Task<IEnumerable<MonthComparisonChartVM>> GetFinanceTotalsByMonth(MonthComparisonChartRequestDTO request);
+        Task<Summary> GetSummary();
     }
 
     public class FinanceService : IFinanceService
@@ -34,19 +35,22 @@ namespace MyFinances.Service
         private readonly IIncomeService incomeService;
         private readonly IRemindersService remindersService;
         private readonly IBaseService baseService;
+        private readonly ICNWService cnwService;
 
         public FinanceService(
             IFinanceRepository financeRepository,
             ISpendingService spendingService,
             IIncomeService incomeService,
             IRemindersService remindersService,
-            IBaseService baseService)
+            IBaseService baseService,
+            ICNWService cnwService)
         {
             this.financeRepository = financeRepository ?? throw new ArgumentNullException(nameof(financeRepository));
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
             this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
             this.remindersService = remindersService ?? throw new ArgumentNullException(nameof(remindersService));
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
+            this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
         }
 
         public DateTime CalculateNextDueDate(DateTime date)
@@ -120,6 +124,48 @@ namespace MyFinances.Service
                 UpcomingReminders = reminders.Where(x => x.PaymentStatus == PaymentStatus.Upcoming),
                 Alerts = reminders.Where(x => x.PaymentStatus == PaymentStatus.Unknown)
             };
+        }
+
+
+        public async Task<Summary> GetSummary()
+        {
+            int weekNo = Utils.GetWeek(DateTime.UtcNow);
+            int cwtlCurrentRoutesWorked = (await cnwService.GetAllRoutesAsync(weekNo)).Count();
+            var cwtlCurrentPayWeekSummary = await cnwService.GetWeekSummaryAsync(weekNo - 3);
+            decimal cwtlTotalVanDamagesPaid = (await cnwService.GetWeekSummariesAsync()).Sum(x => x.DeduVanDamages);
+
+            var settings = await baseService.GetSettingsAsync();
+
+            decimal incurredIncome = (await incomeService.GetAllIncomesAsync(
+                new IncomeRequestDTO
+                {
+                    DateFilter = new DateFilter
+                    {
+                        Frequency = DateFrequency.DateRange,
+                        FromDateRange = settings.StartingDate,
+                        ToDateRange = DateTime.UtcNow
+                    }
+                })).Sum(x => x.Amount);
+
+            decimal incurredSpendings = (await spendingService.GetAllAsync(
+                new SpendingRequestDTO
+                {
+                    DateFilter = new DateFilter
+                    {
+                        Frequency = DateFrequency.DateRange,
+                        FromDateRange = settings.StartingDate,
+                        ToDateRange = DateTime.UtcNow
+                    }
+                })).Sum(x => x.Amount);
+
+            return 
+                new Summary
+                {
+                    CWTLCalculatedPay = Utils.ToCurrency(cwtlCurrentPayWeekSummary.CalcTotalPayToDriver),
+                    CWTLRoutesWorked = cwtlCurrentRoutesWorked,
+                    CWTLTotalVanDamagesPaid = Utils.ToCurrency(cwtlTotalVanDamagesPaid),
+                    EstimatedAvailableCredit = Utils.ToCurrency((settings.AvailableCredit + incurredIncome) - incurredSpendings)
+                };
         }
 
         public async Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates)

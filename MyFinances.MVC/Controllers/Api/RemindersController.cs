@@ -58,6 +58,7 @@ namespace MyFinances.Website.Controllers.API
         public async Task<HttpResponseMessage> GetNotificationsAsync()
         {
             var notifications = await financeService.GetNotifications();
+            var summary = await financeService.GetSummary();
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -94,7 +95,8 @@ namespace MyFinances.Website.Controllers.API
                         x.Category,
                         x.Sort
                     }),
-                    notifications.Alerts
+                    notifications.Alerts,
+                    Summary = summary
                 }
             });
         }

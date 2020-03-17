@@ -22,5 +22,13 @@ export interface IReminderNotification {
     overDueReminders: IReminder[],
     upcomingReminders: IReminder[],
     dueTodayReminders: IReminder[],
-    alerts: IReminder[]
+    alerts: IReminder[],
+    summary: ISummary
+}
+
+export interface ISummary {
+    cwtlCalculatedPay: string,
+    cwtlRoutesWorked: number,
+    cwtlTotalVanDamagesPaid: string,
+    estimatedAvailableCredit: string
 }

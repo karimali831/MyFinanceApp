@@ -347,8 +347,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\CNW\WeekSummary.cshtml" />
     <Content Include="Views\CNW\RouteSummary.cshtml" />
-    <Content Include="Views\Finances\_Chart.cshtml" />
-    <Content Include="Views\Finances\Chart.cshtml" />
+    <Content Include="Views\Finances\Settings.cshtml" />
     <None Include="Web.Stage.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

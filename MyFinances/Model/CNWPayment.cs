@@ -20,7 +20,7 @@ namespace MyFinances.Model
         public decimal? CalcNetAmount { get; set; }
         public decimal CalcTotalPay { get; set; }
         [DbIgnore]
-        public decimal? CalcTotalPayToDriver { get; set; }
+        public decimal CalcTotalPayToDriver { get; set; }
         public decimal? ActualMiles { get; set; }
         public decimal? ActualRoutePay { get; set; }
         [DbIgnore]

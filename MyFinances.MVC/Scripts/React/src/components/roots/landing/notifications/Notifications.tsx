@@ -168,6 +168,19 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                     : null    
                 }
                 </>
+                <div className="card-group">
+                    <div className="card">
+                        <div className="card-body">
+                        <h5 className="card-title">Summary Info</h5>
+                            <p className="card-text">
+                                CWTL Upcoming Calculated Pay: {notifications.summary.cwtlCalculatedPay} <br />
+                                CWTL Routes Worked This Week: {notifications.summary.cwtlRoutesWorked} <br />
+                                CWTL Van Total Damages Paid: {notifications.summary.cwtlTotalVanDamagesPaid} <br />
+                                Estimated available credit: {notifications.summary.estimatedAvailableCredit}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }

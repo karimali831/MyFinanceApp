@@ -77,7 +77,7 @@ namespace MyFinances.Service
                 weekSummary.ActualMileagePay = rates.Mileage * weekSummary.ActualMiles;
                 weekSummary.CNWRates = rates;
                 weekSummary.ActualNetAmount = weekSummary.ActualTotalPay - rates.VATFlatRate;
-                weekSummary.CalcTotalPayToDriver = weekSummary.CalcNetAmount + rates.VATFlatRate;
+                weekSummary.CalcTotalPayToDriver = (weekSummary.CalcNetAmount + rates.VATFlatRate) ?? 0;
 
                 /*
                  * Estimated fuel cost formula 

@@ -87,11 +87,6 @@ namespace MyFinances.Helpers
 
         public static string FilterDateSql(DateFilter dateFilter)
         {
-            if (dateFilter.FromDateRange.HasValue && dateFilter.ToDateRange.HasValue)
-            {
-                return $"{dateFilter.DateField} >= '{dateFilter.FromDateRange.Value}' AND {dateFilter.DateField} <= '{dateFilter.ToDateRange.Value}'";
-            }
-
             if (DateTime.TryParseExact(dateFilter.Frequency.ToString(), "MMMM", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime freq))
             {
                 var year = DateTime.UtcNow.Date >= freq.Date ? DateTime.UtcNow.Year : DateTime.UtcNow.Year - 1;
@@ -99,27 +94,19 @@ namespace MyFinances.Helpers
                        $"AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()) + 1, 0)";
             }
 
-            switch (dateFilter.Frequency)
+            return dateFilter.Frequency switch
             {
-                case DateFrequency.Today:
-                    return $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)";
-                case DateFrequency.Yesterday:
-                    return $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0)";
-                case DateFrequency.Upcoming:
-                    return $"[{dateFilter.DateField}] > DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)";
-                case DateFrequency.LastXDays:
-                    return $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), - {dateFilter.Interval})";
-                case DateFrequency.LastXMonths:
-                    return $"[{dateFilter.DateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETUTCDATE()) - {dateFilter.Interval}, DAY(GETUTCDATE())) - 1)";
-                case DateFrequency.CurrentYear:
-                    return $"YEAR([{dateFilter.DateField}]) = YEAR(GETUTCDATE())";
-                case DateFrequency.PreviousYear:
-                    return $"YEAR([{dateFilter.DateField}]) = YEAR(DATEADD(YEAR, -1, GETUTCDATE()))";
-                case DateFrequency.AllTime:
-                    return $"[{dateFilter.DateField}] <= GETUTCDATE()";
-                default:
-                    return "";
-            }
+                DateFrequency.DateRange => $"{dateFilter.DateField} >= '{dateFilter.FromDateRange.Value.ToString("yyyy-MM-dd HH:mm")}' AND {dateFilter.DateField} <= '{dateFilter.ToDateRange.Value.ToString("yyyy-MM-dd HH:mm")}'",
+                DateFrequency.Today => $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)",
+                DateFrequency.Yesterday => $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0)",
+                DateFrequency.Upcoming => $"[{dateFilter.DateField}] > DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)",
+                DateFrequency.LastXDays => $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), - {dateFilter.Interval})",
+                DateFrequency.LastXMonths => $"[{dateFilter.DateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETUTCDATE()) - {dateFilter.Interval}, DAY(GETUTCDATE())) - 1)",
+                DateFrequency.CurrentYear => $"YEAR([{dateFilter.DateField}]) = YEAR(GETUTCDATE())",
+                DateFrequency.PreviousYear => $"YEAR([{dateFilter.DateField}]) = YEAR(DATEADD(YEAR, -1, GETUTCDATE()))",
+                DateFrequency.AllTime => $"[{dateFilter.DateField}] <= GETUTCDATE()",
+                _ => "",
+            };
         }
 
         public static string ResolveUrl(string originalUrl)

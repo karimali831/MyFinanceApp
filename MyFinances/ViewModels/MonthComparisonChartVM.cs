@@ -15,5 +15,6 @@ namespace MyFinances.ViewModels
         public CategoryType Type { get; set; }
         public string Category { get; set; }
         public string SecondCategory { get; set; }
+        public int DaysInMonth { get; set; }
     }
 }

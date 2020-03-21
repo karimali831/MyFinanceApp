@@ -173,29 +173,46 @@ namespace MyFinances.Service
 
         public async Task MissedCNWPaymentEntriesAsync()
         {
-            var weekSummaries = (await GetWeekSummariesAsync()).Select(x => x.WeekNo.ToString()).ToList();
+            var weekSummaries = (await GetWeekSummariesAsync())
+                .Select(x => (x.WeekNo, x.WeekDate.Year))
+                .OrderBy(x => x.Year)
+                .ThenBy(x => x.WeekNo);
 
+            var firstYear = weekSummaries.Select(x => x.Year).First();
             var currentWeek = Utils.GetWeek(DateTime.UtcNow);
+            var weeks = new List<(int WeekNo, int Year)>();
 
-            var weeks = new List<string>();
-
-            for (int i = 1; i <= currentWeek; i++)
+            for (int y = firstYear; y <= DateTime.UtcNow.Year; y++)
             {
-                weeks.Add(i.ToString());
+                var firstWeekNo = weekSummaries
+                    .Where(x => x.Year == y)
+                    .Select(x => x.WeekNo)
+                    .FirstOrDefault();
+
+                int lastWeekno = y == DateTime.UtcNow.Year ? currentWeek : Utils.GetWeeksInYear(y);
+
+                for (int i = firstWeekNo; i <= lastWeekno; i++)
+                {
+                    weeks.Add((i, y));
+                }
             }
 
             var results = weekSummaries.Except(weeks);
-            var missedEntries = new List<MissedEntries>();
 
-            var data = new MissedEntries()
+            if (results.Any())
             {
-                Name = "CNW Week",
-                Dates = results.ToArray()
-            };
+                var missedEntries = new List<MissedEntries>();
 
-            missedEntries.Add(data);
+                var data = new MissedEntries()
+                {
+                    Name = "CNW Week",
+                    Dates = results.Select(x => x.WeekNo.ToString()).ToArray()
+                };
 
-            await remindersService.MissedEntriesAsync(missedEntries, "You have a missed CNW payment entry for");
+                missedEntries.Add(data);
+
+                await remindersService.MissedEntriesAsync(missedEntries, "You have a missed CNW payment entry for");
+            }
         }
     }
 }

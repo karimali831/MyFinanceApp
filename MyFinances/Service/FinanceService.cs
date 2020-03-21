@@ -98,6 +98,10 @@ namespace MyFinances.Service
 
         public async Task<RemindersVM> GetNotifications()
         {
+            await incomeService.MissedIncomeEntriesAsync();
+            await spendingService.MissedCreditCardInterestEntriesAsync();
+            await cnwService.MissedCNWPaymentEntriesAsync();
+
             var finances = await GetFinances(resyncNextDueDates: false);
             var upcomingPayments = upcomingPaymentRemindersAsync(finances);
             var getReminders = await remindersService.GetAllAsync();
@@ -129,9 +133,20 @@ namespace MyFinances.Service
 
         public async Task<Summary> GetSummary()
         {
-            int weekNo = Utils.GetWeek(DateTime.UtcNow);
+            var date = DateTime.UtcNow;
+            int weekArrears;
+
+            if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || date.DayOfWeek == DayOfWeek.Friday)
+            {
+                weekArrears = 2;
+            } 
+            else {
+                weekArrears = 3;
+            }
+
+            int weekNo = Utils.GetWeek(date);
             int cwtlCurrentRoutesWorked = (await cnwService.GetAllRoutesAsync(weekNo)).Count();
-            var cwtlCurrentPayWeekSummary = await cnwService.GetWeekSummaryAsync(weekNo - 3);
+            var cwtlCurrentPayWeekSummary = await cnwService.GetWeekSummaryAsync(weekNo - weekArrears);
             decimal cwtlTotalVanDamagesPaid = (await cnwService.GetWeekSummariesAsync()).Sum(x => x.DeduVanDamages);
 
             var settings = await baseService.GetSettingsAsync();

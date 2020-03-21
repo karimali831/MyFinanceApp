@@ -68,15 +68,26 @@ namespace MyFinances.Helpers
             // exclude first month and last month records (because partial stored records)
             var averagedResults = data.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM", CultureInfo.InvariantCulture) && x.YearMonth != "2019-07");
 
+            //int daysInMonth = System.DateTime.DaysInMonth(2001, July);
+
+     
+
             if (averagedResults.Any())
             {
+                foreach (var item in averagedResults)
+                {
+                    int year = int.Parse(item.YearMonth.Split('-')[0]);
+                    int month = int.Parse(item.YearMonth.Split('-')[1]);
+                    item.DaysInMonth = DateTime.DaysInMonth(year, month);
+                }
+
                 switch (type)
                 {
                     case ChartHeaderTitleType.Monthly:
                         return $"Averaged monthly: {ToCurrency(averagedResults.Average(x => x.Total))}";
 
                     case ChartHeaderTitleType.Daily:
-                        return $"Averaged daily: {ToCurrency(averagedResults.Average(x => x.Total) / 28)}";
+                        return $"Averaged daily: {ToCurrency(averagedResults.Average(x => x.Total / x.DaysInMonth))}";
 
                     case ChartHeaderTitleType.Total:
                         return $"Total: {ToCurrency(data.Sum(x => x.Total))}";
@@ -182,6 +193,15 @@ namespace MyFinances.Helpers
                 }
                 return MvcHtmlString.Create(builder.ToString());
             }
+        }
+
+        public static int GetWeeksInYear(int year)
+        {
+            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+            DateTime date1 = new DateTime(year, 12, 31);
+            Calendar cal = dfi.Calendar;
+            return cal.GetWeekOfYear(date1, dfi.CalendarWeekRule,
+                                                dfi.FirstDayOfWeek);
         }
     }
 }

@@ -139,7 +139,7 @@
                     </tr>*@
                 <tr>
                     <th scope="row">Total Pay</th>
-                    <td>£@(Model.Payment.CalcTotalPayToDriver.HasValue ? Model.Payment.CalcTotalPayToDriver.Value.ToString("#.##") : null)</td>
+                    <td>£@Model.Payment.CalcTotalPayToDriver.ToString("#.##")</td>
                     <td>£@(Model.Payment.ActualTotalPay.HasValue ? Model.Payment.ActualTotalPay.Value.ToString("#.##") : null)</td>
                     <td>@Html.Raw(Utils.AmountDifference(Model.Payment.ActualTotalPay, Model.Payment.CalcTotalPayToDriver))</td>
                 </tr>

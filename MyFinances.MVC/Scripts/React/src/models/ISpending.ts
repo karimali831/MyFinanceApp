@@ -26,4 +26,5 @@ export interface ISpendingSummary
     cat2: string,
     secondCats: ISpendingSummary[],
     total: number,
+    average: string
 }

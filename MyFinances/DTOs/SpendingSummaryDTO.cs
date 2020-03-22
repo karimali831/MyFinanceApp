@@ -16,5 +16,6 @@ namespace MyFinances.DTOs
         public string Cat2 { get; set; }
         public IEnumerable<SpendingSummaryDTO> SecondCats { get; set; }
         public decimal Total { get; set; }
+        public string Average { get; set; }
     }
 }

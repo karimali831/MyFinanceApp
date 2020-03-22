@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Nager.Date;
 using Nager.Date.Extensions;
+using MyFinances.Helpers;
 
 namespace MyFinances.Service
 {
@@ -91,22 +92,42 @@ namespace MyFinances.Service
                                         SecondCatId = s.SecondCatId,
                                         Cat2 = s.Cat2,
                                         Total = s.Total
-                                    })
+                                    }),
                         }
                  );
 
             var firstCats = incomeSummary.Where(x => x.Cat2 == null);
+            var data = firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
 
-            return firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
+            foreach (var item in data)
+            {
+                if (item.Cat2 == null)
+                {
+
+                    var tt = await GetIncomesByCategoryAndMonthAsync(dateFilter, item.CatId, false);
+                    item.Average = Utils.ChartsHeaderTitle(tt, ChartHeaderTitleType.Monthly);
+                }
+                else
+                {
+                    foreach (var x in item.SecondCats)
+                    {
+                        var tt = await GetIncomesByCategoryAndMonthAsync(dateFilter, x.SecondCatId, true);
+                        item.Average = Utils.ChartsHeaderTitle(tt, ChartHeaderTitleType.Monthly);
+                    }
+                }
+            }
+
+            return data;
         }
 
 
         public async Task MissedIncomeEntriesAsync()
         {
-            var incomeStreams = new List<(string DateColumn, int WeekArrears, Categories CategoryType)>()
+            var incomeStreams = new List<(string DateColumn, int WeekArrears, Categories CategoryType, string RecsBegan)>()
             {
-                (nameof(Income.AmazonWeekCommencing), 3, Categories.CWTL),
-                (nameof(Income.Date), 1, Categories.UberEats)
+                (nameof(Income.AmazonWeekCommencing), 3, Categories.CWTL, "2019-08-07"),
+                (nameof(Income.Date), 1, Categories.UberEats, "2019-08-07"),
+                (nameof(Income.Date), 1, Categories.Flex, "2020-03-23")
             };
 
             var results = new List<MissedEntries>();
@@ -117,7 +138,8 @@ namespace MyFinances.Service
                     await incomeRepository.MissedIncomeEntriesAsync(
                         incomeStream.DateColumn, 
                         incomeStream.WeekArrears, 
-                        incomeStream.CategoryType
+                        incomeStream.CategoryType,
+                        incomeStream.RecsBegan
                     )
                 );
 

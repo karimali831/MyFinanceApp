@@ -22,4 +22,5 @@ export interface IIncomeSummary {
     cat2: string,
     secondCats: IIncomeSummary[],
     total: number,
+    average: string
 }

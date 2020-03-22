@@ -18,7 +18,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<Income>> GetAllAsync(DateFilter filter);
         Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(IncomeDTO dto);
-        Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category);
+        Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category, string recsBegan = "2019-08-07");
         Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat);
     }
 
@@ -69,7 +69,8 @@ namespace MyFinances.Repository
 						i.SecondSourceId AS SecondCatId,
 	                    c1.Name AS Cat1,
                         c2.Name AS Cat2,
-	                    SUM(i.Amount) as Total
+	                    SUM(i.Amount) as Total,
+                        FORMAT(AVG(i.Amount), 'C', 'en-gb') as Average
                     FROM 
 	                    {TABLE} as i
                     LEFT JOIN Categories c1
@@ -154,10 +155,10 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category)
+        public async Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category, string recsBegan = "2019-08-07")
         {
             string sqlTxt = $@"
-                DECLARE @start DATE = '2019-08-07' -- since records began
+                DECLARE @start DATE = @RecsBegan -- since records began
                 DECLARE @end DATE = DATEADD(WEEK, DATEDIFF(WEEK, -1, GETUTCDATE())-@WeekArrears, -1) 
 
                 ;WITH IntervalDates (date)
@@ -185,7 +186,8 @@ namespace MyFinances.Repository
                     new {
                         @IncomeStream = (int)category,
                         @DateColumn = dateColumn,
-                        @WeekArrears = weekArrears
+                        @WeekArrears = weekArrears,
+                        @RecsBegan = recsBegan
                     }
                 )).ToArray();
 

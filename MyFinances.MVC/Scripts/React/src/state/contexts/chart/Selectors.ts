@@ -90,7 +90,7 @@ export const chartSummaryData = (state: IStoreState, dataType: DataType): IChart
     dataSets.push(ds1);
 
     const chartModel: IChartModel = {
-        labels:  results.map((s) => s.cat1),
+        labels:  results.map((s) => s.cat1 + " (averaged: " + s.average + ")"),
         datasets: dataSets,
     }
 

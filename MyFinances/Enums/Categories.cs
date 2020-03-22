@@ -15,6 +15,7 @@ namespace MyFinances.Enums
         UberEats,
         CCInterest = 42,
         MissedEntries = 1140,
-        Bills = 1144
+        Bills = 1144,
+        Flex = 1147
     }
 }

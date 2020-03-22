@@ -1,5 +1,6 @@
 ﻿using MyFinances.DTOs;
 using MyFinances.Enums;
+using MyFinances.Helpers;
 using MyFinances.Model;
 using MyFinances.Repository;
 using MyFinances.ViewModels;
@@ -132,13 +133,32 @@ namespace MyFinances.Service
                                         SecondCatId = s.SecondCatId,
                                         Cat2 = s.Cat2,
                                         Total = s.Total
-                                    })
+                                    }),
                         }
                  );
 
             var firstCats = spendingsSummary.Where(x => x.Cat2 == null);
+            var data = firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
 
-            return firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
+            foreach (var item in data)
+            {
+                if (item.Cat2 == null)
+                {
+
+                    var tt = await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.CatId, false, item.IsFinance);
+                    item.Average = Utils.ChartsHeaderTitle(tt, ChartHeaderTitleType.Monthly);
+                }
+                else
+                {
+                    foreach (var x in item.SecondCats)
+                    {
+                        var tt = await GetSpendingsByCategoryAndMonthAsync(dateFilter, x.SecondCatId, true, false);
+                        item.Average = Utils.ChartsHeaderTitle(tt, ChartHeaderTitleType.Monthly);
+                    }
+                }
+            }
+
+            return data;
         }
 
         public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance)

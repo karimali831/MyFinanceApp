@@ -139,7 +139,8 @@ namespace MyFinances.Repository
                     CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Cat1,
                     CASE WHEN s.CatId IS NULL THEN 1 ELSE 0 END AS IsFinance,
 	                c2.Name AS Cat2, 
-                    SUM(s.Amount) as Total
+                    SUM(s.Amount) as Total,
+                    FORMAT(AVG(s.Amount), 'C', 'en-gb') as Average
                 FROM 
 	                {TABLE} as s
 	            LEFT JOIN Categories c1 

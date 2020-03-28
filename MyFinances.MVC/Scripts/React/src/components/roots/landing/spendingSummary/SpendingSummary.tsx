@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faChartPie, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faChartPie, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { ISpendingSummary } from '../../../../models/ISpending';
 import { Load } from '../../../base/Loader';
 import { ShowSecondCategorySpendingSummaryAction, FilterChangedAction } from '../../../../state/contexts/landing/Actions';
@@ -77,7 +77,7 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                         <tr>
                             <th scope="col" colSpan={2}>
                                 <Link to={"/chart/finances/"} onClick={() => this.props.loadChart(chartRequest, ChartDataType.Finances)}>
-                                    <FontAwesomeIcon icon={faChartBar} /> Finances breakdown chart
+                                    <FontAwesomeIcon icon={faChartLine} /> Finances breakdown chart
                                 </Link>
                                 <br />
                                 <Link to={"/chart/spendingsummary/"}> 

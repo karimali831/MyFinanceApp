@@ -108,8 +108,8 @@ namespace MyFinances.Helpers
             return dateFilter.Frequency switch
             {
                 DateFrequency.DateRange => $"{dateFilter.DateField} >= '{dateFilter.FromDateRange.Value.ToString("yyyy-MM-dd HH:mm")}' AND {dateFilter.DateField} <= '{dateFilter.ToDateRange.Value.ToString("yyyy-MM-dd HH:mm")}'",
-                DateFrequency.Today => $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)",
-                DateFrequency.Yesterday => $"[{dateFilter.DateField}] = DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0)",
+                DateFrequency.Today => $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0) AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 1)",
+                DateFrequency.Yesterday => $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0) AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 1, GETUTCDATE()), 1)",
                 DateFrequency.Upcoming => $"[{dateFilter.DateField}] > DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)",
                 DateFrequency.LastXDays => $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), - {dateFilter.Interval})",
                 DateFrequency.LastXMonths => $"[{dateFilter.DateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETUTCDATE()) - {dateFilter.Interval}, DAY(GETUTCDATE())) - 1)",

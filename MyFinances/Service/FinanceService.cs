@@ -173,13 +173,15 @@ namespace MyFinances.Service
                     }
                 })).Sum(x => x.Amount);
 
-            return 
+            decimal remainingBalance = (settings.AvailableCredit + incurredIncome) - incurredSpendings;
+
+            return
                 new Summary
                 {
                     CWTLCalculatedPay = Utils.ToCurrency(cwtlCurrentPayWeekSummary.CalcTotalPayToDriver),
                     CWTLRoutesWorked = cwtlCurrentRoutesWorked,
                     CWTLTotalVanDamagesPaid = Utils.ToCurrency(cwtlTotalVanDamagesPaid),
-                    EstimatedAvailableCredit = Utils.ToCurrency((settings.AvailableCredit + incurredIncome) - incurredSpendings)
+                    EstimatedAvailableCredit = Utils.ToCurrency(remainingBalance)
                 };
         }
 

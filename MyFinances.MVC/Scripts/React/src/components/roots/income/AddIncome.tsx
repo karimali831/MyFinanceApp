@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom'
 import { AddMenu } from '../../base/Menu';
 import { IIncomeDTO } from '../../../models/IIncome';
 import SelectionRefinementForIncomeSources from './SelectionRefinementForIncomeSourcesConnected';
+import * as moment from 'moment';
 
 export interface IPropsFromState {
     selectedCat?: number,
@@ -21,7 +22,7 @@ export default class AddExpense extends React.Component<IPropsFromState, IOwnSta
         super(props);
         this.state = { 
             amount: undefined,
-            date: "",
+            date: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
             redirect: false
         };
     }
@@ -41,7 +42,7 @@ export default class AddExpense extends React.Component<IPropsFromState, IOwnSta
                         <SelectionRefinementForIncomeSources />
                     </div>
                     <div className="form-group form-group-lg">
-                        <input className="form-control" type="date" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
+                        <input className="form-control" type="datetime-local" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
                     </div>
                     <div className="form-group form-group-lg">
                         <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />

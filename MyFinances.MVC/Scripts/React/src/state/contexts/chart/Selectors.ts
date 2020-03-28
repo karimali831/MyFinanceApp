@@ -83,14 +83,14 @@ export const chartSummaryData = (state: IStoreState, dataType: DataType): IChart
 
     const ds1: ChartDataSets = {
         data: results.map((s) => s.total),
-        backgroundColor: config.backgroundColor,
+        backgroundColor: config.backgroundColor, 
         hoverBackgroundColor: config.hoverBackgroundColor
     }
 
     dataSets.push(ds1);
 
     const chartModel: IChartModel = {
-        labels:  results.map((s) => s.cat1 + " (averaged: " + s.average + ")"),
+        labels:  results.map((s) => s.cat1 + " (" + s.average+")"),
         datasets: dataSets,
     }
 

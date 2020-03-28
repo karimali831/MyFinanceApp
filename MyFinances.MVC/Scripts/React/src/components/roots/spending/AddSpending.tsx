@@ -37,7 +37,7 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
             amount: undefined,
             loading: true,
             name: "",
-            date: moment(new Date()).format('YYYY-MM-DD'),
+            date: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
             selectedFinanceId: undefined,
             redirect: false
         };
@@ -66,7 +66,7 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
                         <input className="form-control" type="text" value={this.state.name} placeholder="Enter item" onChange={(e) => { this.onSpendingChanged(e);}} />
                     </div>
                     <div className="form-group form-group-lg">
-                        <input className="form-control" type="date" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
+                        <input className="form-control" type="datetime-local" value={this.state.date} placeholder="dd-MM-yy" onChange={(e) => { this.onDateChanged(e);}} />
                     </div>
                     <div className="form-group form-group-lg">
                         <select onChange={e => this.onChangeSelectedFinance(e)} className="form-control">

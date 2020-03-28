@@ -196,6 +196,7 @@ namespace MyFinances.Repository
                             SELECT Date, Amount
                             FROM Spendings
                             WHERE FinanceId = @FinanceId 
+                            AND Amount != 0
                             ORDER BY Date DESC",
                             new { FinanceId = financeId }
                     ))

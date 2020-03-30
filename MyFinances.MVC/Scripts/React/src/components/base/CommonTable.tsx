@@ -2,7 +2,7 @@ import * as React from 'react';
 import BootstrapTable, { SelectRowOptions, ITableProps, ITableOptions } from 'react-bootstrap-table-next';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import { commonApi, IUpdateRequest } from '../../api/CommonApi';
+import { commonApi, IUpdateRequest } from '../../Api/CommonApi';
 
 export interface IOwnProps {
     table: string,

@@ -1,5 +1,5 @@
 
-import { IIncomeResponse, api, IIncomeRequest } from '../../../api/Api'
+import { IIncomeResponse, api, IIncomeRequest } from '../../../Api/Api'
 import { select, call, put, takeLatest } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../contexts/error/Actions';
 import { getIncomeRequest } from 'src/state/contexts/income/Selectors';

@@ -12,3 +12,7 @@ export enum ChartDataType {
     IncomeSummaryByCategory,
     Finances
 }
+
+export enum ChartLabelType {
+    MonthAbbrev
+}

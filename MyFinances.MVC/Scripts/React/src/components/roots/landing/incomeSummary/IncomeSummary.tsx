@@ -9,7 +9,7 @@ import { ShowSecondCategoryIncomeSummaryAction } from 'src/state/contexts/landin
 import { CategoryType } from 'src/enums/CategoryType';
 import SummaryList from '../SummaryList';
 import { Link } from 'react-router-dom';
-import { IMonthComparisonChartRequest } from 'src/api/Api';
+import { IMonthComparisonChartRequest } from 'src/Api/Api';
 import { LoadChartAction } from 'src/state/contexts/chart/Actions';
 import { ChartDataType } from 'src/enums/ChartType';
 

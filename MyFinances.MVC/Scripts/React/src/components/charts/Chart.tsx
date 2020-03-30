@@ -6,7 +6,7 @@ import { ChartOptions } from 'chart.js';
 import DateFilter from '../dateFilter/DateFilter';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DataType } from 'src/enums/DataType';
-import { api, IMonthComparisonChartRequest } from 'src/api/Api';
+import { api, IMonthComparisonChartRequest } from 'src/Api/Api';
 import { ICategory } from 'src/models/ICategory';
 import { IFinance } from 'src/models/IFinance';
 import SelectionRefinementForChartCategories from './SelectionRefinementForChartCategories';

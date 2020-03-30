@@ -4,6 +4,7 @@ using MyFinances.DTOs;
 using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Model;
+using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,6 +20,7 @@ namespace MyFinances.Repository
         Task InsertAsync(CNWPaymentDTO dto);
         Task DeleteAsync(int weekNo);
         Task<bool> WeekPaymentSummaryExists(int weekNo);
+        Task<IEnumerable<MonthComparisonChartVM>> GetFuelInByMonthAsync(DateFilter dateFilter);
     }
 
     public class CNWPaymentsRepository : ICNWPaymentsRepository
@@ -79,6 +81,26 @@ namespace MyFinances.Repository
                     new { WeekNo = weekNo }
                 ));
             }
+        }
+
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetFuelInByMonthAsync(DateFilter dateFilter)
+        {
+            string sqlTxt = $@"
+                SELECT 
+	                CONVERT(CHAR(7), PayDate, 120) as YearMonth, 
+	                DATENAME(month, PayDate) AS MonthName, SUM(ActualMiles) as 'Total',
+                    'FuelIn' AS Category
+                FROM 
+                    {TABLE}
+                WHERE 
+                    {Utils.FilterDateSql(dateFilter)} 
+                GROUP BY 
+                    CONVERT(CHAR(7), PayDate, 120) , DATENAME(month, PayDate)
+                ORDER BY 
+                    YearMonth";
+
+            using var sql = dbConnectionFactory();
+            return (await sql.QueryAsync<MonthComparisonChartVM>(sqlTxt)).ToArray();
         }
     }
 }

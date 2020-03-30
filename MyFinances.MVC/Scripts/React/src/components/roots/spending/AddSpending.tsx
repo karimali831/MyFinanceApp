@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Redirect } from 'react-router-dom'
 import * as moment from 'moment'
 import { IFinance } from '../../../models/IFinance';
-import { commonApi } from '../../../api/CommonApi';
-import { api } from '../../../api/Api';
+import { commonApi } from '../../../Api/CommonApi';
+import { api } from '../../../Api/Api';
 import { Load } from '../../base/Loader';
 import { AddMenu } from '../../base/Menu';
 import { ISpendingDTO } from '../../../models/ISpending';

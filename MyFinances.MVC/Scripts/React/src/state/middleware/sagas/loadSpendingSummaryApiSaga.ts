@@ -1,4 +1,4 @@
-import {  api, ISpendingSummaryResponse } from '../../../api/Api'
+import {  api, ISpendingSummaryResponse } from '../../../Api/Api'
 import { select, call, put, takeLatest } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../contexts/error/Actions';
 import { LandingSummaryActionTypes, LoadSpendingSummarySuccessAction, LoadSpendingSummaryFailureAction } from '../../contexts/landing/Actions';

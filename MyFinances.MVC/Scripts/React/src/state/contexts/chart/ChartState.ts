@@ -1,5 +1,5 @@
 
-import { IMonthComparisonChartRequest, IMonthComparisonChartResponse } from 'src/api/Api';
+import { IMonthComparisonChartRequest, IMonthComparisonChartResponse } from 'src/Api/Api';
 import { ChartDataType } from 'src/enums/ChartType';
 
 export default interface IChartState {

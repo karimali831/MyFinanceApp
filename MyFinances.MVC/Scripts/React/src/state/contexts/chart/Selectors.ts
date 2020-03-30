@@ -1,12 +1,11 @@
 import IStoreState from 'src/state/IStoreState';
 import { IChartModel } from 'src/models/IChart';
 import { ChartDataSets, ChartColor } from 'chart.js';
-import { CategoryType } from 'src/enums/CategoryType';
 import { distinctValues } from 'src/components/utils/Utils';
-import { IMonthComparisonChartRequest } from 'src/api/Api';
+import { IMonthComparisonChartRequest, IMonthComparisonChartResponse } from 'src/Api/Api';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DataType } from 'src/enums/DataType';
-import { ChartDataType } from 'src/enums/ChartType';
+import { ChartDataType, ChartType, ChartLabelType } from 'src/enums/ChartType';
 
 export const getChartDataType = (state: IStoreState): ChartDataType | undefined => 
     state.chart.type
@@ -22,48 +21,6 @@ export const getMonthComparisonChartRequest = (state: IStoreState, dateFilter: I
     } else {
         return null;
     }
-}
-
-export const incomeExpenseChartData = (state: IStoreState): IChartModel => {
-    const results = state.chart.incomeExpenseComparisonChart
-  
-    if (results === undefined) {
-        return {};
-    }
-
-    const dataSets: ChartDataSets[] = [];
-    const config = lineChartConfig();
-
-    const ds1: ChartDataSets = {
-        label: "Income",
-        data: results.data.filter(s => s.type === CategoryType.Incomes).map((s) => s.total),
-        pointBorderColor: config[0].pointBorderColor,
-        pointBackgroundColor: config[0].pointBackgroundColor,
-        borderColor: config[0].borderColor,
-        pointHoverBackgroundColor: config[0].pointHoverBackgroundColor,
-        pointHoverBorderColor: config[0].pointHoverBorderColor
-    }
-
-    const ds2: ChartDataSets = {
-        label: "Spendings",
-        data: results.data.filter(s => s.type === CategoryType.Spendings).map((s) => s.total),
-        pointBorderColor: config[1].pointBorderColor,
-        pointBackgroundColor: config[1].pointBackgroundColor,
-        borderColor: config[1].borderColor,
-        pointHoverBackgroundColor: config[1].pointHoverBackgroundColor,
-        pointHoverBorderColor: config[1].pointHoverBorderColor
-    }
-
-    dataSets.push(ds1, ds2);
-
-    const labels = results.data.map((s) => s.monthName.substring(0, 3));
-
-    const chartModel: IChartModel = {
-        labels:  labels.filter(distinctValues),
-        datasets: dataSets,
-    }
-
-    return chartModel;
 }
 
 export const chartSummaryData = (state: IStoreState, dataType: DataType): IChartModel => {
@@ -83,8 +40,8 @@ export const chartSummaryData = (state: IStoreState, dataType: DataType): IChart
 
     const ds1: ChartDataSets = {
         data: results.map((s) => s.total),
-        backgroundColor: config.backgroundColor, 
-        hoverBackgroundColor: config.hoverBackgroundColor
+        backgroundColor: config[0].backgroundColor, 
+        hoverBackgroundColor: config[0].hoverBackgroundColor
     }
 
     dataSets.push(ds1);
@@ -97,87 +54,71 @@ export const chartSummaryData = (state: IStoreState, dataType: DataType): IChart
     return chartModel;
 }
 
-export const chartSummaryDataByCategory = (state: IStoreState, dataType: DataType): IChartModel => {
-    let results;
-    if (DataType.SpendingSummary === dataType) {
-        results = state.chart.expenseCategoryComparisonChart;
-    } else if (DataType.IncomeSummary === dataType) {
-        results = state.chart.incomeCategoryComparisonChart;
-    }
+export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, results?: IMonthComparisonChartResponse): IChartModel => {
 
     if (results === undefined) {
         return {};
     }
- 
+
     const dataSets: ChartDataSets[] = [];
-    const config = doughnutChartConfig();
 
-    const ds1: ChartDataSets = {
-        label: results.title,
-        data: results.data.map((s) => s.total),
-        backgroundColor: config.backgroundColor,
-        hoverBackgroundColor: config.hoverBackgroundColor
+    dataSets[0] = {
+        label: results.summary.titleDs1,
+        data: results.ds1.map((s) => s.total)
     }
-
-    dataSets.push(ds1);
-
-    const labels = results.data.map((s) => s.monthName.substring(0, 3));
-
-    const chartModel: IChartModel = {
-        labels:  labels.filter(distinctValues),
-        datasets: dataSets,
+ 
+    if (results.ds2 !== null && results.ds2.length > 0) {
+        dataSets[1] = {
+            label: results.summary.titleDs2,
+            data: results.ds2.map((s) => s.total)
+        }
     }
-
-    return chartModel;
-}
-
-export const generateMonthlyComparisonChart = (labels: string[], dataSets: ChartDataSets[]): IChartModel => {
-
-    const config = doughnutChartConfig();
-    if (dataSets.length > 0) {
-        dataSets.forEach((element: ChartDataSets) : ChartDataSets => {
-            return {
-                label: element.label,
-                data: element.data,
-                backgroundColor: config.backgroundColor,
-                hoverBackgroundColor: config.hoverBackgroundColor
-            }
-        });
-    }
-
     
-    const chartModel: IChartModel = {
-        labels:  labels.filter(distinctValues),
-        datasets: dataSets,
+    let config: ChartDataSets[];
+    switch (chartType)
+    {
+        case ChartType.Doughnut || ChartType.Bar:
+            config = doughnutChartConfig();
+
+            dataSets[0].backgroundColor = config[0].backgroundColor;
+            dataSets[0].hoverBackgroundColor = config[0].hoverBackgroundColor;
+
+            if (results.ds2 !== null && results.ds2.length > 0) {    
+                dataSets[1].backgroundColor = config[1].backgroundColor;
+                dataSets[1].hoverBackgroundColor = config[1].hoverBackgroundColor;    
+            }
+            break;
+
+        case ChartType.Line:
+            config = lineChartConfig();
+
+            dataSets[0].pointBorderColor = config[0].pointBorderColor;
+            dataSets[0].pointBackgroundColor = config[0].pointBackgroundColor;
+            dataSets[0].borderColor = config[0].borderColor;
+            dataSets[0].pointHoverBackgroundColor = config[0].pointHoverBackgroundColor;
+            dataSets[0].pointHoverBorderColor = config[0].pointHoverBorderColor;
+            
+            if (results.ds2 !== null && results.ds2.length > 0) {  
+                dataSets[1].pointBorderColor = config[1].pointBorderColor;
+                dataSets[1].pointBackgroundColor = config[1].pointBackgroundColor;
+                dataSets[1].borderColor = config[1].borderColor;
+                dataSets[1].pointHoverBackgroundColor = config[1].pointHoverBackgroundColor;
+                dataSets[1].pointHoverBorderColor = config[1].pointHoverBorderColor;
+            }
+            break;
     }
 
-    return chartModel;
+    let labels;
+    switch (chartLabelType)
+    {
+        case ChartLabelType.MonthAbbrev:
+            labels = results.ds1.map((s) => s.monthName.substring(0, 3));
+            break;
 
-}
-
-export const chartFinanceSummary = (state: IStoreState): IChartModel => {
-    const results = state.chart.financesComparisonChart;
-
-    if (results === undefined) {
-        return {};
+        default:
+            labels = results.ds1.map((s) => s.monthName);
+            break;
     }
- 
-    const dataSets: ChartDataSets[] = [];
-    const config = lineChartConfig();
-
-    const ds1: ChartDataSets = {
-        label: "Finances summary by month",
-        data: results.data.map((s) => s.total),
-        pointBorderColor: config[0].pointBorderColor,
-        pointBackgroundColor: config[0].pointBackgroundColor,
-        borderColor: config[0].borderColor,
-        pointHoverBackgroundColor: config[0].pointHoverBackgroundColor,
-        pointHoverBorderColor: config[0].pointHoverBorderColor,
-    }
-
-    dataSets.push(ds1);
-
-    const labels = results.data.map((s) => s.monthName.substring(0, 3));
 
     const chartModel: IChartModel = {
         labels:  labels.filter(distinctValues),
@@ -212,9 +153,10 @@ export const lineChartConfig = () : ChartDataSets[] => {
     return dataSets;
 }
 
-export const doughnutChartConfig = () : ChartDataSets => {
+export const doughnutChartConfig = () : ChartDataSets[] => {
     const backgroundColors: ChartColor[] = []
     const hoverBackgroundColors: ChartColor[] = [];
+    const dataSets: ChartDataSets[] = [];
 
     backgroundColors.push(
         'rgba(255, 99, 132, 0.2)',
@@ -250,10 +192,17 @@ export const doughnutChartConfig = () : ChartDataSets => {
         '#ffa600'
     )
 
-    const config: ChartDataSets = {
+    const configDs1: ChartDataSets = {
+        backgroundColor: backgroundColors,
+        hoverBackgroundColor: hoverBackgroundColors
+    }
+    
+    const configDs2: ChartDataSets = {
         backgroundColor: backgroundColors,
         hoverBackgroundColor: hoverBackgroundColors
     }
 
-    return config;
+    dataSets.push(configDs1, configDs2);
+
+    return dataSets;
 }

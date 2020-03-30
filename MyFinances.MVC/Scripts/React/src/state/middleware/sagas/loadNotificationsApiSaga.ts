@@ -1,4 +1,4 @@
-import { api, INotificationResponse } from '../../../api/Api'
+import { api, INotificationResponse } from '../../../Api/Api'
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../contexts/error/Actions';
 import { LandingSummaryActionTypes, LoadNotificationsSuccessAction, LoadNotificationsFailureAction } from '../../contexts/landing/Actions';

@@ -1,12 +1,12 @@
 import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import ChartProps, { IPropsFromState, IPropsFromDispatch } from '../../../../charts/ChartProps';
-import { ChartType, ChartDataType } from 'src/enums/ChartType';
-import { chartSummaryDataByCategory } from 'src/state/contexts/chart/Selectors';
+import { ChartType, ChartDataType, ChartLabelType } from 'src/enums/ChartType';
 import { DateFilterChangeAction } from 'src/state/contexts/common/Actions';
 import { DataType } from 'src/enums/DataType';
 import { LoadChartAction } from 'src/state/contexts/chart/Actions';
 import { CategoryType } from 'src/enums/CategoryType';
+import { chartData } from 'src/state/contexts/chart/Selectors';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -15,7 +15,7 @@ import { CategoryType } from 'src/enums/CategoryType';
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
         chartSummary: state.chart.expenseCategoryComparisonChart !== undefined ? state.chart.expenseCategoryComparisonChart.summary : null,
-        chart: chartSummaryDataByCategory(state, DataType.SpendingSummary),
+        chart: chartData(ChartType.Bar, ChartLabelType.MonthAbbrev, state.chart.expenseCategoryComparisonChart),
         chartType: ChartType.Bar,
         width: 200,
         height: 400,

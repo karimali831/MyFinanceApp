@@ -9,7 +9,7 @@ import { loadSpendingSummary } from './loadSpendingSummaryApiSaga';
 import { spendingSummaryDateFilter, incomeSummaryDateFilter } from 'src/state/contexts/landing/Selectors';
 import { loadIncomeSummary } from './loadIncomeSummaryApiSaga';
 import { loadSpendings } from './loadSpendingsApiSaga';
-import { ISpendingRequest, IIncomeRequest } from 'src/api/Api';
+import { ISpendingRequest, IIncomeRequest } from 'src/Api/Api';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DateFrequency } from 'src/enums/DateFrequency';
 import { loadIncomes } from './loadIncomesApiSaga';

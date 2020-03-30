@@ -1,5 +1,5 @@
 import { SpendingActionTypes, LoadSpendingsFailureAction, LoadSpendingsSuccessAction } from './../../contexts/spending/Actions';
-import { ISpendingRequest, ISpendingResponse, api } from '../../../api/Api'
+import { ISpendingRequest, ISpendingResponse, api } from '../../../Api/Api'
 import { select, call, put, takeLatest } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../../state/contexts/error/Actions';
 import { getSpendingsRequest } from 'src/state/contexts/spending/Selectors';

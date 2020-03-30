@@ -4,7 +4,7 @@ import { IChartModel, IChartSummary } from '../../models/IChart';
 import { Chart } from './Chart';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DataType } from 'src/enums/DataType';
-import { IMonthComparisonChartRequest } from 'src/api/Api';
+import { IMonthComparisonChartRequest } from 'src/Api/Api';
 import { CategoryType } from 'src/enums/CategoryType';
 
 export interface IPropsFromState {

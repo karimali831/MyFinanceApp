@@ -1,4 +1,4 @@
-import { api, IIncomeSummaryResponse } from '../../../api/Api'
+import { api, IIncomeSummaryResponse } from '../../../Api/Api'
 import { select, call, put, takeLatest } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../contexts/error/Actions';
 import { LandingSummaryActionTypes, LoadIncomeSummarySuccessAction, LoadIncomeSummaryFailureAction } from '../../contexts/landing/Actions';

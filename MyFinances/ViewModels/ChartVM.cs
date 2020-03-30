@@ -10,7 +10,8 @@ namespace MyFinances.ViewModels
     {
         public ChartSummaryVM Summary { get; set; }
         public string Title { get; set; }
-        public IEnumerable<MonthComparisonChartVM> Data { get; set; }
+        public IEnumerable<MonthComparisonChartVM> Ds1 { get; set; }
+        public IEnumerable<MonthComparisonChartVM> Ds2 { get; set; }
     }
 
     public class ChartSummaryVM

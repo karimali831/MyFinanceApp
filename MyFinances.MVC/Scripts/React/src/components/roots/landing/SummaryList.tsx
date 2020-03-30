@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { CategoryType } from 'src/enums/CategoryType';
 import { SummaryFilteredList } from '../../utils/Utils';
 import { IBaseModel } from 'src/models/ISummaryBaseModel';
-import { IMonthComparisonChartRequest } from 'src/api/Api';
+import { IMonthComparisonChartRequest } from 'src/Api/Api';
 import { ChartDataType } from 'src/enums/ChartType';
 
 export interface IOwnState {

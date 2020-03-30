@@ -10,7 +10,7 @@ import SummaryList from '../SummaryList';
 import DateFilter from './connected/DateFilterSSConnected';
 import SelectionRefinementForSpendingSummary from './connected/SelectionRefinementForSpendingSummaryConnected';
 import { Link } from 'react-router-dom';
-import { IMonthComparisonChartRequest } from 'src/api/Api';
+import { IMonthComparisonChartRequest } from 'src/Api/Api';
 import { ChartDataType } from 'src/enums/ChartType';
 import { LoadChartAction } from 'src/state/contexts/chart/Actions';
 

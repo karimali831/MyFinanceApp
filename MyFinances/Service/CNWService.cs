@@ -22,6 +22,7 @@ namespace MyFinances.Service
         Task<decimal> GetFuelIn(DateFilter dateFilter);
         decimal EstimatedFuelCost(decimal miles, decimal averageMpg, decimal fuelCost);
         Task MissedCNWPaymentEntriesAsync();
+        Task<List<MonthComparisonChartVM>> GetFuelInByMonthAsync(DateFilter dateFilter);
     }
 
     public class CNWService : ICNWService
@@ -169,6 +170,22 @@ namespace MyFinances.Service
 
             return (await cnwPaymentsRepository.GetAllAsync(dateFilter))
                 .Sum(x => rates.Mileage * x.ActualMiles) ?? 0;
+        }
+
+        public async Task<List<MonthComparisonChartVM>> GetFuelInByMonthAsync(DateFilter dateFilter)
+        {
+            var data = await cnwPaymentsRepository.GetFuelInByMonthAsync(dateFilter);
+            var rates = await cnwRatesRepository.GetAsync();
+
+            if (data.Any())
+            {
+                foreach (var cnwPayment in data)
+                {
+                    cnwPayment.Total *= rates.Mileage;
+                }
+            }
+
+            return data.ToList();
         }
 
         public async Task MissedCNWPaymentEntriesAsync()

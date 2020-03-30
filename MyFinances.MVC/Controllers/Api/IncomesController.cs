@@ -109,7 +109,7 @@ namespace MyIncomes.Website.Controllers.API
                 {
                     Summary = summary,
                     Title = string.Format("{0} Chart for {1} {2}", "Incomes", results.First().Category, secondCategory),
-                    Data = results
+                    Ds1 = results
                 });
         }
     }

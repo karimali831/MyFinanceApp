@@ -1,4 +1,4 @@
-import { ISpendingRequest } from '../../../api/Api';
+import { ISpendingRequest } from '../../../Api/Api';
 import IStoreState from '../../../state/IStoreState';
 
 export const getSpendingsRequest = (state: IStoreState): ISpendingRequest => {

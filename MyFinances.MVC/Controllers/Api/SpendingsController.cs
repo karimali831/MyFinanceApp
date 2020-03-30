@@ -5,6 +5,7 @@ using MyFinances.Service;
 using MyFinances.ViewModels;
 using MyFinances.Website.Controllers.Api;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -116,17 +117,36 @@ namespace MyFinances.Website.Controllers.API
 
             var summary = new ChartSummaryVM
             {
+                TitleDs1 = string.Format("{0} Chart for {1} {2}", "Spendings", results.First().Category, secondCategory),
                 AveragedDailyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Daily),
                 AveragedMonthlyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Monthly),
                 TotalSpentDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Total),
             };
 
+            // if ds2 
+            var ds2 = new List<MonthComparisonChartVM>();
+
+            // if fuel cat then check fuel in ds2
+            if (request.CatId == 1 && request.SecondCatId == 28)
+            {
+                request.DateFilter.DateField = "PayDate";
+                ds2 = await cnwService.GetFuelInByMonthAsync(request.DateFilter);
+
+                if (ds2.Any())
+                {
+                    summary.TitleDs2 = "AMZ Van Fuel In";
+                    summary.AveragedDailyDs2 = Utils.ChartsHeaderTitle(ds2, ChartHeaderTitleType.Daily);
+                    summary.AveragedMonthlyDs2 = Utils.ChartsHeaderTitle(ds2, ChartHeaderTitleType.Monthly);
+                    summary.TotalSpentDs2 = Utils.ChartsHeaderTitle(ds2, ChartHeaderTitleType.Total);
+                }
+            }
+
             return Request.CreateResponse(HttpStatusCode.OK, 
                 new ChartVM
                 {
                     Summary = summary,
-                    Title = string.Format("{0} Chart for {1} {2}", "Spendings", results.First().Category, secondCategory),
-                    Data = results
+                    Ds1 = results,
+                    Ds2 = ds2
                 });
         }
     }

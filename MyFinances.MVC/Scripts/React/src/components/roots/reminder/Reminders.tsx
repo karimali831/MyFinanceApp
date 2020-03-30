@@ -2,7 +2,7 @@ import * as React from 'react';
 import { IReminder } from '../../../models/IReminder';
 import Table from '../../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
-import { api } from 'src/api/Api';
+import { api } from 'src/Api/Api';
 import { Load } from 'src/components/base/Loader';
 
 interface IOwnProps {

@@ -68,9 +68,10 @@ namespace MyFinances.Helpers
             // exclude first month and last month records (because partial stored records)
             var averagedResults = data.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM", CultureInfo.InvariantCulture) && x.YearMonth != "2019-07");
 
-            //int daysInMonth = System.DateTime.DaysInMonth(2001, July);
-
-     
+            int months = averagedResults
+                .Select(x => x.MonthName)
+                .Distinct()
+                .Count();
 
             if (averagedResults.Any())
             {
@@ -84,10 +85,10 @@ namespace MyFinances.Helpers
                 switch (type)
                 {
                     case ChartHeaderTitleType.Monthly:
-                        return $"Averaged monthly: {ToCurrency(averagedResults.Average(x => x.Total))}";
+                        return $"Averaged monthly: {ToCurrency(averagedResults.Sum(x => x.Total) / months)}";
 
                     case ChartHeaderTitleType.Daily:
-                        return $"Averaged daily: {ToCurrency(averagedResults.Average(x => x.Total / x.DaysInMonth))}";
+                        return $"Averaged daily: {ToCurrency(averagedResults.Sum(x => x.Total / months / x.DaysInMonth))}";
 
                     case ChartHeaderTitleType.Total:
                         return $"Total: {ToCurrency(data.Sum(x => x.Total))}";
@@ -118,6 +119,60 @@ namespace MyFinances.Helpers
                 DateFrequency.AllTime => $"[{dateFilter.DateField}] <= GETUTCDATE()",
                 _ => "",
             };
+        }
+
+        public static List<DateTime> GetMonthsBetween(DateTime from, DateTime to)
+        {
+            if (from > to) return GetMonthsBetween(to, from);
+
+            var monthDiff = Math.Abs((to.Year * 12 + (to.Month - 1)) - (from.Year * 12 + (from.Month - 1)));
+
+            if (from.AddMonths(monthDiff) > to || to.Day < from.Day)
+            {
+                monthDiff -= 1;
+            }
+
+            List<DateTime> results = new List<DateTime>();
+            for (int i = monthDiff; i >= 1; i--)
+            {
+                results.Add(to.AddMonths(-i));
+            }
+
+            return results;
+        }
+
+        public static List<MonthComparisonChartVM> AddEmptyMonths(List<MonthComparisonChartVM> data)
+        {
+            if (data != null && data.Any())
+            {
+                var monthYear = GetMonthsBetween(
+                    DateTime.Parse("2019-08-01"), DateTime.UtcNow.Date)
+                        .Select(x => x.ToString("yyyy-MM", CultureInfo.InvariantCulture)
+                );
+
+
+                var zeroMonths = monthYear.Except(data.Select(x => x.YearMonth));
+
+                if (zeroMonths.Any())
+                {
+                    foreach (var item in zeroMonths)
+                    {
+                        data.Add(new MonthComparisonChartVM
+                        {
+                            YearMonth = item,
+                            MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(int.Parse(item.Split('-')[1])),
+                            Total = 0,
+                            Category = data[0].Category,
+                            SecondCategory = data[0].SecondCategory
+
+                        });
+                    }
+                }
+            }
+
+            return data
+                .OrderBy(x => x.YearMonth)
+                .ToList();
         }
 
         public static string ResolveUrl(string originalUrl)

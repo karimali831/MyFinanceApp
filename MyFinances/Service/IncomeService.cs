@@ -160,7 +160,8 @@ namespace MyFinances.Service
 
         public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat)
         {
-            return await incomeRepository.GetIncomesByCategoryAndMonthAsync(dateFilter, catId, isSecondCat);
+            var data = await incomeRepository.GetIncomesByCategoryAndMonthAsync(dateFilter, catId, isSecondCat);
+            return Utils.AddEmptyMonths(data.ToList());
         }
 
         public async Task InsertIncomeAsync(IncomeDTO dto)

@@ -1,8 +1,8 @@
-import { ICategoryResponse } from '../../../api/Api'
+import { ICategoryResponse } from '../../../Api/Api'
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import { ReportErrorAction } from '../../contexts/error/Actions';
 import { CommonActionTypes, LoadCategoriesSuccessAction, LoadCategoriesFailureAction, LoadSecondCategoriesSuccessAction} from 'src/state/contexts/common/Actions';
-import { commonApi } from 'src/api/CommonApi';
+import { commonApi } from 'src/Api/CommonApi';
 import { CategoryType } from 'src/enums/CategoryType';
 import { getSecondTypeId, getCategoryType } from 'src/state/contexts/common/Selectors';
 

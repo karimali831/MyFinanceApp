@@ -20,7 +20,7 @@ namespace MyFinances.Service
         Task InsertAsync(SpendingDTO dto);
         (DateTime? Date, decimal Amount) ExpenseLastPaid(int financeId);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter);
-        Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance);
+        Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int? catId = null, bool isSecondCat = false, bool isFinance = false);
     }
 
     public class SpendingService : ISpendingService
@@ -139,21 +139,27 @@ namespace MyFinances.Service
 
             var firstCats = spendingsSummary.Where(x => x.Cat2 == null);
             var data = firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
+            var monthlySpendings = await GetSpendingsByCategoryAndMonthAsync(dateFilter);
 
             foreach (var item in data)
             {
                 if (item.Cat2 == null)
                 {
-
-                    var tt = await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.CatId, false, item.IsFinance);
-                    item.Average = Utils.ChartsHeaderTitle(tt, ChartHeaderTitleType.Monthly);
+                    item.Average = 
+                        Utils.ChartsHeaderTitle(
+                            monthlySpendings.Where(x => x.Category == item.Cat1 && x.IsFinance == item.IsFinance),
+                            ChartHeaderTitleType.Monthly
+                        );
                 }
                 else
                 {
                     foreach (var x in item.SecondCats)
                     {
-                        var tt = await GetSpendingsByCategoryAndMonthAsync(dateFilter, x.SecondCatId, true, false);
-                        item.Average = Utils.ChartsHeaderTitle(tt, ChartHeaderTitleType.Monthly);
+                        item.Average = 
+                            Utils.ChartsHeaderTitle(
+                                monthlySpendings.Where(x => x.SecondCategory == item.Cat2), 
+                                ChartHeaderTitleType.Monthly
+                            );
                     }
                 }
             }
@@ -161,9 +167,11 @@ namespace MyFinances.Service
             return data;
         }
 
-        public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance)
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int? catId = null, bool isSecondCat = false, bool isFinance = false)
         {
-            return await spendingRepository.GetSpendingsByCategoryAndMonthAsync(dateFilter, catId, isSecondCat, isFinance);
+            var data = await spendingRepository.GetSpendingsByCategoryAndMonthAsync(dateFilter, catId, isSecondCat, isFinance);
+            return Utils.AddEmptyMonths(data.ToList());
+
         }
     }
 }

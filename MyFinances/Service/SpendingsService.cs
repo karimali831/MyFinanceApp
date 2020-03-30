@@ -170,7 +170,7 @@ namespace MyFinances.Service
         public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int? catId = null, bool isSecondCat = false, bool isFinance = false)
         {
             var data = await spendingRepository.GetSpendingsByCategoryAndMonthAsync(dateFilter, catId, isSecondCat, isFinance);
-            return Utils.AddEmptyMonths(data.ToList());
+            return Utils.AddEmptyMonths(data.ToList(), dateFilter);
 
         }
     }

@@ -108,7 +108,7 @@ namespace MyFinances.Helpers
 
             return dateFilter.Frequency switch
             {
-                DateFrequency.DateRange => $"{dateFilter.DateField} >= '{dateFilter.FromDateRange.Value.ToString("yyyy-MM-dd HH:mm")}' AND {dateFilter.DateField} <= '{dateFilter.ToDateRange.Value.ToString("yyyy-MM-dd HH:mm")}'",
+                DateFrequency.DateRange => $"{dateFilter.DateField} >= '{dateFilter.FromDateRange.Value:yyyy-MM-dd HH:mm}' AND {dateFilter.DateField} <= '{dateFilter.ToDateRange.Value:yyyy-MM-dd HH:mm}'",
                 DateFrequency.Today => $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0) AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 1)",
                 DateFrequency.Yesterday => $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0) AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 1, GETUTCDATE()), 1)",
                 DateFrequency.Upcoming => $"[{dateFilter.DateField}] > DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)",
@@ -141,15 +141,28 @@ namespace MyFinances.Helpers
             return results;
         }
 
-        public static List<MonthComparisonChartVM> AddEmptyMonths(List<MonthComparisonChartVM> data)
+        public static List<MonthComparisonChartVM> AddEmptyMonths(List<MonthComparisonChartVM> data, DateFilter dateFilter)
         {
             if (data != null && data.Any())
             {
-                var monthYear = GetMonthsBetween(
-                    DateTime.Parse("2019-08-01"), DateTime.UtcNow.Date)
-                        .Select(x => x.ToString("yyyy-MM", CultureInfo.InvariantCulture)
-                );
+                var firstDate = DateTime.Parse(data
+                    .OrderBy(x => x.YearMonth)
+                    .Select(x => x.YearMonth + "-01")
+                    .FirstOrDefault());
 
+                var lastDate = DateTime.Parse(data
+                    .OrderByDescending(x => x.YearMonth)
+                    .Select(x => x.YearMonth + "-01")
+                    .FirstOrDefault());
+
+                if (dateFilter.Frequency == DateFrequency.AllTime)
+                {
+                    lastDate = DateTime.UtcNow;
+                }
+
+
+                var monthYear = GetMonthsBetween(firstDate, lastDate)
+                    .Select(x => x.ToString("yyyy-MM", CultureInfo.InvariantCulture));
 
                 var zeroMonths = monthYear.Except(data.Select(x => x.YearMonth));
 

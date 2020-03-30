@@ -19,7 +19,7 @@ namespace MyFinances.Service
         Task<IEnumerable<IncomeSummaryDTO>> GetIncomeSummaryAsync(DateFilter dateFilter);
         Task InsertIncomeAsync(IncomeDTO dto);
         Task MissedIncomeEntriesAsync();
-        Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat);
+        Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int? catId = null, bool isSecondCat = false);
     }
 
     public class IncomeService : IIncomeService
@@ -98,21 +98,27 @@ namespace MyFinances.Service
 
             var firstCats = incomeSummary.Where(x => x.Cat2 == null);
             var data = firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
+            var monthlyIncomes = await GetIncomesByCategoryAndMonthAsync(dateFilter);
 
             foreach (var item in data)
             {
                 if (item.Cat2 == null)
                 {
-
-                    var tt = await GetIncomesByCategoryAndMonthAsync(dateFilter, item.CatId, false);
-                    item.Average = Utils.ChartsHeaderTitle(tt, ChartHeaderTitleType.Monthly);
+                    item.Average =
+                        Utils.ChartsHeaderTitle(
+                            monthlyIncomes.Where(x => x.Category == item.Cat1),
+                            ChartHeaderTitleType.Monthly
+                        );
                 }
                 else
                 {
                     foreach (var x in item.SecondCats)
                     {
-                        var tt = await GetIncomesByCategoryAndMonthAsync(dateFilter, x.SecondCatId, true);
-                        item.Average = Utils.ChartsHeaderTitle(tt, ChartHeaderTitleType.Monthly);
+                        item.Average =
+                            Utils.ChartsHeaderTitle(
+                                monthlyIncomes.Where(x => x.SecondCategory == item.Cat2),
+                                ChartHeaderTitleType.Monthly
+                            );
                     }
                 }
             }
@@ -158,10 +164,10 @@ namespace MyFinances.Service
             await reminderService.MissedEntriesAsync(results, "You have a missed income entry for");
         }
 
-        public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat)
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int? catId = null, bool isSecondCat = false)
         {
             var data = await incomeRepository.GetIncomesByCategoryAndMonthAsync(dateFilter, catId, isSecondCat);
-            return Utils.AddEmptyMonths(data.ToList());
+            return Utils.AddEmptyMonths(data.ToList(), dateFilter);
         }
 
         public async Task InsertIncomeAsync(IncomeDTO dto)

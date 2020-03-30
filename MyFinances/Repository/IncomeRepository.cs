@@ -19,7 +19,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(IncomeDTO dto);
         Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category, string recsBegan = "2019-08-07");
-        Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat);
+        Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int? catId, bool isSecondCat);
     }
 
     public class IncomeRepository : IIncomeRepository
@@ -89,7 +89,7 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat)
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int? catId, bool isSecondCat)
         {
             string sqlTxt = "";
             if (isSecondCat)

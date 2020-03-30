@@ -70,31 +70,58 @@ namespace MyFinances.Repository
 
         public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int? catId, bool isSecondCat, bool isFinance)
         {
-            string field = (isSecondCat ? "s.SecondCatId" : isFinance ? "s.FinanceId" : "s.CatId");
+            string sqlTxt = "";
+            if (isSecondCat)
+            {
+                sqlTxt = $@"
+                    SELECT 
+	                    CONVERT(CHAR(7), Date, 120) as YearMonth, 
+	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
+                        CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
+                        c2.Name as SecondCategory
+                    FROM 
+                        {TABLE} s
+				    LEFT JOIN Categories c1 
+                        ON c1.Id = s.CatId
+                    LEFT JOIN Categories c2
+                        ON c2.Id = s.SecondCatId
+				    LEFT JOIN Finances f 
+                        ON f.Id = s.FinanceId
+                    WHERE 
+                        {Utils.FilterDateSql(dateFilter)} 
+                    AND 
+                        s.SecondCatId = @CatId
+                    GROUP BY 
+                        CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
+                        c1.Name,  F.Name, c2.Name
+                    ORDER BY 
+                        YearMonth";
+            }
+            else
+            {
+                var field = isFinance ? "s.FinanceId" : "s.CatId";
 
-            string sqlTxt = $@"
-                SELECT 
-	                CONVERT(CHAR(7), Date, 120) as YearMonth, 
-	                DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
-                    CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
-                    CASE WHEN c1.Name IS NULL THEN 1 ELSE 0 END AS IsFinance,
-                    c2.Name as SecondCategory
-                FROM 
-                    {TABLE} s
-				LEFT JOIN Categories c1 
-                    ON c1.Id = s.CatId
-                LEFT JOIN Categories c2
-                    ON c2.Id = s.SecondCatId
-				LEFT JOIN Finances f 
-                    ON f.Id = s.FinanceId
-                WHERE 
-                    {Utils.FilterDateSql(dateFilter)} 
-                    {(catId.HasValue ? $"AND {field} = @CatId" : "")}
-                GROUP BY 
-                    CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
-                    c1.Name,  F.Name, c2.Name
-                ORDER BY 
-                    YearMonth";
+                sqlTxt = $@"
+                    SELECT 
+	                    CONVERT(CHAR(7), Date, 120) as YearMonth, 
+	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
+                        CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category
+                    FROM 
+                        {TABLE} s
+				    LEFT JOIN Categories c1 
+                        ON c1.Id = s.CatId
+				    LEFT JOIN Finances f 
+                        ON f.Id = s.FinanceId
+                    WHERE 
+                        {Utils.FilterDateSql(dateFilter)} 
+                    AND 
+                        {field} = @CatId
+                    GROUP BY 
+                        CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
+                        c1.Name, F.Name
+                    ORDER BY 
+                        YearMonth";
+            }
 
             using var sql = dbConnectionFactory();
             return (await sql.QueryAsync<MonthComparisonChartVM>(sqlTxt, new { CatId = catId })).ToArray();

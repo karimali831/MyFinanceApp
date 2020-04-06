@@ -42,7 +42,7 @@ const CommonReducer: Reducer<ICommonState, CommonActions> =
                         ...{ 
                             loadingSecondCategories: true,
                             selectedCat: action.selectedCat,
-                            secondTypeId: action.secondTypeId,
+                            secondTypeId: action.secondTypeId ? action.secondTypeId : undefined,
                             selectedSecondCat: undefined
                         } 
                     };

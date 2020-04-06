@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { IMonthComparisonChartRequest } from 'src/Api/Api';
 import { ChartDataType } from 'src/enums/ChartType';
 import { LoadChartAction } from 'src/state/contexts/chart/Actions';
+import { OnChangeSelectedCategoryAction, OnChangeSelectedSecondCategoryAction } from 'src/state/contexts/common/Actions';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -31,7 +32,9 @@ export interface IOwnState {}
 export interface IPropsFromDispatch {
     showSecondCategory: (secondCat: string ) => ShowSecondCategorySpendingSummaryAction,
     resetCategoryFilter: (filter: string) => FilterChangedAction,
-    loadChart: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => LoadChartAction
+    loadChart: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => LoadChartAction,
+    onChangeSelectedCategory: (selectedCat: number, secondTypeId?: number) => OnChangeSelectedCategoryAction,
+    onChangeSelectedSecondCategory: (selectedSecondCat: number) => OnChangeSelectedSecondCategoryAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
@@ -106,6 +109,8 @@ export default class SpendingSummary extends React.Component<AllProps, IOwnState
                         <SummaryList<ISpendingSummary>
                             showSecondCategory={this.props.showSecondCategory}
                             showSecondCatSummary={this.props.showSecondCatSummary}
+                            onChangeSelectedCategory={this.props.onChangeSelectedCategory}
+                            onChangeSelectedSecondCategory={this.props.onChangeSelectedSecondCategory}
                             showChartByCategory={this.props.loadChart}
                             categoryType={this.props.categoryType}
                             filteredResults={results}

@@ -13,6 +13,7 @@ import { CategoryType } from 'src/enums/CategoryType';
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
+        loading: state.chart.loading,
         chart: chartSummaryData(state, DataType.IncomeSummary),
         chartType: ChartType.Doughnut,
         width: 200,

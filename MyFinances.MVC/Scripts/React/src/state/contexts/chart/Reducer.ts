@@ -14,16 +14,16 @@ const CWTLReducer: Reducer<IChartState, ChartActions> =
                 };
      
             case ChartActionTypes.LoadIncomeExpenseChartSuccess:
-                return { ...state, incomeExpenseComparisonChart: action.chart };
+                return { ...state, incomeExpenseComparisonChart: action.chart, loading: false };
 
             case ChartActionTypes.LoadIncomesByCategoryChartSuccess:
-                return { ...state, incomeCategoryComparisonChart: action.chart };
+                return { ...state, incomeCategoryComparisonChart: action.chart, loading: false  };
 
             case ChartActionTypes.LoadExpensesByCategoryChartSuccess:
-                return { ...state, expenseCategoryComparisonChart: action.chart };
+                return { ...state, expenseCategoryComparisonChart: action.chart, loading: false  };
 
             case ChartActionTypes.LoadFinancesChartSuccess:
-                return { ...state, financesComparisonChart: action.chart };
+                return { ...state, financesComparisonChart: action.chart, loading: false  };
 
             default:
                 return state;

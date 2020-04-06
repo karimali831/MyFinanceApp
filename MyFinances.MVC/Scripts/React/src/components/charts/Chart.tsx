@@ -11,6 +11,7 @@ import { ICategory } from 'src/models/ICategory';
 import { IFinance } from 'src/models/IFinance';
 import SelectionRefinementForChartCategories from './SelectionRefinementForChartCategories';
 import { CategoryType } from 'src/enums/CategoryType';
+import { Load } from '../base/Loader';
 
 interface IOwnState {
 	loading: boolean,
@@ -20,6 +21,7 @@ interface IOwnState {
 }
  
 interface IOwnProps {
+	loading: boolean,
 	chartSummary?: IChartSummary | null,
 	chartType: ChartType,
 	chart: IChartModel,
@@ -87,6 +89,11 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 
     public render() {
 		const summary = this.props.chartSummary;
+
+		if (this.state.loading || this.props.loading) {
+            return <Load text="Loading..."/>
+        }
+
         return (
             <div id="summary-chart">
 				{summary ? 

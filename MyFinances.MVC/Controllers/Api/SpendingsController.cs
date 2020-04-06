@@ -113,7 +113,7 @@ namespace MyFinances.Website.Controllers.API
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No results");
             }
 
-            string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
+            string secondCategory = !isSecondCat ? "" : $"- ({results.First().SecondCategory})";
 
             var summary = new ChartSummaryVM
             {

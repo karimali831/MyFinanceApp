@@ -13,6 +13,7 @@ import { chartData } from 'src/state/contexts/chart/Selectors';
 // Map full state to state required for component
 const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
+        loading: state.chart.loading,
         chartSummary: state.chart.financesComparisonChart !== undefined ? state.chart.financesComparisonChart.summary : null,
         chart: chartData(ChartType.Line, ChartLabelType.MonthAbbrev, state.chart.financesComparisonChart),
         chartType: ChartType.Line,

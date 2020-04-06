@@ -18,7 +18,7 @@ export function* loadCategories(subCategories: boolean) {
         const categoryType: CategoryType = yield select(getCategoryType);
 
         const categoryTypeId = (secondTypeId !== undefined && subCategories === true) ? secondTypeId : categoryType;
-
+    
         // Start the API call asynchronously
         const result: ICategoryResponse = yield call(commonApi.categories, categoryTypeId);
 

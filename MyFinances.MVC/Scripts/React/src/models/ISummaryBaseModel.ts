@@ -5,5 +5,6 @@ export interface IBaseModel<T> {
     isFinance: boolean,
     cat2: string,
     secondCats: T[],
+    secondTypeId?: number,
     total: number
 }

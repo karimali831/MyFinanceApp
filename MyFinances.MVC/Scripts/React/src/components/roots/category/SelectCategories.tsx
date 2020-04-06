@@ -79,7 +79,7 @@ export default class SelectCategories extends React.Component<IOwnProps, IOwnSta
                                     <option value={0}>-- select subcategory --</option>
                                     {
                                         this.props.secondCategories.map(c =>
-                                            <option key={c.id} value={c.id} disabled={c.disabled} selected={this.state.selectedSecondCat === c.secondTypeId}>{c.name}</option>
+                                            <option key={c.id} value={c.id} disabled={c.disabled} selected={this.state.selectedSecondCat === c.id}>{c.name}</option>
                                         )
                                     }
                                 </select>

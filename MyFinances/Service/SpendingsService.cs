@@ -20,7 +20,7 @@ namespace MyFinances.Service
         Task InsertAsync(SpendingDTO dto);
         (DateTime? Date, decimal Amount) ExpenseLastPaid(int financeId);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter);
-        Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int? catId = null, bool isSecondCat = false, bool isFinance = false);
+        Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance);
     }
 
     public class SpendingService : ISpendingService
@@ -117,13 +117,14 @@ namespace MyFinances.Service
             var secondCats = spendingsSummary
                 .Where(x => x.Cat2 != null)
                 .GroupBy(
-                    p => new { p.CatId, p.Cat1, p.IsFinance },
+                    p => new { p.CatId, p.Cat1, p.IsFinance, p.SecondTypeId },
                     p => new { p.SecondCatId, p.Cat2, p.Total },
                     (key, g) =>
                         new SpendingSummaryDTO
                         {
                             Cat1 = key.Cat1,
                             CatId = key.CatId,
+                            SecondTypeId = key.SecondTypeId,
                             IsFinance = key.IsFinance,
                             Total = spendingsSummary
                                 .Where(x => x.CatId == key.CatId && x.Cat1 == key.Cat1)
@@ -139,7 +140,6 @@ namespace MyFinances.Service
 
             var firstCats = spendingsSummary.Where(x => x.Cat2 == null);
             var data = firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
-            var monthlySpendings = await GetSpendingsByCategoryAndMonthAsync(dateFilter);
 
             foreach (var item in data)
             {
@@ -147,7 +147,7 @@ namespace MyFinances.Service
                 {
                     item.Average = 
                         Utils.ChartsHeaderTitle(
-                            monthlySpendings.Where(x => x.Category == item.Cat1 && x.IsFinance == item.IsFinance),
+                            await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.CatId, isSecondCat: false, isFinance: item.IsFinance),
                             ChartHeaderTitleType.Monthly
                         );
                 }
@@ -157,7 +157,7 @@ namespace MyFinances.Service
                     {
                         item.Average = 
                             Utils.ChartsHeaderTitle(
-                                monthlySpendings.Where(x => x.SecondCategory == item.Cat2), 
+                                await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.SecondCatId, isSecondCat: true, isFinance: false),
                                 ChartHeaderTitleType.Monthly
                             );
                     }
@@ -167,7 +167,7 @@ namespace MyFinances.Service
             return data;
         }
 
-        public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int? catId = null, bool isSecondCat = false, bool isFinance = false)
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance)
         {
             var data = await spendingRepository.GetSpendingsByCategoryAndMonthAsync(dateFilter, catId, isSecondCat, isFinance);
             return Utils.AddEmptyMonths(data.ToList(), dateFilter);

@@ -8,6 +8,7 @@ import { SummaryFilteredList } from '../../utils/Utils';
 import { IBaseModel } from 'src/models/ISummaryBaseModel';
 import { IMonthComparisonChartRequest } from 'src/Api/Api';
 import { ChartDataType } from 'src/enums/ChartType';
+import { OnChangeSelectedCategoryAction, OnChangeSelectedSecondCategoryAction } from 'src/state/contexts/common/Actions';
 
 export interface IOwnState {
     showAllCats: boolean,
@@ -22,7 +23,9 @@ export interface IOwnProps<T> {
     icon: IconDefinition,
     chartDataType: ChartDataType,
     showSecondCategory: (secondCat: string) => void,
-    showChartByCategory: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => void
+    showChartByCategory: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => void,
+    onChangeSelectedCategory: (selectedCat: number, secondTypeId?: number) => OnChangeSelectedCategoryAction,
+    onChangeSelectedSecondCategory: (selectedSecondCat: number) => OnChangeSelectedSecondCategoryAction
 }
 
 export default class SummaryList<T extends IBaseModel<T>> extends React.Component<IOwnProps<T>, IOwnState> {
@@ -46,7 +49,7 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
                             {
                                 this.props.dateFilter !== undefined ?  
                                 <>
-                                    <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + s.catId + "/" + false} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, s.isFinance, this.props.dateFilter), this.props.chartDataType)}>
+                                    <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + s.catId + "/" + false} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, s.isFinance, this.props.dateFilter, undefined, s.secondTypeId), this.props.chartDataType)}>
                                         <FontAwesomeIcon icon={faChartBar} /> 
                                     </Link>
                                     <Link to={SummaryFilteredList(this.props.categoryType, s.catId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, false, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {s.cat1}</Link>    
@@ -67,7 +70,7 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
                                                     <div key={key2}>                            {
                                                     this.props.dateFilter !== null && this.props.dateFilter !== undefined ?
                                                             <> 
-                                                                <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + c.secondCatId + "/" + true} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, false, this.props.dateFilter, c.secondCatId), this.props.chartDataType)}>
+                                                                <Link to={"/chart/"+CategoryType[this.props.categoryType]+"/summary/" + c.secondCatId + "/" + true} onClick={() => this.props.showChartByCategory(this.chartByCategoryRequest(s.catId, false, this.props.dateFilter, c.secondCatId, s.secondTypeId), this.props.chartDataType)}>
                                                                     <FontAwesomeIcon icon={faChartBar} /> 
                                                                 </Link>
                                                                 <Link to={SummaryFilteredList(this.props.categoryType, c.secondCatId, this.props.dateFilter.frequency, this.props.dateFilter.interval, s.isFinance, true, this.props.dateFilter.fromDateRange, this.props.dateFilter.toDateRange)}> {c.cat2}</Link> £{c.total}
@@ -101,7 +104,7 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
         )
     }
 
-    private chartByCategoryRequest = (catId: number, isFinance: boolean, dateFilter?: IDateFilter, secondCatId?: number) : IMonthComparisonChartRequest => {
+    private chartByCategoryRequest = (catId: number, isFinance: boolean, dateFilter?: IDateFilter, secondCatId?: number, secondTypeId?: number) : IMonthComparisonChartRequest => {
         const request: IMonthComparisonChartRequest = {
             catId: catId,
             secondCatId: secondCatId,
@@ -110,6 +113,12 @@ export default class SummaryList<T extends IBaseModel<T>> extends React.Componen
             categoryType: this.props.categoryType === CategoryType.Incomes ? CategoryType.IncomeSources : CategoryType.Spendings
         }
 
+        this.props.onChangeSelectedCategory(catId, secondTypeId);
+
+        if (secondCatId) {
+            this.props.onChangeSelectedSecondCategory(secondCatId);
+        }
+        
         return request;
     }
 

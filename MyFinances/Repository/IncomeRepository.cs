@@ -19,7 +19,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<IncomeSummaryDTO>> GetSummaryAsync(DateFilter dateFilter);
         Task InsertAsync(IncomeDTO dto);
         Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category, string recsBegan = "2019-08-07");
-        Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int? catId, bool isSecondCat);
+        Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat);
     }
 
     public class IncomeRepository : IIncomeRepository
@@ -70,6 +70,7 @@ namespace MyFinances.Repository
 	                    c1.Name AS Cat1,
                         c2.Name AS Cat2,
 	                    SUM(i.Amount) as Total,
+                        c1.SecondTypeId,
                         FORMAT(AVG(i.Amount), 'C', 'en-gb') as Average
                     FROM 
 	                    {TABLE} as i
@@ -80,7 +81,7 @@ namespace MyFinances.Repository
                     WHERE 
                          {Utils.FilterDateSql(dateFilter)}
                     GROUP BY 
-	                    i.SourceId, i.SecondSourceId, c1.Name, c2.Name
+	                    i.SourceId, i.SecondSourceId, c1.Name, c2.Name, c1.SecondTypeId
                     ORDER BY 
 	                    Total DESC";
 
@@ -89,7 +90,7 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int? catId, bool isSecondCat)
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat)
         {
             string sqlTxt = "";
             if (isSecondCat)
@@ -108,7 +109,7 @@ namespace MyFinances.Repository
                         ON c2.Id = i.SecondSourceId
                     WHERE 
                         {Utils.FilterDateSql(dateFilter)} 
-                    AND
+                    AND 
                         i.SecondSourceId = @CatId
                     GROUP BY 
                         CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
@@ -131,7 +132,7 @@ namespace MyFinances.Repository
                         ON c2.Id = i.SecondSourceId
                     WHERE 
                         {Utils.FilterDateSql(dateFilter)} 
-                    AND
+                    AND 
                         i.SourceId = @CatId
                     GROUP BY 
                         CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import IncomeSummary, { IPropsFromState, IPropsFromDispatch } from '../IncomeSummary';
 import { ShowSecondCategoryIncomeSummaryAction } from '../../../../../state/contexts/landing/Actions';
 import { LoadChartAction } from 'src/state/contexts/chart/Actions';
+import { OnChangeSelectedCategoryAction, OnChangeSelectedSecondCategoryAction } from 'src/state/contexts/common/Actions';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -24,7 +25,9 @@ const mapPropsFromDispatch: IPropsFromDispatch =
 {
     showSecondCategory: ShowSecondCategoryIncomeSummaryAction.creator,
     loadIncomeExpense: LoadChartAction.creator,
-    loadIncomesByCategory: LoadChartAction.creator
+    loadIncomesByCategory: LoadChartAction.creator,
+    onChangeSelectedCategory: OnChangeSelectedCategoryAction.creator,
+    onChangeSelectedSecondCategory: OnChangeSelectedSecondCategoryAction.creator
 };
 
 

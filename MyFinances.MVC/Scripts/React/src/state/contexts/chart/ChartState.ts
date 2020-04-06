@@ -3,6 +3,7 @@ import { IMonthComparisonChartRequest, IMonthComparisonChartResponse } from 'src
 import { ChartDataType } from 'src/enums/ChartType';
 
 export default interface IChartState {
+    loading: boolean,
     request?: IMonthComparisonChartRequest | undefined,
     type?: ChartDataType | undefined,
     incomeExpenseComparisonChart?: IMonthComparisonChartResponse | undefined,
@@ -13,6 +14,7 @@ export default interface IChartState {
 
 export class ChartState {
     public static readonly intialState = {
+        loading: true,
         request: undefined,
         ChartDataType: undefined,
         incomeExpenseComparisonChart: undefined,

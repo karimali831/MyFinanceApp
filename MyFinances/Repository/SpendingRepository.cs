@@ -22,7 +22,7 @@ namespace MyFinances.Repository
         (DateTime? Date, decimal Amount) ExpenseLastPaid(int financeId);
         Task InsertAsync(SpendingDTO dto);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFilter dateFilter);
-        Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int? catId, bool isSecondCat, bool isFinance);
+        Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance);
     }
 
     public class SpendingRepository : ISpendingRepository
@@ -68,7 +68,7 @@ namespace MyFinances.Repository
             }
         }
 
-        public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int? catId, bool isSecondCat, bool isFinance)
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance)
         {
             string sqlTxt = "";
             if (isSecondCat)
@@ -77,7 +77,7 @@ namespace MyFinances.Repository
                     SELECT 
 	                    CONVERT(CHAR(7), Date, 120) as YearMonth, 
 	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
-                        CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
+                        c1.Name AS Category,
                         c2.Name as SecondCategory
                     FROM 
                         {TABLE} s
@@ -85,15 +85,13 @@ namespace MyFinances.Repository
                         ON c1.Id = s.CatId
                     LEFT JOIN Categories c2
                         ON c2.Id = s.SecondCatId
-				    LEFT JOIN Finances f 
-                        ON f.Id = s.FinanceId
                     WHERE 
                         {Utils.FilterDateSql(dateFilter)} 
                     AND 
                         s.SecondCatId = @CatId
                     GROUP BY 
                         CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
-                        c1.Name,  F.Name, c2.Name
+                        c1.Name, c2.Name
                     ORDER BY 
                         YearMonth";
             }
@@ -105,7 +103,8 @@ namespace MyFinances.Repository
                     SELECT 
 	                    CONVERT(CHAR(7), Date, 120) as YearMonth, 
 	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
-                        CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category
+                        CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
+                        CASE WHEN c1.Name IS NULL THEN 1 ELSE 0 END AS IsFinance
                     FROM 
                         {TABLE} s
 				    LEFT JOIN Categories c1 
@@ -136,6 +135,7 @@ namespace MyFinances.Repository
                     CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Cat1,
                     CASE WHEN s.CatId IS NULL THEN 1 ELSE 0 END AS IsFinance,
 	                c2.Name AS Cat2, 
+                    c1.SecondTypeId,
                     SUM(s.Amount) as Total
                 FROM 
 	                {TABLE} as s
@@ -148,7 +148,7 @@ namespace MyFinances.Repository
                 WHERE 
                     {Utils.FilterDateSql(dateFilter)}
                 GROUP BY 
-                    s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name
+                    s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name, c1.SecondTypeId
                 ORDER BY 
                     Total DESC";
 

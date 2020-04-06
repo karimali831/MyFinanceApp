@@ -8,6 +8,7 @@ import { IMonthComparisonChartRequest } from 'src/Api/Api';
 import { CategoryType } from 'src/enums/CategoryType';
 
 export interface IPropsFromState {
+	loading: boolean,
 	chartSummary?: IChartSummary | null,
 	chart: IChartModel,
 	chartType: ChartType,
@@ -32,6 +33,7 @@ type AllProps = IPropsFromState & IPropsFromDispatch
 
 const ChartProps: React.SFC<AllProps> = (props) =>
 	<Chart
+		loading={props.loading}
 		chartSummary={props.chartSummary}
 		chartType={props.chartType}
 		chart={props.chart}

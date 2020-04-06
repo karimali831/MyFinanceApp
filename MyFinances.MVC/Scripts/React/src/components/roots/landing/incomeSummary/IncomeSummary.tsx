@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { IMonthComparisonChartRequest } from 'src/Api/Api';
 import { LoadChartAction } from 'src/state/contexts/chart/Actions';
 import { ChartDataType } from 'src/enums/ChartType';
+import { OnChangeSelectedCategoryAction, OnChangeSelectedSecondCategoryAction } from 'src/state/contexts/common/Actions';
 
 export interface IPropsFromState {
     dateFilter: IDateFilter,
@@ -27,6 +28,8 @@ export interface IPropsFromDispatch {
     showSecondCategory: (secondCat: string) => ShowSecondCategoryIncomeSummaryAction
     loadIncomeExpense: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => LoadChartAction,
     loadIncomesByCategory: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) =>  LoadChartAction
+    onChangeSelectedCategory: (selectedCat: number, secondTypeId?: number) => OnChangeSelectedCategoryAction,
+    onChangeSelectedSecondCategory: (selectedSecondCat: number) => OnChangeSelectedSecondCategoryAction
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch;
@@ -47,7 +50,7 @@ export default class IncomeSummary extends React.Component<AllProps> {
                 <thead className="thead-light">
                     <tr>
                         <th scope="col" colSpan={2}>
-                            <Link to={"/chart/incomeexpense/"} onClick={() => this.props.loadIncomeExpense(incomeExpenseChartRequest, ChartDataType.IncomeSummary)}>
+                            <Link to={"/chart/incomeexpense/"} onClick={() => this.props.loadIncomeExpense(incomeExpenseChartRequest, ChartDataType.IncomeExpenseSummary)}>
                                 <FontAwesomeIcon icon={faChartLine} /> Income and expenses summary chart
                             </Link>
                             <br />
@@ -63,6 +66,8 @@ export default class IncomeSummary extends React.Component<AllProps> {
                         showSecondCategory={this.props.showSecondCategory}
                         showSecondCatSummary={this.props.showSecondCatSummary}
                         showChartByCategory={this.props.loadIncomesByCategory}
+                        onChangeSelectedCategory={this.props.onChangeSelectedCategory}
+                        onChangeSelectedSecondCategory={this.props.onChangeSelectedSecondCategory}
                         categoryType={this.props.categoryType}
                         filteredResults={this.props.incomeSummary}
                         dateFilter={this.props.dateFilter}

@@ -21,12 +21,14 @@ export interface IPropsFromState {
 	secondTypeId?: number,
 	selectedCat?: number,
 	selectedSecondCat?: number,
+	maxCats?: number | null,
 	request?: IMonthComparisonChartRequest
 }
 
 export interface IPropsFromDispatch {
-	dateFilterChanged: (filter: IDateFilter, dataType: DataType,) => void,
-	chartChanged?: (request: IMonthComparisonChartRequest, type: ChartDataType) => void
+	dateFilterChanged: (filter: IDateFilter, dataType: DataType) => void,
+	chartChanged?: (request: IMonthComparisonChartRequest, type: ChartDataType) => void,
+	maxCatsChanged?: (maxCats: number) => void
 }
 
 type AllProps = IPropsFromState & IPropsFromDispatch
@@ -48,6 +50,8 @@ const ChartProps: React.SFC<AllProps> = (props) =>
 		selectedSecondCat={props.selectedSecondCat}
 		chartChanged={props.chartChanged}
 		dateFilterChanged={props.dateFilterChanged}
+		maxCatsChanged={props.maxCatsChanged}
+		maxCats={props.maxCats}
 		request={props.request} />
 
 export default ChartProps;

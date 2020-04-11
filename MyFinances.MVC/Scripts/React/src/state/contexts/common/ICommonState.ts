@@ -13,7 +13,7 @@ export default interface ICommonState {
     selectedCat?: number,
     selectedSecondCat?: number,
     loadingCategories: boolean,
-    loadingSecondCategories: boolean,
+    loadingSecondCategories: boolean
 }
 
 export class CommonState {

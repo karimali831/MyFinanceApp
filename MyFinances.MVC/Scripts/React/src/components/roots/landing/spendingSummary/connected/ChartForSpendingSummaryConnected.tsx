@@ -6,6 +6,7 @@ import { ChartType, ChartDataType } from 'src/enums/ChartType';
 import { chartSummaryData } from 'src/state/contexts/chart/Selectors';
 import { DataType } from 'src/enums/DataType';
 import { CategoryType } from 'src/enums/CategoryType';
+import { SpendingSummaryMaxCatsChangeAction } from 'src/state/contexts/landing/Actions';
 
 // REACT-REDUX
 // Wrap stateless component with redux connected component
@@ -21,13 +22,15 @@ const mapStateToProps =
         dateFilter: state.spendingSummary.dateFilter,
         dataType: DataType.SpendingSummary,
         categoryType: CategoryType.Spendings,
-        chartDataType: ChartDataType.SpendingSummary
+        chartDataType: ChartDataType.SpendingSummary,
+        maxCats: state.spendingSummary.maxCats
     });
 
 // Add required action creators for component
 const mapPropsFromDispatch: IPropsFromDispatch =
 {
-    dateFilterChanged: DateFilterChangeAction.creator
+    dateFilterChanged: DateFilterChangeAction.creator,
+    maxCatsChanged: SpendingSummaryMaxCatsChangeAction.creator
 };
 
 

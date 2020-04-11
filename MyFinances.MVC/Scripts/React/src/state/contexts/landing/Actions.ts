@@ -19,7 +19,7 @@ export class LandingSummaryActionTypes {
     public static readonly LoadNotificationsSuccess = "@@landingsummary/loadnotificationssuccess";
     public static readonly LoadNotificationsFailure = "@@landingsummary/loadnotificationsfailure";
     public static readonly FilterChanged = "@@landingsummary/filterchanged";
-    
+    public static readonly SpendingSummaryMaxCatsChange = "@@common/spendingsummarymaxcatschange"
 }
 
 // actions defined as classes with a creator as a static function
@@ -116,6 +116,17 @@ export class SpendingSummaryDateFilterChangeAction {
     ) { }
 }
 
+export class SpendingSummaryMaxCatsChangeAction {
+    public static readonly creator = (maxCats: number) => new SpendingSummaryMaxCatsChangeAction(maxCats);
+
+    public readonly type = LandingSummaryActionTypes.SpendingSummaryMaxCatsChange
+
+    constructor(
+        public maxCats: number
+    ) { }
+}
+
+
 export class IncomeSummaryDateFilterChangeAction {
     public static readonly creator = (filter: IDateFilter) => new IncomeSummaryDateFilterChangeAction(filter);
 
@@ -178,4 +189,5 @@ export type LandingSummaryActions =
     LoadNotificationsAction |
     LoadNotificationsSuccessAction |
     LoadNotificationsFailureAction  |
-    FilterChangedAction 
+    FilterChangedAction |
+    SpendingSummaryMaxCatsChangeAction

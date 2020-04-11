@@ -26,7 +26,7 @@ export const getMonthComparisonChartRequest = (state: IStoreState, dateFilter: I
 export const chartSummaryData = (state: IStoreState, dataType: DataType): IChartModel => {
     let results;
     if (DataType.SpendingSummary === dataType) {
-        results = state.spendingSummary.spendingSummary.slice(0, 10);
+        results = state.spendingSummary.spendingSummary.slice(0, state.spendingSummary.maxCats);
     } else if (DataType.IncomeSummary === dataType) {
         results = state.incomeSummary.incomeSummary;
     }

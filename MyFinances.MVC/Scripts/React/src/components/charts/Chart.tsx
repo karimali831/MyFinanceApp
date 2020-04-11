@@ -35,8 +35,10 @@ interface IOwnProps {
 	selectedCat?: number,
 	selectedSecondCat?: number,
 	request?: IMonthComparisonChartRequest,
+	maxCats?: number | null,
 	chartChanged?: (request: IMonthComparisonChartRequest, chartDataType: ChartDataType) => void
-	dateFilterChanged: (filter: IDateFilter, dataType: DataType) => void
+	dateFilterChanged: (filter: IDateFilter, dataType: DataType) => void,
+	maxCatsChanged?: (maxCats: number) => void
 }
 
 export class Chart extends React.Component<IOwnProps, IOwnState> {
@@ -48,7 +50,7 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 			categories: [],
 			finances: [],
 			catId: this.props.request !== undefined && this.props.request.isFinance ? this.props.request.catId : undefined
-        };
+		};
     }
 
 	public componentDidMount() {
@@ -156,6 +158,21 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 							: null}
 						</>
 					: null}
+				{
+					this.props.maxCats ? 
+					<>
+						<select onChange={(e) => this.onChangeMaxCats(e)} className="form-control">
+                        {
+							this.props.chart.datasets && this.props.chart.datasets[0].data !== undefined  ?
+								Array.from(Array(this.props.chart.datasets[0].data.length), (e, i) => {
+									return <option key={i} value={i+1} selected={this.props.maxCats === i+1}>X = {i+1}</option>
+								})
+							: null
+                        }
+                        </select>
+					</>
+					: null
+				}
 				<div style={{width: "100%", height: this.props.height}}>
 					{this.chart()}
 				</div>
@@ -213,6 +230,14 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 		
 		return options;
 	}
+
+	private onChangeMaxCats = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const maxCats = Number(e.target.value);
+		
+		if (this.props.maxCatsChanged) {
+			this.props.maxCatsChanged(maxCats);
+		}
+    }
 	
 	private chart = () => {
 		switch (this.props.chartType) {

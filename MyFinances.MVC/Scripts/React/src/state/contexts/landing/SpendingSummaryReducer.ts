@@ -20,6 +20,9 @@ const SpendingSummaryReducer: Reducer<ISpendingSummaryState, LandingSummaryActio
                     }
                 }
 
+            case LandingSummaryActionTypes.SpendingSummaryMaxCatsChange:
+                return { ...state, maxCats: action.maxCats }
+
             case LandingSummaryActionTypes.ShowSecondCategorySpendingSummary:
                 return {
                     ...state, 

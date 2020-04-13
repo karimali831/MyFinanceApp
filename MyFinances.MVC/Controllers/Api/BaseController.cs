@@ -50,7 +50,7 @@ namespace MyFinances.Website.Controllers.API
             string fieldToPascal = Utils.FirstCharToUpper(model.Field);
             object dbValue = model.Value;
 
-            if (DateTime.TryParse(model.Value, out DateTime date))
+            if (DateTime.TryParseExact(model.Value, "yyyy-MM-dd", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date))
             {
                 dbValue = date;
             }

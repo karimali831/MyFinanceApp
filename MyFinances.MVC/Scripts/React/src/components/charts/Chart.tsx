@@ -46,7 +46,7 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 	constructor(props: IOwnProps) {
         super(props);
         this.state = { 
-            loading: true,
+            loading: this.props.loading,
 			categories: [],
 			finances: [],
 			catId: this.props.request !== undefined && this.props.request.isFinance ? this.props.request.catId : undefined
@@ -92,7 +92,7 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
     public render() {
 		const summary = this.props.chartSummary;
 
-		if (this.state.loading || this.props.loading) {
+		if (this.state.loading) {
             return <Load text="Loading..."/>
         }
 
@@ -164,8 +164,8 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 						<select onChange={(e) => this.onChangeMaxCats(e)} className="form-control">
                         {
 							this.props.chart.datasets && this.props.chart.datasets[0].data !== undefined  ?
-								Array.from(Array(this.props.chart.datasets[0].data.length), (e, i) => {
-									return <option key={i} value={i+1} selected={this.props.maxCats === i+1}>X = {i+1}</option>
+								Array.from(Array(30), (e, i) => {
+									return <option key={i} value={i+1} selected={this.props.maxCats === i+1}>Top {i+1} Categories</option>
 								})
 							: null
                         }

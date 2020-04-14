@@ -22,7 +22,7 @@ interface IOwnState {
  
 interface IOwnProps {
 	loading: boolean,
-	chartSummary?: IChartSummary | null,
+	chartSummary?: IChartSummary[] | null,
 	chartType: ChartType,
 	chart: IChartModel,
 	width: number,
@@ -101,34 +101,22 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 				{summary ? 
 				<>
 					<div className="card-group">
-						<div className="card">
-							<div className="card-body">
-							<h5 className="card-title">{summary.titleDs1}</h5>
-								<p className="card-text">
-									{summary.averagedDailyDs1} <br />
-									{summary.averagedMonthlyDs1}
-								</p>
-							</div>
-							<div className="card-footer">
-							<small className="text-muted">{summary.totalSpentDs1}</small>
-							</div>
-						</div>
-						{summary.titleDs2 ? 
-						<>
-							<div className="card">
-								<div className="card-body">
-								<h5 className="card-title">{summary.titleDs2}</h5>
-									<p className="card-text">
-										{summary.averagedDailyDs2} <br />
-										{summary.averagedMonthlyDs2}
-									</p>
+						{summary.map((s, idx) => {
+							return (
+								<div className="card" key={idx}>
+									<div className="card-body">
+									<h5 className="card-title">{s.title}</h5>
+										<p className="card-text">
+											{s.averagedDaily} <br />
+											{s.averagedMonthly}
+										</p>
+									</div>
+									<div className="card-footer">
+									<small className="text-muted">{s.totalSpent}</small>
+									</div>
 								</div>
-								<div className="card-footer">
-								<small className="text-muted">{summary.totalSpentDs2}</small>
-								</div>
-							</div>
-						</>
-						: null }
+							)
+						})}
 					</div>
 				</> : null}
 				<DateFilter 

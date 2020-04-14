@@ -62,17 +62,12 @@ export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, 
 
     const dataSets: ChartDataSets[] = [];
 
-    dataSets[0] = {
-        label: results.summary.titleDs1,
-        data: results.ds1.map((s) => s.total)
-    }
- 
-    if (results.ds2 !== null && results.ds2.length > 0) {
-        dataSets[1] = {
-            label: results.summary.titleDs2,
-            data: results.ds2.map((s) => s.total)
+    results.summary.map((s, idx) => {
+        dataSets[idx] = {
+            label: s.title,
+            data: results.data[idx].map(t => t.total)
         }
-    }
+    })
     
     let config: ChartDataSets[];
     switch (chartType)
@@ -80,45 +75,39 @@ export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, 
         case ChartType.Doughnut || ChartType.Bar:
             config = doughnutChartConfig();
 
-            dataSets[0].backgroundColor = config[0].backgroundColor;
-            dataSets[0].hoverBackgroundColor = config[0].hoverBackgroundColor;
-
-            if (results.ds2 !== null && results.ds2.length > 0) {    
-                dataSets[1].backgroundColor = config[1].backgroundColor;
-                dataSets[1].hoverBackgroundColor = config[1].hoverBackgroundColor;    
-            }
+            dataSets.map((d, idx) => {
+                d.backgroundColor = config[idx].backgroundColor,
+                d.hoverBackgroundColor = config[idx].hoverBackgroundColor
+            })
             break;
 
         case ChartType.Line:
             config = lineChartConfig();
 
-            dataSets[0].pointBorderColor = config[0].pointBorderColor;
-            dataSets[0].pointBackgroundColor = config[0].pointBackgroundColor;
-            dataSets[0].borderColor = config[0].borderColor;
-            dataSets[0].pointHoverBackgroundColor = config[0].pointHoverBackgroundColor;
-            dataSets[0].pointHoverBorderColor = config[0].pointHoverBorderColor;
-            
-            if (results.ds2 !== null && results.ds2.length > 0) {  
-                dataSets[1].pointBorderColor = config[1].pointBorderColor;
-                dataSets[1].pointBackgroundColor = config[1].pointBackgroundColor;
-                dataSets[1].borderColor = config[1].borderColor;
-                dataSets[1].pointHoverBackgroundColor = config[1].pointHoverBackgroundColor;
-                dataSets[1].pointHoverBorderColor = config[1].pointHoverBorderColor;
-            }
+            dataSets.map((d, idx) => {
+                d.pointBorderColor = config[idx].pointBorderColor,
+                d.pointBackgroundColor = config[idx].pointBackgroundColor,
+                d.borderColor = config[idx].borderColor,
+                d.pointHoverBackgroundColor = config[idx].pointHoverBackgroundColor,
+                d.pointBackgroundColor = config[idx].pointBackgroundColor,
+                d.pointHoverBorderColor  = config[idx].pointHoverBorderColor
+            })
             break;
     }
 
-    let labels;
-    switch (chartLabelType)
-    {
-        case ChartLabelType.MonthAbbrev:
-            labels = results.ds1.map((s) => s.monthName.substring(0, 3));
-            break;
+    let labels: string[] = [];
+    results.data.map(d => {
+        switch (chartLabelType)
+        {
+            case ChartLabelType.MonthAbbrev:
+                labels = d.map((s) => s.monthName.substring(0, 3));
+                break;
 
-        default:
-            labels = results.ds1.map((s) => s.monthName);
-            break;
-    }
+            default:
+                labels = d.map((s) => s.monthName);
+                break;
+        }
+    })
 
     const chartModel: IChartModel = {
         labels:  labels.filter(distinctValues),

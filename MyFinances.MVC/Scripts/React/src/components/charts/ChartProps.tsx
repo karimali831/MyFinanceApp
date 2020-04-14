@@ -9,7 +9,7 @@ import { CategoryType } from 'src/enums/CategoryType';
 
 export interface IPropsFromState {
 	loading: boolean,
-	chartSummary?: IChartSummary | null,
+	chartSummary?: IChartSummary[] | null,
 	chart: IChartModel,
 	chartType: ChartType,
 	width: number,

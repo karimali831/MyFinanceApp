@@ -5,6 +5,7 @@ using MyFinances.Service;
 using MyFinances.ViewModels;
 using MyFinances.Website.Controllers.Api;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -88,28 +89,34 @@ namespace MyIncomes.Website.Controllers.API
             var isSecondCat = request.SecondCatId.HasValue && request.SecondCatId != 0 ? true : false;
             var catId = isSecondCat ? request.SecondCatId.Value : request.CatId;
 
-            var results = await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat);
+            var results = new List<MonthComparisonChartVM[]>()
+            {
+                (await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat)).ToArray()
+            };
 
-            if (!results.Any())
+            if (!results[0].Any())
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No results");
             }
       
-            string secondCategory = string.IsNullOrEmpty(results.First().SecondCategory) ? "" : $"- ({results.First().SecondCategory})";
+            string secondCategory = string.IsNullOrEmpty(results[0].First().SecondCategory) ? "" : $"- ({results[0].First().SecondCategory})";
 
-            var summary = new ChartSummaryVM
+            var summary = new List<ChartSummaryVM>()
             {
-                AveragedDailyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Daily),
-                AveragedMonthlyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Monthly),
-                TotalSpentDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Total),
-            };
+                new ChartSummaryVM
+                {
+                    AveragedDaily = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Daily),
+                    AveragedMonthly = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Monthly),
+                    TotalSpent = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Total)
+                }
+           };
 
             return Request.CreateResponse(HttpStatusCode.OK,
                 new ChartVM
                 {
                     Summary = summary,
-                    Title = string.Format("{0} Chart for {1} {2}", "Incomes", results.First().Category, secondCategory),
-                    Ds1 = results
+                    Title = string.Format("{0} Chart for {1} {2}", "Incomes", results[0].First().Category, secondCategory),
+                    Data = results
                 });
         }
     }

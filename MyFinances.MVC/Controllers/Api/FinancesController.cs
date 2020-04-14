@@ -70,27 +70,34 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> IncomeExpenseComparisonChart(MonthComparisonChartRequestDTO request)
         {
-            var ds1 = (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Spendings);
-            var ds2 = (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Income);
-  
-            var summary = new ChartSummaryVM
+            var datasets = new List<MonthComparisonChartVM[]>
             {
-                TitleDs1 = "Spendings Summary",
-                TitleDs2 = "Income Summary",
-                AveragedDailyDs1 = Utils.ChartsHeaderTitle(ds1, ChartHeaderTitleType.Daily),
-                AveragedDailyDs2 = Utils.ChartsHeaderTitle(ds2, ChartHeaderTitleType.Daily),
-                AveragedMonthlyDs1 = Utils.ChartsHeaderTitle(ds1, ChartHeaderTitleType.Monthly),
-                AveragedMonthlyDs2 = Utils.ChartsHeaderTitle(ds2, ChartHeaderTitleType.Monthly),
-                TotalSpentDs1 = Utils.ChartsHeaderTitle(ds1, ChartHeaderTitleType.Total),
-                TotalSpentDs2 = Utils.ChartsHeaderTitle(ds2, ChartHeaderTitleType.Total)
+                (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Spendings).ToArray(),
+                (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Income).ToArray()
             };
+
+            var summaries = new List<ChartSummaryVM>()
+            {
+                new ChartSummaryVM { Title = "Spending Summary" },
+                new ChartSummaryVM { Title = "Income Summary" }
+            };
+
+
+            int idx = 0;
+            foreach (var summary in summaries)
+            {
+                summaries[idx].AveragedDaily = Utils.ChartsHeaderTitle(datasets[idx], ChartHeaderTitleType.Daily);
+                summaries[idx].AveragedMonthly = Utils.ChartsHeaderTitle(datasets[idx], ChartHeaderTitleType.Monthly);
+                summaries[idx].TotalSpent = Utils.ChartsHeaderTitle(datasets[idx], ChartHeaderTitleType.Total);
+                idx++;
+            };
+
 
             return Request.CreateResponse(HttpStatusCode.OK,
                 new ChartVM
                 {
-                    Summary = summary,
-                    Ds1 = ds1,
-                    Ds2 = ds2
+                    Summary = summaries,
+                    Data = datasets
                 });
         }
 
@@ -98,20 +105,26 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> FinancesChartAsync(MonthComparisonChartRequestDTO request)
         {
-            var results = await financeService.GetFinanceTotalsByMonth(request);
-
-            var summary = new ChartSummaryVM
+            var results = new List<MonthComparisonChartVM[]>
             {
-                TitleDs1 = "Finances Breakdown",
-                AveragedDailyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Daily),
-                AveragedMonthlyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Monthly),
-                TotalSpentDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Total),
+                (await financeService.GetFinanceTotalsByMonth(request)).ToArray()
             };
- 
+
+            var summaries = new List<ChartSummaryVM>
+            {
+                new ChartSummaryVM
+                {
+                    Title = "Finances Breakdown",
+                    AveragedDaily = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Daily),
+                    AveragedMonthly = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Monthly),
+                    TotalSpent = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Total),
+                }
+            };
+
             return Request.CreateResponse(HttpStatusCode.OK, new ChartVM
             {
-                Summary = summary,
-                Ds1 = results
+                Summary = summaries,
+                Data = results
             });
         }
     }

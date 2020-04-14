@@ -106,48 +106,52 @@ namespace MyFinances.Website.Controllers.API
             var isSecondCat = request.SecondCatId.HasValue && !request.IsFinance && request.SecondCatId != 0 ? true : false;
             var catId = isSecondCat ? request.SecondCatId.Value : request.CatId;
 
-            var results = await spendingService.GetSpendingsByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat, request.IsFinance);
+            var results = new List<MonthComparisonChartVM[]>
+            {
+                (await spendingService.GetSpendingsByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat, request.IsFinance)).ToArray()
+            };
 
-            if (!results.Any())
+
+            if (!results[0].Any())
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No results");
             }
 
-            string secondCategory = !isSecondCat ? "" : $"- ({results.First().SecondCategory})";
+            string secondCategory = !isSecondCat ? "" : $"- ({results[0].First().SecondCategory})";
 
-            var summary = new ChartSummaryVM
+            var summaries = new List<ChartSummaryVM>
             {
-                TitleDs1 = string.Format("{0} Chart for {1} {2}", "Spendings", results.First().Category, secondCategory),
-                AveragedDailyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Daily),
-                AveragedMonthlyDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Monthly),
-                TotalSpentDs1 = Utils.ChartsHeaderTitle(results, ChartHeaderTitleType.Total),
+                new ChartSummaryVM
+                {
+                    Title = string.Format("{0} Chart for {1} {2}", "Spendings", results[0].First().Category, secondCategory),
+                    AveragedDaily = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Daily),
+                    AveragedMonthly = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Monthly),
+                    TotalSpent = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Total)
+                }
             };
-
-            // if ds2 
-            var ds2 = new List<MonthComparisonChartVM>();
 
             // if fuel cat then check fuel in ds2
             if (request.CatId == 1 && request.SecondCatId == 28)
             {
                 request.DateFilter.DateField = "PayDate";
-                ds2 = await cnwService.GetFuelInByMonthAsync(request.DateFilter);
+                results.Add((await cnwService.GetFuelInByMonthAsync(request.DateFilter)).ToArray());
 
-                if (ds2.Any())
+                summaries.Add(new ChartSummaryVM
                 {
-                    summary.TitleDs2 = "AMZ Van Fuel In";
-                    summary.AveragedDailyDs2 = Utils.ChartsHeaderTitle(ds2, ChartHeaderTitleType.Daily);
-                    summary.AveragedMonthlyDs2 = Utils.ChartsHeaderTitle(ds2, ChartHeaderTitleType.Monthly);
-                    summary.TotalSpentDs2 = Utils.ChartsHeaderTitle(ds2, ChartHeaderTitleType.Total);
-                }
+                    Title = "AMZ Van Fuel In",
+                    AveragedDaily = Utils.ChartsHeaderTitle(results[1], ChartHeaderTitleType.Daily),
+                    AveragedMonthly = Utils.ChartsHeaderTitle(results[1], ChartHeaderTitleType.Monthly),
+                    TotalSpent = Utils.ChartsHeaderTitle(results[1], ChartHeaderTitleType.Total)
+                });
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, 
                 new ChartVM
                 {
-                    Summary = summary,
-                    Ds1 = results,
-                    Ds2 = ds2
-                });
+                    Summary = summaries,
+                    Data = results
+                }
+            );
         }
     }
 }

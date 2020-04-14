@@ -13,14 +13,10 @@ export interface IMonthComparisonChart {
 }
 
 export interface IChartSummary{
-    titleDs1: string,
-    titleDs2: string,
-    averagedDailyDs1: string,
-    averagedDailyDs2: string,
-    averagedMonthlyDs1: string,
-    averagedMonthlyDs2: string,
-    totalSpentDs1: string,
-    totalSpentDs2: string,
+    title: string,
+    averagedDaily: string,
+    averagedMonthly: string,
+    totalSpent: string
 }
 
 export interface IChartModel {

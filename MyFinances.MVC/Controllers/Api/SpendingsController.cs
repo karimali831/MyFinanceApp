@@ -25,14 +25,17 @@ namespace MyFinances.Website.Controllers.API
         private readonly ISpendingService spendingService;
         private readonly ICNWService cnwService;
         private readonly IBaseService baseService;
+        private readonly IFinanceService financeService;
 
         public SpendingsController(
             ISpendingService spendingService, 
             ICNWService cnwService,
+            IFinanceService financeService,
             IBaseService baseService)
         {
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
             this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
+            this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
         }
 
@@ -108,23 +111,19 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> SpendingsByCategoryChart(MonthComparisonChartRequestDTO request)
         {
-            var isSecondCat = 
-                request.SecondCatId.HasValue && 
-                !request.IsFinance && 
-                request.SecondCatId != 0 &&
-                request.SecondCatId != 9999
-                    ? true 
-                    : false;
-
+            var isSecondCat = request.SecondCatId.HasValue && !request.IsFinance && request.SecondCatId != 0 && request.SecondCatId != 9999 ? true : false;
             var catId = isSecondCat ? request.SecondCatId.Value : request.CatId;
-            var catName = await baseService.GetCategoryName(catId);
+
+            var catName = request.IsFinance 
+                ? (await financeService.GetAsync(catId)).Name
+                : await baseService.GetCategoryName(catId);
 
             var dictionary = new Dictionary<string, MonthComparisonChartVM[]>
             {
                 { catName, (await spendingService.GetSpendingsByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat, request.IsFinance)).ToArray() }
             };
 
-            var results = dictionary.Values.ToArray();
+            var results = dictionary.Values.ToList();
 
             if (!results[0].Any())
             {
@@ -183,6 +182,7 @@ namespace MyFinances.Website.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK, 
                 new ChartVM
                 {
+                    Labels = Utils.ChartLabels(results),
                     Summary = summaries,
                     Data = dictionary
                 }

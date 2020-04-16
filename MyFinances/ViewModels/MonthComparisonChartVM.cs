@@ -9,7 +9,6 @@ namespace MyFinances.ViewModels
 {
     public class MonthComparisonChartVM
     {
-        public string LabelTitle { get; set; }
         public string YearMonth { get; set; }
         public string MonthName { get; set; }
         public decimal Total { get; set; }

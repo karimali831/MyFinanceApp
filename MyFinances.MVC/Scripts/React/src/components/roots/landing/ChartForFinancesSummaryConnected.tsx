@@ -1,4 +1,4 @@
-import { ChartType, ChartDataType, ChartLabelType } from 'src/enums/ChartType';
+import { ChartType, ChartDataType } from 'src/enums/ChartType';
 import IStoreState from 'src/state/IStoreState';
 import Chart, { IPropsFromState, IPropsFromDispatch } from 'src/components/charts/ChartProps';
 import { connect } from 'react-redux';
@@ -15,7 +15,7 @@ const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
         loading: state.chart.loading,
         chartSummary: state.chart.financesComparisonChart !== undefined ? state.chart.financesComparisonChart.summary : null,
-        chart: chartData(ChartType.Line, ChartLabelType.MonthAbbrev, state.chart.financesComparisonChart),
+        chart: chartData(ChartType.Line, state.chart.financesComparisonChart),
         chartType: ChartType.Line,
         width: 1200,
         height: 500,

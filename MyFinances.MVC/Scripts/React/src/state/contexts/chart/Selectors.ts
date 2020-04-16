@@ -1,11 +1,11 @@
 import IStoreState from 'src/state/IStoreState';
 import { IChartModel } from 'src/models/IChart';
 import { ChartDataSets, ChartColor } from 'chart.js';
-import { distinctValues, capitalize } from 'src/components/utils/Utils';
+import { capitalize } from 'src/components/utils/Utils';
 import { IMonthComparisonChartRequest, IMonthComparisonChartResponse } from 'src/Api/Api';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DataType } from 'src/enums/DataType';
-import { ChartDataType, ChartType, ChartLabelType } from 'src/enums/ChartType';
+import { ChartDataType, ChartType } from 'src/enums/ChartType';
 
 export const getChartDataType = (state: IStoreState): ChartDataType | undefined => 
     state.chart.type
@@ -54,17 +54,7 @@ export const chartSummaryData = (state: IStoreState, dataType: DataType): IChart
     return chartModel;
 }
 
-// // change to line chart if showing subcat datasets
-// export const getChartType = (defaultChartType: ChartType, selectedSecondCat?: number): ChartType => {
-//     if (selectedSecondCat === 9999) {
-//         return ChartType.Line;
-//     } else {
-//         return defaultChartType;
-//     }
-// }
-
-
-export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, results?: IMonthComparisonChartResponse): IChartModel => {
+export const chartData = (chartType: ChartType, results?: IMonthComparisonChartResponse): IChartModel => {
 
     if (results === undefined) {
         return {};
@@ -108,24 +98,8 @@ export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, 
             break;
     }
 
-    let labels: string[] = [];
-
-    for (const key in results.data)
-    {
-        switch (chartLabelType)
-        {
-            case ChartLabelType.MonthAbbrev:
-                labels = results.data[key].map((s) => s.monthName.substring(0, 3));
-                break;
-
-            default:
-                labels = results.data[key].map((s) => s.monthName);
-                break;
-        }
-    }
-
     const chartModel: IChartModel = {
-        labels:  labels.filter(distinctValues),
+        labels:  results.labels,
         datasets: dataSets,
     }
 

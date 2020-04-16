@@ -260,6 +260,7 @@ export interface IMonthComparisonChartRequest
 
 export interface IMonthComparisonChartResponse
 {
+    labels: string[],
     summary: IChartSummary[],
     data:  { [key: string]: IMonthComparisonChart[] }
 }

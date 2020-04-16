@@ -1,4 +1,4 @@
-import { ChartType, ChartDataType, ChartLabelType } from 'src/enums/ChartType';
+import { ChartType, ChartDataType } from 'src/enums/ChartType';
 import IStoreState from 'src/state/IStoreState';
 import { chartData } from 'src/state/contexts/chart/Selectors';
 import Chart, { IPropsFromState, IPropsFromDispatch } from 'src/components/charts/ChartProps';
@@ -15,7 +15,7 @@ const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
         loading: state.chart.loading,
         chartSummary: state.chart.incomeExpenseComparisonChart !== undefined ? state.chart.incomeExpenseComparisonChart.summary : null,
-        chart: chartData(ChartType.Line, ChartLabelType.MonthAbbrev, state.chart.incomeExpenseComparisonChart),
+        chart: chartData(ChartType.Line, state.chart.incomeExpenseComparisonChart),
         chartType: ChartType.Line,
         width: 200,
         height: 500,

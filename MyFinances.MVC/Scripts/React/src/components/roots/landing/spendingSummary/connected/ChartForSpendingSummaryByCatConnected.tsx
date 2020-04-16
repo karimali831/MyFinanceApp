@@ -1,7 +1,7 @@
 import IStoreState from '../../../../../state/IStoreState';
 import { connect } from 'react-redux';
 import ChartProps, { IPropsFromState, IPropsFromDispatch } from '../../../../charts/ChartProps';
-import { ChartType, ChartDataType, ChartLabelType } from 'src/enums/ChartType';
+import { ChartType, ChartDataType } from 'src/enums/ChartType';
 import { DateFilterChangeAction } from 'src/state/contexts/common/Actions';
 import { DataType } from 'src/enums/DataType';
 import { LoadChartAction } from 'src/state/contexts/chart/Actions';
@@ -16,7 +16,7 @@ const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
         loading: state.chart.loading,
         chartSummary: state.chart.expenseCategoryComparisonChart !== undefined ? state.chart.expenseCategoryComparisonChart.summary : null,
-        chart: chartData(ChartType.Bar, ChartLabelType.MonthAbbrev, state.chart.expenseCategoryComparisonChart),
+        chart: chartData(ChartType.Bar, state.chart.expenseCategoryComparisonChart),
         chartType: ChartType.Bar,
         width: 200,
         height: 400,

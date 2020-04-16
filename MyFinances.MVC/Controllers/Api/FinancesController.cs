@@ -83,6 +83,7 @@ namespace MyFinances.Website.Controllers.API
             };
 
             var results = datasets.Values.ToList();
+            var labels = Utils.ChartLabels(results);
 
             int idx = 0;
             foreach (var summary in summaries)
@@ -97,6 +98,7 @@ namespace MyFinances.Website.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK,
                 new ChartVM
                 {
+                    Labels = labels,
                     Summary = summaries,
                     Data = datasets
                 });
@@ -126,6 +128,7 @@ namespace MyFinances.Website.Controllers.API
 
             return Request.CreateResponse(HttpStatusCode.OK, new ChartVM
             {
+                Labels = Utils.ChartLabels(results),
                 Summary = summaries,
                 Data = dictionary
             });

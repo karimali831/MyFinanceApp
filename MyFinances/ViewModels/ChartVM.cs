@@ -9,6 +9,7 @@ namespace MyFinances.ViewModels
     public class ChartVM
     {
         public IList<ChartSummaryVM> Summary { get; set; }
+        public string[] Labels { get; set; }
         public IDictionary<string, MonthComparisonChartVM[]> Data { get; set; }
     }
 

@@ -16,6 +16,7 @@ namespace MyFinances.Service
 {
     public interface IFinanceService
     {
+        Task<Finance> GetAsync(int financeId);
         Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates);
         Task<IEnumerable<FinanceVM>> GetFinances(bool resyncNextDueDates);
         Task InsertAsync(FinanceDTO dto);
@@ -183,6 +184,11 @@ namespace MyFinances.Service
                     CWTLTotalVanDamagesPaid = Utils.ToCurrency(cwtlTotalVanDamagesPaid),
                     EstimatedAvailableCredit = Utils.ToCurrency(remainingBalance)
                 };
+        }
+
+        public async Task<Finance> GetAsync(int financeId)
+        {
+            return await financeRepository.GetAsync(financeId);
         }
 
         public async Task<IEnumerable<Finance>> GetAllAsync(bool resyncNextDueDates)

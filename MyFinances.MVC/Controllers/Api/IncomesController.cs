@@ -98,7 +98,7 @@ namespace MyIncomes.Website.Controllers.API
             };
 
             var results = dictionary.Values.ToList();
-
+        
             if (!results[0].Any())
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No results");
@@ -126,7 +126,7 @@ namespace MyIncomes.Website.Controllers.API
                 {
                     foreach (var cat in categories)
                     {
-                        dictionary.Add(cat.Name, (await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat: true)).ToArray());
+                        dictionary.Add(cat.Name, (await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, cat.Id, isSecondCat: true)).ToArray());
                     }
                 }
 
@@ -137,6 +137,7 @@ namespace MyIncomes.Website.Controllers.API
                 new ChartVM
                 {
                     Summary = summary,
+                    Labels = Utils.ChartLabels(results),
                     Data = dictionary
                 });
         }

@@ -97,6 +97,15 @@ namespace MyFinances.Helpers
             return "";
         }
 
+        public static string[] ChartLabels(List<MonthComparisonChartVM[]> results)
+        {
+            return results
+                .Max()
+                .Select(x => x.MonthName.Substring(0, 3))
+                .Distinct()
+                .ToArray();
+        }
+
         public static string FilterDateSql(DateFilter dateFilter)
         {
             if (DateTime.TryParseExact(dateFilter.Frequency.ToString(), "MMMM", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime freq))

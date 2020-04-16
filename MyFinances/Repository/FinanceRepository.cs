@@ -15,6 +15,7 @@ namespace MyFinances.Repository
 {
     public interface IFinanceRepository
     {
+        Task<Finance> GetAsync(int financeId);
         Task<IEnumerable<Finance>> GetAllAsync();
         Task InsertAsync(FinanceDTO dto);
         Task UpdateNextDueDateAsync(DateTime dueDate, int Id);
@@ -32,6 +33,14 @@ namespace MyFinances.Repository
         public FinanceRepository(Func<IDbConnection> dbConnectionFactory)
         {
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
+        }
+
+        public async Task<Finance> GetAsync(int financeId)
+        {
+            string sqlTxt = $"{DapperHelper.SELECT(TABLE, FIELDS)} WHERE Id = @Id";
+
+            var sql = dbConnectionFactory();
+            return (await sql.QueryAsync<Finance>(sqlTxt, new { Id = financeId })).FirstOrDefault();
         }
 
         public async Task<IEnumerable<Finance>> GetAllAsync()

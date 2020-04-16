@@ -70,25 +70,26 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> IncomeExpenseComparisonChart(MonthComparisonChartRequestDTO request)
         {
-            var datasets = new List<MonthComparisonChartVM[]>
-            {
-                (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Spendings).ToArray(),
-                (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Income).ToArray()
-            };
-
             var summaries = new List<ChartSummaryVM>()
             {
                 new ChartSummaryVM { Title = "Spending Summary" },
                 new ChartSummaryVM { Title = "Income Summary" }
             };
 
+            var datasets = new Dictionary<string, MonthComparisonChartVM[]>
+            {
+                { summaries[0].Title, (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Spendings).ToArray() },
+                { summaries[1].Title, (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Income).ToArray() }
+            };
+
+            var results = datasets.Values.ToList();
 
             int idx = 0;
             foreach (var summary in summaries)
             {
-                summaries[idx].AveragedDaily = Utils.ChartsHeaderTitle(datasets[idx], ChartHeaderTitleType.Daily);
-                summaries[idx].AveragedMonthly = Utils.ChartsHeaderTitle(datasets[idx], ChartHeaderTitleType.Monthly);
-                summaries[idx].TotalSpent = Utils.ChartsHeaderTitle(datasets[idx], ChartHeaderTitleType.Total);
+                summaries[idx].AveragedDaily = Utils.ChartsHeaderTitle(results[idx], ChartHeaderTitleType.Daily);
+                summaries[idx].AveragedMonthly = Utils.ChartsHeaderTitle(results[idx], ChartHeaderTitleType.Monthly);
+                summaries[idx].TotalSpent = Utils.ChartsHeaderTitle(results[idx], ChartHeaderTitleType.Total);
                 idx++;
             };
 
@@ -105,10 +106,12 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> FinancesChartAsync(MonthComparisonChartRequestDTO request)
         {
-            var results = new List<MonthComparisonChartVM[]>
+            var dictionary = new Dictionary<string, MonthComparisonChartVM[]>
             {
-                (await financeService.GetFinanceTotalsByMonth(request)).ToArray()
+                {"Finances Breakdown", (await financeService.GetFinanceTotalsByMonth(request)).ToArray() }
             };
+
+            var results = dictionary.Values.ToList();
 
             var summaries = new List<ChartSummaryVM>
             {
@@ -124,7 +127,7 @@ namespace MyFinances.Website.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK, new ChartVM
             {
                 Summary = summaries,
-                Data = results
+                Data = dictionary
             });
         }
     }

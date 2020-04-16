@@ -12,7 +12,8 @@ export interface IOwnProps {
     categoryType?: CategoryType,
     secondTypeId?: number | undefined,
     selectedCat?: number | undefined,
-    selectedSecondCat?: number  | undefined
+    selectedSecondCat?: number  | undefined,
+    showAllSubcats?: boolean | false,
     loadCategories: (categoryType: CategoryType) => LoadCategoriesAction
     onChangeSelectedCategory: (selectedCat: number, secondTypeId?: number) => OnChangeSelectedCategoryAction,
     onChangeSelectedSecondCategory: (selectedSecondCat: number) => OnChangeSelectedSecondCategoryAction
@@ -77,6 +78,11 @@ export default class SelectCategories extends React.Component<IOwnProps, IOwnSta
                             <>
                                 <select id="categories" onChange={e => this.onChangeSelectedSecondCategory(e)} className="form-control">
                                     <option value={0}>-- select subcategory --</option>
+                                    {
+                                        this.props.showAllSubcats 
+                                            ? <option value={9999}>All</option>  
+                                            : null
+                                    }
                                     {
                                         this.props.secondCategories.map(c =>
                                             <option key={c.id} value={c.id} disabled={c.disabled} selected={this.state.selectedSecondCat === c.id}>{c.name}</option>

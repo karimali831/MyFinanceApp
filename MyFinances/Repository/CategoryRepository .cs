@@ -16,6 +16,7 @@ namespace MyFinances.Repository
         Task<IEnumerable<Category>> GetAllAsync();
         Task AddCategory(CategoryDTO dto);
         Task<string> GetCategoryName(int id);
+        Task<int> GetSecondTypeId(int catId);
     }
 
     public class CategoryRepository : ICategoryRepository
@@ -32,26 +33,26 @@ namespace MyFinances.Repository
 
         public async Task<IEnumerable<Category>> GetAllAsync()
         {
-            using (var sql = dbConnectionFactory())
-            {
-                return (await sql.QueryAsync<Category>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
-            }
+            using var sql = dbConnectionFactory();
+            return (await sql.QueryAsync<Category>($"{DapperHelper.SELECT(TABLE, FIELDS)}")).ToArray();
         }
 
         public async Task<string> GetCategoryName(int id)
         {
-            using (var sql = dbConnectionFactory())
-            {
-                return (await sql.QueryAsync<string>($"SELECT Name FROM Categories WHERE Id = @Id", new { Id = id })).FirstOrDefault();
-            }
+            using var sql = dbConnectionFactory();
+            return (await sql.QueryAsync<string>($"SELECT Name FROM {TABLE} WHERE Id = @Id", new { Id = id })).FirstOrDefault();
         }
 
         public async Task AddCategory(CategoryDTO dto)
         {
-            using (var sql = dbConnectionFactory())
-            {
-                await sql.ExecuteAsync($@"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
-            }
+            using var sql = dbConnectionFactory();
+            await sql.ExecuteAsync($@"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
+        }
+
+        public async Task<int> GetSecondTypeId(int catId)
+        {
+            using var sql = dbConnectionFactory();
+            return (await sql.QueryAsync<int>($"SELECT SecondTypeId FROM {TABLE} WHERE Id = @Id", new { Id = catId })).FirstOrDefault();
         }
     }
 }

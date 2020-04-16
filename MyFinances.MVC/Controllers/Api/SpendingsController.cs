@@ -24,11 +24,16 @@ namespace MyFinances.Website.Controllers.API
     {
         private readonly ISpendingService spendingService;
         private readonly ICNWService cnwService;
+        private readonly IBaseService baseService;
 
-        public SpendingsController(ISpendingService spendingService, ICNWService cnwService)
+        public SpendingsController(
+            ISpendingService spendingService, 
+            ICNWService cnwService,
+            IBaseService baseService)
         {
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
             this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
+            this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
         }
 
         [HttpPost]
@@ -103,19 +108,29 @@ namespace MyFinances.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> SpendingsByCategoryChart(MonthComparisonChartRequestDTO request)
         {
-            var isSecondCat = request.SecondCatId.HasValue && !request.IsFinance && request.SecondCatId != 0 ? true : false;
-            var catId = isSecondCat ? request.SecondCatId.Value : request.CatId;
+            var isSecondCat = 
+                request.SecondCatId.HasValue && 
+                !request.IsFinance && 
+                request.SecondCatId != 0 &&
+                request.SecondCatId != 9999
+                    ? true 
+                    : false;
 
-            var results = new List<MonthComparisonChartVM[]>
+            var catId = isSecondCat ? request.SecondCatId.Value : request.CatId;
+            var catName = await baseService.GetCategoryName(catId);
+
+            var dictionary = new Dictionary<string, MonthComparisonChartVM[]>
             {
-                (await spendingService.GetSpendingsByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat, request.IsFinance)).ToArray()
+                { catName, (await spendingService.GetSpendingsByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat, request.IsFinance)).ToArray() }
             };
 
+            var results = dictionary.Values.ToArray();
 
             if (!results[0].Any())
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No results");
             }
+
 
             string secondCategory = !isSecondCat ? "" : $"- ({results[0].First().SecondCategory})";
 
@@ -130,18 +145,38 @@ namespace MyFinances.Website.Controllers.API
                 }
             };
 
+
+            // make subcats datasets
+            if (request.SecondCatId.HasValue && request.SecondCatId.Value == 9999)
+            {
+                int secondTypeId = await baseService.GetSecondTypeId(catId);
+                var categories = await baseService.GetAllCategories((CategoryType)secondTypeId, false);
+
+                if (categories.Any())
+                {
+                    foreach (var cat in categories)
+                    {
+                        dictionary.Add(cat.Name, (await spendingService.GetSpendingsByCategoryAndMonthAsync(request.DateFilter, cat.Id, isSecondCat: true, isFinance: false)).ToArray());
+                    }
+                }
+
+                dictionary.Remove(catName);
+            }
+
             // if fuel cat then check fuel in ds2
             if (request.CatId == 1 && request.SecondCatId == 28)
             {
                 request.DateFilter.DateField = "PayDate";
-                results.Add((await cnwService.GetFuelInByMonthAsync(request.DateFilter)).ToArray());
+                string amzVanFuelInLabel = "AMZ Fleet Van Fuel In";
+
+                dictionary.Add(amzVanFuelInLabel, (await cnwService.GetFuelInByMonthAsync(request.DateFilter)).ToArray());
 
                 summaries.Add(new ChartSummaryVM
                 {
-                    Title = "AMZ Van Fuel In",
-                    AveragedDaily = Utils.ChartsHeaderTitle(results[1], ChartHeaderTitleType.Daily),
-                    AveragedMonthly = Utils.ChartsHeaderTitle(results[1], ChartHeaderTitleType.Monthly),
-                    TotalSpent = Utils.ChartsHeaderTitle(results[1], ChartHeaderTitleType.Total)
+                    Title = amzVanFuelInLabel,
+                    AveragedDaily = Utils.ChartsHeaderTitle(dictionary[amzVanFuelInLabel], ChartHeaderTitleType.Daily),
+                    AveragedMonthly = Utils.ChartsHeaderTitle(dictionary[amzVanFuelInLabel], ChartHeaderTitleType.Monthly),
+                    TotalSpent = Utils.ChartsHeaderTitle(dictionary[amzVanFuelInLabel], ChartHeaderTitleType.Total)
                 });
             }
 
@@ -149,7 +184,7 @@ namespace MyFinances.Website.Controllers.API
                 new ChartVM
                 {
                     Summary = summaries,
-                    Data = results
+                    Data = dictionary
                 }
             );
         }

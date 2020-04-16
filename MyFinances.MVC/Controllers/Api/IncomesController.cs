@@ -23,10 +23,12 @@ namespace MyIncomes.Website.Controllers.API
     public class IncomesController : ApiController
     {
         private readonly IIncomeService incomeService;
+        private readonly IBaseService baseService;
 
-        public IncomesController(IIncomeService incomeService)
+        public IncomesController(IIncomeService incomeService, IBaseService baseService)
         {
             this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
+            this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
         }
 
 
@@ -86,13 +88,16 @@ namespace MyIncomes.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> IncomesByCategoryChart(MonthComparisonChartRequestDTO request)
         {
-            var isSecondCat = request.SecondCatId.HasValue && request.SecondCatId != 0 ? true : false;
+            var isSecondCat = request.SecondCatId.HasValue && request.SecondCatId != 0 && request.SecondCatId != 9999 ? true : false;
             var catId = isSecondCat ? request.SecondCatId.Value : request.CatId;
+            var catName = await baseService.GetCategoryName(catId);
 
-            var results = new List<MonthComparisonChartVM[]>()
+            var dictionary = new Dictionary<string, MonthComparisonChartVM[]>()
             {
-                (await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat)).ToArray()
+                { catName, (await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat)).ToArray() }
             };
+
+            var results = dictionary.Values.ToList();
 
             if (!results[0].Any())
             {
@@ -105,18 +110,34 @@ namespace MyIncomes.Website.Controllers.API
             {
                 new ChartSummaryVM
                 {
+                    Title = string.Format("{0} Chart for {1} {2}", "Incomes", results[0].First().Category, secondCategory),
                     AveragedDaily = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Daily),
                     AveragedMonthly = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Monthly),
                     TotalSpent = Utils.ChartsHeaderTitle(results[0], ChartHeaderTitleType.Total)
                 }
-           };
+            };
+
+            if (request.SecondCatId.HasValue && request.SecondCatId.Value == 9999)
+            {
+                int secondTypeId = await baseService.GetSecondTypeId(catId);
+                var categories = await baseService.GetAllCategories((CategoryType)secondTypeId, false);
+
+                if (categories.Any())
+                {
+                    foreach (var cat in categories)
+                    {
+                        dictionary.Add(cat.Name, (await incomeService.GetIncomesByCategoryAndMonthAsync(request.DateFilter, catId, isSecondCat: true)).ToArray());
+                    }
+                }
+
+                dictionary.Remove(catName);
+            }
 
             return Request.CreateResponse(HttpStatusCode.OK,
                 new ChartVM
                 {
                     Summary = summary,
-                    Title = string.Format("{0} Chart for {1} {2}", "Incomes", results[0].First().Category, secondCategory),
-                    Data = results
+                    Data = dictionary
                 });
         }
     }

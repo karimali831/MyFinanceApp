@@ -17,7 +17,8 @@ const mapStateToProps =
         selectedCat: state.chart.request !== undefined ? state.chart.request.catId : state.common.selectedCat,
         selectedSecondCat: state.chart.request !== undefined ? state.chart.request.secondCatId : state.common.selectedSecondCat, 
         loadingCategories: state.common.loadingCategories,
-        loadingSecondCategories: state.common.loadingSecondCategories
+        loadingSecondCategories: state.common.loadingSecondCategories,
+        showAllSubcats: true
     });
 
 // Add required action creators for component

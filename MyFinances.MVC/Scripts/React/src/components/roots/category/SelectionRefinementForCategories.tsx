@@ -12,7 +12,8 @@ export interface IPropsFromState {
     selectedCat?: number,
     selectedSecondCat?: number,
     loadingCategories: boolean,
-    loadingSecondCategories: boolean
+    loadingSecondCategories: boolean,
+    showAllSubcats?: boolean | false
 }
 
 export interface IPropsFromDispatch {
@@ -36,6 +37,7 @@ const SelectCategoriesForSummary: React.SFC<AllProps> = (props) =>
         onChangeSelectedSecondCategory={props.onChangeSelectedSecondCategory}
         selectedCat={props.selectedCat}
         selectedSecondCat={props.selectedSecondCat}
+        showAllSubcats={props.showAllSubcats}
     />
 
 export default SelectCategoriesForSummary;

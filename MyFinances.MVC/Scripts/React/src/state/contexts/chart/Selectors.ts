@@ -1,7 +1,7 @@
 import IStoreState from 'src/state/IStoreState';
 import { IChartModel } from 'src/models/IChart';
 import { ChartDataSets, ChartColor } from 'chart.js';
-import { distinctValues } from 'src/components/utils/Utils';
+import { distinctValues, capitalize } from 'src/components/utils/Utils';
 import { IMonthComparisonChartRequest, IMonthComparisonChartResponse } from 'src/Api/Api';
 import { IDateFilter } from 'src/models/IDateFilter';
 import { DataType } from 'src/enums/DataType';
@@ -36,7 +36,7 @@ export const chartSummaryData = (state: IStoreState, dataType: DataType): IChart
     }
  
     const dataSets: ChartDataSets[] = [];
-    const config = doughnutChartConfig();
+    const config = doughnutChartConfig(results.length);
 
     const ds1: ChartDataSets = {
         data: results.map((s) => s.total),
@@ -54,6 +54,16 @@ export const chartSummaryData = (state: IStoreState, dataType: DataType): IChart
     return chartModel;
 }
 
+// // change to line chart if showing subcat datasets
+// export const getChartType = (defaultChartType: ChartType, selectedSecondCat?: number): ChartType => {
+//     if (selectedSecondCat === 9999) {
+//         return ChartType.Line;
+//     } else {
+//         return defaultChartType;
+//     }
+// }
+
+
 export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, results?: IMonthComparisonChartResponse): IChartModel => {
 
     if (results === undefined) {
@@ -62,18 +72,21 @@ export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, 
 
     const dataSets: ChartDataSets[] = [];
 
-    results.summary.map((s, idx) => {
-        dataSets[idx] = {
-            label: s.title,
-            data: results.data[idx].map(t => t.total)
+    let i = 0;
+    for (const key in results.data)
+    {
+        dataSets[i] = {
+            label: capitalize(key),
+            data: results.data[key].map(t => t.total)
         }
-    })
-    
-    let config: ChartDataSets[];
+        i++;
+    }
+
+    let config: ChartDataSets[] = [];
     switch (chartType)
     {
         case ChartType.Doughnut || ChartType.Bar:
-            config = doughnutChartConfig();
+            config = doughnutChartConfig(dataSets.length);
 
             dataSets.map((d, idx) => {
                 d.backgroundColor = config[idx].backgroundColor,
@@ -82,7 +95,7 @@ export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, 
             break;
 
         case ChartType.Line:
-            config = lineChartConfig();
+            config = lineChartConfig(dataSets.length);
 
             dataSets.map((d, idx) => {
                 d.pointBorderColor = config[idx].pointBorderColor,
@@ -96,18 +109,20 @@ export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, 
     }
 
     let labels: string[] = [];
-    results.data.map(d => {
+
+    for (const key in results.data)
+    {
         switch (chartLabelType)
         {
             case ChartLabelType.MonthAbbrev:
-                labels = d.map((s) => s.monthName.substring(0, 3));
+                labels = results.data[key].map((s) => s.monthName.substring(0, 3));
                 break;
 
             default:
-                labels = d.map((s) => s.monthName);
+                labels = results.data[key].map((s) => s.monthName);
                 break;
         }
-    })
+    }
 
     const chartModel: IChartModel = {
         labels:  labels.filter(distinctValues),
@@ -117,32 +132,36 @@ export const chartData = (chartType: ChartType, chartLabelType: ChartLabelType, 
     return chartModel;
 }
 
-export const lineChartConfig = () : ChartDataSets[] => {
+export const lineChartConfig = (datasetsCount: number) : ChartDataSets[] => {
 
     const dataSets: ChartDataSets[] = [];
 
-    const configDs1: ChartDataSets = {
-        pointBorderColor: "rgba(75,192,192,1)",
-        pointBackgroundColor: "#fff",
-        borderColor: '#bc5090',
-        pointHoverBackgroundColor: "rgba(75,192,192,1)",
-        pointHoverBorderColor: "rgba(220,220,220,1)",
-    }
+    Array.from(Array(datasetsCount), (e, i) => {
+        if (i % 2) {
+            dataSets.push({
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                borderColor: '#bc5090',
+                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)"
+            })
+        } else {
+            dataSets.push({
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                borderColor: '#58508d',
+                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)"
+            })
 
-    const configDs2: ChartDataSets = {
-        pointBorderColor: "rgba(75,192,192,1)",
-        pointBackgroundColor: "#fff",
-        borderColor: '#58508d',
-        pointHoverBackgroundColor: "rgba(75,192,192,1)",
-        pointHoverBorderColor: "rgba(220,220,220,1)",
-    }
+        }
+    });
 
-    dataSets.push(configDs1, configDs2);
 
     return dataSets;
 }
 
-export const doughnutChartConfig = () : ChartDataSets[] => {
+export const doughnutChartConfig = (datasetsCount: number) : ChartDataSets[] => {
     const backgroundColors: ChartColor[] = []
     const hoverBackgroundColors: ChartColor[] = [];
     const dataSets: ChartDataSets[] = [];
@@ -181,17 +200,12 @@ export const doughnutChartConfig = () : ChartDataSets[] => {
         '#ffa600'
     )
 
-    const configDs1: ChartDataSets = {
-        backgroundColor: backgroundColors,
-        hoverBackgroundColor: hoverBackgroundColors
-    }
-    
-    const configDs2: ChartDataSets = {
-        backgroundColor: backgroundColors,
-        hoverBackgroundColor: hoverBackgroundColors
-    }
-
-    dataSets.push(configDs1, configDs2);
+    Array.from(Array(datasetsCount), (e, i) => {
+        dataSets.push({
+            backgroundColor: backgroundColors,
+            hoverBackgroundColor: hoverBackgroundColors
+        })
+    });
 
     return dataSets;
 }

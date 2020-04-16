@@ -29,6 +29,11 @@ export const intToOrdinalNumberString = (cell: any, row: any) => {
 	}
 }
 
+export const capitalize = (s: string) => {
+	if (typeof s !== 'string') { return '' }
+	return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 export const priceFormatter = (cell: any, row: any) => {
     // `<i class='glyphicon glyphicon-gbp'></i> ${cell}`;
     return `£${cell}`;

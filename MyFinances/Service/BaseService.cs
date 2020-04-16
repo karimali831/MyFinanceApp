@@ -16,6 +16,7 @@ namespace MyFinances.Service
         Task<IEnumerable<Category>> GetAllCategories(CategoryType? typeId, bool catsWithSubs);
         Task AddCategory(CategoryDTO dto);
         Task<string> GetCategoryName(int id);
+        Task<int> GetSecondTypeId(int catId);
         Task<Setting> GetSettingsAsync();
         Task UpdateSettingsAsync(Setting settings);
     }
@@ -71,6 +72,11 @@ namespace MyFinances.Service
         public async Task<string> GetCategoryName(int id)
         {
             return await categoryRepository.GetCategoryName(id);
+        }
+
+        public async Task<int> GetSecondTypeId(int catId)
+        {
+            return await categoryRepository.GetSecondTypeId(catId);
         }
 
         public async Task<Setting> GetSettingsAsync()

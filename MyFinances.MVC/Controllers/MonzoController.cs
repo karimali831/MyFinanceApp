@@ -59,8 +59,14 @@ namespace MyFinances.Website.Controllers
                     .Take(100)
                     .ToList();
 
+                var spentToday = transactions
+                    .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
+                    .Sum(x => x.Amount / 100m);
+                    
+
                 var viewModel = new AccountSummaryModel
                 {
+                    SpentToday = spentToday,
                     Account = accounts[0],
                     Balance = balance,
                     Transactions = transactions

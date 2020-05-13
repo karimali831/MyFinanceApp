@@ -1,0 +1,15 @@
+﻿@model MyFinances.Website.ViewModels.AccountSummaryModel
+@{
+    ViewBag.Title = "Approve Data Accesas";
+}
+
+<div class="mvcView">
+    <h2>Open Monzo App to approve data access...</h2>
+
+    @Html.ActionLink(
+        "I have approved",
+        "ApproveDataAccess",
+        "Monzo",
+        new { accessToken = Model.Token },
+        new { @class = "btn btn-lg btn-primary", role = "button" })
+</div>

@@ -1,0 +1,45 @@
+﻿@model MyFinances.Website.ViewModels.AccountSummaryModel
+@using MyFinances.Helpers
+@{
+    ViewBag.Title = "Account Summary";
+    var SortCodeFormat = string.Join(
+                            "-",
+                            new[] {
+                                Model.Account.SortCode.Substring(0, 2),
+                                Model.Account.SortCode.Substring(2, 2),
+                                Model.Account.SortCode.Substring(4, 2)
+                                    });
+}
+
+<div class="mvcView">
+    <h1 class="text-center">Accout No: @Model.Account.AccountNumber - Sort Code: @SortCodeFormat</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h2><small>Balance:</small></h2>
+            <div class="well well-lg">
+                <span class="h2">@Utils.ToCurrency(Model.Balance.Value / 100m)</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2><small>Spent Today:</small></h2>
+            <div class="well well-lg">
+                <span class="h2">@Utils.ToCurrency(-Model.SpentToday)</span>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-hover">
+        @foreach (var transaction in @Model.Transactions)
+        {
+            var plus = (transaction.Amount > 0 ? "+" : null);
+            var color = (transaction.Amount > 0 ? "green" : null);
+            <tr>
+                <td><img src="@(transaction.Merchant?.Logo)" width="64" height="64" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
+                <td><span class="h3">@(transaction.Merchant?.Name ?? transaction.Description)</span> <small>(@(transaction.Category))</small></td>
+                <td><span class="h3">@(transaction.Created.ToLongDateString())</span> <small>(@(transaction.Created.ToShortTimeString()))</small></td>
+                <td class="text-right"><span class="h3"><font color="@color">@plus@Utils.ToCurrency(transaction.Amount / 100m)</font /></span></td>
+            </tr>
+
+        }
+    </table>
+</div>

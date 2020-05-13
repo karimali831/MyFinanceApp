@@ -4,7 +4,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LoadNotificationsAction } from 'src/state/contexts/landing/Actions';
 import { commonApi } from 'src/Api/CommonApi';
-import { priorityBadge } from 'src/components/utils/Utils';
+import { priorityBadge, monzoAccountSummary } from 'src/components/utils/Utils';
 import { IReminder, IReminderNotification } from 'src/models/IReminder';
 import { ReminderType } from 'src/enums/ReminderType';
 
@@ -179,7 +179,11 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                             </p>
                             <div className="card-footer">
 							<small className="text-muted">Estimated remaining balance: {notifications.summary.estimatedAvailableCredit}</small>
-							</div>
+							<br />
+                            <a href={monzoAccountSummary()}>
+                                <img src="https://i.ibb.co/xg3f0K3/monzo-logo.png" />
+                            </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -223,6 +227,6 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                 loadingDeleted: false
             }
         }) 
-      }
+    }
 
 }

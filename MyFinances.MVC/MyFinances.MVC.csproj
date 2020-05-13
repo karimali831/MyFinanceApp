@@ -65,6 +65,9 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Monzo, Version=0.11.0.21, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Monzo.0.11.0.21\lib\netstandard1.1\Monzo.dll</HintPath>
+    </Reference>
     <Reference Include="Nager.Date, Version=1.25.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nager.Date.1.25.6\lib\net461\Nager.Date.dll</HintPath>
     </Reference>
@@ -82,6 +85,9 @@
     </Reference>
     <Reference Include="Ninject.Web.WebApi, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.Web.WebApi.3.3.0\lib\net45\Ninject.Web.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.11.3.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.11.3\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SharpRaven, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpRaven.2.4.0\lib\net471\SharpRaven.dll</HintPath>
@@ -277,6 +283,7 @@
     </Compile>
     <Compile Include="MVCModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AccountSummaryModel.cs" />
     <Compile Include="ViewModels\WeekSummaryVM.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -286,6 +293,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Chart.css" />
     <Content Include="Content\Chart.min.css" />
+    <Content Include="Content\Images\monzo_logo.png" />
     <Content Include="Content\Images\refresh.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -347,6 +355,9 @@
     <Content Include="Views\CNW\WeekSummary.cshtml" />
     <Content Include="Views\CNW\RouteSummary.cshtml" />
     <Content Include="Views\Finances\Settings.cshtml" />
+    <Content Include="Views\Monzo\Index.cshtml" />
+    <Content Include="Views\Monzo\OAuthCallback.cshtml" />
+    <Content Include="Views\Monzo\ApproveDataAccess.cshtml" />
     <None Include="Web.Stage.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

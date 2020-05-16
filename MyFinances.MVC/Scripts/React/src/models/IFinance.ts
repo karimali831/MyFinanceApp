@@ -1,3 +1,5 @@
+import { PaymentStatus } from 'src/enums/PaymentStatus';
+
 export interface IFinance {
     id: number,
     name: string,
@@ -13,14 +15,6 @@ export interface IFinance {
     manualPayment: boolean,
     daysUntilDue: number,
     paymentStatus: PaymentStatus
-}
-
-export enum PaymentStatus {
-    Paid,
-    Upcoming,
-    Late,
-    Unknown,
-    DueToday
 }
 
 export interface IFinanceDTO {

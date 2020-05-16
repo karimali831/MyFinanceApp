@@ -4,6 +4,7 @@ using MyFinances.Helpers;
 using MyFinances.Service;
 using MyFinances.ViewModels;
 using MyFinances.Website.Controllers.Api;
+using RestSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -36,8 +37,9 @@ namespace MyFinances.Website.Controllers.API
 
             if (upcomingPayments)
             {
-                finances = finances.Where(x => x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7) || x.ManualPayment);
+                finances = finances.Where(x => (x.PaymentStatus != PaymentStatus.Ended && x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7)) || x.ManualPayment);
             }
+
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Finances =

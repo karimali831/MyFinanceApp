@@ -22,7 +22,7 @@ namespace MyFinances.Service
         Task InsertAsync(FinanceDTO dto);
         int? CalculateDays(DateTime? Date1, DateTime? Date2);
         int? DaysLastPaid(int Id);
-        PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate);
+        PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate, DateTime? endDate);
         Task<IEnumerable<MonthComparisonChartVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
         Task<RemindersVM> GetNotifications();
         Task<IEnumerable<MonthComparisonChartVM>> GetFinanceTotalsByMonth(MonthComparisonChartRequestDTO request);
@@ -85,7 +85,7 @@ namespace MyFinances.Service
                         OverrideNextDueDate = x.OverrideNextDueDate,
                         ManualPayment = x.ManualPayment,
                         DaysUntilDue = CalculateDays(x.NextDueDate, DateTime.UtcNow),
-                        PaymentStatus = PaymentStatusAsync(x.Id, x.NextDueDate)
+                        PaymentStatus = PaymentStatusAsync(x.Id, x.NextDueDate, x.EndDate)
                     });
                 }
             }
@@ -100,10 +100,10 @@ namespace MyFinances.Service
         public async Task<RemindersVM> GetNotifications()
         {
             await incomeService.MissedIncomeEntriesAsync();
-            await spendingService.MissedCreditCardInterestEntriesAsync();
+            //await spendingService.MissedCreditCardInterestEntriesAsync();
             await cnwService.MissedCNWPaymentEntriesAsync();
 
-            var finances = await GetFinances(resyncNextDueDates: false);
+            var finances = (await GetFinances(resyncNextDueDates: false)).Where(x => x.PaymentStatus != PaymentStatus.Ended);
             var upcomingPayments = upcomingPaymentRemindersAsync(finances);
             var getReminders = await remindersService.GetAllAsync();
 
@@ -272,7 +272,7 @@ namespace MyFinances.Service
             return CalculateDays(DateTime.UtcNow, expenseLastPaidDate.Date);
         }
 
-        public PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate)
+        public PaymentStatus PaymentStatusAsync(int Id, DateTime? nextDueDate, DateTime? endDate)
         {
             if (!nextDueDate.HasValue)
             {
@@ -281,6 +281,11 @@ namespace MyFinances.Service
 
             var daysUntilDue = CalculateDays(nextDueDate, DateTime.UtcNow);
             var daysLastPaid = DaysLastPaid(Id);
+
+            if (endDate.HasValue && DateTime.UtcNow.Date > endDate.Value)
+            {
+                return PaymentStatus.Ended;
+            }
 
             if (daysUntilDue == null)
             {

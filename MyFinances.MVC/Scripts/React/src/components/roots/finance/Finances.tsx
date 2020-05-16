@@ -65,6 +65,14 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             text: 'Due Date',
             formatter: intToOrdinalNumberString
           }, {
+            dataField: 'endDate',
+            text: 'End Date',
+            editor:  {
+                type: 'date'
+            },
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
             dataField: 'daysUntilDue',
             text: 'Next Due',
             hidden: true

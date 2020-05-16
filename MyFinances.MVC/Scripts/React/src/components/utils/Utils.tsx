@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { PaymentStatus } from 'src/models/IFinance';
 import { CategoryType } from 'src/enums/CategoryType';
 import { DateFrequency } from 'src/enums/DateFrequency';
 import { Priority } from 'src/enums/Priority';
+import { PaymentStatus } from 'src/enums/PaymentStatus';
 
 export const intToOrdinalNumberString = (cell: any, row: any) => {
 	cell = Math.round(cell);
@@ -53,18 +53,20 @@ export const boolHighlight = (bool: boolean) => {
 
 export const monthNames = ["January", "February", "March", "April", "May","June","July", "August", "September", "October", "November","December"]
 
-export const paymentStatus = (status: number, daysUntilDue: number) => {
+export const paymentStatus = (status: PaymentStatus, daysUntilDue: number) => {
 	switch (status) {
-		case 0:
+		case PaymentStatus.Paid:
 			return <span className="label label-success">{PaymentStatus[PaymentStatus.Paid]}</span>
-		case 1:
+		case PaymentStatus.Upcoming:
 			return <span className="label label-warning">{PaymentStatus[PaymentStatus.Upcoming]} ({daysUntilDue} days)</span>
-		case 2:
+		case PaymentStatus.Late:
 			return <span className="label label-danger">{PaymentStatus[PaymentStatus.Late]} ({daysUntilDue} days)</span>
-		case 3:
+		case PaymentStatus.Unknown:
 			return <span className="label label-default">{PaymentStatus[PaymentStatus.Unknown]}</span>
-		case 4:
+		case PaymentStatus.DueToday:
 			return <span className="label label-danger">{PaymentStatus[PaymentStatus.DueToday]} ({daysUntilDue} days)</span>
+		case PaymentStatus.Ended:
+			return <span className="label label-default">{PaymentStatus[PaymentStatus.Ended]}</span>
 		default:
 			return ""
 	}

@@ -8,6 +8,7 @@ namespace MyFinances.Enums
 {
     public enum PaymentStatus
     {
+        Ended,
         Paid,
         Upcoming,
         Late,

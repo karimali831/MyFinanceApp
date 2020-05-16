@@ -284,6 +284,7 @@
     </Compile>
     <Compile Include="MVCModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AddTransactionVM.cs" />
     <Compile Include="ViewModels\AccountSummaryModel.cs" />
     <Compile Include="ViewModels\WeekSummaryVM.cs" />
   </ItemGroup>
@@ -360,6 +361,8 @@
     <Content Include="Views\Monzo\Index.cshtml" />
     <Content Include="Views\Monzo\OAuthCallback.cshtml" />
     <Content Include="Views\Monzo\ApproveDataAccess.cshtml" />
+    <Content Include="Views\Monzo\AddSpending.cshtml" />
+    <Content Include="Views\Monzo\Close.cshtml" />
     <None Include="Web.Stage.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

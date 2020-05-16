@@ -15,6 +15,7 @@ namespace MyFinances.DTOs
         public int? CatId { get; set; }
         public int? SecondCatId { get; set; }
         public int? FinanceId { get; set; }
+        public string MonzoTransId { get; set; }
     }
 
     public class SpendingRequestDTO

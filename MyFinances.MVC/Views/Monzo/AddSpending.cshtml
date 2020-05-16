@@ -1,0 +1,54 @@
+﻿@model MyFinances.Website.ViewModels.AddTransactionVM
+@{
+    ViewBag.Title = "Add Transaction";
+}
+
+<div class="mvcView">
+    <h2>Add Spending</h2>
+    <form action="AddTransaction" method="post" class="form-horizontal">
+        <div class="form-group form-group-lg">
+            <select onchange='location.href = this.value' class="form-control">
+                <option value="@Url.Action("AddTransaction", "Monzo", new { Model.MonzoTransId, Model.Name, Model.Amount, Model.Date, isFinance = false, Id = 0 })">-- select finance --</option>
+                @foreach (var finance in Model.Finances)
+                {
+                    <option value="@Url.Action("AddTransaction", "Monzo", new { Model.MonzoTransId, Model.Name, Model.Amount, Model.Date, isFinance = true, finance.Id })" selected="@(Model.SelectedId == finance.Id)">@finance.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group form-group-lg">
+            @if (!Model.IsFinance.Value)
+            {
+                <select name="Id" onchange='location.href = this.value' class="form-control">
+                    <option value="0">-- select category --</option>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option value="@Url.Action("AddTransaction", "Monzo", new { Model.MonzoTransId, Model.Name, Model.Amount, Model.Date, isFinance = false, category.Id, category.SecondTypeId })" selected="@(Model.SelectedId == category.Id)">@category.Name</option>
+                    }
+                </select>
+                if (Model.SecondCategories != null && Model.SecondCategories.Any())
+                {
+                    <select name="secondCatId" class="form-control">
+                        <option value="0">-- select subcategory --</option>
+                        @foreach (var category in Model.SecondCategories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                }
+            }
+        </div>
+        <div class="form-group form-group-lg">
+            <input name="name" class="form-control" type="text" value="@Model.Name" placeholder="Enter item" />
+        </div>
+        <div class="form-group form-group-lg">
+            <input name="date" class="form-control" type="datetime-local" value="@Model.Date" placeholder="dd-MM-yy" />
+        </div>
+        @Html.HiddenFor(x => x.IsFinance)
+        @Html.HiddenFor(x => x.SelectedId)
+        @Html.HiddenFor(x => x.MonzoTransId)
+        <div class="form-group form-group-lg">
+            <input name="amount" class="form-control" step="any" type="number" value="@(-Model.Amount / 100m)" placeholder="Enter amount" />
+        </div>
+        <button type="submit" class="btn btn-primary">Add Spending</button>
+    </form>
+</div>

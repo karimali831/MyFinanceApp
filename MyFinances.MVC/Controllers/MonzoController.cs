@@ -1,11 +1,15 @@
 ﻿using Monzo;
+using MyFinances.DTOs;
+using MyFinances.Enums;
 using MyFinances.Helpers;
+using MyFinances.Service;
 using MyFinances.Website.ViewModels;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,14 +24,24 @@ namespace MyFinances.Website.Controllers
     public sealed class MonzoController : Controller
     {
         private readonly IMonzoAuthorizationClient _monzoAuthorizationClient;
+        private readonly IFinanceService financeService;
+        private readonly IBaseService baseService;
+        private readonly ISpendingService spendingService;
+
         private readonly string clientId = ConfigurationManager.AppSettings["MonzoClientId"];
         private readonly string clientSecret = ConfigurationManager.AppSettings["MonzoClientSecret"];
         private readonly string rootUrl = ConfigurationManager.AppSettings["RootUrl"];
 
-        public MonzoController()
+        public MonzoController(
+            IFinanceService financeService, 
+            ISpendingService spendingService,
+            IBaseService baseService)
         {
             _monzoAuthorizationClient = new MonzoAuthorizationClient(clientId, clientSecret, rootUrl);
-        }
+            this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
+            this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
+            this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
+;        }
 
         [HttpGet]
         public ActionResult Index()
@@ -47,6 +61,71 @@ namespace MyFinances.Website.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<ActionResult> AddTransaction(string monzoTransId, string name, decimal amount, string date, bool isFinance, int selectedId, int? secondCatId = null)
+        {
+            var dto = new SpendingDTO
+            {
+                Name = name,
+                Amount = amount,
+                SecondCatId = secondCatId,
+                Date = DateTime.ParseExact(date, "yyyy-MM-ddTHH:mm", new CultureInfo("en-GB")),
+                MonzoTransId = monzoTransId
+            };
+
+            dto.FinanceId = !isFinance ? (int?)null : selectedId;
+            dto.CatId = !isFinance ? selectedId : (int?)null; 
+
+            if (dto.FinanceId.HasValue && dto.CatId.HasValue)
+                dto.CatId = null;
+
+            if (!dto.FinanceId.HasValue && !dto.CatId.HasValue)
+                throw new ApplicationException("Must have FinanceId or catId");
+
+            await spendingService.InsertAsync(dto);
+
+            return View("Close");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> AddTransaction(string monzoTransId, string name, long amount, string date, bool? isFinance, int? Id, CategoryType? secondTypeId)
+        {
+            var categories = await baseService.GetAllCategories(Enums.CategoryType.Spendings, catsWithSubs: false);
+            var viewModel = new AddTransactionVM();
+
+            viewModel.IsFinance = isFinance ?? false;
+
+            if (Id.HasValue)
+            {
+                 viewModel.SelectedId = Id.Value;
+            }
+
+            if (secondTypeId.HasValue && secondTypeId != 0)
+            {
+                var secondCategories = await baseService.GetAllCategories(secondTypeId, catsWithSubs: false);
+                viewModel.SecondCategories = secondCategories;
+            }
+
+            viewModel.Categories = categories;
+            viewModel.Amount = amount;
+            viewModel.Date = date;
+            viewModel.MonzoTransId = monzoTransId;
+
+            if (amount < 0)
+            {
+                var finances = await financeService.GetFinances(resyncNextDueDates: false);
+
+                viewModel.Finances = finances;
+                viewModel.Name = name;
+
+                return View("AddSpending", viewModel);
+            }
+            else 
+            {
+                return View("AddIncome", viewModel);
+            }
+        }
+
         public async Task<ActionResult> ApproveDataAccess(string accessToken)
         {
             // fetch transactions etc
@@ -63,7 +142,6 @@ namespace MyFinances.Website.Controllers
                     .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
                     .Sum(x => x.Amount / 100m);
                     
-
                 var viewModel = new AccountSummaryModel
                 {
                     SpentToday = spentToday,

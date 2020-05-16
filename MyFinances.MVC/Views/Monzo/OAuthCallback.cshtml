@@ -29,15 +29,16 @@
     </div>
 
     <table class="table table-hover">
-        @foreach (var transaction in @Model.Transactions)
+        @foreach (var transaction in Model.Transactions)
         {
             var plus = (transaction.Amount > 0 ? "+" : null);
             var color = (transaction.Amount > 0 ? "green" : null);
+            var name = (transaction.Merchant?.Name ?? transaction.Description);
             <tr>
                 <td><img src="@(transaction.Merchant?.Logo)" width="64" height="64" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
-                <td><span class="h3">@(transaction.Merchant?.Name ?? transaction.Description)</span> <small>(@(transaction.Category))</small></td>
+                <td><span class="h3">@name</span> <small>(@(transaction.Category))</small></td>
                 <td><span class="h3">@(transaction.Created.ToLongDateString())</span> <small>(@(transaction.Created.ToShortTimeString()))</small></td>
-                <td class="text-right"><span class="h3"><font color="@color">@plus@Utils.ToCurrency(transaction.Amount / 100m)</font /></span></td>
+                <td class="text-right"><span class="h3"><font color="@color">@plus@Utils.ToCurrency(transaction.Amount / 100m)</font /></span> <small>@Html.ActionLink("(tag)", "AddTransaction", "Monzo", new { monzoTransId = transaction.Id, name, transaction.Amount, date = transaction.Created.ToString("yyyy-MM-ddTHH:mm") }, new { target = "_blank" })</small></td>
             </tr>
 
         }

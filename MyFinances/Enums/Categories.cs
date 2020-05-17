@@ -16,6 +16,8 @@ namespace MyFinances.Enums
         CCInterest = 42,
         MissedEntries = 1140,
         Bills = 1144,
-        Flex = 1147
+        Flex = 1147,
+        SavingsPot, // of type income
+        Savings // of type spending
     }
 }

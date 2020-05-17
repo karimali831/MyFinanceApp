@@ -10,9 +10,10 @@ namespace MyFinances.DTOs
     public class IncomeDTO
     {
         public int SourceId { get; set; }
-        public int SecondSourceId { get; set; }
+        public int? SecondSourceId { get; set; }
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
+        public string MonzoTransId { get; set; }
     }
 
     public class IncomeRequestDTO

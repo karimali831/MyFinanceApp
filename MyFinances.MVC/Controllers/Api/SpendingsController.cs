@@ -26,16 +26,19 @@ namespace MyFinances.Website.Controllers.API
         private readonly ICNWService cnwService;
         private readonly IBaseService baseService;
         private readonly IFinanceService financeService;
+        private readonly IIncomeService incomeService;
 
         public SpendingsController(
             ISpendingService spendingService, 
             ICNWService cnwService,
             IFinanceService financeService,
+            IIncomeService incomeService,
             IBaseService baseService)
         {
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
             this.cnwService = cnwService ?? throw new ArgumentNullException(nameof(cnwService));
             this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
+            this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
         }
 
@@ -102,6 +105,18 @@ namespace MyFinances.Website.Controllers.API
 
             if (!dto.FinanceId.HasValue && !dto.CatId.HasValue)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, false);
+                
+            if (dto.CatId == (int)Categories.Savings)
+            {
+                var potIncomeDto = new IncomeDTO
+                {
+                    Amount = dto.Amount,
+                    SourceId = (int)Categories.SavingsPot,
+                    Date = dto.Date,
+                };
+
+                await incomeService.InsertIncomeAsync(potIncomeDto);
+            }
 
             await spendingService.InsertAsync(dto);
             return Request.CreateResponse(HttpStatusCode.OK, true);

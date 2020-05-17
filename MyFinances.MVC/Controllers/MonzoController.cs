@@ -27,6 +27,7 @@ namespace MyFinances.Website.Controllers
         private readonly IFinanceService financeService;
         private readonly IBaseService baseService;
         private readonly ISpendingService spendingService;
+        private readonly IIncomeService incomeService;
 
         private readonly string clientId = ConfigurationManager.AppSettings["MonzoClientId"];
         private readonly string clientSecret = ConfigurationManager.AppSettings["MonzoClientSecret"];
@@ -35,12 +36,14 @@ namespace MyFinances.Website.Controllers
         public MonzoController(
             IFinanceService financeService, 
             ISpendingService spendingService,
+            IIncomeService incomeService,
             IBaseService baseService)
         {
             _monzoAuthorizationClient = new MonzoAuthorizationClient(clientId, clientSecret, rootUrl);
             this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
+            this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
 ;        }
 
         [HttpGet]
@@ -62,8 +65,49 @@ namespace MyFinances.Website.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddTransaction(string monzoTransId, string name, decimal amount, string date, bool isFinance, int selectedId, int? secondCatId = null)
+        public async Task<ActionResult> AddIncome(string monzoTransId, decimal amount, string date, int selectedId, int? secondCatId = null)
         {
+            var dto = new IncomeDTO
+            {
+                Amount = amount,
+                SourceId =     selectedId,
+                SecondSourceId = secondCatId,
+                Date = DateTime.ParseExact(date, "yyyy-MM-ddTHH:mm", new CultureInfo("en-GB")),
+                MonzoTransId = monzoTransId
+            };
+
+            await incomeService.InsertIncomeAsync(dto);
+
+            return View("Close");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddSpending(string monzoTransId, string name, decimal amount, string date, bool isFinance, int selectedId, int? secondCatId = null, decimal? potTopup = null)
+        {
+            // add to savings-pot
+            if (potTopup.HasValue)
+            {
+                var potIncomeDto = new IncomeDTO
+                {
+                    Amount = potTopup.Value,
+                    SourceId = (int)Categories.SavingsPot,
+                    Date = DateTime.ParseExact(date, "yyyy-MM-ddTHH:mm", new CultureInfo("en-GB")),
+                    MonzoTransId = monzoTransId
+                };
+
+                var potSpendingDto = new SpendingDTO
+                {
+                    Name = $"{name} (savings top-up)",
+                    Amount = potTopup.Value,
+                    CatId = (int)Categories.Savings,
+                    Date = DateTime.ParseExact(date, "yyyy-MM-ddTHH:mm", new CultureInfo("en-GB")),
+                    MonzoTransId = monzoTransId
+                };
+
+                await incomeService.InsertIncomeAsync(potIncomeDto);
+                await spendingService.InsertAsync(potSpendingDto);
+            }
+
             var dto = new SpendingDTO
             {
                 Name = name,
@@ -90,7 +134,6 @@ namespace MyFinances.Website.Controllers
         [HttpGet]
         public async Task<ActionResult> AddTransaction(string monzoTransId, string name, long amount, string date, bool? isFinance, int? Id, CategoryType? secondTypeId)
         {
-            var categories = await baseService.GetAllCategories(Enums.CategoryType.Spendings, catsWithSubs: false);
             var viewModel = new AddTransactionVM();
 
             viewModel.IsFinance = isFinance ?? false;
@@ -100,30 +143,39 @@ namespace MyFinances.Website.Controllers
                  viewModel.SelectedId = Id.Value;
             }
 
+            viewModel.Date = date;
+            viewModel.MonzoTransId = monzoTransId;
+            viewModel.Amount = amount; 
+
+            if (amount < 0)
+            {
+                var finances = await financeService.GetFinances(resyncNextDueDates: false);
+                viewModel.Finances = finances;
+                viewModel.Name = name;
+                viewModel.Type = CategoryType.Spendings;
+
+                decimal fullAmount = Math.Ceiling(-amount / 100m);
+
+                viewModel.PotTopup = fullAmount - (-amount / 100m);
+                viewModel.ActualAmount = fullAmount;
+            }
+            else
+            {
+                viewModel.Type = CategoryType.Income;
+                viewModel.ActualAmount = (amount / 100m);
+            }
+
+            // get categories and sub-categories
+            var categories = await baseService.GetAllCategories(amount < 0 ? CategoryType.Spendings : CategoryType.IncomeSources, catsWithSubs: false);
+            viewModel.Categories = categories;
+
             if (secondTypeId.HasValue && secondTypeId != 0)
             {
                 var secondCategories = await baseService.GetAllCategories(secondTypeId, catsWithSubs: false);
                 viewModel.SecondCategories = secondCategories;
             }
 
-            viewModel.Categories = categories;
-            viewModel.Amount = amount;
-            viewModel.Date = date;
-            viewModel.MonzoTransId = monzoTransId;
-
-            if (amount < 0)
-            {
-                var finances = await financeService.GetFinances(resyncNextDueDates: false);
-
-                viewModel.Finances = finances;
-                viewModel.Name = name;
-
-                return View("AddSpending", viewModel);
-            }
-            else 
-            {
-                return View("AddIncome", viewModel);
-            }
+            return View("AddTransaction", viewModel);
         }
 
         public async Task<ActionResult> ApproveDataAccess(string accessToken)

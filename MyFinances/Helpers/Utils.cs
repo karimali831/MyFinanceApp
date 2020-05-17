@@ -100,7 +100,7 @@ namespace MyFinances.Helpers
         public static string[] ChartLabels(List<MonthComparisonChartVM[]> results)
         {
             return results
-                .Max()
+                .SelectMany(x => x)
                 .Select(x => x.MonthName.Substring(0, 3))
                 .Distinct()
                 .ToArray();

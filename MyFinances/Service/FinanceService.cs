@@ -152,7 +152,7 @@ namespace MyFinances.Service
 
             var settings = await baseService.GetSettingsAsync();
 
-            decimal incurredIncome = (await incomeService.GetAllIncomesAsync(
+            var incurredIncome = (await incomeService.GetAllIncomesAsync(
                 new IncomeRequestDTO
                 {
                     DateFilter = new DateFilter
@@ -161,7 +161,15 @@ namespace MyFinances.Service
                         FromDateRange = settings.StartingDate,
                         ToDateRange = DateTime.UtcNow
                     }
-                })).Sum(x => x.Amount);
+                }));
+
+            decimal incomeExcludingSavings = incurredIncome
+                .Where(x => x.SourceId != (int)Categories.SavingsPot)
+                .Sum(x => x.Amount);
+
+            decimal incomeSavings = incurredIncome
+                .Where(x => x.SourceId == (int)Categories.SavingsPot)
+                .Sum(x => x.Amount);
 
             decimal incurredSpendings = (await spendingService.GetAllAsync(
                 new SpendingRequestDTO
@@ -174,7 +182,7 @@ namespace MyFinances.Service
                     }
                 })).Sum(x => x.Amount);
 
-            decimal remainingBalance = (settings.AvailableCredit + incurredIncome) - incurredSpendings;
+            decimal remainingBalance = (settings.AvailableCredit + incomeExcludingSavings) - incurredSpendings;
 
             return
                 new Summary
@@ -182,7 +190,7 @@ namespace MyFinances.Service
                     CWTLCalculatedPay = Utils.ToCurrency(cwtlCurrentPayWeekSummary.CalcTotalPayToDriver),
                     CWTLRoutesWorked = cwtlCurrentRoutesWorked,
                     CWTLTotalVanDamagesPaid = Utils.ToCurrency(cwtlTotalVanDamagesPaid),
-                    EstimatedAvailableCredit = Utils.ToCurrency(remainingBalance)
+                    EstimatedAvailableCredit = $"{Utils.ToCurrency(remainingBalance)} (exlusive of {Utils.ToCurrency(incomeSavings)} savings)"
                 };
         }
 

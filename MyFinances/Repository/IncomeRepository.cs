@@ -47,7 +47,8 @@ namespace MyFinances.Repository
                         i.SecondSourceId,
                         i.WeekNo,
                         c1.Name AS Source,
-                        c2.Name AS SecondSource
+                        c2.Name AS SecondSource,
+                        i.MonzoTransId
                     FROM {TABLE} i
                     INNER JOIN Categories c1
                         ON c1.Id = i.SourceId

@@ -50,7 +50,8 @@ namespace MyFinances.Repository
 					CASE WHEN s.CatId IS NULL THEN (SELECT CatID FROM Finances WHERE ID = s.FinanceId) ELSE s.CatId END AS CatId,
                     CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
 	                c2.Name AS SecondCategory,
-                    s.FinanceId AS FinanceId
+                    s.FinanceId AS FinanceId,
+                    s.MonzoTransId
                 FROM {TABLE} s 
                 LEFT JOIN Categories c1 
                     ON c1.Id = s.CatId

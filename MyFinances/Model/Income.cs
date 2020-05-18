@@ -17,6 +17,7 @@ namespace MyFinances.Model
         public int WeekNo { get; set; }
         public int AmazonWeekNo { get; set; }
         public DateTime AmazonWeekCommencing { get; set; }
+        public string MonzoTransId { get; set; }
     }
 
     public class IncomeMap : EntityTypeConfiguration<Income>

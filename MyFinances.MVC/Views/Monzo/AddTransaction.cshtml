@@ -56,10 +56,10 @@
         @Html.HiddenFor(x => x.MonzoTransId)
         <div class="form-group form-group-lg">
             <input name="amount" class="form-control" step="any" type="number" value="@Model.ActualAmount" placeholder="Enter amount" />
-            @if (Model.PotTopup.HasValue)
+            @if (Model.PotTopup.HasValue && Model.PotTopup.Value != 0 && !Model.IsFinance.Value)
             {
                 @Html.HiddenFor(x => x.PotTopup)
-                <span class="label label-success">+ inclusive of @Utils.ToCurrency(Model.PotTopup.Value) to Savings Pot</span>
+                <span class="label label-success">+ plus @Utils.ToCurrency(Model.PotTopup.Value) to Savings Pot</span>
             }
         </div>
         <button type="submit" class="btn btn-primary">Add @Enum.GetName(typeof(CategoryType), Model.Type)</button>

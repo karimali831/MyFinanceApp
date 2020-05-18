@@ -85,7 +85,7 @@ namespace MyFinances.Website.Controllers
         public async Task<ActionResult> AddSpending(string monzoTransId, string name, decimal amount, string date, bool isFinance, int selectedId, int? secondCatId = null, decimal? potTopup = null)
         {
             // add to savings-pot
-            if (potTopup.HasValue)
+            if (potTopup.HasValue && potTopup.Value != 0 && !isFinance)
             {
                 var potIncomeDto = new IncomeDTO
                 {
@@ -154,10 +154,13 @@ namespace MyFinances.Website.Controllers
                 viewModel.Name = name;
                 viewModel.Type = CategoryType.Spendings;
 
-                decimal fullAmount = Math.Ceiling(-amount / 100m);
-
-                viewModel.PotTopup = fullAmount - (-amount / 100m);
-                viewModel.ActualAmount = fullAmount;
+                if (!viewModel.IsFinance.Value)
+                {
+                    decimal fullAmount = Math.Ceiling(-amount / 100m);
+                    viewModel.PotTopup = fullAmount - (-amount / 100m);
+                }
+ 
+                viewModel.ActualAmount = (-amount / 100m);
             }
             else
             {
@@ -193,7 +196,7 @@ namespace MyFinances.Website.Controllers
                 var spentToday = transactions
                     .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
                     .Sum(x => x.Amount / 100m);
-                    
+
                 var viewModel = new AccountSummaryModel
                 {
                     SpentToday = spentToday,
@@ -201,6 +204,53 @@ namespace MyFinances.Website.Controllers
                     Balance = balance,
                     Transactions = transactions
                 };
+
+                // check synced transactions
+                var spendingsMonzoTransIds = (await spendingService.GetAllAsync(new SpendingRequestDTO
+                {
+                    DateFilter = new DateFilter
+                    {
+                        Frequency = DateFrequency.AllTime,
+                        Interval = 1
+                    }
+                }))
+                .OrderByDescending(x => x.Date)
+                .Select(x => x.MonzoTransId)
+                .Take(100);
+
+                var incomesMonzoTransIds = (await incomeService.GetAllIncomesAsync(new IncomeRequestDTO
+                {
+                    DateFilter = new DateFilter
+                    {
+                        Frequency = DateFrequency.AllTime,
+                        Interval = 1
+                    }
+                }))
+                .OrderByDescending(x => x.Date)
+                .Select(x => x.MonzoTransId)
+                .Take(100);
+
+                var syncedTransactions = new List<string>();
+
+                foreach (var trans in transactions)
+                {
+                    if (trans.Amount < 0)
+                    {
+                        if (spendingsMonzoTransIds.Contains(trans.Id))
+                        {
+                            syncedTransactions.Add(trans.Id);
+                        }
+                    }
+                    else
+                    {
+                        if (incomesMonzoTransIds.Contains(trans.Id))
+                        {
+                            syncedTransactions.Add(trans.Id);
+                        }
+                    }
+                }
+
+                viewModel.SyncedTransactions = syncedTransactions;
 
                 return View("OAuthCallback", viewModel);
             }

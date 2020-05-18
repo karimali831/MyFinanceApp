@@ -9,6 +9,7 @@ namespace MyFinances.Website.ViewModels
         public Account Account { get; set; }
         public decimal SpentToday { get; set; }
         public IList<Transaction> Transactions { get; set; }
+        public IList<string> SyncedTransactions { get; set; }
         public Balance Balance { get; set; }
     }
 }

@@ -16,31 +16,39 @@
     <div class="row">
         <div class="col-md-6">
             <h2><small>Balance:</small></h2>
-            <div class="well well-lg">
-                <span class="h2">@Utils.ToCurrency(Model.Balance.Value / 100m)</span>
+            <div class="well well-sm">
+                <span class="h3">@Utils.ToCurrency(Model.Balance.Value / 100m)</span>
             </div>
         </div>
         <div class="col-md-6">
             <h2><small>Spent Today:</small></h2>
-            <div class="well well-lg">
-                <span class="h2">@Utils.ToCurrency(-Model.SpentToday)</span>
+            <div class="well well-sm">
+                <span class="h3">@Utils.ToCurrency(-Model.SpentToday)</span>
             </div>
         </div>
     </div>
 
     <table class="table table-hover">
-        @foreach (var transaction in Model.Transactions)
-        {
-            var plus = (transaction.Amount > 0 ? "+" : null);
-            var color = (transaction.Amount > 0 ? "green" : null);
-            var name = (transaction.Merchant?.Name ?? transaction.Description);
-            <tr>
-                <td><img src="@(transaction.Merchant?.Logo)" width="64" height="64" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
-                <td><span class="h3">@name</span> <small>(@(transaction.Category))</small></td>
-                <td><span class="h3">@(transaction.Created.ToLongDateString())</span> <small>(@(transaction.Created.ToShortTimeString()))</small></td>
-                <td class="text-right"><span class="h3"><font color="@color">@plus@Utils.ToCurrency(transaction.Amount / 100m)</font /></span> <small>@Html.ActionLink("(tag)", "AddTransaction", "Monzo", new { monzoTransId = transaction.Id, name, transaction.Amount, date = transaction.Created.ToString("yyyy-MM-ddTHH:mm") }, new { target = "_blank" })</small></td>
-            </tr>
+        <tbody>
+            @foreach (var transaction in Model.Transactions)
+            {
+                var plus = (transaction.Amount > 0 ? "+" : null);
+                var color = (transaction.Amount > 0 ? "green" : null);
+                var name = (transaction.Merchant?.Name.Substring(0, Math.Min(transaction.Merchant.Name.Length, 10)) ?? transaction.Description.Substring(0, Math.Min(transaction.Description.Length, 15)));
+                <tr>
+                    <td><img src="@(transaction.Merchant?.Logo)" width="32" height="32" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
+                    <td>@name <small>(@(transaction.Category))</small></td>
+                    <td>@(transaction.Created.ToLongDateString()) <small>(@(transaction.Created.ToShortTimeString()))</small></td>
+                    <td class="text-right">
+                        @if (!Model.SyncedTransactions.Contains(transaction.Id) && !transaction.Description.StartsWith("pot_") && transaction.Amount != 0)
+                        {
+                            <small>@Html.ActionLink("(sync)", "AddTransaction", "Monzo", new { monzoTransId = transaction.Id, name, transaction.Amount, date = transaction.Created.ToString("yyyy-MM-ddTHH:mm") }, new { target = "_blank" })</small>
+                        }
+                        <font color="@color"><strong>@plus@Utils.ToCurrency(transaction.Amount / 100m)</strong></font>
+                    </td>
+                </tr>
 
-        }
+            }
+        </tbody>
     </table>
 </div>

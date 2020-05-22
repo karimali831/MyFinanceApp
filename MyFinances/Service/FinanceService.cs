@@ -85,7 +85,8 @@ namespace MyFinances.Service
                         OverrideNextDueDate = x.OverrideNextDueDate,
                         ManualPayment = x.ManualPayment,
                         DaysUntilDue = CalculateDays(x.NextDueDate, DateTime.UtcNow),
-                        PaymentStatus = PaymentStatusAsync(x.Id, x.NextDueDate, x.EndDate)
+                        PaymentStatus = PaymentStatusAsync(x.Id, x.NextDueDate, x.EndDate),
+                        DirectDebit = x.DirectDebit
                     });
                 }
             }

@@ -77,6 +77,12 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             text: 'Next Due',
             hidden: true
           }, {
+            dataField: 'directDebit',
+            text: 'Is DD',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs",
+            formatter: boolHighlight
+          }, {
             dataField: 'paymentStatus',
             text: 'Status',
             formatter: this.paymentStatus

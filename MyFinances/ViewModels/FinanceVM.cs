@@ -21,6 +21,7 @@ namespace MyFinances.ViewModels
         public bool ManualPayment { get; set; }
         public int? DaysUntilDue { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
+        public bool DirectDebit { get; set; }
 
     }
 }

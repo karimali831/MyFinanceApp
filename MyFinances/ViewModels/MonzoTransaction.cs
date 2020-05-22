@@ -10,7 +10,7 @@ namespace MyFinances.ViewModels
         public string Name { get; set; }
         public string Category { get; set; }
         public string Logo { get; set; }
-        public long Amount { get; set; }
+        public decimal Amount { get; set; }
         public DateTime Created { get; set; }
     }
 }

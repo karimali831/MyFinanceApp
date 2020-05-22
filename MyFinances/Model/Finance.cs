@@ -21,6 +21,7 @@ namespace MyFinances.Model
         public decimal? TotalAmount { get; set; }
         public decimal? TotalPaid { get; set; }
         public bool ManualPayment { get; set; }
+        public bool DirectDebit { get; set; }
 
     }
 

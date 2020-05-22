@@ -40,7 +40,6 @@ namespace MyFinances.Website.Controllers.API
                 finances = finances.Where(x => (x.PaymentStatus != PaymentStatus.Ended && x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7)) || x.ManualPayment);
             }
 
-
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Finances =
                     finances.Select(x => new
@@ -54,6 +53,7 @@ namespace MyFinances.Website.Controllers.API
                         x.ManualPayment,
                         x.DaysUntilDue,
                         x.PaymentStatus,
+                        x.DirectDebit,
                         EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
                         NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null
                     })

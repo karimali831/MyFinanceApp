@@ -14,7 +14,8 @@ export interface IFinance {
     totalPaid: number,
     manualPayment: boolean,
     daysUntilDue: number,
-    paymentStatus: PaymentStatus
+    paymentStatus: PaymentStatus,
+    directDebit: boolean
 }
 
 export interface IFinanceDTO {

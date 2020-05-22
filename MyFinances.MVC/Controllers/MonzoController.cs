@@ -73,10 +73,10 @@ namespace MyFinances.Website.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddSpending(string monzoTransId, string name, decimal amount, string date, bool isFinance, int selectedId, int? secondCatId = null, decimal? potTopup = null)
+        public async Task<ActionResult> AddSpending(string monzoTransId, string name, decimal amount, string date, bool isFinance, bool isDD, int selectedId, int? secondCatId = null, decimal? potTopup = null)
         {
             // add to savings-pot
-            if (potTopup.HasValue && potTopup.Value != 0 && !isFinance)
+            if (potTopup.HasValue && potTopup.Value != 0 && !isDD)
             {
                 var potIncomeDto = new IncomeDTO
                 {
@@ -123,11 +123,12 @@ namespace MyFinances.Website.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> AddTransaction(string monzoTransId, string name, long amount, string date, bool? isFinance, int? Id, CategoryType? secondTypeId)
+        public async Task<ActionResult> AddTransaction(string monzoTransId, string name, long amount, string date, bool? isFinance, bool? isDD, int? Id, CategoryType? secondTypeId)
         {
             var viewModel = new AddTransactionVM
             {
-                IsFinance = isFinance ?? false
+                IsFinance = isFinance ?? false,
+                IsDD = isDD ?? false
             };
 
             if (Id.HasValue)
@@ -145,8 +146,8 @@ namespace MyFinances.Website.Controllers
                 viewModel.Finances = finances;
                 viewModel.Name = name;
                 viewModel.Type = CategoryType.Spendings;
-
-                if (!viewModel.IsFinance.Value)
+     
+                if (!viewModel.IsDD.Value)
                 {
                     decimal fullAmount = Math.Ceiling(-amount / 100m);
                     viewModel.PotTopup = fullAmount - (-amount / 100m);

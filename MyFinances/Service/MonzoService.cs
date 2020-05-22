@@ -83,30 +83,33 @@ namespace MyFinances.Service
                     }
                     else
                     {
-                        await Task.Run(async () =>
+                        if (trans.Created > DateTime.Parse("21/05/2020"))
                         {
-
+                            await Task.Run(async () =>
+                            {
                             // auto sync income payables 
                             int? category = trans.Name switch
-                            {
-                                "PAY" => (int)Categories.CWTL,
-                                "Amazon" => (int)Categories.Flex,
-                                _ => null,
-                            };
-
-                            if (category.HasValue)
-                            {
-                                var dto = new IncomeDTO
                                 {
-                                    Amount = trans.Amount,
-                                    SourceId = category.Value,
-                                    Date = trans.Created,
-                                    MonzoTransId = trans.Id
+                                    "PAY" => (int)Categories.CWTL,
+                                    "Amazon" => (int)Categories.Flex,
+                                    "Uber" => (int)Categories.UberEats,
+                                    _ => null,
                                 };
 
-                                await incomeService.InsertIncomeAsync(dto);
-                            }
-                        });
+                                if (category.HasValue)
+                                {
+                                    var dto = new IncomeDTO
+                                    {
+                                        Amount = trans.Amount / 100m,
+                                        SourceId = category.Value,
+                                        Date = trans.Created,
+                                        MonzoTransId = trans.Id
+                                    };
+
+                                    await incomeService.InsertIncomeAsync(dto);
+                                }
+                            });
+                        }
                     }
                 }
             }

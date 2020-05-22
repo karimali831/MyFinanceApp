@@ -154,6 +154,7 @@
     <Compile Include="Enums\PaymentStatus.cs" />
     <Compile Include="Enums\CategoryType.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="ViewModels\MonzoTransaction.cs" />
     <Compile Include="Model\Settings.cs" />
     <Compile Include="Model\Reminder.cs" />
     <Compile Include="Model\CNWRates.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="Repository\IncomeRepository.cs" />
     <Compile Include="Repository\SpendingRepository.cs" />
     <Compile Include="Repository\FinanceRepository.cs" />
+    <Compile Include="Service\MonzoService.cs" />
     <Compile Include="Service\IncomeService.cs" />
     <Compile Include="Service\RemindersService.cs" />
     <Compile Include="Service\BaseService.cs" />

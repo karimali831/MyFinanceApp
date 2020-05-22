@@ -3,6 +3,7 @@ using MyFinances.DTOs;
 using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Service;
+using MyFinances.ViewModels;
 using MyFinances.Website.ViewModels;
 using Newtonsoft.Json;
 using RestSharp;
@@ -24,26 +25,16 @@ namespace MyFinances.Website.Controllers
     public sealed class MonzoController : Controller
     {
         private readonly IMonzoAuthorizationClient _monzoAuthorizationClient;
-        private readonly IFinanceService financeService;
-        private readonly IBaseService baseService;
-        private readonly ISpendingService spendingService;
-        private readonly IIncomeService incomeService;
+        private readonly IMonzoService monzoService;
 
         private readonly string clientId = ConfigurationManager.AppSettings["MonzoClientId"];
         private readonly string clientSecret = ConfigurationManager.AppSettings["MonzoClientSecret"];
         private readonly string rootUrl = ConfigurationManager.AppSettings["RootUrl"];
 
-        public MonzoController(
-            IFinanceService financeService, 
-            ISpendingService spendingService,
-            IIncomeService incomeService,
-            IBaseService baseService)
+        public MonzoController(IMonzoService monzoService)
         {
             _monzoAuthorizationClient = new MonzoAuthorizationClient(clientId, clientSecret, rootUrl);
-            this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
-            this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
-            this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
-            this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
+            this.monzoService = monzoService ?? throw new ArgumentNullException(nameof(monzoService));
 ;        }
 
         [HttpGet]
@@ -76,7 +67,7 @@ namespace MyFinances.Website.Controllers
                 MonzoTransId = monzoTransId
             };
 
-            await incomeService.InsertIncomeAsync(dto);
+            await monzoService.AddIncome(dto);
 
             return View("Close");
         }
@@ -104,8 +95,8 @@ namespace MyFinances.Website.Controllers
                     MonzoTransId = monzoTransId
                 };
 
-                await incomeService.InsertIncomeAsync(potIncomeDto);
-                await spendingService.InsertAsync(potSpendingDto);
+                await monzoService.AddIncome(potIncomeDto);
+                await monzoService.AddSpending(potSpendingDto);
             }
 
             var dto = new SpendingDTO
@@ -126,7 +117,7 @@ namespace MyFinances.Website.Controllers
             if (!dto.FinanceId.HasValue && !dto.CatId.HasValue)
                 throw new ApplicationException("Must have FinanceId or catId");
 
-            await spendingService.InsertAsync(dto);
+            await monzoService.AddSpending(dto);
 
             return View("Close");
         }
@@ -134,9 +125,10 @@ namespace MyFinances.Website.Controllers
         [HttpGet]
         public async Task<ActionResult> AddTransaction(string monzoTransId, string name, long amount, string date, bool? isFinance, int? Id, CategoryType? secondTypeId)
         {
-            var viewModel = new AddTransactionVM();
-
-            viewModel.IsFinance = isFinance ?? false;
+            var viewModel = new AddTransactionVM
+            {
+                IsFinance = isFinance ?? false
+            };
 
             if (Id.HasValue)
             {
@@ -149,7 +141,7 @@ namespace MyFinances.Website.Controllers
 
             if (amount < 0)
             {
-                var finances = await financeService.GetFinances(resyncNextDueDates: false);
+                var finances = await monzoService.GetFinances();
                 viewModel.Finances = finances;
                 viewModel.Name = name;
                 viewModel.Type = CategoryType.Spendings;
@@ -169,12 +161,12 @@ namespace MyFinances.Website.Controllers
             }
 
             // get categories and sub-categories
-            var categories = await baseService.GetAllCategories(amount < 0 ? CategoryType.Spendings : CategoryType.IncomeSources, catsWithSubs: false);
+            var categories = await monzoService.GetCategories(amount < 0 ? CategoryType.Spendings : CategoryType.IncomeSources);
             viewModel.Categories = categories;
 
             if (secondTypeId.HasValue && secondTypeId != 0)
             {
-                var secondCategories = await baseService.GetAllCategories(secondTypeId, catsWithSubs: false);
+                var secondCategories = await monzoService.GetCategories(secondTypeId);
                 viewModel.SecondCategories = secondCategories;
             }
 
@@ -188,14 +180,32 @@ namespace MyFinances.Website.Controllers
             {
                 var accounts = await client.GetAccountsAsync();
                 var balance = await client.GetBalanceAsync(accounts[0].Id);
-                var transactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
+                var getTransactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
                     .OrderByDescending(x => x.Created)
                     .Take(100)
                     .ToList();
 
-                var spentToday = transactions
+                var spentToday = getTransactions
                     .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
                     .Sum(x => x.Amount / 100m);
+
+                var transactions = new List<MonzoTransaction>();
+
+                if (getTransactions.Any())
+                {
+                    foreach (var trans in getTransactions)
+                    {
+                        transactions.Add(new MonzoTransaction
+                        {
+                            Id = trans.Id,
+                            Amount = trans.Amount,
+                            Created = trans.Created,
+                            Name = trans.Merchant?.Name ?? trans.Description,
+                            Logo = trans.Merchant?.Logo,
+                            Category = trans.Category
+                        });
+                    }
+                }
 
                 var viewModel = new AccountSummaryModel
                 {
@@ -205,52 +215,8 @@ namespace MyFinances.Website.Controllers
                     Transactions = transactions
                 };
 
-                // check synced transactions
-                var spendingsMonzoTransIds = (await spendingService.GetAllAsync(new SpendingRequestDTO
-                {
-                    DateFilter = new DateFilter
-                    {
-                        Frequency = DateFrequency.AllTime,
-                        Interval = 1
-                    }
-                }))
-                .OrderByDescending(x => x.Date)
-                .Select(x => x.MonzoTransId)
-                .Take(100);
-
-                var incomesMonzoTransIds = (await incomeService.GetAllIncomesAsync(new IncomeRequestDTO
-                {
-                    DateFilter = new DateFilter
-                    {
-                        Frequency = DateFrequency.AllTime,
-                        Interval = 1
-                    }
-                }))
-                .OrderByDescending(x => x.Date)
-                .Select(x => x.MonzoTransId)
-                .Take(100);
-
-                var syncedTransactions = new List<string>();
-
-                foreach (var trans in transactions)
-                {
-                    if (trans.Amount < 0)
-                    {
-                        if (spendingsMonzoTransIds.Contains(trans.Id))
-                        {
-                            syncedTransactions.Add(trans.Id);
-                        }
-                    }
-                    else
-                    {
-                        if (incomesMonzoTransIds.Contains(trans.Id))
-                        {
-                            syncedTransactions.Add(trans.Id);
-                        }
-                    }
-                }
-
-                viewModel.SyncedTransactions = syncedTransactions;
+                var syncTransactions = await monzoService.SyncTransactions(transactions);
+                viewModel.SyncedTransactions = syncTransactions;
 
                 return View("OAuthCallback", viewModel);
             }

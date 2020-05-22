@@ -97,6 +97,7 @@ export const incomeExpenseChartUrl = (frequency: string, interval: number) => `$
 export const incomeExpenseByCategoryChartUrl = (categoryType: CategoryType, catId: number, type: string, frequency: string, interval: number) => `${rootUrl}/finances/IncomeExpenseByCategoryChart?categoryType=${categoryType}&catId=${catId}&type=${type}&frequency=${frequency}&interval=${interval}`;
 export const monzoAccountSummary = () => `${rootUrl}/monzo/login`
 export const monzoLogoUrl = () => `${rootUrl}/Content/Images/monzo_logo.png`
+export const monzoIconUrl = () => `${rootUrl}/Content/Images/monzo_icon.png`
 
 export const SummaryFilteredList =
 	(categoryType: CategoryType, catId?: number, frequency?: DateFrequency, interval?: number, isFinance?: boolean, isSecondCat?: boolean, fromDate?: string | null, toDate?: string | null) => `${CategoryType[categoryType]}/${catId}/${frequency}/${interval}/${categoryType === CategoryType.Spendings ? isFinance + "/" : ""}${isSecondCat}/${fromDate}/${toDate}`;

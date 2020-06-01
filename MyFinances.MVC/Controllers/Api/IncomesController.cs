@@ -36,7 +36,8 @@ namespace MyIncomes.Website.Controllers.API
         [HttpPost]
         public async Task<HttpResponseMessage> GetIncomesAsync(IncomeRequestDTO request)
         {
-            var incomes = await incomeService.GetAllIncomesAsync(request);
+            var incomes = (await incomeService.GetAllIncomesAsync(request))
+                .Where(x => x.SourceId != (int)Categories.SavingsPot);
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Incomes = 
@@ -49,7 +50,7 @@ namespace MyIncomes.Website.Controllers.API
                         x.Amount,
                         x.WeekNo
                     })
-            });
+            });;;
         }
 
         [Route("summary")]

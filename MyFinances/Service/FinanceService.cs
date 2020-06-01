@@ -11,6 +11,7 @@ using Nager.Date;
 using Nager.Date.Extensions;
 using System.Globalization;
 using MyFinances.Helpers;
+using MyFinances.Models;
 
 namespace MyFinances.Service
 {
@@ -27,6 +28,8 @@ namespace MyFinances.Service
         Task<RemindersVM> GetNotifications();
         Task<IEnumerable<MonthComparisonChartVM>> GetFinanceTotalsByMonth(MonthComparisonChartRequestDTO request);
         Task<Summary> GetSummary();
+        Task<Monzo> MonzoAccountSummary();
+        Task InsertMonzoAccountSummary(Monzo accountSummary);
     }
 
     public class FinanceService : IFinanceService
@@ -388,6 +391,16 @@ namespace MyFinances.Service
             }
 
             return paymentReminders;
+        }
+
+        public async Task<Monzo> MonzoAccountSummary()
+        {
+            return await financeRepository.MonzoAccountSummary();
+        }
+
+        public async Task InsertMonzoAccountSummary(Monzo accountSummary)
+        {
+            await financeRepository.InsertMonzoAccountSummary(accountSummary);
         }
     }
 }

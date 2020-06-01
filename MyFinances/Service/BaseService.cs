@@ -1,9 +1,12 @@
-﻿using MyFinances.DTOs;
+﻿using DFM.ExceptionHandling;
+using DFM.ExceptionHandling.Sentry;
+using MyFinances.DTOs;
 using MyFinances.Enums;
 using MyFinances.Model;
 using MyFinances.Repository;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,6 +22,7 @@ namespace MyFinances.Service
         Task<int> GetSecondTypeId(int catId);
         Task<Setting> GetSettingsAsync();
         Task UpdateSettingsAsync(Setting settings);
+        void ReportException(Exception exception);
     }
 
     public class BaseService : IBaseService
@@ -26,6 +30,7 @@ namespace MyFinances.Service
         private readonly IBaseRepository baseRepository;
         private readonly ISettingRepository settingRepository;
         private readonly ICategoryRepository categoryRepository;
+        private readonly IExceptionHandlerService exceptionHandlerService;
 
         public BaseService(
             IBaseRepository baseRepository, 
@@ -35,6 +40,7 @@ namespace MyFinances.Service
             this.baseRepository = baseRepository ?? throw new ArgumentNullException(nameof(baseRepository));
             this.categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
             this.settingRepository = settingRepository ?? throw new ArgumentNullException(nameof(settingRepository));
+            this.exceptionHandlerService = new ExceptionHandlerService(ConfigurationManager.AppSettings["DFM.ExceptionHandling.Sentry.Environment"]);
         }
 
         public async Task UpdateAsync<T>(string field, T value, int id, string table) where T : class
@@ -87,6 +93,12 @@ namespace MyFinances.Service
         public async Task UpdateSettingsAsync(Setting settings)
         {
             await settingRepository.UpdateAsync(settings);
+        }
+
+        public void ReportException(Exception exception)
+        {
+            // Update to Sentry
+            exceptionHandlerService.ReportException(exception).Submit();
         }
     }
 }

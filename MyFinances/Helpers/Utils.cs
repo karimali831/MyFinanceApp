@@ -3,10 +3,12 @@ using MyFinances.Enums;
 using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -63,6 +65,48 @@ namespace MyFinances.Helpers
             return highlight == false ? formatAmount : $"<span class='label label-{label}'>{formatAmount}</span>";
         }
 
+        public static T ToEnum<T>(this string value) where T : struct, IConvertible
+        {
+            if(Enum.TryParse(value, true, out T result))
+            {
+                return result;
+            }
+            else
+            {
+                return default;
+            }
+        }
+
+        public static string CleanCategory(string text) => Regex.Replace(text, @"[^0-9a-zA-Z]+", "").Trim();
+
+        public static string GetDescription<T>(this T e) where T : IConvertible
+        {
+            if (e is Enum)
+            {
+                Type type = e.GetType();
+                Array values = System.Enum.GetValues(type);
+
+                foreach (int val in values)
+                {
+                    if (val == e.ToInt32(CultureInfo.InvariantCulture))
+                    {
+                        var memInfo = type.GetMember(type.GetEnumName(val));
+                        var descriptionAttribute = memInfo[0]
+                            .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                            .FirstOrDefault() as DescriptionAttribute;
+
+                        if (descriptionAttribute != null)
+                        {
+                            return descriptionAttribute.Description;
+                        }
+                    }
+                };
+            }
+
+            return null; // could also return string.Empty
+        }
+    
+    
         public static string ChartsHeaderTitle(IEnumerable<MonthComparisonChartVM> data, ChartHeaderTitleType type)
         {
             // exclude first month and last month records (because partial stored records)
@@ -115,19 +159,21 @@ namespace MyFinances.Helpers
                        $"AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()) + 1, 0)";
             }
 
-            return dateFilter.Frequency switch
+            var filteredDate = dateFilter.Frequency switch
             {
-                DateFrequency.DateRange => $"{dateFilter.DateField} >= '{dateFilter.FromDateRange.Value:yyyy-MM-dd HH:mm}' AND {dateFilter.DateField} <= '{dateFilter.ToDateRange.Value:yyyy-MM-dd HH:mm}'",
+                DateFrequency.DateRange => $"{dateFilter.DateField} >= '{dateFilter.FromDateRange.Value:yyyy-MM-dd HH:mm}' AND {dateFilter.DateField} < '{dateFilter.ToDateRange.Value.AddDays(1):yyyy-MM-dd HH:mm}'",
                 DateFrequency.Today => $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0) AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 1)",
                 DateFrequency.Yesterday => $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 1, GETDATE()), 0) AND [{dateFilter.DateField}] < DATEADD(DAY, DATEDIFF(DAY, 1, GETUTCDATE()), 1)",
                 DateFrequency.Upcoming => $"[{dateFilter.DateField}] > DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), 0)",
                 DateFrequency.LastXDays => $"[{dateFilter.DateField}] >= DATEADD(DAY, DATEDIFF(DAY, 0, GETUTCDATE()), - {dateFilter.Interval})",
-                DateFrequency.LastXMonths => $"[{dateFilter.DateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETUTCDATE()) - {dateFilter.Interval}, DAY(GETUTCDATE())) - 1)",
+                DateFrequency.LastXMonths => $"[{dateFilter.DateField}] >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETUTCDATE()) - {dateFilter.Interval}, DAY(GETUTCDATE()) - 1)",
                 DateFrequency.CurrentYear => $"YEAR([{dateFilter.DateField}]) = YEAR(GETUTCDATE())",
                 DateFrequency.PreviousYear => $"YEAR([{dateFilter.DateField}]) = YEAR(DATEADD(YEAR, -1, GETUTCDATE()))",
                 DateFrequency.AllTime => $"[{dateFilter.DateField}] <= GETUTCDATE()",
                 _ => "",
             };
+
+            return filteredDate;
         }
 
         public static List<DateTime> GetMonthsBetween(DateTime from, DateTime to)

@@ -73,32 +73,8 @@ namespace MyFinances.Website.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddSpending(string monzoTransId, string name, decimal amount, string date, bool isFinance, bool isDD, int selectedId, int? secondCatId = null, decimal? potTopup = null)
+        public async Task<ActionResult> AddSpending(string monzoTransId, string name, decimal amount, string date, bool isFinance, int selectedId, int? secondCatId = null)
         {
-            // add to savings-pot
-            if (potTopup.HasValue && potTopup.Value != 0 && !isDD)
-            {
-                var potIncomeDto = new IncomeDTO
-                {
-                    Amount = potTopup.Value,
-                    SourceId = (int)Categories.SavingsPot,
-                    Date = DateTime.ParseExact(date, "yyyy-MM-ddTHH:mm", new CultureInfo("en-GB")),
-                    MonzoTransId = monzoTransId
-                };
-
-                var potSpendingDto = new SpendingDTO
-                {
-                    Name = $"{name} (savings top-up)",
-                    Amount = potTopup.Value,
-                    CatId = (int)Categories.Savings,
-                    Date = DateTime.ParseExact(date, "yyyy-MM-ddTHH:mm", new CultureInfo("en-GB")),
-                    MonzoTransId = monzoTransId
-                };
-
-                await monzoService.AddIncome(potIncomeDto);
-                await monzoService.AddSpending(potSpendingDto);
-            }
-
             var dto = new SpendingDTO
             {
                 Name = name,
@@ -123,12 +99,11 @@ namespace MyFinances.Website.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> AddTransaction(string monzoTransId, string name, long amount, string date, bool? isFinance, bool? isDD, int? Id, CategoryType? secondTypeId)
+        public async Task<ActionResult> AddTransaction(string monzoTransId, string name, decimal amount, string date, bool? isFinance, int? Id, CategoryType? secondTypeId)
         {
             var viewModel = new AddTransactionVM
             {
-                IsFinance = isFinance ?? false,
-                IsDD = isDD ?? false
+                IsFinance = isFinance ?? false
             };
 
             if (Id.HasValue)
@@ -146,13 +121,6 @@ namespace MyFinances.Website.Controllers
                 viewModel.Finances = finances;
                 viewModel.Name = name;
                 viewModel.Type = CategoryType.Spendings;
-     
-                if (!viewModel.IsDD.Value)
-                {
-                    decimal fullAmount = Math.Ceiling(-amount / 100m);
-                    viewModel.PotTopup = fullAmount - (-amount / 100m);
-                }
- 
                 viewModel.ActualAmount = (-amount / 100m);
             }
             else
@@ -174,26 +142,30 @@ namespace MyFinances.Website.Controllers
             return View("AddTransaction", viewModel);
         }
 
-        public async Task<ActionResult> ApproveDataAccess(string accessToken)
+        public async Task<ActionResult> ApproveDataAccess(string accessToken = null)
         {
-            // fetch transactions etc
-            using (var client = new MonzoClient(accessToken))
+            var initialData = await monzoService.MonzoAccountSummary();
+
+            // if we have not inserted latest monzo account details in last hour then execute monzo client 
+            if (initialData == null || initialData.Created >= DateTime.Now.AddHours(-1) || accessToken != null)
             {
-                var accounts = await client.GetAccountsAsync();
-                var balance = await client.GetBalanceAsync(accounts[0].Id);
-                var getTransactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
-                    .OrderByDescending(x => x.Created)
-                    .Take(100)
-                    .ToList();
-
-                var spentToday = getTransactions
-                    .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
-                    .Sum(x => x.Amount / 100m);
-
-                var transactions = new List<MonzoTransaction>();
-
-                if (getTransactions.Any())
+                // fetch transactions etc
+                using (var client = new MonzoClient(accessToken))
                 {
+                    var accounts = await client.GetAccountsAsync();
+                    var balance = await client.GetBalanceAsync(accounts[0].Id);
+                    var savings = await client.GetBalanceAsync(accounts[0].Id);
+                    var getTransactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
+                        .OrderByDescending(x => x.Created)
+                        .Take(100)
+                        .ToList();
+
+                    var spentToday = getTransactions
+                        .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
+                        .Sum(x => x.Amount / 100m);
+
+                    var transactions = new List<MonzoTransaction>();
+
                     foreach (var trans in getTransactions)
                     {
                         transactions.Add(new MonzoTransaction
@@ -202,25 +174,66 @@ namespace MyFinances.Website.Controllers
                             Amount = trans.Amount,
                             Created = trans.Created,
                             Name = trans.Merchant?.Name ?? trans.Description,
+                            Description = trans.Merchant.Id,
                             Logo = trans.Merchant?.Logo,
-                            Category = trans.Category
+                            Category = trans.Category,
+                            Notes = trans.Notes,
+                            Settled = trans.Settled
                         });
                     }
+
+                    // store in temporary table 
+                    var monzo = new MyFinances.Models.Monzo
+                    {
+                        Balance = balance.Value / 100m,
+                        AccountNo = accounts[0].AccountNumber,
+                        SortCode = accounts[0].SortCode,
+                        SpentToday = spentToday,
+                        Transactions = transactions
+                    };
+
+                    await monzoService.InsertMonzoAccountSummary(monzo);
                 }
-
-                var viewModel = new AccountSummaryModel
-                {
-                    SpentToday = spentToday,
-                    Account = accounts[0],
-                    Balance = balance,
-                    Transactions = transactions
-                };
-
-                var syncTransactions = await monzoService.SyncTransactions(transactions);
-                viewModel.SyncedTransactions = syncTransactions;
-
-                return View("OAuthCallback", viewModel);
             }
+
+            var data = await monzoService.MonzoAccountSummary();
+
+            var viewModel = new MonzoAccountSummaryVM
+            {
+                SpentToday = data.SpentToday,
+                AccountNo = data.AccountNo,
+                SortCode = data.SortCode,
+                Balance = data.Balance,
+                Transactions = data.Transactions.ToList(),
+                LastSynced = data.Created
+            };
+
+            // sync settled transactions date format being : 2020-05-31T07:06:18.533Z
+            var syncTransactions = await monzoService.SyncTransactions(viewModel.Transactions);
+            viewModel.SyncedTransactions = syncTransactions;
+
+            if (syncTransactions.Any(x => !string.IsNullOrEmpty(x.Value.Syncables)))
+            {
+                var description = new List<string>
+                    {
+                        syncTransactions.First(x => x.Key == CategoryType.Income).Value.Syncables,
+                        syncTransactions.First(x => x.Key == CategoryType.Spendings).Value.Syncables
+                    };
+
+                viewModel.Modal = new BootBox
+                {
+                    Reload = true,
+                    Title = "Please wait while Monzo transactions are synced...",
+                    Description = description.ToArray()
+                };
+            };
+
+            if (accessToken != null)
+            {
+                return RedirectToAction("ApproveDataAccess");
+            }
+
+            return View("OAuthCallback", viewModel);
         }
 
         [HttpGet]
@@ -242,7 +255,7 @@ namespace MyFinances.Website.Controllers
 
             // we now have the access token and will be prompted in Monzo app to 
             // grant access to the data, this must be approved before executing next line of code!
-            return View("ApproveDataAccess", new AccountSummaryModel { Token = accessToken.Value });
+            return View("ApproveDataAccess", new MonzoAccountSummaryVM { Token = accessToken.Value });
         }
 
         // Call this from Callback location to get access code after Auth redirect.

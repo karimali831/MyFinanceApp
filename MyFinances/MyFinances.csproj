@@ -148,12 +148,14 @@
     <Compile Include="Enums\Categories.cs" />
     <Compile Include="Enums\ChartHeaderTitleType.cs" />
     <Compile Include="Enums\ChartType.cs" />
+    <Compile Include="Enums\MonzoSync.cs" />
     <Compile Include="Enums\Priority.cs" />
     <Compile Include="Enums\OverrideDueDate.cs" />
     <Compile Include="Enums\DateFrequency.cs" />
     <Compile Include="Enums\PaymentStatus.cs" />
     <Compile Include="Enums\CategoryType.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Model\Monzo.cs" />
     <Compile Include="ViewModels\MonzoTransaction.cs" />
     <Compile Include="Model\Settings.cs" />
     <Compile Include="Model\Reminder.cs" />

@@ -6,6 +6,7 @@ using MyFinances.Models;
 using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -54,6 +55,7 @@ namespace MyFinances.Service
                     Interval = 1
                 }
             }))
+            .Where(x => x.MonzoTransId != null)
             .OrderByDescending(x => x.Date)
             .Select(x => x.MonzoTransId)
             .Take(100);
@@ -69,6 +71,7 @@ namespace MyFinances.Service
                     Interval = 1
                 }
             }))
+            .Where(x => x.MonzoTransId != null)
             .OrderByDescending(x => x.Date)
             .Select(x => x.MonzoTransId)
             .Take(100);
@@ -80,7 +83,27 @@ namespace MyFinances.Service
             var incomeIDs = new List<string>();
             var incomeSyncables = new List<string>();
             var spendingSyncables = new List<string>();
-            string strStartDate = "14/05/2020"; // start date since started savings pot top-ups
+            DateTime startDate = DateTime.Parse("14/05/2020", new CultureInfo("en-GB")); // start date since started savings pot top-ups
+
+            // check duplicates
+            var (Name, Duplicates) = await baseService.CheckDuplicates("MonzoTransId", "Spendings");
+
+            if (Duplicates >= 2)
+            {
+                string note = $"Duplicated monzo trans entries: {Duplicates} for {Name}";
+                var exists = await reminderService.ReminderExists(note);
+
+                if (!exists)
+                {
+                    await reminderService.AddReminder(new ReminderDTO
+                    {
+                        DueDate = DateTime.UtcNow,
+                        Notes = note,
+                        Priority = Priority.Medium,
+                        CatId = Categories.MissedEntries
+                    });
+                }
+            }
 
             // check synced transactions
             var spendingsMonzoTransIds = await SpendingsMonzoTransIds();
@@ -89,6 +112,7 @@ namespace MyFinances.Service
 
             foreach (var trans in transactions)
             {
+
                 // debited from card
                 if (trans.Amount < 0)
                 {
@@ -98,7 +122,7 @@ namespace MyFinances.Service
                     }
                     else
                     {
-                        if (trans.Created > DateTime.Parse(strStartDate))
+                        if (trans.Created > startDate)
                         {
                             int? category = null;
                             int? secondCategory = null;
@@ -211,7 +235,7 @@ namespace MyFinances.Service
                     // auto sync pot incomes
                     if (!incomesMonzoTransIds.Contains(trans.Id))
                     {
-                        if (trans.Created > DateTime.Parse(strStartDate))
+                        if (trans.Created > startDate)
                         {
                             if (trans.Name.StartsWith(MonzoSync.pot_.ToString()))
                             {
@@ -239,7 +263,7 @@ namespace MyFinances.Service
                     }
                     else
                     {
-                        if (trans.Created > DateTime.Parse(strStartDate))
+                        if (trans.Created > startDate)
                         {
                             // auto sync income payables 
                             int? category = null;

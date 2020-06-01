@@ -1,4 +1,5 @@
-﻿using MyFinances.DTOs;
+﻿using MyFinances.Controllers;
+using MyFinances.DTOs;
 using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Model;
@@ -18,7 +19,7 @@ using System.Web.Mvc;
 
 namespace MyFinances.Website.Controllers
 {
-    public class FinancesController : Controller
+    public class FinancesController : UserMvcController
     {
         private readonly IBaseService baseService;
 

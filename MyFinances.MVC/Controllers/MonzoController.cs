@@ -1,4 +1,5 @@
 ﻿using Monzo;
+using MyFinances.Controllers;
 using MyFinances.DTOs;
 using MyFinances.Enums;
 using MyFinances.Helpers;
@@ -22,7 +23,7 @@ using System.Web.Mvc;
 
 namespace MyFinances.Website.Controllers
 {
-    public sealed class MonzoController : Controller
+    public sealed class MonzoController : UserMvcController
     {
         private readonly IMonzoAuthorizationClient _monzoAuthorizationClient;
         private readonly IMonzoService monzoService;
@@ -147,7 +148,7 @@ namespace MyFinances.Website.Controllers
             var initialData = await monzoService.MonzoAccountSummary();
 
             // if we have not inserted latest monzo account details in last hour then execute monzo client 
-            if (initialData == null || initialData.Created >= DateTime.Now.AddHours(-1) || accessToken != null)
+            if (initialData == null || accessToken != null)
             {
                 // fetch transactions etc
                 using (var client = new MonzoClient(accessToken))
@@ -174,7 +175,7 @@ namespace MyFinances.Website.Controllers
                             Amount = trans.Amount,
                             Created = trans.Created,
                             Name = trans.Merchant?.Name ?? trans.Description,
-                            Description = trans.Merchant.Id,
+                            Description = trans.Merchant?.Id ?? trans.Description,
                             Logo = trans.Merchant?.Logo,
                             Category = trans.Category,
                             Notes = trans.Notes,

@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace MyFinances.Controllers
 {
-    public class CNWController : Controller
+    public class CNWController : UserMvcController
     {
         private readonly ICNWService cnwService;
 

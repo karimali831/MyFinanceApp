@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace MyFinances.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : UserMvcController
     { 
         public string pwd = "5424";
 

@@ -14,17 +14,32 @@ namespace MyFinances.Repository
     {
         Task UpdateAsync<T>(string field, T value, int id, string table) where T : class;
         Task DeleteAsync(int Id, string table);
+        Task<(string, int)> CheckDuplicates(string column, string table);
     }
 
     public class BaseRepository : IBaseRepository
     {
         private readonly Func<IDbConnection> dbConnectionFactory;
-        //private static readonly string TABLE = "Bases";
         private static readonly string[] FIELDS = typeof(Finance).DapperFields();
 
         public BaseRepository(Func<IDbConnection> dbConnectionFactory)
         {
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
+        }
+
+        public async Task<(string, int)> CheckDuplicates(string column, string table)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<(string, int)>($@"
+                    SELECT {column}, COUNT(*) As Duplicates
+                    FROM {table}
+                    WHERE {column} is not null
+                    GROUP BY {column} 
+                    HAVING COUNT(*) > 1
+                "))
+                .SingleOrDefault();
+            }
         }
 
         public async Task UpdateAsync<T>(string field, T value, int id, string table) where T : class

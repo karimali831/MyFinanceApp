@@ -118,7 +118,8 @@ namespace MyFinances.Service
                                     // there's a second category 
                                     if (tranNotesCategories.Length == 3)
                                     {
-                                        var cat2 = categories.FirstOrDefault(x => Utils.CleanCategory(x.Name).Equals(tranNotesCategories[2], StringComparison.OrdinalIgnoreCase));
+                                        var secondCategories = await baseService.GetAllCategories(cat1.SecondTypeId, catsWithSubs: false);
+                                        var cat2 = secondCategories.FirstOrDefault(x => Utils.CleanCategory(x.Name).Equals(tranNotesCategories[2], StringComparison.OrdinalIgnoreCase));
 
                                         if (cat2 != null)
                                         { 

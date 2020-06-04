@@ -28,16 +28,16 @@ namespace MyFinances.Controllers
         {
             filterContext.ExceptionHandled = true;
 
-            //Log the error!!
             exceptionHandlerService.ReportException(filterContext.Exception).Submit();
 
-            ////Redirect or return a view, but not both.
-            //filterContext.Result = RedirectToAction("Index", "ErrorHandler");
-            //// OR 
-            //filterContext.Result = new ViewResult
-            //{
-            //    ViewName = "~/Views/ErrorHandler/Index.cshtml"
-            //};
+            filterContext.Result = new ViewResult
+            {
+                ViewName = "~/Views/Shared/Error.cshtml",
+                ViewData = new ViewDataDictionary(filterContext.Controller.ViewData)
+                {
+                    Model = new ErrorVM { Exception = filterContext.Exception }
+                }
+            };
         }
     }
 }

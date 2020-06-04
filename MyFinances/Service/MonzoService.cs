@@ -100,27 +100,36 @@ namespace MyFinances.Service
             }
         }
 
-        private async Task MonzoTagMismatched(string transName, string cat, string secondCat = null)
+        private async Task MonzoTagMismatched(string transName, string cat = null, string secondCat = null)
         {
             string msg = "";
             if (secondCat != null)
             {
-                msg = $"Unable to automatically sync transaction: {transName} with matched category {cat} and unmatched second category: {secondCat}";
+                msg = $"Unable to automatically sync expense transaction: {transName} with matched category {cat} and unmatched second category: {secondCat}";
+            }
+            else if (cat != null)
+            {
+                msg = $"Unable to automatically sync expense transaction: {transName} with unmatched category: {cat}";
             }
             else
             {
-                msg = $"Unable to automatically sync transaction: {transName} with unmatched category: {cat}";
+                msg = $"Unable to automatically sync income transaction: {transName}";
             }
 
-            await reminderService.AddReminder(new ReminderDTO
-            {
-                DueDate = DateTime.UtcNow,
-                Notes = msg,
-                Priority = Priority.Medium,
-                CatId = Categories.MissedEntries
-            });
+            var exists = await reminderService.ReminderExists(msg);
 
-            baseService.ReportException(new Exception(msg));
+            if (!exists)
+            {
+                await reminderService.AddReminder(new ReminderDTO
+                {
+                    DueDate = DateTime.UtcNow,
+                    Notes = msg,
+                    Priority = Priority.Medium,
+                    CatId = Categories.MonzoTransaction
+                });
+
+                baseService.ReportException(new Exception(msg));
+            }
         }
 
         public async Task<IDictionary<CategoryType, (IList<string>, string Syncables)>> SyncTransactions(IList<MonzoTransaction> transactions)
@@ -190,7 +199,7 @@ namespace MyFinances.Service
                             }
                             else
                             {
-                                await MonzoTagMismatched(trans.Name, tranNotesCategories[2]);
+                                await MonzoTagMismatched(trans.Name, tranNotesCategories[1]);
                             }
                         }
                         else
@@ -198,7 +207,7 @@ namespace MyFinances.Service
                             // auto sync finances
                             var finance = finances.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
 
-                            if (finances != null)
+                            if (finance != null)
                             {
                                 name = finance.Name;
                                 financeId = finance.Id;
@@ -276,7 +285,7 @@ namespace MyFinances.Service
                         }
                         else
                         {
-                            await MonzoTagMismatched(trans.Name, trans.Description);
+                            await MonzoTagMismatched(trans.Name);
                         }
                     }
                 }

@@ -18,8 +18,6 @@
         {
             @Html.Partial("_BootBox", Model.Modal)
         }
-
-
         <div class="row">
             <div class="col-md-4">
                 <h2><small>Balance:</small></h2>
@@ -47,10 +45,11 @@
                     var plus = (transaction.Amount > 0 ? "+" : null);
                     var color = (transaction.Amount > 0 ? "green" : null);
                     var name = (transaction.Name.Substring(0, Math.Min(transaction.Name.Length, 15)));
+
                     <tr>
                         <td><img src="@(transaction.Logo)" width="32" height="32" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
-                        <td title="@transaction.Description">@name <br /><small>(@transaction.Description)</small></td>
-                        <td>@(transaction.Created.ToLongDateString()) <small>(@(transaction.Created.ToShortTimeString()))</small></td>
+                        <td title="@transaction.Description settled on @transaction.Settled">@name <br /><small style="display: none">(@transaction.Description)</small></td>
+                        <td>@(transaction.Created.ToShortDateString()) <small>(@(transaction.Created.ToShortTimeString()))</small></td>
                         <td class="text-right">
                             @if (!Model.SyncedTransactions.SelectMany(x => x.Value.Transactions).Contains(transaction.Id) && !transaction.Name.StartsWith("pot_") && transaction.Amount != 0)
                             {

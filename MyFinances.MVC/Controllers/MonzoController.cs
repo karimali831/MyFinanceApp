@@ -143,6 +143,11 @@ namespace MyFinances.Website.Controllers
             return View("AddTransaction", viewModel);
         }
 
+        //public async Task<ActionResult> ManualSyncTransaction(CategoryType type, string transId)
+        //{
+
+        //}
+
         public async Task<ActionResult> ApproveDataAccess(string accessToken = null)
         {
             var initialData = await monzoService.MonzoAccountSummary();
@@ -169,6 +174,8 @@ namespace MyFinances.Website.Controllers
 
                     foreach (var trans in getTransactions)
                     {
+                        string settled = string.IsNullOrEmpty(trans.Settled) ? "" : trans.Settled.Substring(0, trans.Settled.Length - 5);
+
                         transactions.Add(new MonzoTransaction
                         {
                             Id = trans.Id,
@@ -179,7 +186,7 @@ namespace MyFinances.Website.Controllers
                             Logo = trans.Merchant?.Logo,
                             Category = trans.Category,
                             Notes = trans.Notes,
-                            Settled = trans.Settled
+                            Settled = settled
                         });
                     }
 
@@ -214,11 +221,22 @@ namespace MyFinances.Website.Controllers
      
             Func<string, bool> isSettled = (string settledDateParse) => 
             {
-                return DateTime.ParseExact(settledDateParse, "yyyy-MM-ddTHH:mm:ssZ ", new CultureInfo("en-GB"), DateTimeStyles.None) >= DateTime.UtcNow;
+                if (string.IsNullOrEmpty(settledDateParse))
+                {
+                    return true;
+                }
+                else if (DateTime.TryParseExact(settledDateParse, "yyyy-MM-ddTHH:mm:ss", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             };
 
             var toSyncTransactions = viewModel.Transactions
-                .Where(x => x.Created > startDate && !string.IsNullOrEmpty(x.Settled) && isSettled(x.Settled))
+                .Where(x => x.Created > startDate)
                 .ToList();
 
             var syncTransactions = await monzoService.SyncTransactions(toSyncTransactions);

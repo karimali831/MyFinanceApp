@@ -18,6 +18,7 @@ namespace MyFinances.Enums
         Bills = 1144,
         Flex = 1147,
         SavingsPot, // of type income
-        Savings // of type spending
+        Savings, // of type spending,
+        MonzoTransaction = 2151
     }
 }

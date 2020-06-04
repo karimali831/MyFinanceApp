@@ -15,7 +15,8 @@ export interface IFinance {
     manualPayment: boolean,
     daysUntilDue: number,
     paymentStatus: PaymentStatus,
-    directDebit: boolean
+    directDebit: boolean,
+    monzoTag: string
 }
 
 export interface IFinanceDTO {

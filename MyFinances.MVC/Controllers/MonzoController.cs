@@ -175,7 +175,7 @@ namespace MyFinances.Website.Controllers
                             Amount = trans.Amount,
                             Created = trans.Created,
                             Name = trans.Merchant?.Name ?? trans.Description,
-                            Description = trans.Merchant?.Id ?? trans.Description,
+                            Description = trans.Merchant?.Id ?? trans.Merchant?.Name ?? trans.Description,
                             Logo = trans.Merchant?.Logo,
                             Category = trans.Category,
                             Notes = trans.Notes,
@@ -210,7 +210,18 @@ namespace MyFinances.Website.Controllers
             };
 
             // sync settled transactions date format being : 2020-05-31T07:06:18.533Z
-            var syncTransactions = await monzoService.SyncTransactions(viewModel.Transactions);
+            DateTime startDate = DateTime.Parse("14/05/2020", new CultureInfo("en-GB")); // start date since started savings pot top-ups
+     
+            Func<string, bool> isSettled = (string settledDateParse) => 
+            {
+                return DateTime.ParseExact(settledDateParse, "yyyy-MM-ddTHH:mm:ssZ ", new CultureInfo("en-GB"), DateTimeStyles.None) >= DateTime.UtcNow;
+            };
+
+            var toSyncTransactions = viewModel.Transactions
+                .Where(x => x.Created > startDate && !string.IsNullOrEmpty(x.Settled) && isSettled(x.Settled))
+                .ToList();
+
+            var syncTransactions = await monzoService.SyncTransactions(toSyncTransactions);
             viewModel.SyncedTransactions = syncTransactions;
 
             if (syncTransactions.Any(x => !string.IsNullOrEmpty(x.Value.Syncables)))

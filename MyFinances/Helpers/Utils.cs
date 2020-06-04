@@ -77,8 +77,6 @@ namespace MyFinances.Helpers
             }
         }
 
-        public static string CleanCategory(string text) => Regex.Replace(text, @"[^0-9a-zA-Z]+", "").Trim();
-
         public static string GetDescription<T>(this T e) where T : IConvertible
         {
             if (e is Enum)

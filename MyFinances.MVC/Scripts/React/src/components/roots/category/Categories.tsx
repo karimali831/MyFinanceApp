@@ -49,7 +49,12 @@ export default class Categories extends React.Component<IOwnProps, IOwnState> {
             text: 'Second Type Id'
           }, {
             dataField: 'disabled',
-            text: 'Disabled'
+            text: 'Disabled',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
+            dataField: 'monzoTag',
+            text: 'Monzo Tag'
           }
         ];
 

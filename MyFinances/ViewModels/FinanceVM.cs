@@ -22,6 +22,7 @@ namespace MyFinances.ViewModels
         public int? DaysUntilDue { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public bool DirectDebit { get; set; }
+        public string MonzoTag { get; set; }
 
     }
 }

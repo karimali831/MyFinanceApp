@@ -148,7 +148,6 @@
     <Compile Include="Enums\Categories.cs" />
     <Compile Include="Enums\ChartHeaderTitleType.cs" />
     <Compile Include="Enums\ChartType.cs" />
-    <Compile Include="Enums\MonzoSync.cs" />
     <Compile Include="Enums\Priority.cs" />
     <Compile Include="Enums\OverrideDueDate.cs" />
     <Compile Include="Enums\DateFrequency.cs" />

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Razor.Parser.SyntaxTree;
 
 namespace MyFinances.Service
 {
@@ -77,15 +78,8 @@ namespace MyFinances.Service
             .Take(100);
         }
 
-        public async Task<IDictionary<CategoryType, (IList<string>, string Syncables)>> SyncTransactions(IList<MonzoTransaction> transactions)
+        private async Task CheckMonzoTransDuplicates()
         {
-            var spendingIDs = new List<string>();
-            var incomeIDs = new List<string>();
-            var incomeSyncables = new List<string>();
-            var spendingSyncables = new List<string>();
-            DateTime startDate = DateTime.Parse("14/05/2020", new CultureInfo("en-GB")); // start date since started savings pot top-ups
-
-            // check duplicates
             var (Name, Duplicates) = await baseService.CheckDuplicates("MonzoTransId", "Spendings");
 
             if (Duplicates >= 2)
@@ -104,16 +98,59 @@ namespace MyFinances.Service
                     });
                 }
             }
+        }
+
+        private async Task MonzoTagMismatched(string transName, string cat, string secondCat = null)
+        {
+            string msg = "";
+            if (secondCat != null)
+            {
+                msg = $"Unable to automatically sync transaction: {transName} with matched category {cat} and unmatched second category: {secondCat}";
+            }
+            else
+            {
+                msg = $"Unable to automatically sync transaction: {transName} with unmatched category: {cat}";
+            }
+
+            await reminderService.AddReminder(new ReminderDTO
+            {
+                DueDate = DateTime.UtcNow,
+                Notes = msg,
+                Priority = Priority.Medium,
+                CatId = Categories.MissedEntries
+            });
+
+            baseService.ReportException(new Exception(msg));
+        }
+
+        public async Task<IDictionary<CategoryType, (IList<string>, string Syncables)>> SyncTransactions(IList<MonzoTransaction> transactions)
+        {
+            // variable initialisation 
+            var spendingIDs = new List<string>();
+            var incomeIDs = new List<string>();
+            var incomeSyncables = new List<string>();
+            var spendingSyncables = new List<string>();
+            DateTime startDate = DateTime.Parse("14/05/2020", new CultureInfo("en-GB")); // start date since started savings pot top-ups
+
+            // check duplicates - should be unit test
+            await CheckMonzoTransDuplicates();
 
             // check synced transactions
             var spendingsMonzoTransIds = await SpendingsMonzoTransIds();
             var incomesMonzoTransIds = await IncomesMonzoTransIds();
-            var categories = await baseService.GetAllCategories(CategoryType.Spendings, catsWithSubs: false);
+            var categories = (await baseService.GetAllCategories(CategoryType.Spendings, catsWithSubs: false)).Where(x => x.MonzoTag != null);
+            var incomeCategories = (await baseService.GetAllCategories(CategoryType.IncomeSources, catsWithSubs: false)).Where(x => x.MonzoTag != null);
+            var finances = (await GetFinances()).Where(x => x.MonzoTag != null);
 
+            // 2020-06-01T14:15:00.119Z
             foreach (var trans in transactions)
             {
+                int? category = null;
+                int? secondCategory = null;
+                int? financeId = null;
+                string name = "";
 
-                // debited from card
+                // debited
                 if (trans.Amount < 0)
                 {
                     if (spendingsMonzoTransIds.Contains(trans.Id))
@@ -122,139 +159,97 @@ namespace MyFinances.Service
                     }
                     else
                     {
-                        if (trans.Created > startDate)
+                        // auto sync categories
+                        if (trans.Notes.StartsWith("#"))
                         {
-                            int? category = null;
-                            int? secondCategory = null;
-                            int? financeId = null;
-                            string name = "";
+                            var tranNotesCategories = trans.Notes.Split('#');
+                            var cat1 = categories.FirstOrDefault(x => x.MonzoTag.Equals(tranNotesCategories[1], StringComparison.OrdinalIgnoreCase));
 
-                            // auto sync trans with specified categories
-                            if (trans.Notes.StartsWith("#"))
+                            if (cat1 != null)
                             {
-                                var tranNotesCategories = trans.Notes.Split('#');
-                                var cat1 = categories.FirstOrDefault(x => Utils.CleanCategory(x.Name).Equals(tranNotesCategories[1], StringComparison.OrdinalIgnoreCase));
+                                category = cat1.Id;
 
-                                if (cat1 != null)
-                                { 
-                                    category = cat1.Id;
-
-                                    // there's a second category 
-                                    if (tranNotesCategories.Length == 3)
-                                    {
-                                        var secondCategories = await baseService.GetAllCategories(cat1.SecondTypeId, catsWithSubs: false);
-                                        var cat2 = secondCategories.FirstOrDefault(x => Utils.CleanCategory(x.Name).Equals(tranNotesCategories[2], StringComparison.OrdinalIgnoreCase));
-
-                                        if (cat2 != null)
-                                        { 
-                                            secondCategory = cat2.Id;
-                                        }
-                                        else
-                                        {
-                                            string msg = $"Unable to automatically sync transaction: {trans.Name} with matched category {cat1.Name} and unmatched second category: {tranNotesCategories[2]}";
-
-                                            await reminderService.AddReminder(new ReminderDTO
-                                            {
-                                                DueDate = DateTime.UtcNow,
-                                                Notes = msg,
-                                                Priority = Priority.Medium,
-                                                CatId = Categories.MissedEntries
-                                            });
-
-                                            baseService.ReportException(new Exception(msg));
-                                        }
-                                    }
-
-                                    spendingSyncables.Add(cat1.Name);
-                                    name = cat1.Name;
-                                }
-                                else
+                                // there's a second category 
+                                if (tranNotesCategories.Length == 3)
                                 {
-                                    string msg = $"Unable to automatically sync transaction: {trans.Name} with unmatched category: {tranNotesCategories[1]}";
+                                    var secondCategories = await baseService.GetAllCategories(cat1.SecondTypeId, catsWithSubs: false);
+                                    var cat2 = secondCategories.FirstOrDefault(x => x.MonzoTag.Equals(tranNotesCategories[2], StringComparison.OrdinalIgnoreCase));
 
-                                    await reminderService.AddReminder(new ReminderDTO
+                                    if (cat2 != null)
                                     {
-                                        DueDate = DateTime.UtcNow,
-                                        Notes = msg,
-                                        Priority = Priority.Medium,
-                                        CatId = Categories.MissedEntries
-                                    });
-
-                                    baseService.ReportException(new Exception(msg));
+                                        secondCategory = cat2.Id;
+                                    }
+                                    else
+                                    {
+                                        await MonzoTagMismatched(trans.Name, cat1.Name, tranNotesCategories[2]);
+                                    }
                                 }
+
+                                spendingSyncables.Add(cat1.Name);
+                                name = cat1.Name;
                             }
                             else
                             {
-                                // auto sync finances
-                                if (trans.Description.Equals(MonzoSync.GtiRoadTax.GetDescription()))
-                                {
-                                    name = MonzoSync.GtiRoadTax.ToString();
-                                    financeId = (int)MonzoSync.GtiRoadTax;
-                                    spendingSyncables.Add(name);
-                                }
-                                else if (trans.Description.Equals(MonzoSync.BlueMotorFinance.GetDescription()))
-                                {
-                                    name = MonzoSync.BlueMotorFinance.ToString();
-                                    financeId = (int)MonzoSync.BlueMotorFinance;
-                                    spendingSyncables.Add(name);
-                                }
-                                else if (trans.Description.Equals(MonzoSync.EEPhoneBill.GetDescription()))
-                                {
-                                    name = MonzoSync.EEPhoneBill.ToString();
-                                    financeId = (int)MonzoSync.EEPhoneBill;
-                                    spendingSyncables.Add(name);
-                                }
-
-                                // auto sync pot spendings
-                                else if (trans.Name.StartsWith(MonzoSync.pot_.ToString()))
-                                {
-                                    name = "(savings top-up)";
-                                    category = (int)Categories.Savings;
-                                    spendingSyncables.Add(MonzoSync.pot_.GetDescription());
-                                }
+                                await MonzoTagMismatched(trans.Name, tranNotesCategories[2]);
                             }
+                        }
+                        else
+                        {
+                            // auto sync finances
+                            var finance = finances.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
 
-                            if (category.HasValue || financeId.HasValue)
+                            if (finances != null)
                             {
-                                var dto = new SpendingDTO
-                                {
-                                    Name = name,
-                                    Amount = (-trans.Amount / 100m),
-                                    CatId = category ?? null,
-                                    SecondCatId = secondCategory,
-                                    Date = trans.Created,
-                                    MonzoTransId = trans.Id,
-                                    FinanceId = financeId ?? null
-                                };
-
-                                await spendingService.InsertAsync(dto);
+                                name = finance.Name;
+                                financeId = finance.Id;
+                                spendingSyncables.Add(name);
                             }
+
+                            // auto sync savings
+                            if (trans.Name.StartsWith("pot_"))
+                            {
+                                name = "Saving pot top-ups";
+                                category = (int)Categories.Savings;
+                                spendingSyncables.Add(name);
+                            }
+                        }
+
+                        if (category.HasValue || financeId.HasValue)
+                        {
+                            var dto = new SpendingDTO
+                            {
+                                Name = name,
+                                Amount = (-trans.Amount / 100m),
+                                CatId = category ?? null,
+                                SecondCatId = secondCategory,
+                                Date = trans.Created,
+                                MonzoTransId = trans.Id,
+                                FinanceId = financeId ?? null
+                            };
+
+                            await spendingService.InsertAsync(dto);
                         }
                     }
 
                     // auto sync pot incomes
                     if (!incomesMonzoTransIds.Contains(trans.Id))
                     {
-                        if (trans.Created > startDate)
+                        if (trans.Name.StartsWith("pot_"))
                         {
-                            if (trans.Name.StartsWith(MonzoSync.pot_.ToString()))
+                            var dto = new IncomeDTO
                             {
-                                incomeSyncables.Add(MonzoSync.pot_.GetDescription());
+                                Amount = (-trans.Amount / 100m),
+                                SourceId = (int)Categories.SavingsPot,
+                                Date = trans.Created,
+                                MonzoTransId = trans.Id
+                            };
 
-                                var dto = new IncomeDTO
-                                {
-                                    Amount = (-trans.Amount / 100m),
-                                    SourceId = (int)Categories.SavingsPot,
-                                    Date = trans.Created,
-                                    MonzoTransId = trans.Id
-                                };
-
-                                await incomeService.InsertIncomeAsync(dto);
-                            }
+                            incomeSyncables.Add("Saving pot top-ups");
+                            await incomeService.InsertIncomeAsync(dto);
                         }
                     }
                 }
-                // credited to card
+                // credited
                 else if (trans.Amount > 0)
                 {
                     if (incomesMonzoTransIds.Contains(trans.Id))
@@ -263,45 +258,25 @@ namespace MyFinances.Service
                     }
                     else
                     {
-                        if (trans.Created > startDate)
+                        // auto sync incomes
+                        var cat = incomeCategories.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
+
+                        if (cat != null)
                         {
-                            // auto sync income payables 
-                            int? category = null;
-                            MonzoSync transName = trans.Name.Replace(" ", "").ToEnum<MonzoSync>();
-
-                            if (transName != default)
+                            var dto = new IncomeDTO
                             {
-                                switch (transName)
-                                {
-                                    case MonzoSync.Pay:
-                                        category = (int)Categories.CWTL;
-                                        incomeSyncables.Add(MonzoSync.Pay.GetDescription());
-                                        break;
+                                Amount = trans.Amount / 100m,
+                                SourceId = cat.Id,
+                                Date = trans.Created,
+                                MonzoTransId = trans.Id
+                            };
 
-                                    case MonzoSync.Amazon:
-                                        category = (int)Categories.Flex;
-                                        incomeSyncables.Add(MonzoSync.Amazon.GetDescription());
-                                        break;
-
-                                    case MonzoSync.Uber:
-                                        category = (int)Categories.UberEats;
-                                        incomeSyncables.Add(MonzoSync.Uber.GetDescription());
-                                        break;
-                                };
-                            }
-
-                            if (category.HasValue)
-                            {
-                                var dto = new IncomeDTO
-                                {
-                                    Amount = trans.Amount / 100m,
-                                    SourceId = category.Value,
-                                    Date = trans.Created,
-                                    MonzoTransId = trans.Id
-                                };
-
-                                await incomeService.InsertIncomeAsync(dto);
-                            }
+                            await incomeService.InsertIncomeAsync(dto);
+                            incomeSyncables.Add(cat.Name);
+                        }
+                        else
+                        {
+                            await MonzoTagMismatched(trans.Name, trans.Description);
                         }
                     }
                 }

@@ -285,6 +285,7 @@
     </Compile>
     <Compile Include="MVCModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\Error.cs" />
     <Compile Include="ViewModels\BootBox.cs" />
     <Compile Include="ViewModels\AddTransactionVM.cs" />
     <Compile Include="ViewModels\MonzoAccountSummaryVM.cs" />

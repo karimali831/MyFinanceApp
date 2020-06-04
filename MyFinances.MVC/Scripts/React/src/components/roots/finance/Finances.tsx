@@ -77,6 +77,9 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             text: 'Next Due',
             hidden: true
           }, {
+            dataField: 'monzoTag',
+            text: 'Monzo Tag'
+          }, {
             dataField: 'directDebit',
             text: 'Is DD',
             headerClasses: "hidden-xs",

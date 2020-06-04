@@ -4,7 +4,8 @@ export interface ICategory {
     name: string,
     typeId: number,
     secondTypeId: number,
-    disabled: boolean
+    disabled: boolean,
+    monzoTag: string
 }
 
 export interface ICategoryDTO {

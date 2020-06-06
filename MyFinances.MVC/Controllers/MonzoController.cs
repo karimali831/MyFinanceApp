@@ -151,8 +151,9 @@ namespace MyFinances.Website.Controllers
         public async Task<ActionResult> ApproveDataAccess(string accessToken = null)
         {
             var initialData = await monzoService.MonzoAccountSummary();
-
-            // if we have not inserted latest monzo account details in last hour then execute monzo client 
+            var viewModel = new MonzoAccountSummaryVM();
+ 
+            // if requesting new authorization from monzo api...
             if (initialData == null || accessToken != null)
             {
                 // fetch transactions etc
@@ -163,13 +164,14 @@ namespace MyFinances.Website.Controllers
                     var savings = await client.GetBalanceAsync(accounts[0].Id);
                     var getTransactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
                         .OrderByDescending(x => x.Created)
-                        .Take(100)
+                        .Take(50)
                         .ToList();
 
                     var spentToday = getTransactions
                         .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
                         .Sum(x => x.Amount / 100m);
 
+                    viewModel.TransactionMetaData = getTransactions;
                     var transactions = new List<MonzoTransaction>();
 
                     foreach (var trans in getTransactions)
@@ -181,8 +183,8 @@ namespace MyFinances.Website.Controllers
                             Id = trans.Id,
                             Amount = trans.Amount,
                             Created = trans.Created,
-                            Name = trans.Merchant?.Name ?? trans.Description,
-                            Description = trans.Merchant?.Id ?? trans.Merchant?.Name ?? trans.Description,
+                            Name = trans.Merchant?.Name ?? trans.CounterParty?.Name ?? trans.Description,
+                            Description = trans.Merchant?.Id ?? trans.CounterParty?.Name ?? trans.Description,
                             Logo = trans.Merchant?.Logo,
                             Category = trans.Category,
                             Notes = trans.Notes,
@@ -206,16 +208,13 @@ namespace MyFinances.Website.Controllers
 
             var data = await monzoService.MonzoAccountSummary();
 
-            var viewModel = new MonzoAccountSummaryVM
-            {
-                SpentToday = data.SpentToday,
-                AccountNo = data.AccountNo,
-                SortCode = data.SortCode,
-                Balance = data.Balance,
-                Transactions = data.Transactions.ToList(),
-                LastSynced = data.Created
-            };
-
+            viewModel.SpentToday = data.SpentToday;
+            viewModel.AccountNo = data.AccountNo;
+            viewModel.SortCode = data.SortCode;
+            viewModel.Balance = data.Balance;
+            viewModel.Transactions = data.Transactions.ToList();
+            viewModel.LastSynced = data.Created;
+            
             // sync settled transactions date format being : 2020-05-31T07:06:18.533Z
             DateTime startDate = DateTime.Parse("14/05/2020", new CultureInfo("en-GB")); // start date since started savings pot top-ups
      

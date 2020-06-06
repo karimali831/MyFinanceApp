@@ -14,7 +14,7 @@ namespace MyFinances.Repository
     {
         Task UpdateAsync<T>(string field, T value, int id, string table) where T : class;
         Task DeleteAsync(int Id, string table);
-        Task<(string, int)> CheckDuplicates(string column, string table);
+        Task<IList<(string, int)>> CheckDuplicates(string column, string table);
     }
 
     public class BaseRepository : IBaseRepository
@@ -27,7 +27,7 @@ namespace MyFinances.Repository
             this.dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
         }
 
-        public async Task<(string, int)> CheckDuplicates(string column, string table)
+        public async Task<IList<(string, int)>> CheckDuplicates(string column, string table)
         {
             using (var sql = dbConnectionFactory())
             {
@@ -38,7 +38,7 @@ namespace MyFinances.Repository
                     GROUP BY {column} 
                     HAVING COUNT(*) > 1
                 "))
-                .SingleOrDefault();
+                .ToList();
             }
         }
 

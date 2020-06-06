@@ -59,7 +59,7 @@ namespace MyFinances.Service
             .Where(x => x.MonzoTransId != null)
             .OrderByDescending(x => x.Date)
             .Select(x => x.MonzoTransId)
-            .Take(100);
+            .Take(50);
         }
 
         private async Task<IEnumerable<string>> IncomesMonzoTransIds()
@@ -75,27 +75,30 @@ namespace MyFinances.Service
             .Where(x => x.MonzoTransId != null)
             .OrderByDescending(x => x.Date)
             .Select(x => x.MonzoTransId)
-            .Take(100);
+            .Take(50);
         }
 
         private async Task CheckMonzoTransDuplicates()
         {
-            var (Name, Duplicates) = await baseService.CheckDuplicates("MonzoTransId", "Spendings");
+            var duplicates = await baseService.CheckDuplicates("MonzoTransId", "Spendings");
 
-            if (Duplicates >= 2)
+            if (duplicates != null && duplicates.Any())
             {
-                string note = $"Duplicated monzo trans entries: {Duplicates} for {Name}";
-                var exists = await reminderService.ReminderExists(note);
-
-                if (!exists)
+                foreach (var (Name, Duplicates) in duplicates.Where(x => x.Duplicates >= 2))
                 {
-                    await reminderService.AddReminder(new ReminderDTO
+                    string note = $"Duplicated monzo trans entries: {Duplicates} for {Name}";
+                    var exists = await reminderService.ReminderExists(note);
+
+                    if (!exists)
                     {
-                        DueDate = DateTime.UtcNow,
-                        Notes = note,
-                        Priority = Priority.Medium,
-                        CatId = Categories.MissedEntries
-                    });
+                        await reminderService.AddReminder(new ReminderDTO
+                        {
+                            DueDate = DateTime.UtcNow,
+                            Notes = note,
+                            Priority = Priority.Medium,
+                            CatId = Categories.MissedEntries
+                        });
+                    }
                 }
             }
         }

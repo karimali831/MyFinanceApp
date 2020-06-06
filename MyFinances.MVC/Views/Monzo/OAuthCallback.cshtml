@@ -13,7 +13,7 @@
 }
 
     <div class="mvcView">
-        <h1 class="text-center">Accout No: @Model.AccountNo - Sort Code: @SortCodeFormat</h1> @Html.ActionLink($"(last synced: {Model.LastSynced.ToString("dd/MM/yyyy HH:mm")})", "ApproveDataAccess", "Monzo") <a href='@Url.Action("Login", "Monzo")'><img src='@Url.Content("~/Content/Images/refresh.png")' /></a>
+        <h1 class="text-center">Accout No: @Model.AccountNo - Sort Code: @SortCodeFormat</h1> @Html.ActionLink($"(Last updated: {Model.LastSynced.ToString("dd/MM/yyyy HH:mm")})", "ApproveDataAccess", "Monzo") <a href='@Url.Action("Login", "Monzo")'><img src='@Url.Content("~/Content/Images/refresh.png")' /></a>
         @if (Model.Modal != null)
         {
             @Html.Partial("_BootBox", Model.Modal)
@@ -48,7 +48,7 @@
 
                     <tr>
                         <td><img src="@(transaction.Logo)" width="32" height="32" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
-                        <td title="@transaction.Description settled on @transaction.Settled">@name <br /><small style="display: none">(@transaction.Description)</small></td>
+                        <td title="@transaction.Description settled on @transaction.Settled"> <br />@name <small style="display: none">(@(transaction.Notes.StartsWith("#") ? "" : transaction.Description))</small></td>
                         <td>@(transaction.Created.ToShortDateString()) <small>(@(transaction.Created.ToShortTimeString()))</small></td>
                         <td class="text-right">
                             @if (!Model.SyncedTransactions.SelectMany(x => x.Value.Transactions).Contains(transaction.Id) && !transaction.Name.StartsWith("pot_") && transaction.Amount != 0)

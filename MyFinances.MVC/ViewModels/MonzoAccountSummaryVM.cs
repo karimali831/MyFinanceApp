@@ -17,5 +17,6 @@ namespace MyFinances.Website.ViewModels
         public decimal Balance { get; set; }
         public BootBox Modal { get; set; }
         public DateTime LastSynced { get; set; }
+        public IList<Transaction> TransactionMetaData { get; set; }
     }
 }

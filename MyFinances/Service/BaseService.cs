@@ -23,7 +23,7 @@ namespace MyFinances.Service
         Task<Setting> GetSettingsAsync();
         Task UpdateSettingsAsync(Setting settings);
         void ReportException(Exception exception);
-        Task<(string Name, int Duplicates)> CheckDuplicates(string column, string table);
+        Task<IList<(string Name, int Duplicates)>> CheckDuplicates(string column, string table);
     }
 
     public class BaseService : IBaseService
@@ -44,9 +44,9 @@ namespace MyFinances.Service
             this.exceptionHandlerService = new ExceptionHandlerService(ConfigurationManager.AppSettings["DFM.ExceptionHandling.Sentry.Environment"]);
         }
 
-        public Task<(string Name, int Duplicates)> CheckDuplicates(string column, string table)
+        public async Task<IList<(string Name, int Duplicates)>> CheckDuplicates(string column, string table)
         {
-            return baseRepository.CheckDuplicates(column, table);
+            return await baseRepository.CheckDuplicates(column, table);
         }
 
         public async Task UpdateAsync<T>(string field, T value, int id, string table) where T : class

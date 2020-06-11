@@ -143,12 +143,7 @@ namespace MyFinances.Website.Controllers
             return View("AddTransaction", viewModel);
         }
 
-        //public async Task<ActionResult> ManualSyncTransaction(CategoryType type, string transId)
-        //{
-
-        //}
-
-        public async Task<ActionResult> ApproveDataAccess(string accessToken = null)
+        public async Task<ActionResult> ApproveDataAccess(string accessToken = null, bool showPotTrans = false)
         {
             var initialData = await monzoService.MonzoAccountSummary();
             var viewModel = new MonzoAccountSummaryVM();
@@ -160,8 +155,9 @@ namespace MyFinances.Website.Controllers
                 using (var client = new MonzoClient(accessToken))
                 {
                     var accounts = await client.GetAccountsAsync();
+                    var pots = await client.GetPotsAsync();
                     var balance = await client.GetBalanceAsync(accounts[0].Id);
-                    var savings = await client.GetBalanceAsync(accounts[0].Id);
+                    var savingsBalance = await client.GetBalanceAsync(accounts[0].Id);
                     var getTransactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
                         .OrderByDescending(x => x.Created)
                         .Take(50)
@@ -171,7 +167,6 @@ namespace MyFinances.Website.Controllers
                         .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
                         .Sum(x => x.Amount / 100m);
 
-                    viewModel.TransactionMetaData = getTransactions;
                     var transactions = new List<MonzoTransaction>();
 
                     foreach (var trans in getTransactions)
@@ -196,6 +191,7 @@ namespace MyFinances.Website.Controllers
                     var monzo = new MyFinances.Models.Monzo
                     {
                         Balance = balance.Value / 100m,
+                        SavingsBalance = savingsBalance.Value / 100m,
                         AccountNo = accounts[0].AccountNumber,
                         SortCode = accounts[0].SortCode,
                         SpentToday = spentToday,
@@ -212,55 +208,69 @@ namespace MyFinances.Website.Controllers
             viewModel.AccountNo = data.AccountNo;
             viewModel.SortCode = data.SortCode;
             viewModel.Balance = data.Balance;
-            viewModel.Transactions = data.Transactions.ToList();
+            viewModel.SavingsBalance = data.SavingsBalance;
             viewModel.LastSynced = data.Created;
-            
-            // sync settled transactions date format being : 2020-05-31T07:06:18.533Z
-            DateTime startDate = DateTime.Parse("14/05/2020", new CultureInfo("en-GB")); // start date since started savings pot top-ups
-     
-            Func<string, bool> isSettled = (string settledDateParse) => 
-            {
-                if (string.IsNullOrEmpty(settledDateParse))
-                {
-                    return true;
-                }
-                else if (DateTime.TryParseExact(settledDateParse, "yyyy-MM-ddTHH:mm:ss", new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime date))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            };
 
-            var toSyncTransactions = viewModel.Transactions
-                .Where(x => x.Created > startDate)
+            // sync settled transactions date format being : 2020-05-31T07:06:18.533Z
+            var toSyncTransactions = data.Transactions
+                .Where(x => !string.IsNullOrEmpty(x.Settled))
                 .ToList();
 
-            var syncTransactions = await monzoService.SyncTransactions(toSyncTransactions);
-            viewModel.SyncedTransactions = syncTransactions;
-
-            if (syncTransactions.Any(x => !string.IsNullOrEmpty(x.Value.Syncables)))
+            if (toSyncTransactions != null && toSyncTransactions.Any())
             {
-                var description = new List<string>
+                var syncTransactions = await monzoService.SyncTransactions(toSyncTransactions);
+                viewModel.SyncedTransactions = syncTransactions;
+
+                if (syncTransactions.Any(x => !string.IsNullOrEmpty(x.Value.Syncables)))
+                {
+                    var description = new List<string>
                     {
                         syncTransactions.First(x => x.Key == CategoryType.Income).Value.Syncables,
                         syncTransactions.First(x => x.Key == CategoryType.Spendings).Value.Syncables
                     };
 
-                viewModel.Modal = new BootBox
-                {
-                    Reload = true,
-                    Title = "Please wait while Monzo transactions are synced...",
-                    Description = description.ToArray()
+                    viewModel.Modal = new BootBox
+                    {
+                        Reload = true,
+                        Title = "Please wait while Monzo transactions are synced...",
+                        Description = description.ToArray()
+                    };
                 };
-            };
+            }
 
             if (accessToken != null)
             {
                 return RedirectToAction("ApproveDataAccess");
             }
+
+            viewModel.ShowPotTrans = showPotTrans;
+
+            var potlessTrans = data.Transactions
+                .Where(x => (!showPotTrans && !x.Name.StartsWith("pot_")) || showPotTrans)
+                .ToList();
+
+            viewModel.PendingTransactions = potlessTrans.Where(x => string.IsNullOrEmpty(x.Settled) && x.Amount != 0).ToList();
+
+            var settledTransactions = new List<MonzoTransaction>();
+            var unsycnedTransactions = new List<MonzoTransaction>();
+
+            foreach (var tran in potlessTrans.Where(x => !string.IsNullOrEmpty(x.Settled)))
+            {
+                tran.Name = tran.Name.Substring(0, Math.Min(tran.Name.Length, 15));
+                var sync = (!viewModel.SyncedTransactions.SelectMany(x => x.Value.Transactions).Contains(tran.Id) && !tran.Name.StartsWith("pot_") && tran.Amount != 0 && !string.IsNullOrEmpty(tran.Settled) && tran.Notes != "!" && tran.Name != "ATM") ? true : false;
+
+                if (sync)
+                {
+                    unsycnedTransactions.Add(tran);
+                }
+                else
+                {
+                    settledTransactions.Add(tran);
+                }
+            }
+
+            viewModel.SettledTransactions = settledTransactions;
+            viewModel.UnsyncedTransactions = unsycnedTransactions;
 
             return View("OAuthCallback", viewModel);
         }

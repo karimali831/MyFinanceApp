@@ -28,6 +28,7 @@ namespace MyFinances.Ninject
             Bind<ICNWPaymentsRepository>().To<CNWPaymentsRepository>();
             Bind<ICNWRatesRepository>().To<CNWRatesRepository>();
             Bind<IRemindersRepository>().To<RemindersRepository>();
+            Bind<IMonzoRepository>().To<MonzoRepository>();
         }
     }
 }

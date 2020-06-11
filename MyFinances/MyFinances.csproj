@@ -155,6 +155,7 @@
     <Compile Include="Enums\CategoryType.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Model\Monzo.cs" />
+    <Compile Include="Repository\MonzoRepository.cs" />
     <Compile Include="ViewModels\MonzoTransaction.cs" />
     <Compile Include="Model\Settings.cs" />
     <Compile Include="Model\Reminder.cs" />

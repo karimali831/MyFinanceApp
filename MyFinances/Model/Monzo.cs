@@ -10,6 +10,7 @@ namespace MyFinances.Models
     public class Monzo
     {
         public decimal Balance { get; set; }
+        public decimal SavingsBalance { get; set; }
         public string SortCode { get; set; }
         public string AccountNo { get; set; }
         public decimal SpentToday { get; set; }

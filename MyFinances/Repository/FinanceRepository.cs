@@ -23,8 +23,6 @@ namespace MyFinances.Repository
         Task UpdateNextDueDateAsync(DateTime dueDate, int Id);
         Task<IEnumerable<MonthComparisonChartVM>> GetIncomeExpenseTotalsByMonth(DateFilter filter);
         Task<IEnumerable<MonthComparisonChartVM>> GetFinanceTotalsByMonth(MonthComparisonChartRequestDTO request);
-        Task<Monzo> MonzoAccountSummary();
-        Task InsertMonzoAccountSummary(Monzo accountSummary);
     }
 
     public class FinanceRepository : IFinanceRepository
@@ -128,46 +126,6 @@ namespace MyFinances.Repository
             using (var sql = dbConnectionFactory())
             {
                 await sql.ExecuteAsync($@"{DapperHelper.INSERT(TABLE, DTOFIELDS)}", dto);
-            }
-        }
-
-        public async Task InsertMonzoAccountSummary(Monzo accountSummary)
-        {
-            using (var sql = dbConnectionFactory())
-            {
-                static object entry(Monzo t) =>
-                    new
-                    {
-                        balance = t.Balance,
-                        sortCode = t.SortCode,
-                        accountNo = t.AccountNo,
-                        spentToday = t.SpentToday,
-                        jsonTransactions = JsonConvert.SerializeObject(t.Transactions),
-                        created = DateTime.UtcNow
-                    };
-
-                await sql.QueryAsync<Monzo>($@"
-                INSERT INTO MonzoAccount(Balance, SortCode, AccountNo, SpentToday, JsonTransactions, Created) VALUES (@balance, @sortCode, @accountNo, @spentToday, @jsonTransactions, @created)",
-                    entry(accountSummary));
-            }
-        }
-
-        public async Task<Monzo> MonzoAccountSummary()
-        {
-            using (var sql = dbConnectionFactory())
-            {
-                return
-                    (await sql.QueryAsync<Monzo>("SELECT TOP 1 * FROM MonzoAccount ORDER BY created DESC"))
-                        .Select(x => new Monzo
-                        {
-                            Balance = x.Balance,
-                            SortCode = x.SortCode,
-                            AccountNo = x.AccountNo,
-                            SpentToday = x.SpentToday,
-                            Transactions = JsonConvert.DeserializeObject<IEnumerable<MonzoTransaction>>(x.JsonTransactions),
-                            Created = x.Created
-                        })
-                        .FirstOrDefault();
             }
         }
     }

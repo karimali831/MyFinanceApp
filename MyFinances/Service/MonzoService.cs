@@ -3,6 +3,7 @@ using MyFinances.Enums;
 using MyFinances.Helpers;
 using MyFinances.Model;
 using MyFinances.Models;
+using MyFinances.Repository;
 using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace MyFinances.Service
 
     public class MonzoService : IMonzoService
     {
+        private readonly IMonzoRepository monzoRepository;
         private readonly IFinanceService financeService;
         private readonly ISpendingService spendingService;
         private readonly IIncomeService incomeService;
@@ -33,13 +35,15 @@ namespace MyFinances.Service
         private readonly IRemindersService reminderService;
 
         public MonzoService(
+            IMonzoRepository monzoRepository,
             IFinanceService financeService,
             ISpendingService spendingService,
             IIncomeService incomeService,
             IRemindersService reminderService,
             IBaseService baseService)
         {
-            this.financeService = financeService ?? throw new ArgumentNullException(nameof(Finance));
+            this.monzoRepository = monzoRepository ?? throw new ArgumentNullException(nameof(monzoRepository));
+            this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
             this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
             this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
@@ -326,12 +330,12 @@ namespace MyFinances.Service
 
         public async Task<Monzo> MonzoAccountSummary()
         {
-            return await financeService.MonzoAccountSummary();
+            return await monzoRepository.MonzoAccountSummary();
         }
 
         public async Task InsertMonzoAccountSummary(Monzo accountSummary)
         {
-            await financeService.InsertMonzoAccountSummary(accountSummary);
+            await monzoRepository.InsertMonzoAccountSummary(accountSummary);
         }
     }
 }

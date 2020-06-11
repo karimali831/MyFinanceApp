@@ -289,6 +289,14 @@ textarea {
     display: inline-block;
     width: 100%;
   }
+
+
+}
+
+@media screen and (max-width: 600px) {
+    .table-hover{
+        font-size: 10px !important;
+    }
 }
 
 .mvcView {

@@ -285,6 +285,7 @@
     </Compile>
     <Compile Include="MVCModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\CategoriesVM.cs" />
     <Compile Include="ViewModels\Error.cs" />
     <Compile Include="ViewModels\BootBox.cs" />
     <Compile Include="ViewModels\AddTransactionVM.cs" />
@@ -367,6 +368,7 @@
     <Content Include="Views\Monzo\AddTransaction.cshtml" />
     <Content Include="Views\Monzo\Close.cshtml" />
     <Content Include="Views\Shared\_BootBox.cshtml" />
+    <Content Include="Views\Finances\Categories.cshtml" />
     <None Include="Web.Stage.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

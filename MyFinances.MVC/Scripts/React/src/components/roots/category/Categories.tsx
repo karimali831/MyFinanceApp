@@ -4,6 +4,9 @@ import { commonApi } from '../../../Api/CommonApi';
 import { ICategory } from '../../../models/ICategory';
 import Table from '../../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
+import { categoriesUrl } from 'src/components/utils/Utils';
+import { faTags } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IOwnProps {
 }
@@ -64,6 +67,7 @@ export default class Categories extends React.Component<IOwnProps, IOwnState> {
 
         return (
             <div>
+                <a href={categoriesUrl()}><FontAwesomeIcon icon={faTags} />  View Nested Categories</a>
                 <Table 
                     table={this.tableName}
                     data={this.state.categories}

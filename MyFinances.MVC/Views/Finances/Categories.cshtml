@@ -1,0 +1,46 @@
+﻿@model MyFinances.Website.ViewModels.CategoriesVM
+@{
+    ViewBag.Title = "Categories";
+}
+
+    <div class="mvcView">
+        <h2>Categories</h2>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td></td>
+                    <th width="25%" id="name" scope="col">
+                        Name
+                    </th>
+                    <th id="monzotag" scope="col">
+                       Monzo Tag
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cat in Model.Categories)
+                {
+                    <tr>
+                        <th id="@cat.Id" class="span" colspan="5" scope="colgroup">
+                            <i class='glyphicon glyphicon-@(cat.Disabled ? "remove" : "tags")'></i>
+                            @cat.Name
+                        </th>
+                    </tr>
+                    foreach (var secondCat in Model.SecondCategories.Where(x => x.Key == cat.SecondTypeId).SelectMany(x => x.Value))
+                    {
+                        <tr>
+                            <td></td>
+                            <td headers="@cat.Id pbed1 name" style="text-indent: -2em;">
+                                <i class='glyphicon glyphicon-@(secondCat.Disabled ? "remove" : "tag")'></i>
+                                @secondCat.Name
+                            </td>
+                            <td headers="@cat.Id pbed1 monzotag">
+                                @secondCat.MonzoTag
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>

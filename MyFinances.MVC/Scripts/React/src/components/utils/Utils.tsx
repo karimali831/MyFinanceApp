@@ -96,6 +96,7 @@ export const incomeSummaryChartUrl = (frequency: string, interval: number) => `$
 export const incomeExpenseChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/IncomeExpenseChart?frequency=${frequency}&interval=${interval}`;
 export const incomeExpenseByCategoryChartUrl = (categoryType: CategoryType, catId: number, type: string, frequency: string, interval: number) => `${rootUrl}/finances/IncomeExpenseByCategoryChart?categoryType=${categoryType}&catId=${catId}&type=${type}&frequency=${frequency}&interval=${interval}`;
 export const monzoAccountSummary = () => `${rootUrl}/Monzo/ApproveDataAccess`
+export const categoriesUrl = () => `${rootUrl}/Finances/Categories`
 export const monzoLogoUrl = () => `${rootUrl}/Content/Images/monzo_logo.png`
 export const monzoIconUrl = () => `${rootUrl}/Content/Images/monzo_icon.png`
 

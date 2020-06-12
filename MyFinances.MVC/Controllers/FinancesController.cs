@@ -46,5 +46,26 @@ namespace MyFinances.Website.Controllers
             var settings = await baseService.GetSettingsAsync();
             return View(settings);
         }
+
+        public async Task<ActionResult> Categories()
+        {
+            var categories = (await baseService.GetAllCategories(CategoryType.Spendings, catsWithSubs: false));
+            var incomeCategories = (await baseService.GetAllCategories(CategoryType.IncomeSources, catsWithSubs: false));
+
+            var viewmodel = new CategoriesVM();
+            viewmodel.Categories = categories;
+
+            var secondCats = new Dictionary<CategoryType, IEnumerable<Model.Category>>();
+
+            foreach (var cat in categories.Where(x => x.SecondTypeId.HasValue && x.SecondTypeId != 0))
+            {
+                var secondCategories = await baseService.GetAllCategories(cat.SecondTypeId, catsWithSubs: false);
+                secondCats.Add(cat.SecondTypeId.Value, secondCategories);
+            }
+
+            viewmodel.SecondCategories = secondCats;
+
+            return View("Categories", viewmodel);
+        }
     }
 }

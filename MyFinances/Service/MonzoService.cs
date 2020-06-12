@@ -139,6 +139,42 @@ namespace MyFinances.Service
             }
         }
 
+        private async Task<(int? CatId, int? SecondCatId, string cat1Name)> AutosyncWithMonzoTags(MonzoTransaction trans, IEnumerable<Category> categories)
+        {
+            int? category = null;
+            int? secondCategory = null;
+
+            var tranNotesCategories = trans.Notes.Split('#');
+            var cat1 = categories.FirstOrDefault(x => x.MonzoTag.Equals(tranNotesCategories[1], StringComparison.OrdinalIgnoreCase));
+
+            if (cat1 != null)
+            {
+                category = cat1.Id;
+
+                // there's a second category 
+                if (tranNotesCategories.Length == 3)
+                {
+                    var secondCategories = await baseService.GetAllCategories(cat1.SecondTypeId, catsWithSubs: false);
+                    var cat2 = secondCategories.FirstOrDefault(x => x.MonzoTag.Equals(tranNotesCategories[2], StringComparison.OrdinalIgnoreCase));
+
+                    if (cat2 != null)
+                    {
+                        secondCategory = cat2.Id;
+                    }
+                    else
+                    {
+                        await MonzoTagMismatched(trans.Name, cat1.Name, tranNotesCategories[2]);
+                    }
+                }
+            }
+            else
+            {
+                await MonzoTagMismatched(trans.Name, tranNotesCategories[1]);
+            }
+
+            return (category, secondCategory, cat1.Name);
+        }
+
         public async Task<IDictionary<CategoryType, (IList<string>, string Syncables)>> SyncTransactions(IList<MonzoTransaction> transactions)
         {
             // variable initialisation 
@@ -175,38 +211,22 @@ namespace MyFinances.Service
                     }
                     else
                     {
-                        // auto sync categories
+                        // auto sync spending categories
                         if (trans.Notes.StartsWith("#"))
                         {
-                            var tranNotesCategories = trans.Notes.Split('#');
-                            var cat1 = categories.FirstOrDefault(x => x.MonzoTag.Equals(tranNotesCategories[1], StringComparison.OrdinalIgnoreCase));
+                            var getCats = await AutosyncWithMonzoTags(trans, categories);
 
-                            if (cat1 != null)
+                            if (getCats.CatId.HasValue)
                             {
-                                category = cat1.Id;
+                                category = getCats.CatId.Value;
 
-                                // there's a second category 
-                                if (tranNotesCategories.Length == 3)
+                                if (getCats.SecondCatId.HasValue)
                                 {
-                                    var secondCategories = await baseService.GetAllCategories(cat1.SecondTypeId, catsWithSubs: false);
-                                    var cat2 = secondCategories.FirstOrDefault(x => x.MonzoTag.Equals(tranNotesCategories[2], StringComparison.OrdinalIgnoreCase));
-
-                                    if (cat2 != null)
-                                    {
-                                        secondCategory = cat2.Id;
-                                    }
-                                    else
-                                    {
-                                        await MonzoTagMismatched(trans.Name, cat1.Name, tranNotesCategories[2]);
-                                    }
+                                    secondCategory = getCats.SecondCatId.Value;
                                 }
 
-                                spendingSyncables.Add(cat1.Name);
-                                name = cat1.Name;
-                            }
-                            else
-                            {
-                                await MonzoTagMismatched(trans.Name, tranNotesCategories[1]);
+                                spendingSyncables.Add(getCats.cat1Name);
+                                name = getCats.cat1Name;
                             }
                         }
                         else
@@ -274,25 +294,46 @@ namespace MyFinances.Service
                     }
                     else
                     {
-                        // auto sync incomes
-                        var cat = incomeCategories.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
-
-                        if (cat != null)
+                        // auto sync income categories
+                        if (trans.Notes.StartsWith("#"))
                         {
-                            var dto = new IncomeDTO
-                            {
-                                Amount = trans.Amount / 100m,
-                                SourceId = cat.Id,
-                                Date = trans.Created,
-                                MonzoTransId = trans.Id
-                            };
+                            var getCats = await AutosyncWithMonzoTags(trans, incomeCategories);
 
-                            await incomeService.InsertIncomeAsync(dto);
-                            incomeSyncables.Add(cat.Name);
+                            if (getCats.CatId.HasValue)
+                            {
+                                category = getCats.CatId.Value;
+
+                                if (getCats.SecondCatId.HasValue)
+                                {
+                                    secondCategory = getCats.SecondCatId.Value;
+                                }
+
+                                incomeSyncables.Add(getCats.cat1Name);
+                                name = getCats.cat1Name;
+                            }
                         }
                         else
                         {
-                            await MonzoTagMismatched(trans.Name);
+                            // auto sync incomes
+                            var cat = incomeCategories.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
+
+                            if (cat != null)
+                            {
+                                var dto = new IncomeDTO
+                                {
+                                    Amount = trans.Amount / 100m,
+                                    SourceId = cat.Id,
+                                    Date = trans.Created,
+                                    MonzoTransId = trans.Id
+                                };
+
+                                await incomeService.InsertIncomeAsync(dto);
+                                incomeSyncables.Add(cat.Name);
+                            }
+                            else
+                            {
+                                await MonzoTagMismatched(trans.Name);
+                            }
                         }
                     }
                 }

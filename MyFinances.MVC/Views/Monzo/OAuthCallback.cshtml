@@ -20,7 +20,7 @@
             <div>
                 Last Updated: @Model.LastSynced.ToString("dd/MM/yyyy HH:mm")
                 <i class="glyphicon glyphicon-arrow-right"></i>
-                @Html.ActionLink($"{(Model.ShowPotTrans ? "Hide" : "Show")} Pot Transactions", "ApproveDataAccess", "Monzo", new { showPotTrans = !Model.ShowPotTrans }, null)
+                @Html.ActionLink($"{(Model.ShowPotAndTags ? "Hide" : "Show")} Pot & Tags", "ApproveDataAccess", "Monzo", new { showPotAndTags = !Model.ShowPotAndTags }, null)
             </div>
         </div>
         @if (!Model.UnsyncedTransactions.Any())

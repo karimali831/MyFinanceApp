@@ -49,21 +49,32 @@ namespace MyFinances.Website.Controllers
 
         public async Task<ActionResult> Categories()
         {
-            var categories = (await baseService.GetAllCategories(CategoryType.Spendings, catsWithSubs: false));
+            var spendingCategories = (await baseService.GetAllCategories(CategoryType.Spendings, catsWithSubs: false));
             var incomeCategories = (await baseService.GetAllCategories(CategoryType.IncomeSources, catsWithSubs: false));
 
-            var viewmodel = new CategoriesVM();
-            viewmodel.Categories = categories;
+            var viewmodel = new CategoriesVM
+            {
+                SpendingCategories = spendingCategories,
+                IncomeCategories = incomeCategories
+            };
 
-            var secondCats = new Dictionary<CategoryType, IEnumerable<Model.Category>>();
+            var spendingSecondCats = new Dictionary<CategoryType, IEnumerable<Model.Category>>();
+            var incomeSecondCats = new Dictionary<CategoryType, IEnumerable<Model.Category>>();
 
-            foreach (var cat in categories.Where(x => x.SecondTypeId.HasValue && x.SecondTypeId != 0))
+            foreach (var cat in spendingCategories.Where(x => x.SecondTypeId.HasValue && x.SecondTypeId != 0))
             {
                 var secondCategories = await baseService.GetAllCategories(cat.SecondTypeId, catsWithSubs: false);
-                secondCats.Add(cat.SecondTypeId.Value, secondCategories);
+                spendingSecondCats.Add(cat.SecondTypeId.Value, secondCategories);
             }
 
-            viewmodel.SecondCategories = secondCats;
+            foreach (var cat in incomeCategories.Where(x => x.SecondTypeId.HasValue && x.SecondTypeId != 0))
+            {
+                var secondCategories = await baseService.GetAllCategories(cat.SecondTypeId, catsWithSubs: false);
+                incomeSecondCats.Add(cat.SecondTypeId.Value, secondCategories);
+            }
+
+            viewmodel.SpendingSecondCategories = spendingSecondCats;
+            viewmodel.IncomeSecondCategories = incomeSecondCats;
 
             return View("Categories", viewmodel);
         }

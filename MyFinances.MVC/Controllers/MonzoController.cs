@@ -143,7 +143,7 @@ namespace MyFinances.Website.Controllers
             return View("AddTransaction", viewModel);
         }
 
-        public async Task<ActionResult> ApproveDataAccess(string accessToken = null, bool showPotTrans = false)
+        public async Task<ActionResult> ApproveDataAccess(string accessToken = null, bool showPotAndTags = false)
         {
             var initialData = await monzoService.MonzoAccountSummary();
             var viewModel = new MonzoAccountSummaryVM();
@@ -243,11 +243,21 @@ namespace MyFinances.Website.Controllers
                 return RedirectToAction("ApproveDataAccess");
             }
 
-            viewModel.ShowPotTrans = showPotTrans;
+            viewModel.ShowPotAndTags = showPotAndTags;
 
             var potlessTrans = data.Transactions
-                .Where(x => (!showPotTrans && !x.Name.StartsWith("pot_")) || showPotTrans)
+                .Where(x => (!showPotAndTags && !x.Name.StartsWith("pot_")) || showPotAndTags)
                 .ToList();
+
+            foreach (var tran in potlessTrans)
+            {
+                tran.Name = tran.Name.Substring(0, Math.Min(tran.Name.Length, 15));
+
+                if (showPotAndTags && !string.IsNullOrEmpty(tran.Notes))
+                {
+                    tran.Name = string.Format("{0} ({1})", tran.Name, tran.Notes);
+                }
+            }
 
             viewModel.PendingTransactions = potlessTrans.Where(x => string.IsNullOrEmpty(x.Settled) && x.Amount != 0).ToList();
 
@@ -256,7 +266,6 @@ namespace MyFinances.Website.Controllers
 
             foreach (var tran in potlessTrans.Where(x => !string.IsNullOrEmpty(x.Settled)))
             {
-                tran.Name = tran.Name.Substring(0, Math.Min(tran.Name.Length, 15));
                 var sync = (!viewModel.SyncedTransactions.SelectMany(x => x.Value.Transactions).Contains(tran.Id) && !tran.Name.StartsWith("pot_") && tran.Amount != 0 && !string.IsNullOrEmpty(tran.Settled) && tran.Notes != "!" && tran.Name != "ATM") ? true : false;
 
                 if (sync)

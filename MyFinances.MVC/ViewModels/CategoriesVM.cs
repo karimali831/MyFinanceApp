@@ -9,7 +9,9 @@ namespace MyFinances.Website.ViewModels
 {
     public class CategoriesVM
     {
-        public IEnumerable<Category> Categories { get; set; }
-        public IDictionary<CategoryType, IEnumerable<Category>> SecondCategories { get; set; }
+        public IEnumerable<Category> SpendingCategories { get; set; }
+        public IDictionary<CategoryType, IEnumerable<Category>> SpendingSecondCategories { get; set; }
+        public IEnumerable<Category> IncomeCategories { get; set; }
+        public IDictionary<CategoryType, IEnumerable<Category>> IncomeSecondCategories { get; set; }
     }
 }

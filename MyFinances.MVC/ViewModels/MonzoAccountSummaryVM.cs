@@ -9,7 +9,7 @@ namespace MyFinances.Website.ViewModels
     public class MonzoAccountSummaryVM
     {
         public string Token { get; set; }
-        public bool ShowPotTrans { get; set; }
+        public bool ShowPotAndTags { get; set; }
         public string SortCode { get; set; }
         public string AccountNo { get; set; }
         public decimal SpentToday { get; set; }

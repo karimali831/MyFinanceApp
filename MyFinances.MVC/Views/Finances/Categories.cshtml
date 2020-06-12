@@ -2,45 +2,95 @@
 @{
     ViewBag.Title = "Categories";
 }
+<style>
+    i {
+        margin-right: 5px;
+    }
+</style>
+<div class="mvcView">
+    <h2>Spending Categories</h2>
 
-    <div class="mvcView">
-        <h2>Categories</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th width="65%" id="name" scope="col">
+                    Name
+                </th>
+                <th id="monzotag" scope="col">
+                    Monzo Tag
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cat in Model.SpendingCategories)
+            {
+                var hasSecondCategories = Model.SpendingSecondCategories.Any(x => x.Key == cat.SecondTypeId) ? "tags" : "tag";
 
-        <table class="table table-hover">
-            <thead>
                 <tr>
-                    <td></td>
-                    <th width="25%" id="name" scope="col">
-                        Name
-                    </th>
-                    <th id="monzotag" scope="col">
-                       Monzo Tag
-                    </th>
+                    <td>
+                        <i class='glyphicon glyphicon-@(cat.Disabled ? "remove" : hasSecondCategories)'></i>
+                        @cat.Name
+                    </td>
+                    <td>
+                        @(string.IsNullOrEmpty(cat.MonzoTag) ? "-" : cat.MonzoTag)
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var cat in Model.Categories)
+                foreach (var secondCat in Model.SpendingSecondCategories.Where(x => x.Key == cat.SecondTypeId).SelectMany(x => x.Value))
                 {
                     <tr>
-                        <th id="@cat.Id" class="span" colspan="5" scope="colgroup">
-                            <i class='glyphicon glyphicon-@(cat.Disabled ? "remove" : "tags")'></i>
-                            @cat.Name
-                        </th>
+                        <td headers="@cat.Id pbed1 name" style="text-indent: 1em;">
+                            <i class='glyphicon glyphicon-@(secondCat.Disabled ? "remove" : "tag")'></i>
+                            @secondCat.Name
+                        </td>
+                        <td headers="@cat.Id pbed1 monzotag">
+                            @(string.IsNullOrEmpty(secondCat.MonzoTag) ? "-" : secondCat.MonzoTag)
+                        </td>
                     </tr>
-                    foreach (var secondCat in Model.SecondCategories.Where(x => x.Key == cat.SecondTypeId).SelectMany(x => x.Value))
-                    {
-                        <tr>
-                            <td></td>
-                            <td headers="@cat.Id pbed1 name" style="text-indent: -2em;">
-                                <i class='glyphicon glyphicon-@(secondCat.Disabled ? "remove" : "tag")'></i>
-                                @secondCat.Name
-                            </td>
-                            <td headers="@cat.Id pbed1 monzotag">
-                                @secondCat.MonzoTag
-                            </td>
-                        </tr>
-                    }
                 }
-            </tbody>
-        </table>
-    </div>
+            }
+        </tbody>
+    </table>
+
+    <h2>Income Categories</h2>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th width="50%" id="name" scope="col">
+                    Name
+                </th>
+                <th id="monzotag" scope="col">
+                    Monzo Tag
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cat in Model.IncomeCategories)
+            {
+                var hasSecondCategories = Model.IncomeSecondCategories.Any(x => x.Key == cat.SecondTypeId) ? "tags" : "tag";
+
+                <tr>
+                    <td>
+                        <i class='glyphicon glyphicon-@(cat.Disabled ? "remove" : hasSecondCategories)'></i>
+                        @cat.Name
+                    </td>
+                    <td>
+                        @(string.IsNullOrEmpty(cat.MonzoTag) ? "-" : cat.MonzoTag)
+                    </td>
+                </tr>
+                foreach (var secondCat in Model.IncomeSecondCategories.Where(x => x.Key == cat.SecondTypeId).SelectMany(x => x.Value))
+                {
+                    <tr>
+                        <td headers="@cat.Id pbed1 name" style="text-indent: 1em;">
+                            <i class='glyphicon glyphicon-@(secondCat.Disabled ? "remove" : "tag")'></i>
+                            @secondCat.Name
+                        </td>
+                        <td headers="@cat.Id pbed1 monzotag">
+                            @(string.IsNullOrEmpty(secondCat.MonzoTag) ? "-" : secondCat.MonzoTag)
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

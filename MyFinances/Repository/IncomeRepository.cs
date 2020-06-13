@@ -41,6 +41,7 @@ namespace MyFinances.Repository
                 string sqlTxt = $@"
                     SELECT 
                         i.Id,
+                        i.Name,
                         i.Date,
                         i.Amount,
                         i.SourceId,

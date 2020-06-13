@@ -44,6 +44,7 @@ namespace MyIncomes.Website.Controllers.API
                     incomes.Select(x => new
                     {
                         x.Id,
+                        x.Name,
                         x.Source,
                         x.SecondSource, 
                         Date = x.Date.ToString("MM/dd/yyyy"),

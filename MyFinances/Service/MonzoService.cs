@@ -143,7 +143,8 @@ namespace MyFinances.Service
         {
             int? category = null;
             int? secondCategory = null;
-
+            string name = null;
+  
             var tranNotesCategories = trans.Notes.Split('#');
             var cat1 = categories.FirstOrDefault(x => x.MonzoTag.Equals(tranNotesCategories[1], StringComparison.OrdinalIgnoreCase));
 
@@ -166,13 +167,15 @@ namespace MyFinances.Service
                         await MonzoTagMismatched(trans.Name, cat1.Name, tranNotesCategories[2]);
                     }
                 }
+
+                name = cat1.Name;
             }
             else
             {
                 await MonzoTagMismatched(trans.Name, tranNotesCategories[1]);
             }
 
-            return (category, secondCategory, cat1.Name);
+            return (category, secondCategory, name);
         }
 
         public async Task<IDictionary<CategoryType, (IList<string>, string Syncables)>> SyncTransactions(IList<MonzoTransaction> transactions)
@@ -226,7 +229,7 @@ namespace MyFinances.Service
                                 }
 
                                 spendingSyncables.Add(getCats.cat1Name);
-                                name = getCats.cat1Name;
+                                name = trans.Name;
                             }
                         }
                         else
@@ -236,7 +239,7 @@ namespace MyFinances.Service
 
                             if (finance != null)
                             {
-                                name = finance.Name;
+                                name = trans.Name;
                                 financeId = finance.Id;
                                 spendingSyncables.Add(name);
                             }
@@ -274,6 +277,7 @@ namespace MyFinances.Service
                         {
                             var dto = new IncomeDTO
                             {
+                                Name = "Saving pot top-ups",
                                 Amount = (-trans.Amount / 100m),
                                 SourceId = (int)Categories.SavingsPot,
                                 Date = trans.Created,
@@ -309,7 +313,7 @@ namespace MyFinances.Service
                                 }
 
                                 incomeSyncables.Add(getCats.cat1Name);
-                                name = getCats.cat1Name;
+                                name = trans.Name;
                             }
                         }
                         else
@@ -319,21 +323,28 @@ namespace MyFinances.Service
 
                             if (cat != null)
                             {
-                                var dto = new IncomeDTO
-                                {
-                                    Amount = trans.Amount / 100m,
-                                    SourceId = cat.Id,
-                                    Date = trans.Created,
-                                    MonzoTransId = trans.Id
-                                };
-
-                                await incomeService.InsertIncomeAsync(dto);
-                                incomeSyncables.Add(cat.Name);
+                                name = trans.Name;
+                                category = cat.Id;
+                                incomeSyncables.Add(name);
                             }
                             else
                             {
                                 await MonzoTagMismatched(trans.Name);
                             }
+                        }
+
+                        if (category.HasValue)
+                        {
+                            var dto = new IncomeDTO
+                            {
+                                Name = name,
+                                Amount = trans.Amount / 100m,
+                                SourceId = category.Value,
+                                Date = trans.Created,
+                                MonzoTransId = trans.Id
+                            };
+
+                            await incomeService.InsertIncomeAsync(dto);
                         }
                     }
                 }

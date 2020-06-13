@@ -9,6 +9,7 @@ namespace MyFinances.DTOs
 {
     public class IncomeDTO
     {
+        public string Name { get; set; }
         public int SourceId { get; set; }
         public int? SecondSourceId { get; set; }
         public DateTime Date { get; set; }

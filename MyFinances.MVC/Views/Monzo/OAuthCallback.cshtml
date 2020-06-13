@@ -122,7 +122,7 @@
                         var color = (transaction.Amount > 0 ? "green" : null);
                         <tr>
                             <td><img src="@(transaction.Logo)" width="32" height="32" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
-                            <td title="@transaction.Description settled on @transaction.Settled"> <br />@transaction.Name<small style="display: none">(@(transaction.Notes.StartsWith("#") ? "" : transaction.Description))</small></td>
+                            <td title="@transaction.Description settled on @transaction.Settled"> <br />@transaction.Name <small style="display: none">(@(transaction.Notes.StartsWith("#") ? "" : transaction.Description))</small></td>
                             <td>@(transaction.Created.ToShortDateString()) <small>(@(transaction.Created.ToShortTimeString()))</small></td>
                             <td class="text-right">
                                 <font color="@color"><strong>@plus@Utils.ToCurrency(transaction.Amount / 100m)</strong></font>

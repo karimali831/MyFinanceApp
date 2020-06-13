@@ -143,6 +143,59 @@ namespace MyFinances.Website.Controllers
             return View("AddTransaction", viewModel);
         }
 
+        private async Task MonzoClientAuthorisation(string accessToken)
+        {
+            // fetch transactions etc
+            using (var client = new MonzoClient(accessToken))
+            {
+                var accounts = await client.GetAccountsAsync();
+                var pots = await client.GetPotsAsync();
+                var balance = await client.GetBalanceAsync(accounts[0].Id);
+                var savingsBalance = await client.GetBalanceAsync(accounts[0].Id);
+                var getTransactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
+                    .OrderByDescending(x => x.Created)
+                    .Take(50)
+                    .ToList();
+
+                var spentToday = getTransactions
+                    .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
+                    .Sum(x => x.Amount / 100m);
+
+                var transactions = new List<MonzoTransaction>();
+
+                foreach (var trans in getTransactions)
+                {
+                    string settled = string.IsNullOrEmpty(trans.Settled) ? "" : trans.Settled.Substring(0, trans.Settled.Length - 5);
+
+                    transactions.Add(new MonzoTransaction
+                    {
+                        Id = trans.Id,
+                        Amount = trans.Amount,
+                        Created = trans.Created,
+                        Name = trans.Merchant?.Name ?? trans.CounterParty?.Name ?? trans.Description,
+                        Description = trans.Merchant?.Id ?? trans.CounterParty?.Name ?? trans.Description,
+                        Logo = trans.Merchant?.Logo,
+                        Category = trans.Category,
+                        Notes = trans.Notes,
+                        Settled = settled
+                    });
+                }
+
+                // store in temporary table 
+                var monzo = new MyFinances.Models.Monzo
+                {
+                    Balance = balance.Value / 100m,
+                    SavingsBalance = savingsBalance.Value / 100m,
+                    AccountNo = accounts[0].AccountNumber,
+                    SortCode = accounts[0].SortCode,
+                    SpentToday = spentToday,
+                    Transactions = transactions
+                };
+
+                await monzoService.InsertMonzoAccountSummary(monzo);
+            }
+        }
+
         public async Task<ActionResult> ApproveDataAccess(string accessToken = null, bool showPotAndTags = false)
         {
             var initialData = await monzoService.MonzoAccountSummary();
@@ -151,55 +204,8 @@ namespace MyFinances.Website.Controllers
             // if requesting new authorization from monzo api...
             if (initialData == null || accessToken != null)
             {
-                // fetch transactions etc
-                using (var client = new MonzoClient(accessToken))
-                {
-                    var accounts = await client.GetAccountsAsync();
-                    var pots = await client.GetPotsAsync();
-                    var balance = await client.GetBalanceAsync(accounts[0].Id);
-                    var savingsBalance = await client.GetBalanceAsync(accounts[0].Id);
-                    var getTransactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
-                        .OrderByDescending(x => x.Created)
-                        .Take(50)
-                        .ToList();
-
-                    var spentToday = getTransactions
-                        .Where(x => x.Created.Date == DateTime.UtcNow.Date && x.Amount < 0)
-                        .Sum(x => x.Amount / 100m);
-
-                    var transactions = new List<MonzoTransaction>();
-
-                    foreach (var trans in getTransactions)
-                    {
-                        string settled = string.IsNullOrEmpty(trans.Settled) ? "" : trans.Settled.Substring(0, trans.Settled.Length - 5);
-
-                        transactions.Add(new MonzoTransaction
-                        {
-                            Id = trans.Id,
-                            Amount = trans.Amount,
-                            Created = trans.Created,
-                            Name = trans.Merchant?.Name ?? trans.CounterParty?.Name ?? trans.Description,
-                            Description = trans.Merchant?.Id ?? trans.CounterParty?.Name ?? trans.Description,
-                            Logo = trans.Merchant?.Logo,
-                            Category = trans.Category,
-                            Notes = trans.Notes,
-                            Settled = settled
-                        });
-                    }
-
-                    // store in temporary table 
-                    var monzo = new MyFinances.Models.Monzo
-                    {
-                        Balance = balance.Value / 100m,
-                        SavingsBalance = savingsBalance.Value / 100m,
-                        AccountNo = accounts[0].AccountNumber,
-                        SortCode = accounts[0].SortCode,
-                        SpentToday = spentToday,
-                        Transactions = transactions
-                    };
-
-                    await monzoService.InsertMonzoAccountSummary(monzo);
-                }
+                await MonzoClientAuthorisation(accessToken);
+                return RedirectToAction("ApproveDataAccess");
             }
 
             var data = await monzoService.MonzoAccountSummary();
@@ -210,6 +216,7 @@ namespace MyFinances.Website.Controllers
             viewModel.Balance = data.Balance;
             viewModel.SavingsBalance = data.SavingsBalance;
             viewModel.LastSynced = data.Created;
+            viewModel.ShowPotAndTags = showPotAndTags;
 
             // sync settled transactions date format being : 2020-05-31T07:06:18.533Z
             var toSyncTransactions = data.Transactions
@@ -237,13 +244,6 @@ namespace MyFinances.Website.Controllers
                     };
                 };
             }
-
-            if (accessToken != null)
-            {
-                return RedirectToAction("ApproveDataAccess");
-            }
-
-            viewModel.ShowPotAndTags = showPotAndTags;
 
             var potlessTrans = data.Transactions
                 .Where(x => (!showPotAndTags && !x.Name.StartsWith("pot_")) || showPotAndTags)

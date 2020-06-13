@@ -13,6 +13,7 @@ export interface IPropsFromState {
 
 export interface IOwnState {
     date: string,
+    name: string,
     amount?: number | undefined
     redirect: boolean
 }
@@ -21,6 +22,7 @@ export default class AddExpense extends React.Component<IPropsFromState, IOwnSta
     constructor(props: IPropsFromState) {
         super(props);
         this.state = { 
+            name: "",
             amount: undefined,
             date: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
             redirect: false
@@ -39,6 +41,9 @@ export default class AddExpense extends React.Component<IPropsFromState, IOwnSta
                 {AddMenu("income")}
                 <form className="form-horizontal">
                     <div className="form-group form-group-lg">
+                        <input className="form-control" type="text" value={this.state.name} placeholder="Enter item" onChange={(e) => { this.onNameChanged(e);}} />
+                    </div>
+                    <div className="form-group form-group-lg">
                         <SelectionRefinementForIncomeSources />
                     </div>
                     <div className="form-group form-group-lg">
@@ -51,6 +56,14 @@ export default class AddExpense extends React.Component<IPropsFromState, IOwnSta
                 </form>
             </div>
         )
+    }
+
+    private onNameChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ ...this.state, 
+            ...{ 
+                name: e.target.value,
+            }
+        })  
     }
     
     private onDateChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +78,7 @@ export default class AddExpense extends React.Component<IPropsFromState, IOwnSta
         if (this.state.date  && this.props.selectedCat && (this.state.amount || this.state.amount === 0))
         {
             const addModel: IIncomeDTO = {
+                name: this.state.name,
                 sourceId: this.props.selectedCat,
                 secondSourceId: this.props.selectedSecondCat,
                 date: this.state.date,

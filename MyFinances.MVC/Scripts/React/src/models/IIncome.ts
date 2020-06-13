@@ -1,5 +1,6 @@
 export interface IIncome {
     id: number,
+    name: string,
     source: string,
     secondSource: string,
     date: Date,
@@ -8,6 +9,7 @@ export interface IIncome {
 }
 
 export interface IIncomeDTO {
+    name: string,
     sourceId: number,
     secondSourceId: number | undefined,
     date: string,

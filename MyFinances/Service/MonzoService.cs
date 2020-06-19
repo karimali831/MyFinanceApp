@@ -134,8 +134,6 @@ namespace MyFinances.Service
                     Priority = Priority.Medium,
                     CatId = Categories.MonzoTransaction
                 });
-
-                baseService.ReportException(new Exception(msg));
             }
         }
 
@@ -144,19 +142,21 @@ namespace MyFinances.Service
             int? category = null;
             int? secondCategory = null;
             string name = null;
-  
+
             var tranNotesCategories = trans.Notes.Split('#');
-            var cat1 = categories.FirstOrDefault(x => x.MonzoTag.Equals(tranNotesCategories[1], StringComparison.OrdinalIgnoreCase));
+            var tag1 = Utils.GetUntilOrEmpty(tranNotesCategories[1]);
+            var cat1 = categories.FirstOrDefault(x => x.MonzoTag.Equals(tag1, StringComparison.OrdinalIgnoreCase));
 
             if (cat1 != null)
             {
                 category = cat1.Id;
 
-                // there's a second category 
+                // check if there's a second category 
                 if (tranNotesCategories.Length == 3)
                 {
+                    var tag2 = Utils.GetUntilOrEmpty(tranNotesCategories[2]);
                     var secondCategories = await baseService.GetAllCategories(cat1.SecondTypeId, catsWithSubs: false);
-                    var cat2 = secondCategories.FirstOrDefault(x => x.MonzoTag.Equals(tranNotesCategories[2], StringComparison.OrdinalIgnoreCase));
+                    var cat2 = secondCategories.FirstOrDefault(x => x.MonzoTag.Equals(tag2, StringComparison.OrdinalIgnoreCase));
 
                     if (cat2 != null)
                     {
@@ -164,7 +164,7 @@ namespace MyFinances.Service
                     }
                     else
                     {
-                        await MonzoTagMismatched(trans.Name, cat1.Name, tranNotesCategories[2]);
+                        await MonzoTagMismatched(trans.Name, cat1.Name, tag2);
                     }
                 }
 
@@ -172,7 +172,7 @@ namespace MyFinances.Service
             }
             else
             {
-                await MonzoTagMismatched(trans.Name, tranNotesCategories[1]);
+                await MonzoTagMismatched(trans.Name, tag1);
             }
 
             return (category, secondCategory, name);
@@ -229,7 +229,7 @@ namespace MyFinances.Service
                                 }
 
                                 spendingSyncables.Add(getCats.cat1Name);
-                                name = trans.Name;
+                                name = trans.Notes.Contains('*') ? trans.Notes.Split('*').Last() : trans.Name;
                             }
                         }
                         else
@@ -313,7 +313,7 @@ namespace MyFinances.Service
                                 }
 
                                 incomeSyncables.Add(getCats.cat1Name);
-                                name = trans.Name;
+                                name = trans.Notes.Contains('*') ? trans.Notes.Split('*').Last() : trans.Name;
                             }
                         }
                         else

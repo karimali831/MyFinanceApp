@@ -16,6 +16,21 @@ namespace MyFinances.Helpers
 {
     public static class Utils
     {
+        public static string GetUntilOrEmpty(this string text, string stopAt = "*")
+        {
+            if (text.Contains(stopAt))
+            {
+                int charLocation = text.IndexOf(stopAt, StringComparison.Ordinal);
+
+                if (charLocation > 0)
+                {
+                    return text.Substring(0, charLocation);
+                }
+            }
+
+            return text;
+        }
+
         public static string FirstCharToUpper(this string input)
         {
             switch (input)

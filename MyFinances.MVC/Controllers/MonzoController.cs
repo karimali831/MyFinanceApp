@@ -220,7 +220,7 @@ namespace MyFinances.Website.Controllers
 
             // sync settled transactions date format being : 2020-05-31T07:06:18.533Z
             var toSyncTransactions = data.Transactions
-                .Where(x => !string.IsNullOrEmpty(x.Settled))
+                .Where(x => !string.IsNullOrEmpty(x.Settled) && x.Notes != "!")
                 .ToList();
 
             if (toSyncTransactions != null && toSyncTransactions.Any())

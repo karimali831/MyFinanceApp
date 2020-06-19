@@ -112,7 +112,24 @@ namespace MyFinances.Service
 
         public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter)
         {
-            var spendingsSummary = await spendingRepository.GetSpendingsSummaryAsync(dateFilter);
+            var spendingsSummary = (await spendingRepository.GetSpendingsSummaryAsync(dateFilter));
+
+            //// special cats
+            //decimal totalFoodDrinks = spendingsSummary
+            //    .Where(x => x.CatId == 2 || (x.CatId == 4 && (x.SecondCatId == 31 || x.SecondCatId == 93)))
+            //    .Sum(x => x.Total);
+
+            //var specialCatsSummary = new List<SpendingSummaryDTO>
+            //{
+            //    new SpendingSummaryDTO
+            //    {
+            //        CatId = 2155,
+            //        Cat1 = "All Food/Drinks",
+            //        Total = totalFoodDrinks
+            //    }
+            //};
+
+            //spendingsSummary = spendingsSummary.Concat(specialCatsSummary);
 
             var secondCats = spendingsSummary
                 .Where(x => x.Cat2 != null)

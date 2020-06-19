@@ -76,13 +76,15 @@ namespace MyFinances.Website.Controllers.API
             var summaries = new List<ChartSummaryVM>()
             {
                 new ChartSummaryVM { Title = "Spending Summary" },
-                new ChartSummaryVM { Title = "Income Summary" }
+                new ChartSummaryVM { Title = "Income Summary" },
+                new ChartSummaryVM { Title = "Savings Summary" }
             };
 
             var datasets = new Dictionary<string, MonthComparisonChartVM[]>
             {
                 { summaries[0].Title, (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Spendings).ToArray() },
-                { summaries[1].Title, (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Income).ToArray() }
+                { summaries[1].Title, (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Income).ToArray() },
+                { summaries[2].Title, (await financeService.GetIncomeExpenseTotalsByMonth(request.DateFilter)).Where(x => x.Type == CategoryType.Savings).ToArray() }
             };
 
             var results = datasets.Values.ToList();

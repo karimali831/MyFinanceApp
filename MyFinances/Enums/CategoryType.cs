@@ -22,6 +22,7 @@ namespace MyFinances.Enums
         Travel,
         Services,
         Holiday,
-        ReminderTypes
+        ReminderTypes,
+        Savings
     }
 }

@@ -76,7 +76,9 @@ namespace MyFinances.Repository
                     {Utils.FilterDateSql(filter)}
                 GROUP BY 
                     CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date)
+
                 UNION
+
                 SELECT
 	                CONVERT(CHAR(7), Date, 120), 
 	                DATENAME(month, Date), 
@@ -85,6 +87,21 @@ namespace MyFinances.Repository
                     Incomes
                 WHERE 
                     {Utils.FilterDateSql(filter)}
+                    AND SourceId != {(int)Categories.SavingsPot}
+                GROUP BY 
+                    CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date)
+
+                UNION
+
+                SELECT
+	                CONVERT(CHAR(7), Date, 120), 
+	                DATENAME(month, Date), 
+	                SUM(Amount), '{nameof(CategoryType.Savings)}'
+                FROM 
+                    Incomes
+                WHERE 
+                    {Utils.FilterDateSql(filter)}
+                    AND SourceId = {(int)Categories.SavingsPot}
                 GROUP BY 
                     CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date)
                 ORDER BY 

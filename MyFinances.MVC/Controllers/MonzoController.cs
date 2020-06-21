@@ -74,7 +74,7 @@ namespace MyFinances.Website.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddSpending(string monzoTransId, string name, decimal amount, string date, bool isFinance, int selectedId, int? secondCatId = null)
+        public async Task<ActionResult> AddSpending(string monzoTransId, string name, decimal amount, string date, bool isFinance, int selectedId, int? secondCatId = null, bool cashExpense = false)
         {
             var dto = new SpendingDTO
             {
@@ -82,7 +82,8 @@ namespace MyFinances.Website.Controllers
                 Amount = amount,
                 SecondCatId = secondCatId,
                 Date = DateTime.ParseExact(date, "yyyy-MM-ddTHH:mm", new CultureInfo("en-GB")),
-                MonzoTransId = monzoTransId
+                MonzoTransId = monzoTransId,
+                CashExpense = cashExpense
             };
 
             dto.FinanceId = !isFinance ? (int?)null : selectedId;

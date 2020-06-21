@@ -23,6 +23,7 @@ export interface IOwnState {
     loading: boolean,
     name: string,
     date: string,
+    cashExpense: boolean,
     selectedFinanceId: number | undefined
     redirect: boolean
 }
@@ -38,6 +39,7 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
             loading: true,
             name: "",
             date: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
+            cashExpense: false,
             selectedFinanceId: undefined,
             redirect: false
         };
@@ -86,6 +88,9 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
                     <div className="form-group form-group-lg">
                         <input className="form-control" type="number" value={this.state.amount} placeholder="Enter amount" onChange={(e) => { this.onAmountChanged(e);}} />
                     </div>
+                    <div className="form-group form-group-lg">
+                        <input className="form-control" type="checkbox" defaultChecked={this.state.cashExpense} onChange={(e) => { this.onCashExpenseChanged();}} /> Cash Expense?
+                    </div>
                     <button className="btn btn-primary" onClick={() => this.addSpending() }>Add Spending</button>
                 </form>
             </div>
@@ -108,23 +113,17 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
     }
 
     private onSpendingChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ ...this.state, 
-            ...{ 
-                name: e.target.value,
-            }
-        })  
-    }
+        this.setState({ ...this.state, name: e.target.value }) }
+
+    private onCashExpenseChanged =  () => {
+        this.setState({ ...this.state, cashExpense: !this.state.cashExpense }) }
 
     private onDateChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ ...this.state, date: e.target.value })  
     }
 
     private onAmountChanged =  (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ ...this.state, 
-            ...{ 
-                amount: Number(e.target.value),
-            }
-        })  
+        this.setState({ ...this.state, amount: Number(e.target.value) })  
     }
 
     private onChangeSelectedFinance = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -149,7 +148,8 @@ export default class AddSpending extends React.Component<AllProps, IOwnState> {
                 secondCatId: this.state.selectedFinanceId !== undefined ? null : this.props.selectedSecondCat,
                 amount: this.state.amount,
                 date: this.state.date,
-                financeId: this.state.selectedFinanceId
+                financeId: this.state.selectedFinanceId,
+                cashExpense: this.state.cashExpense
             }
             
             commonApi.add(addModel, "spendings");

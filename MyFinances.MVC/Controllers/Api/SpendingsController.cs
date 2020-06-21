@@ -56,7 +56,8 @@ namespace MyFinances.Website.Controllers.API
                     Date = x.Date.ToString("MM/dd/yyyy"),
                     x.Info,
                     x.Category,
-                    x.SecondCategory
+                    x.SecondCategory,
+                    x.CashExpense
                 })
             });
         }

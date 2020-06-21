@@ -47,6 +47,7 @@ namespace MyFinances.Repository
                     s.Date,
                     s.Info,
                     s.SecondCatId,
+                    s.CashExpense,
 					CASE WHEN s.CatId IS NULL THEN (SELECT CatID FROM Finances WHERE ID = s.FinanceId) ELSE s.CatId END AS CatId,
                     CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
 	                c2.Name AS SecondCategory,

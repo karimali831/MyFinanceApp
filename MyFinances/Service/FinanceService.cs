@@ -155,7 +155,7 @@ namespace MyFinances.Service
 
             var settings = await baseService.GetSettingsAsync();
 
-            var incurredIncome = (await incomeService.GetAllIncomesAsync(
+            var accrualIncome = (await incomeService.GetAllIncomesAsync(
                 new IncomeRequestDTO
                 {
                     DateFilter = new DateFilter
@@ -166,15 +166,7 @@ namespace MyFinances.Service
                     }
                 }));
 
-            decimal incomeExcludingSavings = incurredIncome
-                .Where(x => x.SourceId != (int)Categories.SavingsPot)
-                .Sum(x => x.Amount);
-
-            decimal incomeSavings = incurredIncome
-                .Where(x => x.SourceId == (int)Categories.SavingsPot)
-                .Sum(x => x.Amount);
-
-            decimal incurredSpendings = (await spendingService.GetAllAsync(
+            var accrualSpendings = (await spendingService.GetAllAsync(
                 new SpendingRequestDTO
                 {
                     DateFilter = new DateFilter
@@ -183,9 +175,19 @@ namespace MyFinances.Service
                         FromDateRange = settings.StartingDate,
                         ToDateRange = DateTime.UtcNow
                     }
-                })).Sum(x => x.Amount);
+                }));
 
-            decimal remainingBalance = (settings.AvailableCredit + incomeExcludingSavings) - incurredSpendings;
+            decimal incomeExcludingSavings = accrualIncome
+                .Where(x => x.SourceId != (int)Categories.SavingsPot)
+                .Sum(x => x.Amount);
+
+            decimal incomeSavings = accrualIncome
+                .Where(x => x.SourceId == (int)Categories.SavingsPot)
+                .Sum(x => x.Amount);
+
+            decimal cashBalance = accrualSpendings.Where(x => x.CashExpense).Sum(x => x.Amount);
+            decimal cardBalance = accrualSpendings.Where(x => !x.CashExpense).Sum(x => x.Amount);
+            decimal remainingBalance = (settings.AvailableCredit + incomeExcludingSavings) - cardBalance;
 
             return
                 new Summary
@@ -193,7 +195,7 @@ namespace MyFinances.Service
                     CWTLCalculatedPay = Utils.ToCurrency(cwtlCurrentPayWeekSummary.CalcTotalPayToDriver),
                     CWTLRoutesWorked = cwtlCurrentRoutesWorked,
                     CWTLTotalVanDamagesPaid = Utils.ToCurrency(cwtlTotalVanDamagesPaid),
-                    EstimatedAvailableCredit = $"{Utils.ToCurrency(remainingBalance)} (exlusive of {Utils.ToCurrency(incomeSavings)} savings)"
+                    EstimatedAvailableCredit = $"{Utils.ToCurrency(remainingBalance)} (exlusive of {Utils.ToCurrency(cashBalance)} cash & {Utils.ToCurrency(incomeSavings)} savings)"
                 };
         }
 

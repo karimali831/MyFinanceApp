@@ -20,5 +20,6 @@ namespace MyFinances.Website.ViewModels
         public decimal Amount { get; set; }
         public decimal ActualAmount { get; set; }
         public string Date { get; set; }
+        public bool CashExpense { get; set; }
     }
 }

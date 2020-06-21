@@ -5,7 +5,8 @@ export interface ISpending {
     date: Date,
     info: string,
     category: string,
-    secondCategory: string
+    secondCategory: string,
+    cashExpense: boolean
 }
 
 export interface ISpendingDTO {
@@ -14,7 +15,8 @@ export interface ISpendingDTO {
     amount: number,
     catId?: number | null,
     secondCatId?: number | null,
-    financeId?: number
+    financeId?: number,
+    cashExpense: boolean
 }
 
 export interface ISpendingSummary

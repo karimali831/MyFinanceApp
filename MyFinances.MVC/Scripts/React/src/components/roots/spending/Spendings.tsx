@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ISpending } from '../../../models/ISpending';
-import { priceFormatter } from '../../utils/Utils';
+import { priceFormatter, boolHighlight } from '../../utils/Utils';
 import Table from '../../base/CommonTable';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
 import { LoadSpendingsAction } from 'src/state/contexts/spending/Actions';
@@ -39,6 +39,12 @@ const columns: ITableProps[] = [{
     text: 'Category',
     headerClasses: "hidden-xs",
     classes: "hidden-xs"
+}, {
+    dataField: 'cashExpense',
+    text: 'Cash Expense',
+    headerClasses: "hidden-xs",
+    classes: "hidden-xs",
+    formatter: boolHighlight
 }, {
     dataField: 'secondCategory',
     text: 'Second Cat',

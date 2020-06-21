@@ -18,6 +18,7 @@ namespace MyFinances.Model
         public string SecondCategory { get; set; }
         public int? FinanceId { get; set; }
         public string MonzoTransId { get; set; }
+        public bool CashExpense { get; set; }
     }
 
     public class SpendingMap : EntityTypeConfiguration<Spending>

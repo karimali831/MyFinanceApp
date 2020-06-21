@@ -47,6 +47,9 @@
                 <div class="form-group form-group-lg">
                     <input name="name" class="form-control" type="text" value="@Model.Name" placeholder="Enter item" />
                 </div>
+                <div class="form-group form-group-lg">
+                    <input name="cashExpense" class="form-control" type="checkbox" checked="@Model.CashExpense" />
+                </div>
                 @Html.HiddenFor(x => x.IsFinance)
             }
             <div class="form-group form-group-lg">

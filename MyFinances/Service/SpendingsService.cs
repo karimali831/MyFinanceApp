@@ -162,21 +162,25 @@ namespace MyFinances.Service
             {
                 if (item.Cat2 == null)
                 {
-                    item.Average = 
+                    var averaged = 
                         Utils.ChartsHeaderTitle(
                             await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.CatId, isSecondCat: false, isFinance: item.IsFinance),
                             ChartHeaderTitleType.Monthly
                         );
+
+                    item.Average = string.IsNullOrEmpty(averaged) ? Utils.ToCurrency(item.Total) : averaged;
                 }
                 else
                 {
+                    var averaged = 
+                        Utils.ChartsHeaderTitle(
+                            await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.SecondCatId, isSecondCat: true, isFinance: false),
+                            ChartHeaderTitleType.Monthly
+                        );
+
                     foreach (var x in item.SecondCats)
                     {
-                        item.Average = 
-                            Utils.ChartsHeaderTitle(
-                                await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.SecondCatId, isSecondCat: true, isFinance: false),
-                                ChartHeaderTitleType.Monthly
-                            );
+                        item.Average = string.IsNullOrEmpty(averaged) ? Utils.ToCurrency(item.Total) : averaged;
                     }
                 }
             }

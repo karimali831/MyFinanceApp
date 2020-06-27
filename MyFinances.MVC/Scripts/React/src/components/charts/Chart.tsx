@@ -12,6 +12,7 @@ import { IFinance } from 'src/models/IFinance';
 import SelectionRefinementForChartCategories from './SelectionRefinementForChartCategories';
 import { CategoryType } from 'src/enums/CategoryType';
 import { Load } from '../base/Loader';
+import 'chartjs-plugin-datalabels';
 
 interface IOwnState {
 	loading: boolean,
@@ -22,6 +23,7 @@ interface IOwnState {
  
 interface IOwnProps {
 	loading: boolean,
+	headerText?: string | null,
 	chartSummary?: IChartSummary[] | null,
 	chartType: ChartType,
 	chart: IChartModel,
@@ -98,6 +100,7 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 
         return (
             <div id="summary-chart">
+				{this.props.headerText}
 				{summary ? 
 				<>
 					<div className="card-group">
@@ -213,7 +216,13 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 					beginAtZero: true
 				  }
 				}]
-			}
+			},
+			plugins: {
+				datalabels: {
+				   display: true,
+				   color: 'white'
+				}
+			 }
 		}
 		
 		return options;

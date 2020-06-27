@@ -75,8 +75,17 @@ export const chartData = (chartType: ChartType, results?: IMonthComparisonChartR
     let config: ChartDataSets[] = [];
     switch (chartType)
     {
-        case ChartType.Doughnut || ChartType.Bar:
+        case ChartType.Doughnut:
             config = doughnutChartConfig(dataSets.length);
+
+            dataSets.map((d, idx) => {
+                d.backgroundColor = config[idx].backgroundColor,
+                d.hoverBackgroundColor = config[idx].hoverBackgroundColor
+            })
+            break;
+
+        case ChartType.Bar:
+            config = barChartConfig(dataSets.length);
 
             dataSets.map((d, idx) => {
                 d.backgroundColor = config[idx].backgroundColor,
@@ -135,10 +144,45 @@ export const lineChartConfig = (datasetsCount: number) : ChartDataSets[] => {
     return dataSets;
 }
 
-export const doughnutChartConfig = (datasetsCount: number) : ChartDataSets[] => {
-    const backgroundColors: ChartColor[] = []
-    const hoverBackgroundColors: ChartColor[] = [];
+export const barChartConfig = (datasetsCount: number) : ChartDataSets[] => {
     const dataSets: ChartDataSets[] = [];
+
+    Array.from(Array(datasetsCount), (e, i) => {
+        if (datasetsCount === 1)
+        {
+            dataSets.push({
+                backgroundColor: getBackgroundColors(),
+                hoverBackgroundColor: getHoverBackgroundColors()
+            })
+            
+        }
+        else{
+            dataSets.push({
+                backgroundColor: getBackgroundColors()[i],
+                hoverBackgroundColor: getHoverBackgroundColors()[i]
+            })
+        }
+    });
+
+    return dataSets;
+}
+
+
+export const doughnutChartConfig = (datasetsCount: number) : ChartDataSets[] => {
+    const dataSets: ChartDataSets[] = [];
+
+    Array.from(Array(datasetsCount), (e, i) => {
+        dataSets.push({
+            backgroundColor: getBackgroundColors(),
+            hoverBackgroundColor: getHoverBackgroundColors()
+        })
+    });
+
+    return dataSets;
+}
+
+export const getBackgroundColors = () : ChartColor[] => {
+    const backgroundColors: ChartColor[] = []
 
     backgroundColors.push(
         'rgba(255, 99, 132, 0.2)',
@@ -156,6 +200,11 @@ export const doughnutChartConfig = (datasetsCount: number) : ChartDataSets[] => 
         '#ff7c43',
         '#ffa600'
     );
+    return backgroundColors;
+}
+
+export const getHoverBackgroundColors = () : ChartColor[] => {
+    const hoverBackgroundColors: ChartColor[] = []
 
     hoverBackgroundColors.push(
         'rgba(255, 99, 132, 1)',
@@ -173,13 +222,5 @@ export const doughnutChartConfig = (datasetsCount: number) : ChartDataSets[] => 
         '#ff7c43',
         '#ffa600'
     )
-
-    Array.from(Array(datasetsCount), (e, i) => {
-        dataSets.push({
-            backgroundColor: backgroundColors,
-            hoverBackgroundColor: hoverBackgroundColors
-        })
-    });
-
-    return dataSets;
+    return hoverBackgroundColors;
 }

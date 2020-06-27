@@ -16,6 +16,7 @@ const mapStateToProps =
     (state: IStoreState): IPropsFromState => ({
         loading: state.chart.loading,
         chart: chartSummaryData(state, DataType.SpendingSummary),
+        headerText: "Total: " + state.spendingSummary.totalSpent,
         chartType: ChartType.Doughnut,
         width: 200,
         height: 500,

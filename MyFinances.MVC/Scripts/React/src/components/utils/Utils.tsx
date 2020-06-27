@@ -4,6 +4,14 @@ import { DateFrequency } from 'src/enums/DateFrequency';
 import { Priority } from 'src/enums/Priority';
 import { PaymentStatus } from 'src/enums/PaymentStatus';
 
+export const shuffle = (a: any) => {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
 export const intToOrdinalNumberString = (cell: any, row: any) => {
 	cell = Math.round(cell);
 	const numString = cell.toString();

@@ -9,6 +9,7 @@ import { CategoryType } from 'src/enums/CategoryType';
 
 export interface IPropsFromState {
 	loading: boolean,
+	headerText?: string | null,
 	chartSummary?: IChartSummary[] | null,
 	chart: IChartModel,
 	chartType: ChartType,
@@ -36,6 +37,7 @@ type AllProps = IPropsFromState & IPropsFromDispatch
 const ChartProps: React.SFC<AllProps> = (props) =>
 	<Chart
 		loading={props.loading}
+		headerText={props.headerText}
 		chartSummary={props.chartSummary}
 		chartType={props.chartType}
 		chart={props.chart}

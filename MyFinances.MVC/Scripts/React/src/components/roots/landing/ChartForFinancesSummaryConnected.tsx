@@ -16,6 +16,7 @@ const mapStateToProps =
         loading: state.chart.loading,
         chartSummary: state.chart.financesComparisonChart !== undefined ? state.chart.financesComparisonChart.summary : null,
         chart: chartData(ChartType.Line, state.chart.financesComparisonChart),
+        dataLabels: false,
         chartType: ChartType.Line,
         width: 1200,
         height: 500,

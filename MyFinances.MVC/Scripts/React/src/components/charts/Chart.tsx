@@ -24,6 +24,7 @@ interface IOwnState {
 interface IOwnProps {
 	loading: boolean,
 	headerText?: string | null,
+	dataLabels: boolean,
 	chartSummary?: IChartSummary[] | null,
 	chartType: ChartType,
 	chart: IChartModel,
@@ -100,7 +101,6 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 
         return (
             <div id="summary-chart">
-				{this.props.headerText}
 				{summary ? 
 				<>
 					<div className="card-group">
@@ -164,6 +164,11 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 					</>
 					: null
 				}
+				{
+					this.props.headerText !== null ?
+						<h2><span className="label label-danger">{this.props.headerText}</span></h2>
+					: null
+				}
 				<div style={{width: "100%", height: this.props.height}}>
 					{this.chart()}
 				</div>
@@ -219,7 +224,7 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 			},
 			plugins: {
 				datalabels: {
-				   display: true,
+				   display: this.props.dataLabels,
 				   color: 'white'
 				}
 			 }

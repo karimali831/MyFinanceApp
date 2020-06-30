@@ -10,6 +10,7 @@ namespace MyFinances.Model
     {
         public int Id { get; set; }
         public decimal AvailableCredit { get; set; }
+        public decimal AvailableCash { get; set; }
         public DateTime StartingDate { get; set; }
     }
 

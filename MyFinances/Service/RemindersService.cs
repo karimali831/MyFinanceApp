@@ -63,7 +63,10 @@ namespace MyFinances.Service
       
         public async Task AddReminder(ReminderDTO dto)
         {
-            await remindersRepository.InsertAsync(dto);
+            if (!await ReminderExists(dto.Notes))
+            {
+                await remindersRepository.InsertAsync(dto);
+            }
         }
 
         public async Task HideReminder(int Id)
@@ -88,16 +91,13 @@ namespace MyFinances.Service
                         {
                             string dbNotes = string.Format("{0} {1}. ({2})", notes, entry.Name, missedDates);
 
-                            if (!await ReminderExists(dbNotes))
+                            await AddReminder(new ReminderDTO
                             {
-                                await AddReminder(new ReminderDTO
-                                {
-                                    DueDate = DateTime.UtcNow,
-                                    Notes = dbNotes,
-                                    Priority = priority,
-                                    CatId = Categories.MissedEntries
-                                });
-                            }
+                                DueDate = DateTime.UtcNow,
+                                Notes = dbNotes,
+                                Priority = priority,
+                                CatId = Categories.MissedEntries
+                            });
                         }
                     }
                 }

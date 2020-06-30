@@ -137,21 +137,6 @@ namespace MyFinances.Service
 
         public async Task<Summary> GetSummary()
         {
-            var date = DateTime.UtcNow;
-            int weekArrears;
-
-            if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || date.DayOfWeek == DayOfWeek.Friday)
-            {
-                weekArrears = 2;
-            } 
-            else {
-                weekArrears = 3;
-            }
-
-            int weekNo = Utils.GetWeek(date);
-            int cwtlCurrentRoutesWorked = (await cnwService.GetAllRoutesAsync(weekNo)).Count();
-            var cwtlCurrentPayWeekSummary = await cnwService.GetWeekSummaryAsync(weekNo - weekArrears);
-            decimal cwtlTotalVanDamagesPaid = (await cnwService.GetWeekSummariesAsync()).Sum(x => x.DeduVanDamages);
 
             var settings = await baseService.GetSettingsAsync();
 
@@ -187,15 +172,16 @@ namespace MyFinances.Service
 
             decimal cashBalance = accrualSpendings.Where(x => x.CashExpense).Sum(x => x.Amount);
             decimal cardBalance = accrualSpendings.Where(x => !x.CashExpense).Sum(x => x.Amount);
-            decimal remainingBalance = (settings.AvailableCredit + incomeExcludingSavings) - cardBalance;
+
+            decimal remainingCardBalance = (settings.AvailableCredit + incomeExcludingSavings) - cardBalance;
+            decimal remainingCashBalance = settings.AvailableCash - cashBalance;
 
             return
                 new Summary
                 {
-                    CWTLCalculatedPay = Utils.ToCurrency(cwtlCurrentPayWeekSummary.CalcTotalPayToDriver),
-                    CWTLRoutesWorked = cwtlCurrentRoutesWorked,
-                    CWTLTotalVanDamagesPaid = Utils.ToCurrency(cwtlTotalVanDamagesPaid),
-                    EstimatedAvailableCredit = $"{Utils.ToCurrency(remainingBalance)} (exlusive of {Utils.ToCurrency(cashBalance)} cash & {Utils.ToCurrency(incomeSavings)} savings)"
+                    EstimatedBalance = Utils.ToCurrency(remainingCardBalance),
+                    RemainingCash = Utils.ToCurrency(remainingCashBalance),
+                    AccruedSavings = Utils.ToCurrency(incomeSavings)
                 };
         }
 

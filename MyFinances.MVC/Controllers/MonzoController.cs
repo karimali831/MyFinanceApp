@@ -267,7 +267,12 @@ namespace MyFinances.Website.Controllers
 
             foreach (var tran in potlessTrans.Where(x => !string.IsNullOrEmpty(x.Settled)))
             {
-                var sync = (!viewModel.SyncedTransactions.SelectMany(x => x.Value.Transactions).Contains(tran.Id) && !tran.Name.StartsWith("pot_") && tran.Amount != 0 && !string.IsNullOrEmpty(tran.Settled) && tran.Notes != "!" && tran.Name != "ATM") ? true : false;
+                if (tran.Category.Equals("cash", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    await monzoService.UpdateCashBalanceAsync(-tran.Amount);
+                }
+
+                var sync = (!viewModel.SyncedTransactions.SelectMany(x => x.Value.Transactions).Contains(tran.Id) && !tran.Name.StartsWith("pot_") && tran.Amount != 0 && !string.IsNullOrEmpty(tran.Settled) && tran.Notes != "!") ? true : false;
 
                 if (sync)
                 {

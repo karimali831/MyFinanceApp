@@ -15,6 +15,7 @@ namespace MyFinances.Repository
     {
         Task<Setting> GetAsync();
         Task UpdateAsync(Setting settings);
+        Task UpdateCashBalanceAsync(decimal cashBalance);
     }
 
     public class SettingRepository : ISettingRepository
@@ -40,6 +41,7 @@ namespace MyFinances.Repository
             string sqlTxt = $@"
                 UPDATE {TABLE} SET
                 AvailableCredit = @AvailableCredit,
+                AvailableCash = @AvailableCash,
                 StartingDate = @StartingDate
             ";
 
@@ -48,8 +50,17 @@ namespace MyFinances.Repository
             await sql.ExecuteAsync(sqlTxt, new 
             {
                 settings.AvailableCredit,
+                settings.AvailableCash,
                 settings.StartingDate
             });
+        }
+
+        public async Task UpdateCashBalanceAsync(decimal cashBalance)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($"UPDATE {TABLE} SET AvailableCash += @CashBalance", new { CashBalance = cashBalance } );
+            }
         }
     }
 }

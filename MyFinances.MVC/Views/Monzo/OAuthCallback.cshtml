@@ -62,7 +62,7 @@
                         var color = (transaction.Amount > 0 ? "green" : null);
                         <tr>
                             <td width="10%"><img src="@(transaction.Logo)" width="32" height="32" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
-                            <td title="@transaction.Description"> <br />@transaction.Name<small style="display: @(Model.ShowPotAndTags ? "block" : "none")">@transaction.Description</small></td>
+                            <td title="@transaction.Description"> <br />@transaction.Name<small style="display: @(Model.ShowPotAndTags ? "block" : "none")">(@transaction.Category) @transaction.Description</small></td>
                             <td>@(transaction.Created.ToShortDateString()) <small>(@(transaction.Created.ToShortTimeString()))</small></td>
                             <td class="text-right">
                                 <font color="@color"><strong>@plus@Utils.ToCurrency(transaction.Amount / 100m)</strong></font>
@@ -100,7 +100,7 @@
                         var color = (transaction.Amount > 0 ? "green" : null);
                         <tr>
                             <td width="10%"><img src="@(transaction.Logo)" width="32" height="32" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
-                            <td title="@transaction.Description settled on @transaction.Settled"> <br />@transaction.Name<small style="display: @(Model.ShowPotAndTags ? "block" : "none")">@transaction.Description</small></td>
+                            <td title="@transaction.Description settled on @transaction.Settled"> <br />@transaction.Name<small style="display: @(Model.ShowPotAndTags ? "block" : "none")">(@transaction.Category) @transaction.Description</small></td>
                             <td>@(transaction.Created.ToShortDateString()) <small>(@(transaction.Created.ToShortTimeString()))</small></td>
                             <td class="text-right">
                                 <small>@Html.ActionLink("(sync)", "AddTransaction", "Monzo", new { monzoTransId = transaction.Id, transaction.Name, transaction.Amount, date = transaction.Created.ToString("yyyy-MM-ddTHH:mm") }, new { target = "_blank" })</small>
@@ -139,7 +139,7 @@
                         var color = (transaction.Amount > 0 ? "green" : null);
                         <tr>
                             <td width="10%"><img src="@(transaction.Logo)" width="32" height="32" class="img-rounded" onerror="this.src='@Url.Content("~/Content/Images/myfinanceapp.png")'" /></td>
-                            <td title="@transaction.Description settled on @transaction.Settled"> <br />@transaction.Name <small style="display: @(Model.ShowPotAndTags ? "block" : "none")">@transaction.Description</small></td>
+                            <td title="@transaction.Description settled on @transaction.Settled"> <br />@transaction.Name <small style="display: @(Model.ShowPotAndTags ? "block" : "none")">(@transaction.Category) @transaction.Description</small></td>
                             <td>@(transaction.Created.ToShortDateString()) <small>(@(transaction.Created.ToShortTimeString()))</small></td>
                             <td class="text-right">
                                 <font color="@color"><strong>@plus@Utils.ToCurrency(transaction.Amount / 100m)</strong></font>

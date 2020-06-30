@@ -8,9 +8,8 @@ namespace MyFinances.ViewModels
 {
     public class Summary
     {
-        public string CWTLCalculatedPay { get; set; }
-        public int CWTLRoutesWorked { get; set; }
-        public string CWTLTotalVanDamagesPaid { get; set; }
-        public string EstimatedAvailableCredit { get; set; }
+        public string EstimatedBalance { get; set; }
+        public string RemainingCash { get; set; }
+        public string AccruedSavings { get; set; }
     }
 }

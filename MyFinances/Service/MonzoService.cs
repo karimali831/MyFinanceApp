@@ -23,6 +23,7 @@ namespace MyFinances.Service
         Task AddSpending(SpendingDTO dto);
         Task<Monzo> MonzoAccountSummary();
         Task InsertMonzoAccountSummary(Monzo accountSummary);
+        Task UpdateCashBalanceAsync(decimal cashBalance);
     }
 
     public class MonzoService : IMonzoService
@@ -33,6 +34,7 @@ namespace MyFinances.Service
         private readonly IIncomeService incomeService;
         private readonly IBaseService baseService;
         private readonly IRemindersService reminderService;
+        private readonly ISettingRepository settingRepository;
 
         public MonzoService(
             IMonzoRepository monzoRepository,
@@ -40,6 +42,7 @@ namespace MyFinances.Service
             ISpendingService spendingService,
             IIncomeService incomeService,
             IRemindersService reminderService,
+            ISettingRepository settingRepository,
             IBaseService baseService)
         {
             this.monzoRepository = monzoRepository ?? throw new ArgumentNullException(nameof(monzoRepository));
@@ -48,6 +51,7 @@ namespace MyFinances.Service
             this.incomeService = incomeService ?? throw new ArgumentNullException(nameof(incomeService));
             this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
             this.reminderService = reminderService ?? throw new ArgumentNullException(nameof(reminderService));
+            this.settingRepository = settingRepository ?? throw new ArgumentNullException(nameof(settingRepository));
         }
 
         private async Task<IEnumerable<string>> SpendingsMonzoTransIds()
@@ -91,18 +95,15 @@ namespace MyFinances.Service
                 foreach (var (Name, Duplicates) in duplicates.Where(x => x.Duplicates >= 2))
                 {
                     string note = $"Duplicated monzo trans entries: {Duplicates} for {Name}";
-                    var exists = await reminderService.ReminderExists(note);
-
-                    if (!exists)
+      
+                    await reminderService.AddReminder(new ReminderDTO
                     {
-                        await reminderService.AddReminder(new ReminderDTO
-                        {
-                            DueDate = DateTime.UtcNow,
-                            Notes = note,
-                            Priority = Priority.Medium,
-                            CatId = Categories.MissedEntries
-                        });
-                    }
+                        DueDate = DateTime.UtcNow,
+                        Notes = note,
+                        Priority = Priority.Medium,
+                        CatId = Categories.MissedEntries
+                    });
+                    
                 }
             }
         }
@@ -123,18 +124,14 @@ namespace MyFinances.Service
                 msg = $"Unable to automatically sync income transaction: {transName}";
             }
 
-            var exists = await reminderService.ReminderExists(msg);
-
-            if (!exists)
+            await reminderService.AddReminder(new ReminderDTO
             {
-                await reminderService.AddReminder(new ReminderDTO
-                {
-                    DueDate = DateTime.UtcNow,
-                    Notes = msg,
-                    Priority = Priority.Medium,
-                    CatId = Categories.MonzoTransaction
-                });
-            }
+                DueDate = DateTime.UtcNow,
+                Notes = msg,
+                Priority = Priority.Medium,
+                CatId = Categories.MonzoTransaction
+            });
+            
         }
 
         private async Task<(int? CatId, int? SecondCatId, string cat1Name)> AutosyncWithMonzoTags(MonzoTransaction trans, IEnumerable<Category> categories)
@@ -200,151 +197,166 @@ namespace MyFinances.Service
             // 2020-06-01T14:15:00.119Z
             foreach (var trans in transactions)
             {
-                int? category = null;
-                int? secondCategory = null;
-                int? financeId = null;
-                string name = "";
-
-                // debited
-                if (trans.Amount < 0)
+                // add alert 
+                if (trans.Notes.StartsWith("*"))
                 {
-                    if (spendingsMonzoTransIds.Contains(trans.Id))
+                    await reminderService.AddReminder(new ReminderDTO
                     {
-                        spendingIDs.Add(trans.Id);
-                    }
-                    else
-                    {
-                        // auto sync spending categories
-                        if (trans.Notes.StartsWith("#"))
-                        {
-                            var getCats = await AutosyncWithMonzoTags(trans, categories);
-
-                            if (getCats.CatId.HasValue)
-                            {
-                                category = getCats.CatId.Value;
-
-                                if (getCats.SecondCatId.HasValue)
-                                {
-                                    secondCategory = getCats.SecondCatId.Value;
-                                }
-
-                                spendingSyncables.Add(getCats.cat1Name);
-                                name = trans.Notes.Contains('*') ? trans.Notes.Split('*').Last() : trans.Name;
-                            }
-                        }
-                        else
-                        {
-                            // auto sync finances
-                            var finance = finances.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
-
-                            if (finance != null)
-                            {
-                                name = trans.Name;
-                                financeId = finance.Id;
-                                spendingSyncables.Add(name);
-                            }
-
-                            // auto sync savings
-                            if (trans.Name.StartsWith("pot_"))
-                            {
-                                name = "Saving pot top-ups";
-                                category = (int)Categories.Savings;
-                                spendingSyncables.Add(name);
-                            }
-                        }
-
-                        if (category.HasValue || financeId.HasValue)
-                        {
-                            var dto = new SpendingDTO
-                            {
-                                Name = name,
-                                Amount = (-trans.Amount / 100m),
-                                CatId = category ?? null,
-                                SecondCatId = secondCategory,
-                                Date = trans.Created,
-                                MonzoTransId = trans.Id,
-                                FinanceId = financeId ?? null
-                            };
-
-                            await spendingService.InsertAsync(dto);
-                        }
-                    }
-
-                    // auto sync pot incomes
-                    if (!incomesMonzoTransIds.Contains(trans.Id))
-                    {
-                        if (trans.Name.StartsWith("pot_"))
-                        {
-                            var dto = new IncomeDTO
-                            {
-                                Name = "Saving pot top-ups",
-                                Amount = (-trans.Amount / 100m),
-                                SourceId = (int)Categories.SavingsPot,
-                                Date = trans.Created,
-                                MonzoTransId = trans.Id
-                            };
-
-                            incomeSyncables.Add("Saving pot top-ups");
-                            await incomeService.InsertIncomeAsync(dto);
-                        }
-                    }
+                        Notes = trans.Notes.Substring(1),
+                        Priority = Priority.High,
+                        DueDate = DateTime.UtcNow,
+                        CatId = Categories.MonzoTransaction
+                    });
                 }
-                // credited
-                else if (trans.Amount > 0)
+                else
                 {
-                    if (incomesMonzoTransIds.Contains(trans.Id))
+
+                    int? category = null;
+                    int? secondCategory = null;
+                    int? financeId = null;
+                    string name = "";
+
+                    // debited
+                    if (trans.Amount < 0)
                     {
-                        incomeIDs.Add(trans.Id);
-                    }
-                    else
-                    {
-                        // auto sync income categories
-                        if (trans.Notes.StartsWith("#"))
+                        if (spendingsMonzoTransIds.Contains(trans.Id))
                         {
-                            var getCats = await AutosyncWithMonzoTags(trans, incomeCategories);
-
-                            if (getCats.CatId.HasValue)
-                            {
-                                category = getCats.CatId.Value;
-
-                                if (getCats.SecondCatId.HasValue)
-                                {
-                                    secondCategory = getCats.SecondCatId.Value;
-                                }
-
-                                incomeSyncables.Add(getCats.cat1Name);
-                                name = trans.Notes.Contains('*') ? trans.Notes.Split('*').Last() : trans.Name;
-                            }
+                            spendingIDs.Add(trans.Id);
                         }
                         else
                         {
-                            // auto sync incomes
-                            var cat = incomeCategories.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
-
-                            if (cat != null)
+                            // auto sync spending categories
+                            if (trans.Notes.StartsWith("#"))
                             {
-                                name = trans.Name;
-                                category = cat.Id;
-                                incomeSyncables.Add(name);
+                                var getCats = await AutosyncWithMonzoTags(trans, categories);
+
+                                if (getCats.CatId.HasValue)
+                                {
+                                    category = getCats.CatId.Value;
+
+                                    if (getCats.SecondCatId.HasValue)
+                                    {
+                                        secondCategory = getCats.SecondCatId.Value;
+                                    }
+
+                                    spendingSyncables.Add(getCats.cat1Name);
+                                    name = trans.Notes.Contains('*') ? trans.Notes.Split('*').Last() : trans.Name;
+                                }
                             }
                             else
                             {
-                                await MonzoTagMismatched(trans.Name);
+                                // auto sync finances
+                                var finance = finances.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
+
+                                if (finance != null)
+                                {
+                                    name = trans.Name;
+                                    financeId = finance.Id;
+                                    spendingSyncables.Add(name);
+                                }
+
+                                // auto sync savings
+                                if (trans.Name.StartsWith("pot_"))
+                                {
+                                    name = "Saving pot top-ups";
+                                    category = (int)Categories.Savings;
+                                    spendingSyncables.Add(name);
+                                }
+                            }
+
+                            if (category.HasValue || financeId.HasValue)
+                            {
+                                var dto = new SpendingDTO
+                                {
+                                    Name = name,
+                                    Amount = (-trans.Amount / 100m),
+                                    CatId = category ?? null,
+                                    SecondCatId = secondCategory,
+                                    Date = trans.Created,
+                                    MonzoTransId = trans.Id,
+                                    FinanceId = financeId ?? null
+                                };
+
+                                await spendingService.InsertAsync(dto);
                             }
                         }
 
-                        if (category.HasValue)
+                        // auto sync pot incomes
+                        if (!incomesMonzoTransIds.Contains(trans.Id))
                         {
-                            var dto = new IncomeDTO
+                            if (trans.Name.StartsWith("pot_"))
                             {
-                                Name = name,
-                                Amount = trans.Amount / 100m,
-                                SourceId = category.Value,
-                                Date = trans.Created,
-                                MonzoTransId = trans.Id
-                            };
+                                var dto = new IncomeDTO
+                                {
+                                    Name = "Saving pot top-ups",
+                                    Amount = (-trans.Amount / 100m),
+                                    SourceId = (int)Categories.SavingsPot,
+                                    Date = trans.Created,
+                                    MonzoTransId = trans.Id
+                                };
 
-                            await incomeService.InsertIncomeAsync(dto);
+                                incomeSyncables.Add("Saving pot top-ups");
+                                await incomeService.InsertIncomeAsync(dto);
+                            }
+                        }
+                    }
+                    // credited
+                    else if (trans.Amount > 0)
+                    {
+                        if (incomesMonzoTransIds.Contains(trans.Id))
+                        {
+                            incomeIDs.Add(trans.Id);
+                        }
+                        else
+                        {
+                            // auto sync income categories
+                            if (trans.Notes.StartsWith("#"))
+                            {
+                                var getCats = await AutosyncWithMonzoTags(trans, incomeCategories);
+
+                                if (getCats.CatId.HasValue)
+                                {
+                                    category = getCats.CatId.Value;
+
+                                    if (getCats.SecondCatId.HasValue)
+                                    {
+                                        secondCategory = getCats.SecondCatId.Value;
+                                    }
+
+                                    incomeSyncables.Add(getCats.cat1Name);
+                                    name = trans.Notes.Contains('*') ? trans.Notes.Split('*').Last() : trans.Name;
+                                }
+                            }
+                            else
+                            {
+                                // auto sync incomes
+                                var cat = incomeCategories.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
+
+                                if (cat != null)
+                                {
+                                    name = trans.Name;
+                                    category = cat.Id;
+                                    incomeSyncables.Add(name);
+                                }
+                                else
+                                {
+                                    await MonzoTagMismatched(trans.Name);
+                                }
+                            }
+
+                            if (category.HasValue)
+                            {
+                                var dto = new IncomeDTO
+                                {
+                                    Name = name,
+                                    Amount = trans.Amount / 100m,
+                                    SourceId = category.Value,
+                                    Date = trans.Created,
+                                    MonzoTransId = trans.Id
+                                };
+
+                                await incomeService.InsertIncomeAsync(dto);
+                            }
                         }
                     }
                 }
@@ -388,6 +400,11 @@ namespace MyFinances.Service
         public async Task InsertMonzoAccountSummary(Monzo accountSummary)
         {
             await monzoRepository.InsertMonzoAccountSummary(accountSummary);
+        }
+
+        public async Task UpdateCashBalanceAsync(decimal cashBalance)
+        {
+            await settingRepository.UpdateCashBalanceAsync(cashBalance);
         }
     }
 }

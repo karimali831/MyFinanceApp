@@ -174,13 +174,10 @@ export default class Notifications extends React.Component<AllProps, IOwnState> 
                         <div className="card-body">
                         <h5 className="card-title">Summary Info</h5>
                             <p className="card-text">
-                                CWTL Upcoming Calculated Pay: {notifications.summary.cwtlCalculatedPay} <br />
-                                CWTL Routes Worked This Week: {notifications.summary.cwtlRoutesWorked} <br />
-                                CWTL Van Total Damages Paid: {notifications.summary.cwtlTotalVanDamagesPaid} 
+                                Estimated balance: {notifications.summary.estimatedBalance} <br />
+                                Remaining cash: {notifications.summary.remainingCash} <br />
+                                Accrued savings: {notifications.summary.accruedSavings} 
                             </p>
-                            <div className="card-footer">
-							<small className="text-muted">Estimated remaining balance: {notifications.summary.estimatedAvailableCredit}</small>
-                            </div>
                         </div>
                     </div>
                 </div>

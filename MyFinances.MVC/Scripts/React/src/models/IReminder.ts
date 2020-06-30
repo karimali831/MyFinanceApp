@@ -27,8 +27,7 @@ export interface IReminderNotification {
 }
 
 export interface ISummary {
-    cwtlCalculatedPay: string,
-    cwtlRoutesWorked: number,
-    cwtlTotalVanDamagesPaid: string,
-    estimatedAvailableCredit: string
+    estimatedBalance: string,
+    remainingCash: string,
+    accruedSavings: string
 }

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace MyFinances.Service
 {
@@ -157,30 +158,24 @@ namespace MyFinances.Service
 
             var firstCats = spendingsSummary.Where(x => x.Cat2 == null);
             var data = firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
-
+   
             foreach (var item in data)
             {
                 if (item.Cat2 == null)
                 {
-                    var averaged = 
-                        Utils.ChartsHeaderTitle(
-                            await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.CatId, isSecondCat: false, isFinance: item.IsFinance),
-                            ChartHeaderTitleType.Monthly
-                        );
-
-                    item.Average = string.IsNullOrEmpty(averaged) ? Utils.ToCurrency(item.Total) : averaged;
+                    item.Average = Utils.ShowAverage(dateFilter) ?
+                        Utils.ChartsHeaderTitle(await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.CatId, isSecondCat: false, isFinance: item.IsFinance), ChartHeaderTitleType.Monthly) :
+                        Utils.ToCurrency(item.Total);
                 }
                 else
                 {
-                    var averaged = 
-                        Utils.ChartsHeaderTitle(
-                            await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.SecondCatId, isSecondCat: true, isFinance: false),
-                            ChartHeaderTitleType.Monthly
-                        );
 
                     foreach (var x in item.SecondCats)
                     {
-                        item.Average = string.IsNullOrEmpty(averaged) ? Utils.ToCurrency(item.Total) : averaged;
+
+                        item.Average = Utils.ShowAverage(dateFilter) ?
+                            Utils.ChartsHeaderTitle(await GetSpendingsByCategoryAndMonthAsync(dateFilter, item.SecondCatId, isSecondCat: true, isFinance: false), ChartHeaderTitleType.Monthly) :
+                            Utils.ToCurrency(item.Total);
                     }
                 }
             }

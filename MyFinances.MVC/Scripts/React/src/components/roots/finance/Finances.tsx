@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { api } from '../../../Api/Api';
 import { Load } from '../../base/Loader';
-import { priceFormatter, intToOrdinalNumberString, paymentStatus, cleanText, boolHighlight } from '../../utils/Utils';
+import { priceFormatter, intToOrdinalNumberString, paymentStatus, cleanText, boolHighlight, spendingsForFinance } from '../../utils/Utils';
 import { IFinance } from '../../../models/IFinance';
 import Table from '../../base/CommonTable';
 import { OverrideDueDate } from '../../../enums/OverrideDueDate';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
+import { Link } from 'react-router-dom';
 
 interface IOwnProps {
 }
@@ -43,7 +44,8 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             hidden: true
           }, {
             dataField: 'name',
-            text: 'Name'
+            text: 'Name',
+            formatter: this.spendingsForFinance
           }, {
             dataField: 'avgMonthlyAmount',
             text: 'Avg Monthly Cost',
@@ -130,6 +132,10 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
 
     private paymentStatus = (cell: any, row: any) => {
         return paymentStatus(cell, row['daysUntilDue'])
+    }
+
+    private spendingsForFinance = (cell: any, row: any) => {
+        return <Link to={spendingsForFinance(row['id'])}>{row['name']}</Link>
     }
 
     private overrideDueDate = (cell: any, row: any) => {

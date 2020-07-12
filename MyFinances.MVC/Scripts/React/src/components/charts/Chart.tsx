@@ -166,7 +166,7 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 				}
 				{
 					this.props.headerText !== null ?
-						<h2><span className="label label-danger">{this.props.headerText}</span></h2>
+						<h3><span className="label label-danger">{this.props.headerText}</span></h3>
 					: null
 				}
 				<div style={{width: "100%", height: this.props.height}}>

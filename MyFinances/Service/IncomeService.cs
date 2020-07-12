@@ -104,25 +104,17 @@ namespace MyFinances.Service
             {
                 if (item.Cat2 == null)
                 {
-                    var averaged =
-                        Utils.ChartsHeaderTitle(
-                            await GetIncomesByCategoryAndMonthAsync(dateFilter, item.CatId, isSecondCat: false),
-                            ChartHeaderTitleType.Monthly
-                        );
-
-                    item.Average = string.IsNullOrEmpty(averaged) ? Utils.ToCurrency(item.Total) : averaged;
+                    item.Average = Utils.ShowAverage(dateFilter) ?
+                        Utils.ChartsHeaderTitle(await GetIncomesByCategoryAndMonthAsync(dateFilter, item.CatId, isSecondCat: false), ChartHeaderTitleType.Monthly) :
+                        Utils.ToCurrency(item.Total);
                 }
                 else
                 {
                     foreach (var x in item.SecondCats)
                     {
-                        var averaged =
-                            Utils.ChartsHeaderTitle(
-                                await GetIncomesByCategoryAndMonthAsync(dateFilter, item.SecondCatId, isSecondCat: true),
-                                ChartHeaderTitleType.Monthly
-                            );
-
-                        item.Average = string.IsNullOrEmpty(averaged) ? Utils.ToCurrency(item.Total) : averaged;
+                        item.Average = Utils.ShowAverage(dateFilter) ?
+                            Utils.ChartsHeaderTitle(await GetIncomesByCategoryAndMonthAsync(dateFilter, item.SecondCatId, isSecondCat: true), ChartHeaderTitleType.Monthly) :
+                            Utils.ToCurrency(item.Total);
                     }
                 }
             }

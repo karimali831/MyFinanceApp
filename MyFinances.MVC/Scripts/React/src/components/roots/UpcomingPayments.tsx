@@ -2,9 +2,10 @@ import * as React from 'react';
 import { api } from '../../Api/Api'
 import { faArrowDown, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { paymentStatus } from '../utils/Utils';
+import { paymentStatus, spendingsForFinance } from '../utils/Utils';
 import { IFinance } from '../../models/IFinance';
 import { Load } from '../base/Loader';
+import { Link } from 'react-router-dom';
 
 
 interface IOwnProps {
@@ -47,7 +48,7 @@ export default class UpcomingPayments extends React.Component<IOwnProps, IOwnSta
                         <tr key={p.id}>
                             <th scope="row">
                                 <FontAwesomeIcon icon={p.manualPayment ? faExclamationCircle : faArrowDown} />  
-                                 {p.name} - £{p.avgMonthlyAmount}
+                                <Link to={spendingsForFinance(p.id)}>{p.name}</Link> - £{p.avgMonthlyAmount}
                             </th>
                             <td>
                                 {paymentStatus(p.paymentStatus, p.daysUntilDue)}

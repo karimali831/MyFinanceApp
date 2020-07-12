@@ -98,7 +98,7 @@ export const rootUrl: string = process.env.NODE_ENV === "development" ? "http://
 export const appUrl: string = "http://localhost:3000";
 export const weekSummaryUrl = (weekNo: number) => `${rootUrl}/cnw/weeksummary/${weekNo}`;
 export const routeSummaryUrl = (id: string) => `${rootUrl}/cnw/routesummary/${id}`;
-
+export const spendingsForFinance = (id: number) => `/spendings/${id}/0/1/true/false/null/null`;
 export const spendingSummaryChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/SpendingsSummaryChart?frequency=${frequency}&interval=${interval}`;
 export const incomeSummaryChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/IncomesSummaryChart?frequency=${frequency}&interval=${interval}`;
 export const incomeExpenseChartUrl = (frequency: string, interval: number) => `${rootUrl}/finances/IncomeExpenseChart?frequency=${frequency}&interval=${interval}`;

@@ -150,7 +150,7 @@ namespace MyFinances.Website.Controllers
             using (var client = new MonzoClient(accessToken))
             {
                 var accounts = await client.GetAccountsAsync();
-                var pots = await client.GetPotsAsync();
+                //var pots = await client.GetPotsAsync();
                 var balance = await client.GetBalanceAsync(accounts[0].Id);
                 var savingsBalance = await client.GetBalanceAsync(accounts[0].Id);
                 var getTransactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
@@ -178,7 +178,8 @@ namespace MyFinances.Website.Controllers
                         Logo = trans.Merchant?.Logo,
                         Category = trans.Category,
                         Notes = trans.Notes,
-                        Settled = settled
+                        Settled = settled,
+                        DeclineReason = trans.DeclineReason
                     });
                 }
 
@@ -247,7 +248,7 @@ namespace MyFinances.Website.Controllers
             }
 
             var potlessTrans = data.Transactions
-                .Where(x => (!showPotAndTags && !x.Name.StartsWith("pot_")) || showPotAndTags)
+                .Where(x => string.IsNullOrEmpty(x.DeclineReason) && (!showPotAndTags && !x.Name.StartsWith("pot_")) || showPotAndTags)
                 .ToList();
 
             foreach (var tran in potlessTrans)
@@ -267,9 +268,10 @@ namespace MyFinances.Website.Controllers
 
             foreach (var tran in potlessTrans.Where(x => !string.IsNullOrEmpty(x.Settled)))
             {
-                if (tran.Category.Equals("cash", StringComparison.InvariantCultureIgnoreCase))
+                if (tran.Category.Equals("cash", StringComparison.InvariantCultureIgnoreCase) && !settledTransactions.Contains(tran))
                 {
                     await monzoService.UpdateCashBalanceAsync(-tran.Amount);
+                    settledTransactions.Add(tran);
                 }
 
                 var sync = (!viewModel.SyncedTransactions.SelectMany(x => x.Value.Transactions).Contains(tran.Id) && !tran.Name.StartsWith("pot_") && tran.Amount != 0 && !string.IsNullOrEmpty(tran.Settled) && tran.Notes != "!") ? true : false;

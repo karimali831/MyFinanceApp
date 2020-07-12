@@ -143,7 +143,7 @@ namespace MyFinances.Helpers
                 {
                     case ChartHeaderTitleType.Monthly:
                         return $"Averaged monthly: {ToCurrency(averagedResults.Sum(x => x.Total) / months)}";
-
+  
                     case ChartHeaderTitleType.Daily:
                         return $"Averaged daily: {ToCurrency(averagedResults.Sum(x => x.Total / months / x.DaysInMonth))}";
 
@@ -161,6 +161,34 @@ namespace MyFinances.Helpers
                 .Select(x => x.MonthName.Substring(0, 3))
                 .Distinct()
                 .ToArray();
+        }
+
+        public static bool ShowAverage(DateFilter filter)
+        {
+            if (!filter.Frequency.HasValue)
+            {
+                return false;
+            }
+
+            int minMonths = 2;
+
+            if (filter.Frequency == DateFrequency.DateRange && filter.FromDateRange.HasValue && filter.ToDateRange.HasValue)
+            {
+                var monthsBetweenDateRanges = ((filter.ToDateRange?.Year - filter.FromDateRange?.Year) * 12) + filter.ToDateRange?.Month - filter.FromDateRange?.Month;
+                return monthsBetweenDateRanges > minMonths ? true : false; ;
+
+            }
+            else if (
+                filter.Frequency == DateFrequency.AllTime ||
+                (filter.Frequency == DateFrequency.CurrentYear && DateTime.Now.Month > minMonths) ||
+                (filter.Frequency == DateFrequency.LastXMonths && filter.Interval.HasValue && filter.Interval.Value > minMonths) ||
+                filter.Frequency == DateFrequency.PreviousYear) {
+                    return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static string FilterDateSql(DateFilter dateFilter)

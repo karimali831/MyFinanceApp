@@ -15,6 +15,7 @@ namespace MyFinances.ViewModels
         public decimal Amount { get; set; }
         public string Notes { get; set; }
         public string Settled { get; set; }
+        public string DeclineReason { get; set; }
         public DateTime Created { get; set; }
     }
 }

@@ -23,10 +23,12 @@ namespace MyFinances.Website.Controllers.API
     public class FinancesController : ApiController
     {
         private readonly IFinanceService financeService;
+        private readonly ISpendingService spendingService;
 
-        public FinancesController( IFinanceService financeService)
+        public FinancesController(IFinanceService financeService, ISpendingService spendingService)
         {
             this.financeService = financeService ?? throw new ArgumentNullException(nameof(financeService));
+            this.spendingService = spendingService ?? throw new ArgumentNullException(nameof(spendingService));
         }
 
         [Route("{resyncNextDueDates}/{upcomingPayments}")]
@@ -39,6 +41,12 @@ namespace MyFinances.Website.Controllers.API
             {
                 finances = finances.Where(x => (x.PaymentStatus != PaymentStatus.Ended && x.NextDueDate <= DateTime.UtcNow.Date.AddDays(7)) || x.ManualPayment);
             }
+
+            var currentMonth = Enum.TryParse(DateTime.UtcNow.Date.ToString("MMMM", CultureInfo.InvariantCulture), out DateFrequency thisMonth);
+            var spentThisMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = thisMonth, Interval = 1 });
+
+            var lastMonth = Enum.TryParse(DateTime.UtcNow.Date.AddMonths(-1).ToString("MMMM", CultureInfo.InvariantCulture), out DateFrequency previousMonth);
+            var spentLastMonth = await spendingService.GetSpendingSummary(new DateFilter { Frequency = previousMonth, Interval = 1 });
 
             return Request.CreateResponse(HttpStatusCode.OK, new {
                 Finances =
@@ -57,7 +65,12 @@ namespace MyFinances.Website.Controllers.API
                         x.MonzoTag,
                         EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
                         NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null
-                    })
+                    }),
+                TotalAvgCost = finances
+                    .Where(x => x.EndDate == null || DateTime.UtcNow.Date < x.EndDate)
+                    .Sum(x => x.AvgMonthlyAmount),
+                SpentThisMonth = spentThisMonth.Where(x => x.IsFinance == true).Sum(x => x.Total),
+                SpentLastMonth = spentLastMonth.Where(x => x.IsFinance == true).Sum(x => x.Total)
             });
         }
 

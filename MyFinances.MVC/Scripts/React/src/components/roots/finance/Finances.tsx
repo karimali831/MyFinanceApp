@@ -7,12 +7,17 @@ import Table from '../../base/CommonTable';
 import { OverrideDueDate } from '../../../enums/OverrideDueDate';
 import { ITableProps, ITableOptions } from 'react-bootstrap-table-next';
 import { Link } from 'react-router-dom';
+import { faSync } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IOwnProps {
 }
 
 export interface IOwnState {
     finances: IFinance[],
+    totalAvgCost: number | undefined,
+    spentThisMonth: number | undefined,
+    spentLastMonth: number | undefined,
     loading: boolean,
     showEdit: number | undefined
 }
@@ -25,6 +30,9 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
         this.state = { 
             loading: true,
             finances: [],
+            totalAvgCost: undefined,
+            spentThisMonth: undefined,
+            spentLastMonth: undefined,
             showEdit: undefined
         };
     }
@@ -102,13 +110,30 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
 
         return (
             <div>
+                <div className="card">
+									<div className="card-body">
+									<h5 className="card-title">Finance Overview</h5>
+										<p className="card-text">
+                      Total average monthly cost: £{this.state.totalAvgCost}<br />
+                      Spent last month: £{this.state.spentLastMonth} <br />
+                      Spent this month: £{this.state.spentThisMonth}
+										</p>
+									</div>
+									<div className="card-footer">
+									<small className="text-muted">
+                    <a onClick={() => this.loadFinances(true)}>
+                      <FontAwesomeIcon icon={faSync} /> 
+                      Re-sync next due dates
+                    </a>
+                  </small>
+									</div>
+								</div>
                 <Table 
                     table={this.tableName}
                     data={this.state.finances}
                     columns={columns}
                     options={options}
                 /> 
-                <a onClick={() => this.loadFinances(true)}>Re-sync next due dates</a>
             </div>
         )
     }

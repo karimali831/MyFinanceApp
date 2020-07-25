@@ -142,7 +142,7 @@ namespace MyFinances.Service
 
             var tranNotesCategories = trans.Notes.Split('#');
             var tag1 = Utils.GetUntilOrEmpty(tranNotesCategories[1]);
-            var cat1 = categories.FirstOrDefault(x => x.MonzoTag.Equals(tag1, StringComparison.OrdinalIgnoreCase));
+            var cat1 = categories.FirstOrDefault(x => x.MonzoTag != null && x.MonzoTag.Equals(tag1, StringComparison.OrdinalIgnoreCase));
 
             if (cat1 != null)
             {
@@ -153,7 +153,7 @@ namespace MyFinances.Service
                 {
                     var tag2 = Utils.GetUntilOrEmpty(tranNotesCategories[2]);
                     var secondCategories = await baseService.GetAllCategories(cat1.SecondTypeId, catsWithSubs: false);
-                    var cat2 = secondCategories.FirstOrDefault(x => x.MonzoTag.Equals(tag2, StringComparison.OrdinalIgnoreCase));
+                    var cat2 = secondCategories.FirstOrDefault(x => x.MonzoTag != null && x.MonzoTag.Equals(tag2, StringComparison.OrdinalIgnoreCase));
 
                     if (cat2 != null)
                     {
@@ -246,7 +246,7 @@ namespace MyFinances.Service
                             else
                             {
                                 // auto sync finances
-                                var finance = finances.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
+                                var finance = finances.FirstOrDefault(x => x.MonzoTag != null && x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
 
                                 if (finance != null)
                                 {
@@ -330,7 +330,7 @@ namespace MyFinances.Service
                             else
                             {
                                 // auto sync incomes
-                                var cat = incomeCategories.FirstOrDefault(x => x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
+                                var cat = incomeCategories.FirstOrDefault(x => x.MonzoTag != null && x.MonzoTag.Equals(trans.Description, StringComparison.OrdinalIgnoreCase));
 
                                 if (cat != null)
                                 {

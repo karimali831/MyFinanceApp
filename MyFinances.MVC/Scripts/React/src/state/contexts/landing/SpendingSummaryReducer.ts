@@ -14,6 +14,7 @@ const SpendingSummaryReducer: Reducer<ISpendingSummaryState, LandingSummaryActio
                     ...state,
                     ...{
                         spendingSummary: action.spendingSummary, 
+                        spendingSummaryOverview: action.spendingSummaryOverview,
                         fuelIn: action.fuelIn, 
                         totalSpent: action.totalSpent,
                         loading: false

@@ -14,8 +14,11 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th width="75%" scope="col">
+                <th width="65%" scope="col">
                     Name
+                </th>
+                <th scope="col">
+                    Super Category
                 </th>
                 <th scope="col">
                     Monzo Tag
@@ -33,6 +36,9 @@
                         @cat.Name <span class="label label-primary">@cat.Id</span>
                     </td>
                     <td>
+                        <i class='glyphicon glyphicon-@(!string.IsNullOrEmpty(cat.SuperCategory) ? "star" : "")'></i> @(string.IsNullOrEmpty(cat.SuperCategory) ? "-" : cat.SuperCategory)
+                    </td>
+                    <td>
                         <i class='glyphicon glyphicon-@hasSecondCategories'></i>
                         @(string.IsNullOrEmpty(cat.MonzoTag) ? "-" : cat.MonzoTag)
                     </td>
@@ -43,6 +49,9 @@
                         <td style="text-indent: 1em;">
                             <i class='glyphicon glyphicon-@(secondCat.Disabled ? "remove" : "tag")'></i>
                             @secondCat.Name <span class="label label-info">@secondCat.Id</span>
+                        </td>
+                        <td>
+                            <i class='glyphicon glyphicon-@(!string.IsNullOrEmpty(secondCat.SuperCategory) ? "star" : "")'></i> @(string.IsNullOrEmpty(secondCat.SuperCategory) ? "-" : secondCat.SuperCategory)
                         </td>
                         <td style="text-indent: 1em;">
                             <i class='glyphicon glyphicon-tag'></i>

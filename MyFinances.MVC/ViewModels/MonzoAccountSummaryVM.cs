@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Monzo;
 using MyFinances.Enums;
-using MyFinances.ViewModels;
+using MyFinances.Models;
+
 
 namespace MyFinances.Website.ViewModels
 {

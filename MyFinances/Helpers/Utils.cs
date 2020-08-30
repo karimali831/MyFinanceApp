@@ -163,6 +163,59 @@ namespace MyFinances.Helpers
                 .ToArray();
         }
 
+        public static int? MonthsBetweenRanges(DateFilter filter)
+        {
+            int? fromMonth = null;
+            int? toMonth = null;
+            int? fromYear = null;
+            int? toYear = null;
+
+            switch (filter.Frequency)
+            {
+                case DateFrequency.AllTime:
+                    fromMonth = 08;
+                    toMonth = DateTime.Now.Month;
+                    fromYear = 2019;
+                    toYear = DateTime.Now.Year;
+                    break;
+
+                case DateFrequency.CurrentYear:
+                    fromMonth = 01;
+                    toMonth = DateTime.Now.Month;
+                    fromYear = DateTime.Now.Year;
+                    toYear = DateTime.Now.Year;
+                    break;
+
+                case DateFrequency.PreviousYear:
+                    fromMonth = 01;
+                    toMonth = 12;
+                    fromYear = DateTime.Now.Year - 1;
+                    toYear = DateTime.Now.Year - 1;
+                    break;
+
+                case DateFrequency.DateRange:
+                    fromMonth = filter.FromDateRange?.Month;
+                    toMonth = filter.ToDateRange?.Month;
+                    fromYear = filter.FromDateRange?.Year;
+                    toYear = filter.ToDateRange?.Year;
+                    break;
+
+                case DateFrequency.LastXMonths:
+                    fromMonth = DateTime.Now.AddMonths(-filter.Interval ?? -1).Month;
+                    toMonth = DateTime.Now.Month;
+                    fromYear = DateTime.Now.AddMonths(-filter.Interval ?? -1).Year;
+                    toYear = DateTime.UtcNow.Year;
+                    break;
+            }
+
+            if (fromMonth.HasValue && toMonth.HasValue && fromYear.HasValue && toYear.HasValue)
+            {
+                return ((toYear - fromYear) * 12) + toMonth - fromMonth;
+            }
+
+            return null;
+        }  
+
         public static bool ShowAverage(DateFilter filter)
         {
             if (!filter.Frequency.HasValue)
@@ -174,8 +227,7 @@ namespace MyFinances.Helpers
 
             if (filter.Frequency == DateFrequency.DateRange && filter.FromDateRange.HasValue && filter.ToDateRange.HasValue)
             {
-                var monthsBetweenDateRanges = ((filter.ToDateRange?.Year - filter.FromDateRange?.Year) * 12) + filter.ToDateRange?.Month - filter.FromDateRange?.Month;
-                return monthsBetweenDateRanges > minMonths ? true : false; ;
+                return MonthsBetweenRanges(filter).HasValue && MonthsBetweenRanges(filter).Value > minMonths ? true : false; 
 
             }
             else if (

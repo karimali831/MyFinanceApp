@@ -5,6 +5,7 @@ export interface ICategory {
     typeId: number,
     secondTypeId: number,
     disabled: boolean,
+    superCatId: number,
     monzoTag: string
 }
 

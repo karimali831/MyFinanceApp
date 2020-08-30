@@ -28,5 +28,8 @@ export interface ISpendingSummary
     cat2: string,
     secondCats: ISpendingSummary[],
     total: number,
-    average: string
+    average: string,
+    superCatId1: number,
+    superCatId2: number,
+    isSpecialCat: boolean
 }

@@ -6,5 +6,6 @@ export interface IBaseModel<T> {
     cat2: string,
     secondCats: T[],
     secondTypeId?: number,
-    total: number
+    total: number,
+    isSpecialCat: boolean
 }

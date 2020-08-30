@@ -18,5 +18,15 @@ namespace MyFinances.DTOs
         public int? SecondTypeId { get; set; }
         public decimal Total { get; set; }
         public string Average { get; set; }
+        public int? SuperCatId1 { get; set; }
+        public int? SuperCatId2 { get; set; }
+        public bool IsSpecialCat { get; set; } = false;
+    }
+
+    public class SpecialCatsSpendingSummary
+    {
+        public int SuperCatId { get; set; }
+        public string SuperCategory { get; set; }
+        public decimal Total { get; set; }
     }
 }

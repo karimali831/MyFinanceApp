@@ -5,6 +5,7 @@ import { DateFrequency } from 'src/enums/DateFrequency';
 
 export default interface ISpendingSummaryState {
     spendingSummary: ISpendingSummary[],
+    spendingSummaryOverview: ISpendingSummary[],
     fuelIn: number,
     totalSpent: number,
     loading: boolean,
@@ -26,6 +27,7 @@ export class SpendingSummaryState {
 
     public static readonly intialState = {
         spendingSummary: [],
+        spendingSummaryOverview: [],
         fuelIn: 0,
         totalSpent: 0,
         loading: false,

@@ -104,7 +104,7 @@ namespace MyFinances.Service
         {
             await incomeService.MissedIncomeEntriesAsync();
             //await spendingService.MissedCreditCardInterestEntriesAsync();
-            await cnwService.MissedCNWPaymentEntriesAsync();
+            //await cnwService.MissedCNWPaymentEntriesAsync();
 
             var finances = (await GetFinances(resyncNextDueDates: false)).Where(x => x.PaymentStatus != PaymentStatus.Ended);
             var upcomingPayments = upcomingPaymentRemindersAsync(finances);

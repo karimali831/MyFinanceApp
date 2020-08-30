@@ -1,4 +1,5 @@
-﻿using MyFinances.Enums;
+﻿using DFM.Utils;
+using MyFinances.Enums;
 using System.Data.Entity.ModelConfiguration;
 
 namespace MyFinances.Model
@@ -10,6 +11,9 @@ namespace MyFinances.Model
         public CategoryType TypeId { get; set; }
         public CategoryType? SecondTypeId { get; set; }
         public bool Disabled { get; set; }
+        public int? SuperCatId { get; set; }
+        [DbIgnore]
+        public string SuperCategory { get; set; }
         public string MonzoTag { get; set; }
     }
 

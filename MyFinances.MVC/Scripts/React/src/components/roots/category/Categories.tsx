@@ -40,7 +40,8 @@ export default class Categories extends React.Component<IOwnProps, IOwnState> {
         const columns: ITableProps[] = [{
             dataField: 'id',
             text: '#',
-            hidden: true
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
           }, {
             dataField: 'name',
             text: 'Name'
@@ -53,6 +54,11 @@ export default class Categories extends React.Component<IOwnProps, IOwnState> {
           }, {
             dataField: 'disabled',
             text: 'Disabled',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
+            dataField: 'superCatId',
+            text: 'Super CatId',
             headerClasses: "hidden-xs",
             classes: "hidden-xs"
           }, {

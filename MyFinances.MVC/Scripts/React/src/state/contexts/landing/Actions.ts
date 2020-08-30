@@ -34,12 +34,13 @@ export class LoadSpendingSummaryAction {
 }
 
 export class LoadSpendingSummarySuccessAction {
-    public static readonly creator = (spendingSummary: ISpendingSummary[], fuelIn: number, totalSpent: number) => new LoadSpendingSummarySuccessAction(spendingSummary, fuelIn, totalSpent);
+    public static readonly creator = (spendingSummary: ISpendingSummary[], spendingSummaryOverview: ISpendingSummary[], fuelIn: number, totalSpent: number) => new LoadSpendingSummarySuccessAction(spendingSummary, spendingSummaryOverview, fuelIn, totalSpent);
 
     public readonly type = LandingSummaryActionTypes.LoadSpendingSummarySuccess;
 
     constructor(
         public spendingSummary: ISpendingSummary[], 
+        public spendingSummaryOverview: ISpendingSummary[],
         public fuelIn: number, 
         public totalSpent: number
     ) { }

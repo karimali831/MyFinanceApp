@@ -23,6 +23,9 @@ namespace MyFinances.Repository
         Task InsertAsync(SpendingDTO dto);
         Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFilter dateFilter);
         Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance);
+        Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByMonthAsync(DateFilter dateFilter);
+        Task<IEnumerable<SpecialCatsSpendingSummary>> GetSpecialCatsSpendingsSummaryAsync(DateFilter dateFilter);
+        Task<IEnumerable<string>> RecentMonzoSyncedTranIds(int max);
     }
 
     public class SpendingRepository : ISpendingRepository
@@ -70,9 +73,41 @@ namespace MyFinances.Repository
             }
         }
 
+        public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByMonthAsync(DateFilter dateFilter)
+        {
+            string sqlTxt = $@"
+                SELECT 
+	                CONVERT(CHAR(7), Date, 120) as YearMonth, 
+	                DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
+                    CASE WHEN c1.Id IS NULL THEN f.Id ELSE c1.ID END AS CatId,
+                    c2.Id as SecondCatId,
+	                CASE WHEN c1.Id IS NULL THEN 1 ELSE 0 END AS IsFinance
+                FROM 
+                    Spendings s
+                LEFT JOIN Categories c1 
+                    ON c1.Id = s.CatId
+                LEFT JOIN Categories c2
+                    ON c2.Id = s.SecondCatId
+                LEFT JOIN Finances f 
+                    ON f.Id = s.FinanceId
+                WHERE 
+                     {Utils.FilterDateSql(dateFilter)} 
+                GROUP BY 
+                    CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
+                    c1.Id, c2.Id, F.Id
+                ORDER BY 
+                    YearMonth, Total DESC";
+            
+
+            using var sql = dbConnectionFactory();
+            return (await sql.QueryAsync<MonthComparisonChartVM>(sqlTxt)).ToArray();
+        }
+
+
         public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance)
         {
-            string sqlTxt = "";
+            string sqlTxt;
+
             if (isSecondCat)
             {
                 sqlTxt = $@"
@@ -80,7 +115,9 @@ namespace MyFinances.Repository
 	                    CONVERT(CHAR(7), Date, 120) as YearMonth, 
 	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
                         c1.Name AS Category,
-                        c2.Name as SecondCategory
+                        c2.Name as SecondCategory,
+                        c1.SuperCatId AS SuperCatId1,
+						c2.SuperCatId AS SuperCatId2
                     FROM 
                         {TABLE} s
 				    LEFT JOIN Categories c1 
@@ -93,7 +130,7 @@ namespace MyFinances.Repository
                         s.SecondCatId = @CatId
                     GROUP BY 
                         CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
-                        c1.Name, c2.Name
+                        c1.Name, c2.Name, c1.SuperCatId, c2.SuperCatId
                     ORDER BY 
                         YearMonth";
             }
@@ -106,7 +143,8 @@ namespace MyFinances.Repository
 	                    CONVERT(CHAR(7), Date, 120) as YearMonth, 
 	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
                         CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
-                        CASE WHEN c1.Name IS NULL THEN 1 ELSE 0 END AS IsFinance
+                        CASE WHEN c1.Name IS NULL THEN 1 ELSE 0 END AS IsFinance,
+                        c1.SuperCatId AS SuperCatId1
                     FROM 
                         {TABLE} s
 				    LEFT JOIN Categories c1 
@@ -119,13 +157,47 @@ namespace MyFinances.Repository
                         {field} = @CatId
                     GROUP BY 
                         CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
-                        c1.Name, F.Name
+                        c1.Name, F.Name, c1.SuperCatId
                     ORDER BY 
                         YearMonth";
             }
 
             using var sql = dbConnectionFactory();
             return (await sql.QueryAsync<MonthComparisonChartVM>(sqlTxt, new { CatId = catId })).ToArray();
+        }
+
+        public async Task<IEnumerable<SpecialCatsSpendingSummary>> GetSpecialCatsSpendingsSummaryAsync(DateFilter dateFilter)
+        {
+            string sqlTxt = $@"
+                WITH SpecialCats AS  
+                (
+                    SELECT c.SuperCatId, c2.Name AS SuperCategory, SUM(s.Amount) as Total
+	                FROM Spendings as s
+	                LEFT JOIN Categories c ON c.Id = s.CatId
+					LEFT JOIN Categories c2 ON c.SuperCatId = c2.Id
+	                WHERE {Utils.FilterDateSql(dateFilter)} AND c.SuperCatId is not null
+	                GROUP BY c.SuperCatId, c2.Name
+
+                    UNION
+
+                    SELECT c.SuperCatId, c2.Name, SUM(s.Amount)
+	                FROM {TABLE} as s
+	                LEFT JOIN Categories c ON c.Id = s.SecondCatId
+					LEFT JOIN Categories c2 ON c.SuperCatId = c2.Id
+	                WHERE {Utils.FilterDateSql(dateFilter)} AND c.SuperCatId is not null
+	                GROUP BY c.SuperCatId, c2.Name
+
+                ) 
+                SELECT SuperCatId, SuperCategory, SUM(Total) AS Total
+                FROM SpecialCats 
+                GROUP BY SuperCatId, SuperCategory
+                ORDER BY Total DESC";
+
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<SpecialCatsSpendingSummary>(sqlTxt)).ToArray();
+
+            }
         }
 
         public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingsSummaryAsync(DateFilter dateFilter)
@@ -138,6 +210,8 @@ namespace MyFinances.Repository
                     CASE WHEN s.CatId IS NULL THEN 1 ELSE 0 END AS IsFinance,
 	                c2.Name AS Cat2, 
                     c1.SecondTypeId,
+                    c1.SuperCatId as SuperCatId1,
+					c2.SuperCatId as SuperCatId2,
                     SUM(s.Amount) as Total
                 FROM 
 	                {TABLE} as s
@@ -150,7 +224,7 @@ namespace MyFinances.Repository
                 WHERE 
                     {Utils.FilterDateSql(dateFilter)}
                 GROUP BY 
-                    s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name, c1.SecondTypeId
+                    s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name, c1.SecondTypeId, c1.SuperCatId, c2.SuperCatId
                 ORDER BY 
                     Total DESC";
 
@@ -240,6 +314,23 @@ namespace MyFinances.Repository
             using (var sql = dbConnectionFactory())
             {
                 return (await sql.QueryAsync<(int Year, int Month)>(sqlTxt, new { Card = $"%{card}%" })).ToArray();
+
+            }
+        }
+
+        public async Task<IEnumerable<string>> RecentMonzoSyncedTranIds(int max)
+        {
+            string sqlTxt = $@"
+                ;WITH DistinctIds (monzoTransId, date) AS (
+                    select distinct top(@max) monzoTransId, date from spendings
+                    where MonzoTransId is not null
+                )
+                SELECT MonzoTransId from DistinctIds
+                order by Date DESC";
+
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<string>(sqlTxt, new { max })).ToArray();
 
             }
         }

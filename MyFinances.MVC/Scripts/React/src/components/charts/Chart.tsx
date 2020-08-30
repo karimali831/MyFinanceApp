@@ -18,7 +18,8 @@ interface IOwnState {
 	loading: boolean,
 	categories: ICategory[],
 	finances: IFinance[],
-	catId?: number | null
+	catId?: number | null,
+	labelOnclick: boolean
 }
  
 interface IOwnProps {
@@ -52,7 +53,8 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
             loading: this.props.loading,
 			categories: [],
 			finances: [],
-			catId: this.props.request !== undefined && this.props.request.isFinance ? this.props.request.catId : undefined
+			catId: this.props.request !== undefined && this.props.request.isFinance ? this.props.request.catId : undefined,
+			labelOnclick: false
 		};
     }
 
@@ -210,10 +212,20 @@ export class Chart extends React.Component<IOwnProps, IOwnState> {
 
         return request;
 	}
+
+	// private handleLabelOnclick = (event?: MouseEvent, activeElements?: Array<{}>) => {
+
+	// 	vart index = activeElements.
+
+	// 	this.setState({ labelOnclick: true });
+
+	// 	return <Redirect push to="/chart/spendingsummary/" />;
+	// }
 	
 	private chartOptions = () => {
 		const options: ChartOptions = {
 			responsive: true,
+			// onClick: this.handleLabelOnclick,
     		maintainAspectRatio: false,
 			scales: {
 				yAxes: [{

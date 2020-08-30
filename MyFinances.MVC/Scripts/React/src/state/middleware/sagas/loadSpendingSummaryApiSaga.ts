@@ -22,7 +22,7 @@ export function* loadSpendingSummary(request: IDateFilter) {
         const result: ISpendingSummaryResponse = yield call(api.summary, request);
 
         // Create an action to dispatch on success with the returned entity from API
-        const resultAction = new LoadSpendingSummarySuccessAction(result.spendingSummary, result.fuelIn, result.totalSpent);
+        const resultAction = new LoadSpendingSummarySuccessAction(result.spendingSummary, result.spendingSummaryOverview, result.fuelIn, result.totalSpent);
 
         // Dispatch the new action with Redux
         yield put(resultAction);

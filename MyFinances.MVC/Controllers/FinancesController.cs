@@ -61,10 +61,28 @@ namespace MyFinances.Website.Controllers
             var spendingSecondCats = new Dictionary<CategoryType, IEnumerable<Model.Category>>();
             var incomeSecondCats = new Dictionary<CategoryType, IEnumerable<Model.Category>>();
 
-            foreach (var cat in spendingCategories.Where(x => x.SecondTypeId.HasValue && x.SecondTypeId != 0))
+            foreach (var cat in spendingCategories)
             {
-                var secondCategories = await baseService.GetAllCategories(cat.SecondTypeId, catsWithSubs: false);
-                spendingSecondCats.Add(cat.SecondTypeId.Value, secondCategories);
+                if (cat.SuperCatId.HasValue)
+                {
+                    cat.SuperCategory = await baseService.GetCategoryName(cat.SuperCatId.Value);
+                }
+
+                if (cat.SecondTypeId.HasValue && cat.SecondTypeId != 0)
+                {
+                    var secondCategories = await baseService.GetAllCategories(cat.SecondTypeId, catsWithSubs: false);
+
+                    foreach (var cat2 in secondCategories)
+                    {
+                        if (cat2.SuperCatId.HasValue)
+                        {
+                            cat2.SuperCategory = await baseService.GetCategoryName(cat2.SuperCatId.Value);
+                        }
+                    }
+
+                    spendingSecondCats.Add(cat.SecondTypeId.Value, secondCategories);
+
+                }
             }
 
             foreach (var cat in incomeCategories.Where(x => x.SecondTypeId.HasValue && x.SecondTypeId != 0))

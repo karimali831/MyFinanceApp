@@ -275,6 +275,7 @@ export interface ICategoryResponse {
 
 export interface ISpendingSummaryResponse {
     spendingSummary: ISpendingSummary[],
+    spendingSummaryOverview: ISpendingSummary[],
     totalSpent: number,
     fuelIn: number
 }

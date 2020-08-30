@@ -76,15 +76,19 @@ namespace MyFinances.Website.Controllers.API
                 dateFilter.ToDateRange = toDateRange;
             }
 
-            var spendings = await spendingService.GetSpendingSummary(dateFilter);
+            var spendingsSummary = await spendingService.GetSpendingSummary(dateFilter);
+            var spendingsSummary2 = await spendingService.GetSpendingSummary(dateFilter, summaryOverview: true);
+            var spendingsSummary3 = await spendingService.GetSpendingSummaryOverview(dateFilter);
+            var spendingsOverview = spendingsSummary3.Concat(spendingsSummary2).OrderByDescending(x => x.Total);
 
             dateFilter.DateField = "PayDate";
             decimal fuelIn = await cnwService.GetFuelIn(dateFilter);
 
             return Request.CreateResponse(HttpStatusCode.OK,
                 new {
-                    SpendingSummary = spendings,
-                    TotalSpent = spendings.Sum(x => x.Total),
+                    SpendingSummary = spendingsSummary,
+                    SpendingSummaryOverview = spendingsOverview,
+                    TotalSpent = spendingsSummary.Sum(x => x.Total),
                     FuelIn = fuelIn
                 }
             );

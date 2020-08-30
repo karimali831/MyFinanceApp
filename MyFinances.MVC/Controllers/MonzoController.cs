@@ -1,10 +1,11 @@
-﻿using Monzo;
+﻿using Microsoft.Ajax.Utilities;
+using Monzo;
 using MyFinances.Controllers;
 using MyFinances.DTOs;
 using MyFinances.Enums;
 using MyFinances.Helpers;
+using MyFinances.Models;
 using MyFinances.Service;
-using MyFinances.ViewModels;
 using MyFinances.Website.ViewModels;
 using Newtonsoft.Json;
 using RestSharp;
@@ -13,12 +14,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Security;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MyFinances.Website.Controllers
@@ -69,6 +66,7 @@ namespace MyFinances.Website.Controllers
             };
 
             await monzoService.AddIncome(dto);
+            await monzoService.DeleteMonzoTransaction(monzoTransId);
 
             return View("Close");
         }
@@ -96,6 +94,7 @@ namespace MyFinances.Website.Controllers
                 throw new ApplicationException("Must have FinanceId or catId");
 
             await monzoService.AddSpending(dto);
+            await monzoService.DeleteMonzoTransaction(monzoTransId);
 
             return View("Close");
         }
@@ -222,7 +221,7 @@ namespace MyFinances.Website.Controllers
 
             // sync settled transactions date format being : 2020-05-31T07:06:18.533Z
             var toSyncTransactions = data.Transactions
-                .Where(x => !string.IsNullOrEmpty(x.Settled) && x.Notes != "!")
+                .Where(x => !string.IsNullOrEmpty(x.Settled) && x.Notes != "!" && string.IsNullOrEmpty(x.DeclineReason))
                 .ToList();
 
             if (toSyncTransactions != null && toSyncTransactions.Any())
@@ -278,16 +277,30 @@ namespace MyFinances.Website.Controllers
 
                 if (sync)
                 {
+                    if (!await monzoService.TransactionExists(tran.Id))
+                    {
+                        await monzoService.InsertMonzoTransaction(tran);
+                    }
+
                     unsycnedTransactions.Add(tran);
                 }
                 else
                 {
+                    if (await monzoService.TransactionExists(tran.Id))
+                    {
+                        await monzoService.DeleteMonzoTransaction(tran.Id);
+                    }
+
                     settledTransactions.Add(tran);
                 }
             }
 
+
             viewModel.SettledTransactions = settledTransactions;
-            viewModel.UnsyncedTransactions = unsycnedTransactions;
+            viewModel.UnsyncedTransactions = (await monzoService.MonzoTransactions())
+                    .Concat(unsycnedTransactions)
+                    .DistinctBy(x => x.Id)
+                    .ToList();
 
             return View("OAuthCallback", viewModel);
         }

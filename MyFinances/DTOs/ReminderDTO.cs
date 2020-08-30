@@ -14,5 +14,6 @@ namespace MyFinances.DTOs
         public DateTime AddedDate => DateTime.UtcNow;
         public Priority Priority { get; set; }
         public Categories CatId { get; set; }
+        public string MonzoTransId { get; set; }
     }
 }

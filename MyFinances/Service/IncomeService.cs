@@ -20,6 +20,7 @@ namespace MyFinances.Service
         Task InsertIncomeAsync(IncomeDTO dto);
         Task MissedIncomeEntriesAsync();
         Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat);
+        Task<IEnumerable<string>> RecentMonzoSyncedTranIds(int max);
     }
 
     public class IncomeService : IIncomeService
@@ -169,6 +170,11 @@ namespace MyFinances.Service
         public async Task InsertIncomeAsync(IncomeDTO dto)
         {
             await incomeRepository.InsertAsync(dto);
+        }
+
+        public async Task<IEnumerable<string>> RecentMonzoSyncedTranIds(int max)
+        {
+            return await incomeRepository.RecentMonzoSyncedTranIds(max);
         }
     }
 }

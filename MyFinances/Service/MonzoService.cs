@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 using System.Web.Razor.Parser.SyntaxTree;
 
 namespace MyFinances.Service
@@ -24,6 +25,10 @@ namespace MyFinances.Service
         Task<Monzo> MonzoAccountSummary();
         Task InsertMonzoAccountSummary(Monzo accountSummary);
         Task UpdateCashBalanceAsync(decimal cashBalance);
+        Task InsertMonzoTransaction(MonzoTransaction transaction);
+        Task<IList<MonzoTransaction>> MonzoTransactions();
+        Task<bool> TransactionExists(string transId);
+        Task DeleteMonzoTransaction(string transId);
     }
 
     public class MonzoService : IMonzoService
@@ -54,41 +59,11 @@ namespace MyFinances.Service
             this.settingRepository = settingRepository ?? throw new ArgumentNullException(nameof(settingRepository));
         }
 
-        private async Task<IEnumerable<string>> SpendingsMonzoTransIds()
-        {
-            return (await spendingService.GetAllAsync(new SpendingRequestDTO
-            {
-                DateFilter = new DateFilter
-                {
-                    Frequency = DateFrequency.AllTime,
-                    Interval = 1
-                }
-            }))
-            .Where(x => x.MonzoTransId != null)
-            .OrderByDescending(x => x.Date)
-            .Select(x => x.MonzoTransId)
-            .Take(50);
-        }
-
-        private async Task<IEnumerable<string>> IncomesMonzoTransIds()
-        {
-            return (await incomeService.GetAllIncomesAsync(new IncomeRequestDTO
-            {
-                DateFilter = new DateFilter
-                {
-                    Frequency = DateFrequency.AllTime,
-                    Interval = 1
-                }
-            }))
-            .Where(x => x.MonzoTransId != null)
-            .OrderByDescending(x => x.Date)
-            .Select(x => x.MonzoTransId)
-            .Take(50);
-        }
-
         private async Task CheckMonzoTransDuplicates()
         {
-            var duplicates = await baseService.CheckDuplicates("MonzoTransId", "Spendings");
+            var spendingDuplicates = await baseService.CheckDuplicates("MonzoTransId", "Spendings");
+            var incomeDuplicates = await baseService.CheckDuplicates("MonzoTransId", "Incomes");
+            var duplicates = spendingDuplicates.Concat(incomeDuplicates);
 
             if (duplicates != null && duplicates.Any())
             {
@@ -101,7 +76,8 @@ namespace MyFinances.Service
                         DueDate = DateTime.UtcNow,
                         Notes = note,
                         Priority = Priority.Medium,
-                        CatId = Categories.MissedEntries
+                        CatId = Categories.MissedEntries,
+                        MonzoTransId = Name
                     });
                     
                 }
@@ -188,11 +164,13 @@ namespace MyFinances.Service
             await CheckMonzoTransDuplicates();
 
             // check synced transactions
-            var spendingsMonzoTransIds = await SpendingsMonzoTransIds();
-            var incomesMonzoTransIds = await IncomesMonzoTransIds();
+            var spendingsMonzoTransIds = await spendingService.RecentMonzoSyncedTranIds(max: 50);
+            var incomesMonzoTransIds = await incomeService.RecentMonzoSyncedTranIds(max: 50);
             var categories = (await baseService.GetAllCategories(CategoryType.Spendings, catsWithSubs: false)).Where(x => x.MonzoTag != null);
             var incomeCategories = (await baseService.GetAllCategories(CategoryType.IncomeSources, catsWithSubs: false)).Where(x => x.MonzoTag != null);
             var finances = (await GetFinances()).Where(x => x.MonzoTag != null);
+
+            System.Diagnostics.Debug.WriteLine(spendingsMonzoTransIds);
 
             // 2020-06-01T14:15:00.119Z
             foreach (var trans in transactions)
@@ -397,14 +375,38 @@ namespace MyFinances.Service
             return await monzoRepository.MonzoAccountSummary();
         }
 
+        // currently just unsycned transaction
+        public async Task<IList<MonzoTransaction>> MonzoTransactions()
+        {
+            return (await monzoRepository.MonzoTransactions()).ToList();
+        }
+
         public async Task InsertMonzoAccountSummary(Monzo accountSummary)
         {
             await monzoRepository.InsertMonzoAccountSummary(accountSummary);
+        }
+
+        // currently unsynced transactions
+        public async Task InsertMonzoTransaction(MonzoTransaction transaction)
+        {
+            await monzoRepository.InsertMonzoTransaction(transaction);
+        }
+
+        public async Task DeleteMonzoTransaction(string transId)
+        {
+            await monzoRepository.DeleteMonzoTransaction(transId);
+        }
+
+        public async Task<bool> TransactionExists(string transId)
+        {
+            return await monzoRepository.TransactionExists(transId);
         }
 
         public async Task UpdateCashBalanceAsync(decimal cashBalance)
         {
             await settingRepository.UpdateCashBalanceAsync(cashBalance);
         }
+
+
     }
 }

@@ -15,6 +15,7 @@ namespace MyFinances.Repository
         Task UpdateAsync<T>(string field, T value, int id, string table) where T : class;
         Task DeleteAsync(int Id, string table);
         Task<IList<(string, int)>> CheckDuplicates(string column, string table);
+        Task DeleteDuplicates(string column, string table);
     }
 
     public class BaseRepository : IBaseRepository
@@ -41,6 +42,31 @@ namespace MyFinances.Repository
                 .ToList();
             }
         }
+
+        public async Task DeleteDuplicates(string column, string table)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($@"
+                    WITH cte AS (
+                        SELECT
+                            {column},
+                            ROW_NUMBER() OVER(
+                                PARTITION BY
+                                    {column}
+                                ORDER BY
+                                    {column}
+                            ) row_num
+                         FROM
+                            {table}
+                        where {column} is not null
+                    )
+                    DELETE FROM cte
+                    WHERE row_num > 1"
+                );
+            }
+        }
+
 
         public async Task UpdateAsync<T>(string field, T value, int id, string table) where T : class
         {

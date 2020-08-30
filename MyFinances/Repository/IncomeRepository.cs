@@ -20,6 +20,7 @@ namespace MyFinances.Repository
         Task InsertAsync(IncomeDTO dto);
         Task<IEnumerable<(int Year, int Week)>> MissedIncomeEntriesAsync(string dateColumn, int weekArrears, Categories category, string recsBegan = "2019-08-07");
         Task<IEnumerable<MonthComparisonChartVM>> GetIncomesByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat);
+        Task<IEnumerable<string>> RecentMonzoSyncedTranIds(int max);
     }
 
     public class IncomeRepository : IIncomeRepository
@@ -193,6 +194,23 @@ namespace MyFinances.Repository
                         @RecsBegan = recsBegan
                     }
                 )).ToArray();
+
+            }
+        }
+
+        public async Task<IEnumerable<string>> RecentMonzoSyncedTranIds(int max)
+        {
+            string sqlTxt = $@"
+                ;WITH DistinctIds (monzoTransId, date) AS (
+                    select distinct top(@max) monzoTransId, date from incomes
+                    where MonzoTransId is not null
+                )
+                SELECT MonzoTransId from DistinctIds
+                order by Date DESC";
+
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<string>(sqlTxt, new { max })).ToArray();
 
             }
         }

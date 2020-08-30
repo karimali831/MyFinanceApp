@@ -16,6 +16,7 @@ namespace MyFinances.Model
         public int? DaysUntilDue { get; set; }
         public DateTime AddedDate { get; set; }
         public bool Display { get; set; }
+        public string MonzoTransId { get; set; }
         public Priority _priority { get; set; }
         [DbIgnore]
         public string Priority

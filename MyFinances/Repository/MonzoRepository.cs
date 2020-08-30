@@ -18,7 +18,11 @@ namespace MyFinances.Repository
     public interface IMonzoRepository
     {
         Task<Monzo> MonzoAccountSummary();
+        Task<IEnumerable<MonzoTransaction>> MonzoTransactions();
         Task InsertMonzoAccountSummary(Monzo accountSummary);
+        Task InsertMonzoTransaction(MonzoTransaction transaction);
+        Task<bool> TransactionExists(string transId);
+        Task DeleteMonzoTransaction(string transId);
     }
 
     public class MonzoRepository : IMonzoRepository
@@ -26,6 +30,7 @@ namespace MyFinances.Repository
         private readonly Func<IDbConnection> dbConnectionFactory;
         private static readonly string TABLE = "MonzoAccount";
         private static readonly string[] FIELDS = typeof(Monzo).DapperFields();
+        private static readonly string[] TRANSFIELDS = typeof(MonzoTransaction).DapperFields();
 
         public MonzoRepository(Func<IDbConnection> dbConnectionFactory)
         {
@@ -55,6 +60,14 @@ namespace MyFinances.Repository
             }
         }
 
+        public async Task InsertMonzoTransaction(MonzoTransaction transaction)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($"{DapperHelper.INSERT("MonzoTransactions", TRANSFIELDS)}", transaction);
+            }
+        }
+
         public async Task<Monzo> MonzoAccountSummary()
         {
             using (var sql = dbConnectionFactory())
@@ -72,6 +85,33 @@ namespace MyFinances.Repository
                             Created = x.Created
                         })
                         .FirstOrDefault();
+            }
+        }
+
+        public async Task<IEnumerable<MonzoTransaction>> MonzoTransactions()
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.QueryAsync<MonzoTransaction>($"{DapperHelper.SELECT("MonzoTransactions", TRANSFIELDS)}")).ToArray();
+            }
+        }
+
+        public async Task<bool> TransactionExists(string transId)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                return (await sql.ExecuteScalarAsync<bool>($@"
+                    SELECT count(1) FROM MonzoTransactions WHERE Id = @Id",
+                    new { Id = transId }
+                ));
+            }
+        }
+
+        public async Task DeleteMonzoTransaction(string transId)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($"{DapperHelper.DELETE("MonzoTransactions")} WHERE Id = @Id", new { Id = transId });
             }
         }
     }

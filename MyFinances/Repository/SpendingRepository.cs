@@ -81,7 +81,9 @@ namespace MyFinances.Repository
 	                DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
                     CASE WHEN c1.Id IS NULL THEN f.Id ELSE c1.ID END AS CatId,
                     c2.Id as SecondCatId,
-	                CASE WHEN c1.Id IS NULL THEN 1 ELSE 0 END AS IsFinance
+	                CASE WHEN c1.Id IS NULL THEN 1 ELSE 0 END AS IsFinance,
+                    c1.SuperCatId as SuperCatId1,
+					c2.SuperCatId as SuperCatId2
                 FROM 
                     Spendings s
                 LEFT JOIN Categories c1 
@@ -94,7 +96,7 @@ namespace MyFinances.Repository
                      {Utils.FilterDateSql(dateFilter)} 
                 GROUP BY 
                     CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
-                    c1.Id, c2.Id, F.Id
+                    c1.Id, c2.Id, F.Id, c1.SuperCatId, c2.SuperCatId
                 ORDER BY 
                     YearMonth, Total DESC";
             

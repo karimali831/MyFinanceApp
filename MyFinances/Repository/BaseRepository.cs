@@ -16,6 +16,7 @@ namespace MyFinances.Repository
         Task DeleteAsync(int Id, string table);
         Task<IList<(string, int)>> CheckDuplicates(string column, string table);
         Task DeleteDuplicates(string column, string table);
+        Task DeleteDuplicatesByLike(string like, string column, string table);
     }
 
     public class BaseRepository : IBaseRepository
@@ -64,6 +65,14 @@ namespace MyFinances.Repository
                     DELETE FROM cte
                     WHERE row_num > 1"
                 );
+            }
+        }
+
+        public async Task DeleteDuplicatesByLike(string like, string column, string table)
+        {
+            using (var sql = dbConnectionFactory())
+            {
+                await sql.ExecuteAsync($"DELETE FROM {table} WHERE {column} LIKE '%{like}%'");
             }
         }
 

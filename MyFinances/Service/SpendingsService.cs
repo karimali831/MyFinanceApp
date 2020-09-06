@@ -6,6 +6,7 @@ using MyFinances.Repository;
 using MyFinances.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -117,6 +118,7 @@ namespace MyFinances.Service
         {
             var specialCatsSpendingsSummary = (await spendingRepository.GetSpecialCatsSpendingsSummaryAsync(dateFilter));
             var dataSpecialCats = new List<SpendingSummaryDTO>();
+            var monthsBetween = Utils.MonthsBetweenRanges(dateFilter);
 
             foreach (var item in specialCatsSpendingsSummary)
             {
@@ -126,7 +128,7 @@ namespace MyFinances.Service
                     Total = item.Total,
                     IsSpecialCat = true,
                     Average = Utils.ShowAverage(dateFilter) ?
-                        $"Averaged monthly: {Utils.ToCurrency(item.Total / Utils.MonthsBetweenRanges(dateFilter) ?? item.Total)}" :
+                        $"Averaged monthly: {Utils.ToCurrency(item.Total / monthsBetween ?? item.Total)}" :
                         Utils.ToCurrency(item.Total)
                 });
             }
@@ -134,18 +136,19 @@ namespace MyFinances.Service
             return dataSpecialCats;
         }
 
-        private string ComputeAverage(IEnumerable<MonthComparisonChartVM> monthlyFigures, DateFilter dateFilter, decimal totalFigure)
+        private string ComputeAverage(IEnumerable<MonthComparisonChartVM> monthlyFigures, DateFilter dateFilter)
         {
             var fillEmptyMonths = Utils.AddEmptyMonths(monthlyFigures.ToList(), dateFilter);
-            int countMonths = fillEmptyMonths.GroupBy(x => x.YearMonth).Distinct().Count();
-            decimal total = fillEmptyMonths.Sum(x => x.Total);
-            string average = Utils.ToCurrency(total / countMonths);
-            return Utils.ShowAverage(dateFilter) ? $"Averaged monthly: {average}" : Utils.ToCurrency(totalFigure);
+            var data = Utils.AveragedChartResults(fillEmptyMonths);
+            int countMonths = Utils.CountChartMonths(data);
+            decimal total = data.Sum(x => x.Total);
+            string average = countMonths > 0 ? Utils.ToCurrency(total / countMonths) : null;
+            return Utils.ShowAverage(dateFilter) && average != null ? $"Averaged monthly: {average}" : Utils.ToCurrency(total);
         }
 
-        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter, bool summaryOverview = false)
+        public async Task<IEnumerable<SpendingSummaryDTO>> GetSpendingSummary(DateFilter dateFilter, bool summaryOverview)
         {
-            var spendingsSummary = (await spendingRepository.GetSpendingsSummaryAsync(dateFilter));
+            var spendingsSummary = await spendingRepository.GetSpendingsSummaryAsync(dateFilter);
 
             if (summaryOverview)
             {
@@ -180,18 +183,17 @@ namespace MyFinances.Service
             var data = firstCats.Concat(secondCats).OrderByDescending(x => x.Total).ToArray();
             var spendingsByMonth = await spendingRepository.GetSpendingsByMonthAsync(dateFilter);
 
+            if (summaryOverview)
+            {
+                spendingsByMonth = spendingsByMonth.Where(x => x.SuperCatId1 == null && x.SuperCatId2 == null);
+            }
+
             foreach (var item in data)
             {
                 if (item.Cat2 == null)
                 {
                     var monthlyFigures = spendingsByMonth.Where(x => x.CatId == item.CatId && x.IsFinance == item.IsFinance);
-                    var fillEmptyMonths = Utils.AddEmptyMonths(monthlyFigures.ToList(), dateFilter);
-                    int countMonths = fillEmptyMonths.GroupBy(x => x.YearMonth).Distinct().Count();
-                    decimal total = summaryOverview ? item.Total : fillEmptyMonths.Sum(x => x.Total);
-                    string average = Utils.ToCurrency(total / countMonths);
-                    item.Average = Utils.ShowAverage(dateFilter) ? $"Averaged monthly: {average}" : Utils.ToCurrency(item.Total);
-
-     
+                    item.Average = ComputeAverage(monthlyFigures, dateFilter);
                 }
                 else
                 {
@@ -199,7 +201,7 @@ namespace MyFinances.Service
                     foreach (var x in item.SecondCats)
                     {
                         var monthlyFigures = spendingsByMonth.Where(d => d.SecondCatId == x.SecondCatId && x.IsFinance == false);
-                        item.Average = ComputeAverage(monthlyFigures, dateFilter, item.Total);
+                        item.Average = ComputeAverage(monthlyFigures, dateFilter);
                     }
                 }
             }
@@ -210,7 +212,8 @@ namespace MyFinances.Service
         public async Task<IEnumerable<MonthComparisonChartVM>> GetSpendingsByCategoryAndMonthAsync(DateFilter dateFilter, int catId, bool isSecondCat, bool isFinance)
         {
             var data = await spendingRepository.GetSpendingsByCategoryAndMonthAsync(dateFilter, catId, isSecondCat, isFinance);
-            return Utils.AddEmptyMonths(data.ToList(), dateFilter);
+            var fillEmptyMonths = Utils.AddEmptyMonths(data.ToList(), dateFilter);
+            return fillEmptyMonths;
 
         }
 

@@ -164,8 +164,8 @@ namespace MyFinances.Service
             await CheckMonzoTransDuplicates();
 
             // check synced transactions
-            var spendingsMonzoTransIds = await spendingService.RecentMonzoSyncedTranIds(max: 50);
-            var incomesMonzoTransIds = await incomeService.RecentMonzoSyncedTranIds(max: 50);
+            var spendingsMonzoTransIds = await spendingService.RecentMonzoSyncedTranIds(max: 150);
+            var incomesMonzoTransIds = await incomeService.RecentMonzoSyncedTranIds(max: 150);
             var categories = (await baseService.GetAllCategories(CategoryType.Spendings, catsWithSubs: false)).Where(x => x.MonzoTag != null);
             var incomeCategories = (await baseService.GetAllCategories(CategoryType.IncomeSources, catsWithSubs: false)).Where(x => x.MonzoTag != null);
             var finances = (await GetFinances()).Where(x => x.MonzoTag != null);

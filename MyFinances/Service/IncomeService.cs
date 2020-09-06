@@ -128,7 +128,7 @@ namespace MyFinances.Service
         {
             var incomeStreams = new List<(string DateColumn, int WeekArrears, Categories CategoryType, string RecsBegan)>()
             {
-                (nameof(Income.AmazonWeekCommencing), 3, Categories.CWTL, "2019-08-07"),
+                //(nameof(Income.AmazonWeekCommencing), 3, Categories.CWTL, "2019-08-07"),
                 (nameof(Income.Date), 1, Categories.UberEats, "2019-08-07"),
                 (nameof(Income.Date), 1, Categories.Flex, "2020-03-23")
             };

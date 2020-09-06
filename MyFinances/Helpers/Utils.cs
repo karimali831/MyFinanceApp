@@ -118,17 +118,18 @@ namespace MyFinances.Helpers
 
             return null; // could also return string.Empty
         }
-    
-    
+
+
         public static string ChartsHeaderTitle(IEnumerable<MonthComparisonChartVM> data, ChartHeaderTitleType type)
         {
-            // exclude first month and last month records (because partial stored records)
-            var averagedResults = data.Where(x => x.MonthName != DateTime.UtcNow.ToString("MMMM", CultureInfo.InvariantCulture) && x.YearMonth != "2019-07");
+            if (type == ChartHeaderTitleType.Total)
+            {
+                return $"Total: {ToCurrency(data.Sum(x => x.Total))}";
+            }
 
-            int months = averagedResults
-                .Select(x => x.MonthName)
-                .Distinct()
-                .Count();
+            // exclude first month and last month records (because partial stored records)
+            var averagedResults = AveragedChartResults(data);
+            int months = CountChartMonths(averagedResults);
 
             if (averagedResults.Any())
             {
@@ -146,19 +147,24 @@ namespace MyFinances.Helpers
   
                     case ChartHeaderTitleType.Daily:
                         return $"Averaged daily: {ToCurrency(averagedResults.Sum(x => x.Total / months / x.DaysInMonth))}";
-
-                    case ChartHeaderTitleType.Total:
-                        return $"Total: {ToCurrency(data.Sum(x => x.Total))}";
                 }
             }
             return "";
         }
 
+        public static string ChartLabelFormat(string monthName, string yearMonth) 
+            => string.Format("{0}-{1}", monthName.Substring(0, 3), yearMonth.Substring(2, 2));
+        public static int CountChartMonths(IEnumerable<MonthComparisonChartVM> chart) 
+            => chart.Select(x => ChartLabelFormat(x.MonthName, x.YearMonth)).Distinct().Count();
+        public static IEnumerable<MonthComparisonChartVM> AveragedChartResults(IEnumerable<MonthComparisonChartVM> chart) 
+            => chart.Where(x => x.YearMonth != DateTime.UtcNow.ToString("yyyy-MM", CultureInfo.InvariantCulture) && x.YearMonth != "2019-07");
+
+
         public static string[] ChartLabels(List<MonthComparisonChartVM[]> results)
         {
             return results
                 .SelectMany(x => x)
-                .Select(x => x.MonthName.Substring(0, 3))
+                .Select(x => ChartLabelFormat(x.MonthName, x.YearMonth))
                 .Distinct()
                 .ToArray();
         }
@@ -173,7 +179,7 @@ namespace MyFinances.Helpers
             switch (filter.Frequency)
             {
                 case DateFrequency.AllTime:
-                    fromMonth = 08;
+                    fromMonth = 07;
                     toMonth = DateTime.Now.Month;
                     fromYear = 2019;
                     toYear = DateTime.Now.Year;
@@ -187,7 +193,7 @@ namespace MyFinances.Helpers
                     break;
 
                 case DateFrequency.PreviousYear:
-                    fromMonth = 01;
+                    fromMonth = (DateTime.Now.Year - 1) == 2019 ? 07 : 01;
                     toMonth = 12;
                     fromYear = DateTime.Now.Year - 1;
                     toYear = DateTime.Now.Year - 1;

@@ -16,7 +16,8 @@ export interface IFinance {
     daysUntilDue: number,
     paymentStatus: PaymentStatus,
     directDebit: boolean,
-    monzoTag: string
+    monzoTag: string,
+    superCatId: number
 }
 
 export interface IFinanceDTO {

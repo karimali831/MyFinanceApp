@@ -92,6 +92,11 @@ export default class Finances extends React.Component<IOwnProps, IOwnState> {
             headerClasses: "hidden-xs",
             classes: "hidden-xs"
           }, {
+            dataField: 'superCatId',
+            text: 'Super CatId',
+            headerClasses: "hidden-xs",
+            classes: "hidden-xs"
+          }, {
             dataField: 'directDebit',
             text: 'Is DD',
             headerClasses: "hidden-xs",

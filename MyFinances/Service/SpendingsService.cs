@@ -152,7 +152,7 @@ namespace MyFinances.Service
 
             if (summaryOverview)
             {
-                spendingsSummary = spendingsSummary.Where(x => x.SuperCatId1 == null && x.SuperCatId2 == null);
+                spendingsSummary = spendingsSummary.Where(x => x.SuperCatId1 == null && x.SuperCatId2 == null && x.FinanceSuperCatId == null);
             }
 
             var secondCats = spendingsSummary
@@ -185,7 +185,7 @@ namespace MyFinances.Service
 
             if (summaryOverview)
             {
-                spendingsByMonth = spendingsByMonth.Where(x => x.SuperCatId1 == null && x.SuperCatId2 == null);
+                spendingsByMonth = spendingsByMonth.Where(x => x.SuperCatId1 == null && x.SuperCatId2 == null && x.FinanceSuperCatId == null);
             }
 
             foreach (var item in data)

@@ -154,7 +154,7 @@ namespace MyFinances.Website.Controllers
                 var savingsBalance = await client.GetBalanceAsync(accounts[0].Id);
                 var getTransactions = (await client.GetTransactionsAsync(accounts[0].Id, expand: "merchant"))
                     .OrderByDescending(x => x.Created)
-                    .Take(50)
+                    .Take(150)
                     .ToList();
 
                 var spentToday = getTransactions

@@ -19,6 +19,7 @@ namespace MyFinances.ViewModels
         public string SecondCategory { get; set; }
         public int? SuperCatId1 { get; set; }
         public int? SuperCatId2 { get; set; }
+        public int? FinanceSuperCatId { get; set; }
         public bool IsFinance { get; set; } = false;
         public int DaysInMonth { get; set; }
         public string Average { get; set; }

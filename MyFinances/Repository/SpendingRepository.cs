@@ -83,7 +83,8 @@ namespace MyFinances.Repository
                     c2.Id as SecondCatId,
 	                CASE WHEN c1.Id IS NULL THEN 1 ELSE 0 END AS IsFinance,
                     c1.SuperCatId as SuperCatId1,
-					c2.SuperCatId as SuperCatId2
+					c2.SuperCatId as SuperCatId2,
+                    f.SuperCatId as FinanceSuperCatId
                 FROM 
                     Spendings s
                 LEFT JOIN Categories c1 
@@ -96,7 +97,7 @@ namespace MyFinances.Repository
                      {Utils.FilterDateSql(dateFilter)} 
                 GROUP BY 
                     CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
-                    c1.Id, c2.Id, F.Id, c1.SuperCatId, c2.SuperCatId
+                    c1.Id, c2.Id, F.Id, c1.SuperCatId, c2.SuperCatId, f.SuperCatId
                 ORDER BY 
                     YearMonth, Total DESC";
             
@@ -146,7 +147,8 @@ namespace MyFinances.Repository
 	                    DATENAME(month, Date) AS MonthName, SUM(Amount) as 'Total',
                         CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Category,
                         CASE WHEN c1.Name IS NULL THEN 1 ELSE 0 END AS IsFinance,
-                        c1.SuperCatId AS SuperCatId1
+                        c1.SuperCatId AS SuperCatId1,
+                        f.SuperCatId AS FinanceSuperCatId
                     FROM 
                         {TABLE} s
 				    LEFT JOIN Categories c1 
@@ -159,7 +161,7 @@ namespace MyFinances.Repository
                         {field} = @CatId
                     GROUP BY 
                         CONVERT(CHAR(7), Date, 120) , DATENAME(month, Date),
-                        c1.Name, F.Name, c1.SuperCatId
+                        c1.Name, F.Name, c1.SuperCatId, f.SuperCatId
                     ORDER BY 
                         YearMonth";
             }
@@ -179,16 +181,24 @@ namespace MyFinances.Repository
 					LEFT JOIN Categories c2 ON c.SuperCatId = c2.Id
 	                WHERE {Utils.FilterDateSql(dateFilter)} AND c.SuperCatId is not null
 	                GROUP BY c.SuperCatId, c2.Name
-
                     UNION
 
                     SELECT c.SuperCatId, c2.Name, SUM(s.Amount)
-	                FROM {TABLE} as s
+	                FROM Spendings as s
 	                LEFT JOIN Categories c ON c.Id = s.SecondCatId
 					LEFT JOIN Categories c2 ON c.SuperCatId = c2.Id
 	                WHERE {Utils.FilterDateSql(dateFilter)} AND c.SuperCatId is not null
 	                GROUP BY c.SuperCatId, c2.Name
 
+					UNION
+
+					SELECT f.SuperCatId, c.Name AS SuperCategory, SUM(s.Amount) as Total
+	                FROM Spendings as s
+	                LEFT JOIN Finances f ON f.Id = s.FinanceId
+	                LEFT JOIN Categories c ON c.Id = f.SuperCatId
+					WHERE {Utils.FilterDateSql(dateFilter)} AND f.SuperCatId is not null
+	                GROUP BY f.SuperCatId, c.Name
+					
                 ) 
                 SELECT SuperCatId, SuperCategory, SUM(Total) AS Total
                 FROM SpecialCats 
@@ -214,6 +224,7 @@ namespace MyFinances.Repository
                     c1.SecondTypeId,
                     c1.SuperCatId as SuperCatId1,
 					c2.SuperCatId as SuperCatId2,
+                    f.SuperCatId as FinanceSuperCatId,
                     SUM(s.Amount) as Total
                 FROM 
 	                {TABLE} as s
@@ -226,7 +237,7 @@ namespace MyFinances.Repository
                 WHERE 
                     {Utils.FilterDateSql(dateFilter)}
                 GROUP BY 
-                    s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name, c1.SecondTypeId, c1.SuperCatId, c2.SuperCatId
+                    s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name, c1.SecondTypeId, c1.SuperCatId, c2.SuperCatId, f.SuperCatId
                 ORDER BY 
                     Total DESC";
 

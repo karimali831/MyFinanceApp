@@ -63,6 +63,7 @@ namespace MyFinances.Website.Controllers.API
                         x.PaymentStatus,
                         x.DirectDebit,
                         x.MonzoTag,
+                        x.SuperCatId,
                         EndDate = x.EndDate.HasValue ? x.EndDate.Value.ToString("dd-MM-yy") : null,
                         NextDueDate = x.NextDueDate.HasValue ? x.NextDueDate.Value.ToLongDateString() : null
                     }),

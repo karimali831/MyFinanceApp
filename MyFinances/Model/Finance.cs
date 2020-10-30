@@ -23,6 +23,7 @@ namespace MyFinances.Model
         public bool ManualPayment { get; set; }
         public bool DirectDebit { get; set; }
         public string MonzoTag { get; set; }
+        public int? SuperCatId { get; set; }
     }
 
     public class FinanceMap : EntityTypeConfiguration<Finance>

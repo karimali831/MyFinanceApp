@@ -23,6 +23,7 @@ namespace MyFinances.ViewModels
         public PaymentStatus PaymentStatus { get; set; }
         public bool DirectDebit { get; set; }
         public string MonzoTag { get; set; }
+        public int? SuperCatId { get; set; }
 
     }
 }

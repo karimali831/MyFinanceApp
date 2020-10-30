@@ -88,7 +88,8 @@ namespace MyFinances.Service
                         DaysUntilDue = CalculateDays(x.NextDueDate, DateTime.UtcNow),
                         PaymentStatus = PaymentStatusAsync(x.Id, x.NextDueDate, x.EndDate),
                         DirectDebit = x.DirectDebit,
-                        MonzoTag = x.MonzoTag
+                        MonzoTag = x.MonzoTag,
+                        SuperCatId = x.SuperCatId
                     });
                 }
             }

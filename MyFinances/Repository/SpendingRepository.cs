@@ -218,26 +218,33 @@ namespace MyFinances.Repository
                 SELECT 
                     CASE WHEN s.CatId IS NULL THEN s.FinanceId ELSE s.CatId END AS CatId,
                     CASE WHEN s.SecondCatId IS NULL THEN s.FinanceId ELSE s.SecondCatId END AS SecondCatId,
+					CASE WHEN c1.SuperCatId IS NULL THEN f.SuperCatId ELSE c1.SuperCatId END AS SuperCatId1,
+					c2.SuperCatId as SuperCatId2,
                     CASE WHEN c1.Name IS NULL THEN f.Name ELSE c1.Name END AS Cat1,
+					CASE WHEN c3.Name IS NULL THEN c5.Name ELSE c3.Name END AS SuperCat1,	
                     CASE WHEN s.CatId IS NULL THEN 1 ELSE 0 END AS IsFinance,
 	                c2.Name AS Cat2, 
-                    c1.SecondTypeId,
-                    c1.SuperCatId as SuperCatId1,
-					c2.SuperCatId as SuperCatId2,
-                    f.SuperCatId as FinanceSuperCatId,
-                    SUM(s.Amount) as Total
+					c4.Name AS SuperCat2,
+                    c1.SecondTypeId,					
+					SUM(s.Amount) as Total
                 FROM 
-	                {TABLE} as s
+	                Spendings as s
 	            LEFT JOIN Categories c1 
-                    ON c1.Id = s.CatId
+                    ON c1.Id = s.CatId 
 	            LEFT JOIN Categories c2
                     ON c2.Id = s.SecondCatId
 	            LEFT JOIN Finances f 
-                    ON f.Id = s.FinanceId
+                    ON f.Id = s.FinanceId 
+				LEFT JOIN Categories c3
+					ON c3.Id = c1.SuperCatId
+	            LEFT JOIN Categories c4 
+                    ON c4.Id = c2.SuperCatId
+				LEFT JOIN Categories c5
+                    ON c5.Id = f.SuperCatId
                 WHERE 
                     {Utils.FilterDateSql(dateFilter)}
                 GROUP BY 
-                    s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name, c1.SecondTypeId, c1.SuperCatId, c2.SuperCatId, f.SuperCatId
+                    s.CatId, s.SecondCatId, s.FinanceId, c1.Name, c2.Name, f.Name, c1.SecondTypeId, c1.SuperCatId, c2.SuperCatId, f.SuperCatId, c3.Name, c4.Name, c5.Name
                 ORDER BY 
                     Total DESC";
 

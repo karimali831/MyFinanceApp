@@ -20,7 +20,8 @@ namespace MyFinances.DTOs
         public string Average { get; set; }
         public int? SuperCatId1 { get; set; }
         public int? SuperCatId2 { get; set; }
-        public int? FinanceSuperCatId { get; set; }
+        public string SuperCat1 { get; set; }
+        public string SuperCat2 { get; set; }
         public bool IsSpecialCat { get; set; } = false;
     }
 

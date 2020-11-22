@@ -152,7 +152,7 @@ namespace MyFinances.Service
 
             if (summaryOverview)
             {
-                spendingsSummary = spendingsSummary.Where(x => x.SuperCatId1 == null && x.SuperCatId2 == null && x.FinanceSuperCatId == null);
+                spendingsSummary = spendingsSummary.Where(x => x.SuperCatId1 == null && x.SuperCatId2 == null);
             }
 
             var secondCats = spendingsSummary

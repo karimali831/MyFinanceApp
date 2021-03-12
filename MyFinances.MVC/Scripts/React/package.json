@@ -84,7 +84,7 @@
     "@types/remote-redux-devtools": "^0.5.3",
     "css-loader": "^3.1.0",
     "less-loader": "^5.0.0",
-    "react-dev-utils": "^10.0.0",
+    "react-dev-utils": "^11.0.4",
     "remote-redux-devtools": "^0.5.16",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",

@@ -38,7 +38,7 @@
     "babel-preset-react-app": "^9.1.0",
     "base64-inline-loader": "^1.1.1",
     "base64-loader": "^1.0.0",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
     "classnames": "^2.2.6",
     "connected-react-router": "^6.5.2",
